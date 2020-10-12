@@ -1,0 +1,59 @@
+.file-indicate {
+  display: inline-flex;
+  width: 150px;
+  margin: 0 10px 5px 0;
+  padding: 5px 20px 5px 10px;
+  position: relative;
+  flex-wrap: wrap;
+  border: 1px solid #c6c6c6;
+  border-radius: 5px;
+
+  &.success {
+    border: #fff;
+  }
+
+  .name {
+    font-size: 12px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin: 0 0 5px 0;
+    color: #a4a4a4;
+  }
+
+  .indicator {
+    height: 10px;
+    width: 100%;
+    position: relative;
+
+    div {
+      height: 100%;
+      background: #6157FF;
+      opacity: .8;
+      transition: width 0.3s ease-in;
+    }
+  }
+  .info {
+    color: #858585;
+    flex: 1 0 100%;
+
+    svg {
+      margin: 0 5px 0 0;
+    }
+  }
+
+  .close{
+    position: absolute;
+    top: 2px;
+    right: 5px;
+  }
+}
+
+@keyframes loader {
+  0% {
+    width: 0;
+  }
+  100% {
+    width: 100%;
+  }
+}

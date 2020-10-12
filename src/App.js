@@ -1,26 +1,24 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import * as React from "react";
+import { Provider } from "react-redux";
+import { ConnectedRouter } from "connected-react-router";
+import VideoConference from "./containers/VideoConference";
+import { useDropzone } from "react-dropzone";
+import { store, history } from "./redux/store";
 
-function App() {
+import "./styles.scss";
+
+export default function App() {
+  const { getRootProps, isDragActive } = useDropzone();
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
+    <Provider store={store}>
+      <ConnectedRouter history={history}>
+        <div
+          {...getRootProps()}
+          className={`App ${isDragActive ? "drag-active" : ""}`}
         >
-          Learn React
-        </a>
-      </header>
-    </div>
+          <VideoConference isDragActive={isDragActive} />
+        </div>
+      </ConnectedRouter>
+    </Provider>
   );
 }
-
-export default App;

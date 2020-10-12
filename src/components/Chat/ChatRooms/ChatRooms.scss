@@ -1,0 +1,30 @@
+.chat-rooms {
+    flex: 0 0 200px;
+    margin: 40px 40px 0 0;
+
+    li {
+        list-style: none;
+
+        button {
+            background: #fff;
+            color: #007aff;
+            border: 1px solid #007aff;
+            display: block;
+            margin: 0 0 10px 0;
+            padding: 10px 15px;
+            box-sizing: border-box;
+            width: 100%;
+            cursor: pointer;
+
+            &:hover {
+                background: #489ef8;
+                border-color: #007aff;
+            }
+
+            &.active {
+                background: #007aff;
+                color: #fff;
+            }
+        }
+    }
+}
