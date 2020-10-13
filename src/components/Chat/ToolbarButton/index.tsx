@@ -4,7 +4,7 @@ import './ToolbarButton.scss';
 type ToolbarButtonType = {
     icon: string
     type?: string
-    onSubmit?: Function
+    onSubmit?: (event: React.ChangeEvent<HTMLInputElement>) => void
 }
 
 export default function ToolbarButton(props: ToolbarButtonType) {

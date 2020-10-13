@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import moment from "moment";
-import FontAwesomeIcon from "@fortawesome/react-fontawesome";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import faFile from "@fortawesome/fontawesome-free-solid/faFile";
 import faCheck from "@fortawesome/fontawesome-free-solid/faCheck";
 import MessageMenu from "../../../containers/MessageMenu";

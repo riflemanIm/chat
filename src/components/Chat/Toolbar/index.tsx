@@ -8,7 +8,7 @@ type ToolbarType = {
     rightItems: Array<object>
 }
 
-export default function Toolbar(props) {
+export default function Toolbar(props:ToolbarType) {
     const { title, leftItems, rightItems } = props;
     return (
         <div className="toolbar">

@@ -3,7 +3,7 @@ import { Provider } from "react-redux";
 import { ConnectedRouter } from "connected-react-router";
 import VideoConference from "./containers/VideoConference";
 import { useDropzone } from "react-dropzone";
-import { store, history } from "./redux/store";
+import { store, history } from "./redux/store.js";
 
 import "./styles.scss";
 
