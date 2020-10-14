@@ -10,8 +10,6 @@ const epicMiddleware = createEpicMiddleware();
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose; // eslint-disable-line
 const middleware = [epicMiddleware, thunk];
 
-console.log("ddd");
-
 export const history = createHistory();
 export const store = createStore(
   combineReducers({

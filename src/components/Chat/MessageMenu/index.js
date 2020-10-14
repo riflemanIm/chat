@@ -6,8 +6,15 @@ import { getLocaleName } from "../../../utils/lang";
 import "./MessageMenu.scss";
 
 export default function Message(props) {
-  const { data, isMine, deleteMessage, websocket, lang } = props;
+  const {
+    data,
+    isMine,
+    deleteMessage,
+    websocket,
+    // lang
+  } = props;
   const [isOpen, setOpen] = useState(false);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const onMessageDelete = useCallback(() => {
     deleteMessage(data.id);
     setOpen(false);

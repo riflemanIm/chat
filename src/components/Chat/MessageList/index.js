@@ -101,8 +101,8 @@ class MessageList extends Component {
     const {
       app: { targetToken },
       websocket,
-      user,
-      sendChatMessage,
+      //user,
+      //sendChatMessage,
       resetFilesUploads,
       media: { uploads },
     } = this.props;
@@ -134,7 +134,7 @@ class MessageList extends Component {
 
   sendFile = (event) => {
     const {
-      uploadFileToChatMessage,
+      //   uploadFileToChatMessage,
       startFileUploading,
       media: { uploads },
     } = this.props;
@@ -146,7 +146,7 @@ class MessageList extends Component {
   };
 
   render() {
-    const { lang } = this.props.app;
+    // const { lang } = this.props.app;
     const userType = this.props.user.userType
       ? getLocaleName(this.props.user.userType)
       : getLocaleName("doctor");

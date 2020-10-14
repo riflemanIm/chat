@@ -60,9 +60,9 @@ export default function Message(props) {
     showTimestamp,
     selected,
     selectMessage,
-    unselectMessage,
+    // unselectMessage,
   } = props;
-
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const onMessageSelect = useCallback(() => selectMessage(data.id));
   // console.log(data)
   const content =

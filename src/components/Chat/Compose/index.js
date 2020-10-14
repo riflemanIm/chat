@@ -7,7 +7,7 @@ import { getLocaleName } from "../../../utils/lang";
 
 export default function Compose(props) {
   const {
-    app: { lang },
+    //app: { lang },
     media: { isDragActive: globalIsDragActive, uploads },
     rightItems,
     onSubmit,
@@ -18,6 +18,7 @@ export default function Compose(props) {
 
   const onDropHandler = useCallback(
     (acceptedFiles) => onDrop(acceptedFiles),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     []
   );
   const { getRootProps, getInputProps, isDragActive } = useDropzone({

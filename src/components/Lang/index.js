@@ -15,7 +15,7 @@ export default () => {
   }, []);
 
   return (
-    <select className="lang" onChange={onChange}>
+    <select className="lang" onChange={onChange} se>
       <option value="ru" selected={getLang() === "ru"}>
         RU
       </option>

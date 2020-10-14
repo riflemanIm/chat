@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useState, useCallback } from "react";
+import { useCallback } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import faTimes from "@fortawesome/fontawesome-free-solid/faTimes";
 import faFile from "@fortawesome/fontawesome-free-solid/faFile";
@@ -11,6 +11,7 @@ export default function FileUploadIndicate({
   percent = 0,
   cancelFileUploading,
 }) {
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const onClose = useCallback(() => cancelFileUploading(index));
   // console.log('file', file.id);
   const pending = file.percent !== 100; // file.status === 'pending';

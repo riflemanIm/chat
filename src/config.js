@@ -1,4 +1,4 @@
-/* globals __DEV__ */
+// globals __DEV__
 
 import { getLang } from "./utils/lang";
 import moment from "moment";
@@ -6,7 +6,7 @@ import("moment/locale/ru").then(() => moment.locale(getLang()));
 
 export const isDev = true;
 const api_host = "api.mediadoc.fr";
-const api_port = isDev ? ":4000" : "";
+//const api_port = isDev ? ":4000" : "";
 const api_protocol = "https";
 const api_ws_protocol = "wss";
 
