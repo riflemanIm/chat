@@ -2,6 +2,7 @@ import React from "react";
 import File from "./File";
 import Video from "./Video";
 import Image from "./Image";
+import { ChatMessage } from "../../types";
 
 const MessageContent = ({
   apiUrl,

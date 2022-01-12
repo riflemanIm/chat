@@ -8,7 +8,7 @@ import {
 } from "@material-ui/core";
 
 import { getFileMeta, splitFileName } from "../../utils/common";
-import { ChatMessage } from "../../types/chat";
+import { ChatMessage } from "../../types";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({

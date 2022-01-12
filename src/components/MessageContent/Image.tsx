@@ -2,6 +2,7 @@ import React from "react";
 import Viewer from "react-viewer";
 import { createStyles, makeStyles, Theme } from "@material-ui/core";
 import { getImageMeta } from "../../utils/common";
+import { ChatMessage } from "../../types";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
