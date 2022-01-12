@@ -1,7 +1,17 @@
 import React, { createContext, useContext, useEffect } from "react";
 import { Socket } from "socket.io-client";
 import { useSocket } from "../hooks/useSocket";
-import { ChatData, Contact, Group, GroupMessage, JoinGroup, MessageOperation, PrivateMessage, SetTyping, User } from "../types";
+import {
+  ChatData,
+  Contact,
+  Group,
+  GroupMessage,
+  JoinGroup,
+  MessageOperation,
+  PrivateMessage,
+  SetTyping,
+  User
+} from "../types";
 import { ChatContext } from "./ChatContext";
 
 // Формат ответа сервера
@@ -16,11 +26,12 @@ export interface ISocketContext {
   online: boolean;
 }
 const initialContext = {
-  online: false,
+  online: false
 } as ISocketContext;
 
-export const SocketContext: React.Context<ISocketContext> =
-  createContext(initialContext);
+export const SocketContext: React.Context<ISocketContext> = createContext(
+  initialContext
+);
 
 type SocketProviderProps = {
   wsUrl: string;
@@ -29,7 +40,7 @@ type SocketProviderProps = {
 
 export const SocketProvider: React.FC<SocketProviderProps> = ({
   wsUrl,
-  children,
+  children
 }: SocketProviderProps) => {
   const { state, dispatch } = useContext(ChatContext);
   const { socket, online, disconnectSocket, connectSocket } = useSocket(
@@ -76,10 +87,11 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({
       const groupArr = payload.groupData;
       const contactArr = payload.contactData;
       const userArr = payload.userData;
+      dispatch({ type: "CLEAR_CHAT_DATA" });
       if (groupArr.length) {
         for (const group of groupArr) {
           socket?.emit("joinGroupSocket", {
-            groupId: group.groupId,
+            groupId: group.groupId
           });
           dispatch({ type: "SET_GROUP_GATHER", payload: group });
         }
@@ -87,7 +99,7 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({
       if (contactArr.length) {
         for (const contact of contactArr) {
           socket?.emit("joinPrivateSocket", {
-            contactId: contact.userId,
+            contactId: contact.userId
           });
           dispatch({ type: "SET_CONTACT_GATHER", payload: contact });
         }
@@ -157,7 +169,7 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({
       // Информация о присоединении к группе новых пользователей
       if (
         groupObj &&
-        !groupObj.members?.find((member) => member.userId === newUser.userId)
+        !groupObj.members?.find(member => member.userId === newUser.userId)
       ) {
         newUser.isManager = 0;
         groupObj.members?.push(newUser);
@@ -187,7 +199,7 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({
       ) {
         socket?.emit("markAsRead", {
           groupId: data.groupId,
-          _id: data._id,
+          _id: data._id
         });
       }
     };
@@ -205,10 +217,13 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({
         return;
       }
       const data = res.data as PrivateMessage;
-      if (data.contactId === state.user.userId || data.userId === state.user.userId) {
+      if (
+        data.contactId === state.user.userId ||
+        data.userId === state.user.userId
+      ) {
         dispatch({
           type: "ADD_PRIVATE_MESSAGE",
-          payload: data,
+          payload: data
         });
 
         // если есть активная комната и это приватная комната (!groupId && userId) с отправителем сообщения (userId)
@@ -219,7 +234,7 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({
         ) {
           socket?.emit("markAsRead", {
             contactId: data.userId,
-            _id: data._id,
+            _id: data._id
           });
         }
       }
@@ -263,19 +278,19 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({
         if (data.groupId) {
           dispatch({
             type: "LOSE_GROUP_UNREAD_GATHER",
-            payload: data.groupId,
+            payload: data.groupId
           });
         } else {
           dispatch({
             type: "LOSE_CONTACT_UNREAD_GATHER",
-            payload: data.contactId,
+            payload: data.contactId
           });
         }
       } else {
         if (data.contactId)
           dispatch({
             type: "MARK_PRIVATE_MESSAGES_READ",
-            payload: data.userId,
+            payload: data.userId
           });
       }
     };
@@ -324,7 +339,7 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({
       dispatch({ type: "SET_CONTACT_GATHER", payload: data });
       dispatch({ type: "SET_USER_GATHER", payload: data });
       socket?.emit("joinPrivateSocket", {
-        contactId: data.userId,
+        contactId: data.userId
       });
     };
     socket?.on("addContact", listener);
@@ -430,8 +445,8 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({
           type: "ADD_GROUP_MEMBER",
           payload: {
             groupId: group.groupId,
-            members: [newUser],
-          },
+            members: [newUser]
+          }
         });
       }
       // Если это пользователь, присоединяем к группе

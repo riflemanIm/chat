@@ -14,7 +14,7 @@ import {
   SetActiveRoom,
   SetUser,
   SetTyping,
-  User,
+  User
 } from "../types";
 import { chatRoomComparer } from "../utils/common";
 
@@ -39,7 +39,7 @@ const emptyUser: User = {
   username: "",
   password: "",
   avatar: "",
-  langCode: "",
+  langCode: ""
 };
 
 const emptyChatState: ChatState = {
@@ -55,7 +55,7 @@ const emptyChatState: ChatState = {
   conference: null, // url конференции
   typing: null, // кто печатает текст
   loading: false, // загрузка данных
-  error: undefined, // ошибка
+  error: undefined // ошибка
 };
 
 type ChatActionType =
@@ -91,7 +91,8 @@ type ChatActionType =
   | "SET_LOADING"
   | "SET_ERROR"
   | "SET_USER"
-  | "CLEAR_USER";
+  | "CLEAR_USER"
+  | "CLEAR_CHAT_DATA";
 
 type Action = {
   type: ChatActionType;
@@ -134,7 +135,7 @@ const getActiveRoom = (state: ChatState) => {
     // ищем комнату с самым свежим сообщением
     const rooms = [
       ...Object.values(state.contactGather),
-      ...Object.values(state.groupGather),
+      ...Object.values(state.groupGather)
     ].sort(chatRoomComparer);
     if (rooms.length > 0) newActiveRoom = rooms[0];
   }
@@ -151,13 +152,13 @@ const setUserOnline = (
   if (state.contactGather[userId])
     newState.contactGather[userId] = {
       ...newState.contactGather[userId],
-      online,
+      online
     };
 
   // Обновить статус участника в группах
   for (const group of Object.values(state.groupGather) as Group[]) {
     if (!group.members) continue;
-    const member = group.members.find((m) => m.userId === userId);
+    const member = group.members.find(m => m.userId === userId);
     if (member) {
       const index = group.members.indexOf(member);
       group.members[index] = { ...member, online };
@@ -174,12 +175,12 @@ const addGroupMessage = (state: ChatState, payload: GroupMessage) => {
   if (newState.groupGather[groupId].messages) {
     newState.groupGather[groupId].messages = [
       ...(newState.groupGather[groupId].messages as GroupMessage[]),
-      payload,
+      payload
     ];
   } else {
     newState.groupGather[groupId] = {
       ...state.groupGather[groupId],
-      messages: [payload],
+      messages: [payload]
     };
   }
 
@@ -209,12 +210,12 @@ const addPrivateMessage = (state: ChatState, payload: PrivateMessage) => {
   if (newState.contactGather[contactId].messages) {
     newState.contactGather[contactId].messages = [
       ...(newState.contactGather[contactId].messages as PrivateMessage[]),
-      payload,
+      payload
     ];
   } else {
     newState.contactGather[contactId] = {
       ...newState.contactGather[contactId],
-      messages: [payload],
+      messages: [payload]
     };
   }
 
@@ -245,7 +246,7 @@ const contactUnreadGather = (
   if (newState.contactGather[userId]) {
     newState.contactGather[userId] = {
       ...newState.contactGather[userId],
-      unreadCount: predicate(newState.contactGather[userId].unreadCount),
+      unreadCount: predicate(newState.contactGather[userId].unreadCount)
     };
   }
 
@@ -265,7 +266,7 @@ const groupUnreadGather = (
   if (newState.groupGather[groupId]) {
     newState.groupGather[groupId] = {
       ...newState.groupGather[groupId],
-      unreadCount: predicate(newState.groupGather[groupId].unreadCount),
+      unreadCount: predicate(newState.groupGather[groupId].unreadCount)
     };
   }
 
@@ -284,22 +285,21 @@ const revokeMessage = (state: ChatState, payload: MessageOperation) => {
     const { messages } = newState.groupGather[payload.groupId];
     // задаем isRevoke
     if (messages) {
-      const msg = messages.find((message) => message._id === payload._id);
+      const msg = messages.find(message => message._id === payload._id);
       if (msg) {
         const index = messages.indexOf(msg);
         messages[index] = { ...msg, isRevoke: true, revokeUserName: userName };
       }
     }
   } else {
-    const { messages } =
-      newState.contactGather[
-        payload.contactId === userId
-          ? (payload.userId as number)
-          : (payload.contactId as number)
-      ];
+    const { messages } = newState.contactGather[
+      payload.contactId === userId
+        ? (payload.userId as number)
+        : (payload.contactId as number)
+    ];
     // задаем isRevoke
     if (messages) {
-      const msg = messages.find((message) => message._id === payload._id);
+      const msg = messages.find(message => message._id === payload._id);
       if (msg) {
         const index = messages.indexOf(msg);
         messages[index] = { ...msg, isRevoke: true, revokeUserName: userName };
@@ -353,7 +353,7 @@ const updateUserInfo = (state: ChatState, user: User) => {
     newState.userGather[userId] = {
       ...newState.userGather[userId],
       username,
-      avatar,
+      avatar
     };
   }
 
@@ -361,7 +361,7 @@ const updateUserInfo = (state: ChatState, user: User) => {
     newState.contactGather[userId] = {
       ...newState.contactGather[userId],
       username,
-      avatar,
+      avatar
     };
   }
 
@@ -372,9 +372,9 @@ const updateUserInfo = (state: ChatState, user: User) => {
 };
 
 const addGroupMember = (state: ChatState, payload: GroupMember) => {
-  const members: Contact[] = payload.members.map((member) => ({
+  const members: Contact[] = payload.members.map(member => ({
     ...member,
-    isManager: 0,
+    isManager: 0
   }));
 
   const newState = { ...state };
@@ -382,12 +382,12 @@ const addGroupMember = (state: ChatState, payload: GroupMember) => {
   if (newState.groupGather[payload.groupId].members && members) {
     newState.groupGather[payload.groupId].members = [
       ...(state.groupGather[payload.groupId].members as Contact[]),
-      ...members,
+      ...members
     ];
   } else {
     newState.groupGather[payload.groupId] = {
       ...newState.groupGather[payload.groupId],
-      members,
+      members
     };
   }
 
@@ -425,9 +425,9 @@ const addPrivateMessages = (state: ChatState, data: AddPrivateMessages) => {
       ...newState.contactGather[contactId],
       messages: [
         ...messages,
-        ...(newState.contactGather[contactId].messages || []),
+        ...(newState.contactGather[contactId].messages || [])
       ],
-      noMoreData: messages.length < data.pageSize,
+      noMoreData: messages.length < data.pageSize
     };
   }
 
@@ -447,9 +447,9 @@ const addGroupMessages = (state: ChatState, data: AddGroupMessages) => {
       ...newState.groupGather[groupId],
       messages: [
         ...messages,
-        ...(newState.groupGather[groupId].messages || []),
+        ...(newState.groupGather[groupId].messages || [])
       ],
-      noMoreData: messages.length < data.pageSize,
+      noMoreData: messages.length < data.pageSize
     };
   }
 
@@ -474,7 +474,7 @@ const setActiveRoom = (state: ChatState, data: SetActiveRoom) => {
       ? state.groupGather[data.groupId]
       : data.contactId
       ? state.contactGather[data.contactId]
-      : null,
+      : null
   };
 };
 
@@ -483,7 +483,7 @@ const setUser = (state: ChatState, payload: SetUser): ChatState => {
   localStorage.setItem(state.tokenKey, payload.token);
   return {
     ...state,
-    ...payload,
+    ...payload
   };
 };
 
@@ -493,7 +493,7 @@ const clearUser = (state: ChatState): ChatState => {
   return {
     ...state,
     token: "",
-    user: emptyUser,
+    user: emptyUser
   };
 };
 
@@ -504,16 +504,16 @@ function chatReducer(state: ChatState, action: Action): ChatState {
         ...state,
         groupGather: {
           ...state.groupGather,
-          [(action.payload as Group).groupId]: action.payload as Group,
-        },
+          [(action.payload as Group).groupId]: action.payload as Group
+        }
       };
     case "SET_CONTACT_GATHER":
       return {
         ...state,
         contactGather: {
           ...state.contactGather,
-          [(action.payload as Contact).userId]: action.payload as Contact,
-        },
+          [(action.payload as Contact).userId]: action.payload as Contact
+        }
       };
     case "DEL_GROUP":
       return delGroup(state, (action.payload as Group).groupId);
@@ -524,8 +524,8 @@ function chatReducer(state: ChatState, action: Action): ChatState {
         ...state,
         userGather: {
           ...state.userGather,
-          [(action.payload as User).userId]: action.payload as User,
-        },
+          [(action.payload as User).userId]: action.payload as User
+        }
       };
     case "UPDATE_ACTIVE_ROOM":
       return { ...state, activeRoom: getActiveRoom(state) };
@@ -577,17 +577,27 @@ function chatReducer(state: ChatState, action: Action): ChatState {
       return {
         ...state,
         loading: action.payload as boolean,
-        error: "",
+        error: ""
       };
     case "SET_ERROR":
       return {
         ...state,
-        error: action.payload as string,
+        error: action.payload as string
       };
     case "SET_USER":
       return setUser(state, action.payload as SetUser);
     case "CLEAR_USER":
       return clearUser(state);
+    case "CLEAR_CHAT_DATA":
+      return {
+        ...state,
+        activeRoom: null,
+        groupGather: {},
+        userGather: {},
+        contactGather: {},
+        conference: null,
+        typing: null
+      };
   }
 
   return state;
@@ -605,7 +615,7 @@ type ChatProviderProps = {
 
 export const ChatContext = React.createContext({
   state: emptyChatState,
-  dispatch: emptyDispatch,
+  dispatch: emptyDispatch
 });
 
 const getUser = (userData: string | null) => {
@@ -629,7 +639,7 @@ export const ChatProvider: React.FC<ChatProviderProps> = (
     tokenKey: props.tokenKey,
     userKey: props.userKey,
     user,
-    token,
+    token
   };
 
   const [state, dispatch] = React.useReducer(chatReducer, chatState);
