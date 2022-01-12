@@ -1,0 +1,28 @@
+{
+  "CHAT": {
+    "STATUS": {
+      "ONLINE": "online",
+      "OFFLINE": "offline",
+      "TYPING": "typing"
+    },
+    "MESSAGE": {
+      "TYPE": {
+        "IMAGE": "Image",
+        "VIDEO": "Video",
+        "FILE": "File",
+        "NOTIFY": "Notification"
+      },
+      "MENU": {
+        "COPY": "Copy",
+        "DELETE": "Delete"
+      },
+      "REVOKED": {
+        "YOU": "You deleted the message",
+        "CONTACT": "deleted the message"
+      }
+    },
+    "INPUT_MESSAGE": "Please write a message...",
+    "INPUT_SEARCH_CONTACT": "Surname Name",
+    "MEMBERS": "members"
+  }
+}
