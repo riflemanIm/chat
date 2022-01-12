@@ -4,14 +4,17 @@ import axios, { AxiosError, AxiosInstance } from "axios";
 import { Contact, Group, PagingResponse, PrivateMessage } from "../types";
 
 export interface IRestContext {
+  apiUrl: string;
+  pageSize: number;
   fetch: AxiosInstance | null;
   getPrivateMessages: (chat: Contact) => Promise<void>;
   getGroupMessages: (chat: Group) => Promise<void>;
 }
 const initialContext = {} as IRestContext;
 
-export const RestContext: React.Context<IRestContext> =
-  createContext(initialContext);
+export const RestContext: React.Context<IRestContext> = createContext(
+  initialContext
+);
 
 type RestProviderProps = {
   baseURLApi: string;
@@ -22,7 +25,7 @@ type RestProviderProps = {
 export const RestProvider: React.FC<RestProviderProps> = ({
   baseURLApi,
   pageSize,
-  children,
+  children
 }: RestProviderProps) => {
   const { state, dispatch } = useContext(ChatContext);
 
@@ -32,9 +35,9 @@ export const RestProvider: React.FC<RestProviderProps> = ({
     headers: {
       "Cache-Control": "no-cache",
       Pragma: "no-cache",
-      Authorization: `Bearer ${state.token}`,
+      Authorization: `Bearer ${state.token}`
     },
-    withCredentials: false,
+    withCredentials: false
   });
 
   const getPrivateMessages = useCallback(
@@ -47,8 +50,8 @@ export const RestProvider: React.FC<RestProviderProps> = ({
           params: {
             contactId,
             current,
-            pageSize,
-          },
+            pageSize
+          }
         });
         if (data) {
           dispatch({
@@ -56,8 +59,8 @@ export const RestProvider: React.FC<RestProviderProps> = ({
             payload: {
               pageSize,
               contactId,
-              messages: data as PrivateMessage[],
-            },
+              messages: data as PrivateMessage[]
+            }
           });
         }
       } catch (error) {
@@ -82,8 +85,8 @@ export const RestProvider: React.FC<RestProviderProps> = ({
             params: {
               groupId,
               current,
-              pageSize,
-            },
+              pageSize
+            }
           }
         );
         if (data) {
@@ -92,8 +95,8 @@ export const RestProvider: React.FC<RestProviderProps> = ({
             payload: {
               pageSize,
               groupId,
-              ...data,
-            },
+              ...data
+            }
           });
         }
       } catch (error) {
@@ -108,7 +111,13 @@ export const RestProvider: React.FC<RestProviderProps> = ({
 
   return (
     <RestContext.Provider
-      value={{ fetch, getPrivateMessages, getGroupMessages }}
+      value={{
+        apiUrl: baseURLApi,
+        pageSize,
+        fetch,
+        getPrivateMessages,
+        getGroupMessages
+      }}
     >
       {children}
     </RestContext.Provider>
