@@ -1,4 +1,5 @@
 import moment from "moment";
+import { ChatRoom, Contact, Group } from "../types";
 export function isEmpty(
   value: number | string | object | [] | undefined | null
 ) {
@@ -96,7 +97,7 @@ export const getChatId = (chat: ChatRoom | null) => {
 export const getChatName = (chat: ChatRoom) => {
   return (chat as Group).groupId
     ? (chat as Group).name
-    : (chat as ContactDto).username;
+    : (chat as Contact).username;
 };
 
 export const chatRoomComparer = (a: ChatRoom, b: ChatRoom) => {

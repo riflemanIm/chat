@@ -11,6 +11,7 @@ import {
 import { Send, InsertEmoticon } from "@material-ui/icons";
 import Emoji from "./Emoji";
 import { useTranslation } from "react-i18next";
+import { ChatRoom, ImageSize, SendMessage } from "../types";
 
 const useStyles = makeStyles(() => ({
   input: {

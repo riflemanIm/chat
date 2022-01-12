@@ -1,12 +1,12 @@
 // Тип сообщения
-type MessageType = "text" | "image" | "file" | "video" | "notify";
+export type MessageType = "text" | "image" | "file" | "video" | "notify";
 
-declare enum MessageStatus {
+export enum MessageStatus {
   sent = 0,
   read = 1,
 }
 
-declare enum Role {
+export enum Role {
   Unknown = 0,
   Client = 1,
   Agent = 2,
@@ -14,7 +14,7 @@ declare enum Role {
   Operator = 4,
 }
 
-interface User {
+export interface User {
   userId: number;
   username: string;
   password: string;
@@ -25,7 +25,7 @@ interface User {
 }
 
 // Приватные сообщения
-interface PrivateMessage {
+export interface PrivateMessage {
   _id?: number;
   userId: number;
   contactId: number;
@@ -39,7 +39,7 @@ interface PrivateMessage {
 }
 
 // Контакт
-interface ContactDto {
+export interface Contact {
   userId: number;
   username: string;
   avatar?: string;
@@ -53,12 +53,12 @@ interface ContactDto {
 }
 
 // Информация о друзьях
-interface ContactGather {
-  [userId: number]: ContactDto;
+export interface ContactGather {
+  [userId: number]: Contact;
 }
 
 // Групповое сообщение
-interface GroupMessage {
+export interface GroupMessage {
   _id?: number;
   userId: number;
   groupId: number;
@@ -70,7 +70,7 @@ interface GroupMessage {
 }
 
 // Группа
-interface Group {
+export interface Group {
   groupId: number;
   userId: number; // владелец
   name: string;
@@ -79,28 +79,28 @@ interface Group {
   unreadCount?: number;
   createTime: number;
   isTop?: boolean;
-  members?: ContactDto[];
+  members?: Contact[];
   noMoreData?: boolean;
 }
 
 // Группы
-interface GroupGather {
+export interface GroupGather {
   [groupId: number]: Group;
 }
 
 // Ассоциации групп и пользователей
-interface GroupMap {
+export interface GroupMap {
   groupId: number;
   userId: number;
 }
 
 // Ассоциации пользователей и друзей
-interface ContactMap {
+export interface ContactMap {
   contactId: number;
   userId: number;
 }
 
-interface SendMessage {
+export interface SendMessage {
   message: string | File;
   width?: number;
   height?: number;
@@ -110,18 +110,18 @@ interface SendMessage {
 }
 
 // Размер изображения
-interface ImageSize {
+export interface ImageSize {
   width: number;
   height: number;
 }
 
 // Непрочитанные сообщения
-interface UnReadGather {
+export interface UnReadGather {
   [key: string]: number;
 }
 
 // Получить сообщения постранично
-interface PagingParams {
+export interface PagingParams {
   groupId?: number;
   userId?: number;
   contactId?: number;
@@ -130,25 +130,25 @@ interface PagingParams {
 }
 
 // Постраничный ответ для групповых сообщений
-interface PagingResponse {
+export interface PagingResponse {
   messageArr: GroupMessage[];
   userArr: User[];
 }
 
-interface ContactUserMap {
+export interface ContactUserMap {
   contactId: number;
   contactUserName: string;
 }
 
 // информация о том, что контакт печатает текст
-interface Typing {
+export interface SetTyping {
   userId?: number;
   groupId?: number;
   contactId?: number;
 }
 
 // Операция с сообщением
-interface MessageOperation {
+export interface MessageOperation {
   userId?: number;
   username: string;
   groupId?: number;
@@ -157,49 +157,49 @@ interface MessageOperation {
 }
 
 // Данные чата
-interface ChatData {
+export interface ChatData {
   groupData: Group[];
-  contactData: ContactDto[];
+  contactData: Contact[];
   userData: User[];
 }
 
-interface GroupMember {
+export interface GroupMember {
   groupId: number;
-  members: ContactDto[];
+  members: Contact[];
 }
 
-interface AddPrivateMessages {
+export interface AddPrivateMessages {
   pageSize: number;
   contactId: number;
   messages: PrivateMessage[];
 }
 
-interface AddGroupMessages extends PagingResponse {
+export interface AddGroupMessages extends PagingResponse {
   pageSize: number;
   groupId: number;
 }
 
-interface SetActiveRoom {
+export interface SetActiveRoom {
   groupId?: number;
   contactId?: number;
   ifNotExists: boolean;
 }
 
-interface JoinGroup {
+export interface JoinGroup {
   group: Group;
   user: User;
 }
 
-interface SetUser {
+export interface SetUser {
   user: User;
   token: string;
 }
 
-type ChatRoom = Group | ContactDto;
-type ChatMessage = GroupMessage | PrivateMessage;
+export type ChatRoom = Group | Contact;
+export type ChatMessage = GroupMessage | PrivateMessage;
 
 // Операции контекстного меню
-declare enum ContextMenuType {
+export enum ContextMenuType {
   COPY = "COPY", // Скопировать
   REVOKE = "REVOKE", // Удалить сообщение
   TOP_REVERT = "TOP_REVERT", // Открепить

@@ -6,6 +6,7 @@ import { Autocomplete } from "@material-ui/lab";
 import RoomListItem from "./RoomListItem";
 import { chatRoomComparer, getChatId, getChatName } from "../utils/common";
 import { useTranslation } from "react-i18next";
+import { ChatRoom, Contact, Group, SetTyping, User } from "../types";
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -22,8 +23,8 @@ type RoomListProps = {
   user: User;
   activeRoom: ChatRoom | null;
   groups: Group[];
-  contacts: ContactDto[];
-  typing: Typing | null;
+  contacts: Contact[];
+  typing: SetTyping | null;
   onChangeChat?: (chat: ChatRoom) => void;
 };
 

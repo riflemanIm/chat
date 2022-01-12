@@ -15,12 +15,13 @@ import {
 import GroupIcon from "@material-ui/icons/Group";
 import { formatTime, getChatName } from "../utils/common";
 import { useTranslation } from "react-i18next";
+import { ChatMessage, ChatRoom, Contact, Group, SetTyping } from "../types";
 
 type RoomListItemProps = {
   apiUrl: string;
   chat: ChatRoom;
   active: boolean;
-  typing: Typing | null;
+  typing: SetTyping | null;
   onClick: React.MouseEventHandler<HTMLDivElement> | undefined;
 };
 
@@ -107,8 +108,8 @@ const OnlineBadge = withStyles((theme: Theme) =>
 
 const contactAvatar = (
   apiUrl: string,
-  contact: ContactDto,
-  typing: Typing | null
+  contact: Contact,
+  typing: SetTyping | null
 ): JSX.Element => {
   const avatar = (
     <Avatar
@@ -160,7 +161,7 @@ export default function RoomListItem(props: RoomListItemProps) {
       <GroupIcon />{" "}
     </Avatar>
   ) : (
-    contactAvatar(apiUrl, chat as ContactDto, typing)
+    contactAvatar(apiUrl, chat as Contact, typing)
   );
 
   const lastMessage =

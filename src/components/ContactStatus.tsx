@@ -2,9 +2,10 @@ import React from "react";
 import { Typography } from "@material-ui/core";
 import Typing from "./Typing";
 import { useTranslation } from "react-i18next";
+import { Contact } from "../types";
 
 type ContactStatusProps = {
-  contact: ContactDto;
+  contact: Contact;
   isTyping: boolean;
 };
 

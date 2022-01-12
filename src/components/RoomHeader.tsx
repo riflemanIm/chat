@@ -13,6 +13,7 @@ import CallEndIcon from "@material-ui/icons/CallEnd";
 import { createStyles, makeStyles } from "@material-ui/styles";
 import ContactStatus from "./ContactStatus";
 import ContactList from "./ContactList";
+import { ChatRoom, Contact, Group, SetTyping, User } from "../types";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -29,7 +30,7 @@ type RoomHeaderProps = {
   apiUrl: string;
   user: User;
   chat: ChatRoom | null;
-  typing: Typing | null;
+  typing: SetTyping | null;
   conference: string | null;
   className: string;
   onVideoCall?: (chat: ChatRoom) => void;
@@ -122,7 +123,7 @@ export default function RoomHeader({
             >
               <ContactList
                 apiUrl={apiUrl}
-                contacts={group.members as ContactDto[]}
+                contacts={group.members as Contact[]}
                 owner={group.userId}
               />
             </Popover>
@@ -132,7 +133,7 @@ export default function RoomHeader({
       />
     );
   }
-  const contact = chat as ContactDto;
+  const contact = chat as Contact;
   const isTyping = !!typing?.contactId && typing?.userId === contact.userId;
   return (
     <CardHeader

@@ -9,6 +9,7 @@ import {
 import StarIcon from "@material-ui/icons/Star";
 import ContactStatus from "./ContactStatus";
 import { makeStyles } from "@material-ui/styles";
+import { Contact } from "../types";
 
 const useStyles = makeStyles(() => ({
   star: {
@@ -20,7 +21,7 @@ const useStyles = makeStyles(() => ({
 type ContactListProps = {
   apiUrl: string;
   owner: number;
-  contacts: ContactDto[];
+  contacts: Contact[];
 };
 
 export default function ContactList(props: ContactListProps) {

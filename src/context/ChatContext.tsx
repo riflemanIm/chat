@@ -1,4 +1,21 @@
 import React from "react";
+import {
+  AddGroupMessages,
+  AddPrivateMessages,
+  ChatRoom,
+  Contact,
+  ContactGather,
+  Group,
+  GroupGather,
+  GroupMember,
+  GroupMessage,
+  MessageOperation,
+  PrivateMessage,
+  SetActiveRoom,
+  SetUser,
+  SetTyping,
+  User,
+} from "../types";
 import { chatRoomComparer } from "../utils/common";
 
 export interface ChatState {
@@ -12,7 +29,7 @@ export interface ChatState {
   contactGather: ContactGather;
   initialContactId: number | null;
   conference: string | null;
-  typing: Typing | null;
+  typing: SetTyping | null;
   loading: boolean;
   error?: string;
 }
@@ -73,7 +90,7 @@ type ChatActionType =
   | "MARK_PRIVATE_MESSAGES_READ"
   | "SET_LOADING"
   | "SET_ERROR"
-  | "SET_USER" 
+  | "SET_USER"
   | "CLEAR_USER";
 
 type Action = {
@@ -84,11 +101,11 @@ type Action = {
     | number
     | string
     | Group
-    | ContactDto
+    | Contact
     | User
     | PrivateMessage
     | GroupMessage
-    | Typing
+    | SetTyping
     | MessageOperation
     | GroupMember
     | AddPrivateMessages
@@ -151,10 +168,7 @@ const setUserOnline = (
   return newState;
 };
 
-const addGroupMessage = (
-  state: ChatState,
-  payload: GroupMessage
-) => {
+const addGroupMessage = (state: ChatState, payload: GroupMessage) => {
   const newState = { ...state };
   const { groupId } = payload;
   if (newState.groupGather[groupId].messages) {
@@ -184,13 +198,12 @@ const addGroupMessage = (
   return newState;
 };
 
-const addPrivateMessage = (
-  state: ChatState,
-  payload: PrivateMessage
-) => {
+const addPrivateMessage = (state: ChatState, payload: PrivateMessage) => {
   const newState = { ...state };
   const contactId =
-    payload.contactId === state.user.userId ? payload.userId : payload.contactId;
+    payload.contactId === state.user.userId
+      ? payload.userId
+      : payload.contactId;
 
   // 1 добавляем сообщение
   if (newState.contactGather[contactId].messages) {
@@ -262,10 +275,7 @@ const groupUnreadGather = (
   return newState;
 };
 
-const revokeMessage = (
-  state: ChatState,
-  payload: MessageOperation
-) => {
+const revokeMessage = (state: ChatState, payload: MessageOperation) => {
   const { userId } = state.user;
   const newState = { ...state };
   const userName =
@@ -362,7 +372,7 @@ const updateUserInfo = (state: ChatState, user: User) => {
 };
 
 const addGroupMember = (state: ChatState, payload: GroupMember) => {
-  const members: ContactDto[] = payload.members.map((member) => ({
+  const members: Contact[] = payload.members.map((member) => ({
     ...member,
     isManager: 0,
   }));
@@ -371,7 +381,7 @@ const addGroupMember = (state: ChatState, payload: GroupMember) => {
 
   if (newState.groupGather[payload.groupId].members && members) {
     newState.groupGather[payload.groupId].members = [
-      ...(state.groupGather[payload.groupId].members as ContactDto[]),
+      ...(state.groupGather[payload.groupId].members as Contact[]),
       ...members,
     ];
   } else {
@@ -473,7 +483,7 @@ const setUser = (state: ChatState, payload: SetUser): ChatState => {
   localStorage.setItem(state.tokenKey, payload.token);
   return {
     ...state,
-    ...payload
+    ...payload,
   };
 };
 
@@ -502,13 +512,13 @@ function chatReducer(state: ChatState, action: Action): ChatState {
         ...state,
         contactGather: {
           ...state.contactGather,
-          [(action.payload as ContactDto).userId]: action.payload as ContactDto,
+          [(action.payload as Contact).userId]: action.payload as Contact,
         },
       };
     case "DEL_GROUP":
       return delGroup(state, (action.payload as Group).groupId);
     case "DEL_CONTACT":
-      return delContact(state, (action.payload as ContactDto).userId);
+      return delContact(state, (action.payload as Contact).userId);
     case "SET_USER_GATHER":
       return {
         ...state,
@@ -526,15 +536,9 @@ function chatReducer(state: ChatState, action: Action): ChatState {
     case "USER_OFFLINE":
       return setUserOnline(state, action.payload as number, 0);
     case "ADD_GROUP_MESSAGE":
-      return addGroupMessage(
-        state,
-        action.payload as GroupMessage
-      );
+      return addGroupMessage(state, action.payload as GroupMessage);
     case "ADD_PRIVATE_MESSAGE":
-      return addPrivateMessage(
-        state,
-        action.payload as PrivateMessage
-      );
+      return addPrivateMessage(state, action.payload as PrivateMessage);
     case "ADD_GROUP_UNREAD_GATHER":
       return groupUnreadGather(
         state,
@@ -548,16 +552,13 @@ function chatReducer(state: ChatState, action: Action): ChatState {
         (x?: number) => (x || 0) + 1
       );
     case "SET_TYPING":
-      return { ...state, typing: action.payload as Typing };
+      return { ...state, typing: action.payload as SetTyping };
     case "LOSE_GROUP_UNREAD_GATHER":
       return groupUnreadGather(state, action.payload as number, () => 0);
     case "LOSE_CONTACT_UNREAD_GATHER":
       return contactUnreadGather(state, action.payload as number, () => 0);
     case "REVOKE_MESSAGE":
-      return revokeMessage(
-        state,
-        action.payload as MessageOperation
-      );
+      return revokeMessage(state, action.payload as MessageOperation);
     case "UPDATE_GROUP_INFO":
       return updateGroupInfo(state, action.payload as Group);
     case "UPDATE_USER_INFO":
@@ -616,7 +617,9 @@ const getUser = (userData: string | null) => {
   }
 };
 
-export const ChatProvider: React.FC<ChatProviderProps> = (props: ChatProviderProps) => {
+export const ChatProvider: React.FC<ChatProviderProps> = (
+  props: ChatProviderProps
+) => {
   emptyUser.langCode = props.defLang;
   const token = localStorage.getItem(props.tokenKey) as string;
   const userData = localStorage.getItem(props.userKey);

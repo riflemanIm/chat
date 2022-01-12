@@ -22,6 +22,7 @@ import Message from "./Message";
 import RoomHeader from "./RoomHeader";
 import { useTranslation } from "react-i18next";
 import { getChatId, isEmpty } from "../utils/common";
+import { ChatMessage, ChatRoom, SendMessage, SetTyping, User } from "../types";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -102,7 +103,7 @@ type RoomProps = {
   apiUrl: string;
   user: User;
   chat: ChatRoom | null;
-  typing: Typing | null;
+  typing: SetTyping | null;
   conference: string | null;
   loading: boolean;
   pageSize: number;

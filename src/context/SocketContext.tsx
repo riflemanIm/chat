@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect } from "react";
 import { Socket } from "socket.io-client";
 import { useSocket } from "../hooks/useSocket";
+import { ChatData, Contact, Group, GroupMessage, JoinGroup, MessageOperation, PrivateMessage, SetTyping, User } from "../types";
 import { ChatContext } from "./ChatContext";
 
 // Формат ответа сервера
@@ -149,7 +150,7 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({
         return;
       }
       const data = res.data as JoinGroup;
-      const newUser: ContactDto = data.user;
+      const newUser: Contact = data.user;
       newUser.online = 1;
       const { group } = data;
       const groupObj = state.groupGather[group.groupId];
@@ -239,7 +240,7 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({
         return;
       }
       if (timer) clearTimeout(timer);
-      dispatch({ type: "SET_TYPING", payload: res.data as Typing });
+      dispatch({ type: "SET_TYPING", payload: res.data as SetTyping });
       timer = setTimeout(() => {
         dispatch({ type: "SET_TYPING", payload: null });
       }, 1000);
@@ -319,7 +320,7 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({
         dispatch({ type: "SET_ERROR", payload: res.msg });
         return;
       }
-      const data = res.data as ContactDto;
+      const data = res.data as Contact;
       dispatch({ type: "SET_CONTACT_GATHER", payload: data });
       dispatch({ type: "SET_USER_GATHER", payload: data });
       socket?.emit("joinPrivateSocket", {
@@ -353,7 +354,7 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({
         dispatch({ type: "SET_ERROR", payload: res.msg });
         return;
       }
-      const data = res.data as ContactDto;
+      const data = res.data as Contact;
       dispatch({ type: "DEL_CONTACT", payload: data });
     };
     socket?.on("deleteContact", listener);

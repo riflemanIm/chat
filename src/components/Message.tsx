@@ -13,6 +13,7 @@ import { formatTime } from "../utils/common";
 import MessageContent from "./MessageContent";
 import { Alert } from "@material-ui/lab";
 import { useTranslation } from "react-i18next";
+import { ChatMessage, PrivateMessage, User } from "../types";
 
 type MessageProps = {
   apiUrl: string;

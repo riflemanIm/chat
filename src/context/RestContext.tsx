@@ -1,10 +1,11 @@
 import React, { createContext, useCallback, useContext } from "react";
 import { ChatContext } from "./ChatContext";
 import axios, { AxiosError, AxiosInstance } from "axios";
+import { Contact, Group, PagingResponse, PrivateMessage } from "../types";
 
 export interface IRestContext {
   fetch: AxiosInstance | null;
-  getPrivateMessages: (chat: ContactDto) => Promise<void>;
+  getPrivateMessages: (chat: Contact) => Promise<void>;
   getGroupMessages: (chat: Group) => Promise<void>;
 }
 const initialContext = {} as IRestContext;
@@ -37,7 +38,7 @@ export const RestProvider: React.FC<RestProviderProps> = ({
   });
 
   const getPrivateMessages = useCallback(
-    async (chat: ContactDto) => {
+    async (chat: Contact) => {
       const contactId = chat.userId;
       const current = chat.messages?.length;
       try {
