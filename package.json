@@ -1,7 +1,6 @@
 {
   "name": "@pmt/chat",
   "version": "1.0.0",
-  "private": true,
   "main": "src/index.ts",
   "repository": {
     "type": "git",
@@ -10,6 +9,11 @@
   "publishConfig": {
     "@pmt:registry": "https://gitlab.postmodern.ru/api/v4/projects/50/packages/npm/"
   },
+  "keywords": [
+    "chat, telechat"
+  ],
+  "author": "Pavel Ishenin",
+  "license": "ISC",
   "dependencies": {
     "@material-ui/core": "^4.12.3",
     "@material-ui/icons": "^4.11.2",
