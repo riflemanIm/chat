@@ -1,0 +1,244 @@
+import * as React from "react";
+import {
+  Container,
+  Box,
+  Grid,
+  makeStyles,
+  createStyles,
+  Theme,
+  Snackbar,
+  useMediaQuery
+} from "@material-ui/core";
+import { Alert } from "@material-ui/lab";
+import { Room, RoomList, Conference } from "../components";
+import { ChatContext } from "../context/ChatContext";
+import { RestContext } from "../context/RestContext";
+import { SocketContext } from "../context/SocketContext";
+import { Group, Contact, ChatMessage, ChatRoom, SendMessage } from "../types";
+
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    root: {
+      minWidth: 300,
+      minHeight: 470,
+      height: `calc(100vh - ${theme.spacing(8)}px)`,
+      padding: 0,
+      [theme.breakpoints.down("xs")]: {
+        height: "100vh",
+        minHeight: 200
+      }
+    },
+    innerBox: {
+      height: "100%",
+      width: "100%",
+      margin: `${theme.spacing(4)}px 0`,
+      [theme.breakpoints.down("xs")]: {
+        margin: 0
+      }
+    },
+    innerGrid: {
+      height: "100%",
+      width: "100%"
+    }
+  })
+);
+
+export const ChatPage = () => {
+  const classes = useStyles();
+  const isMobile = useMediaQuery((theme: Theme) =>
+    theme.breakpoints.down("sm")
+  );
+  const { state, dispatch } = React.useContext(ChatContext);
+  const { socket } = React.useContext(SocketContext);
+
+  const {
+    apiUrl,
+    pageSize,
+    getPrivateMessages,
+    getGroupMessages
+  } = React.useContext(RestContext);
+
+  const onExitActiveRoom = React.useCallback(() => {
+    dispatch({
+      type: "SET_ACTIVE_ROOM",
+      payload: { ifNotExists: false }
+    });
+  }, [dispatch]);
+
+  const onNeedMoreMessages = React.useCallback(
+    async chat => {
+      if ((chat as Group).groupId) await getGroupMessages(chat as Group);
+      else await getPrivateMessages(chat as Contact);
+    },
+    [getPrivateMessages, getGroupMessages]
+  );
+
+  const onMessageDelete = React.useCallback(
+    (chat: ChatRoom, message: ChatMessage) => {
+      socket?.emit("revokeMessage", {
+        groupId: (chat as Group).groupId, // Идентификатор группы
+        contactId: chat.userId, // Идентификатор контакта
+        _id: message._id // Идентификатор удаленного сообщения
+      });
+    },
+    [socket?.id]
+  );
+
+  const onTyping = React.useCallback(
+    (chat: ChatRoom) => {
+      socket?.emit("typing", {
+        groupId: (chat as Group)?.groupId,
+        contactId: chat?.userId
+      });
+    },
+    [socket?.id]
+  );
+
+  const onSendMessage = React.useCallback(
+    (chat: ChatRoom, data: SendMessage) => {
+      if ((chat as Group).groupId) {
+        socket?.emit("groupMessage", {
+          groupId: (chat as Group)?.groupId,
+          content: data.message,
+          width: data.width,
+          height: data.height,
+          fileName: data.fileName,
+          messageType: data.messageType,
+          size: data.size
+        });
+      } else {
+        socket?.emit("privateMessage", {
+          contactId: chat?.userId,
+          content: data.message,
+          width: data.width,
+          height: data.height,
+          fileName: data.fileName,
+          messageType: data.messageType,
+          size: data.size
+        });
+      }
+    },
+    [socket?.id]
+  );
+
+  const onChangeChat = React.useCallback(
+    (chat: ChatRoom) => {
+      dispatch({
+        type: "SET_ACTIVE_ROOM",
+        payload: {
+          groupId: (chat as Group)?.groupId,
+          contactId: chat?.userId,
+          ifNotExists: false
+        }
+      });
+    },
+    [socket?.id, dispatch]
+  );
+
+  const onEnterRoom = React.useCallback(
+    (chat: ChatRoom) => {
+      if (!chat.messages || chat.messages.length === 0) return;
+      if ((chat as Group).groupId) {
+        socket?.emit("markAsRead", {
+          groupId: (chat as Group).groupId,
+          _id: chat.messages[chat.messages.length - 1]._id
+        });
+      } else {
+        socket?.emit("markAsRead", {
+          contactId: (chat as Group).userId,
+          _id: chat.messages[chat.messages.length - 1]._id
+        });
+      }
+    },
+    [socket?.id]
+  );
+
+  const onVideoCall = React.useCallback(
+    (chat: ChatRoom) => {
+      socket?.emit("startConference", {
+        groupId: (chat as Group).groupId,
+        contactId: chat.userId
+      });
+    },
+    [socket?.id]
+  );
+
+  const onVideoEnd = React.useCallback(() => {
+    dispatch({ type: "SET_CONFERENCE", payload: null });
+  }, [dispatch]);
+
+  const handleError = React.useCallback(() => {
+    dispatch({ type: "SET_ERROR" });
+  }, [dispatch]);
+
+  const GetRoom = (
+    <Room
+      apiUrl={apiUrl}
+      user={state.user}
+      chat={state.activeRoom}
+      typing={state.typing}
+      conference={state.conference}
+      loading={state.loading}
+      pageSize={pageSize}
+      onExitRoom={isMobile ? onExitActiveRoom : undefined}
+      onEnterRoom={onEnterRoom}
+      onNeedMoreMessages={onNeedMoreMessages}
+      onMeesageDelete={onMessageDelete}
+      onTyping={onTyping}
+      onSendMessage={onSendMessage}
+      onVideoCall={onVideoCall}
+      onVideoEnd={onVideoEnd}
+    />
+  );
+
+  const GetRoomList = () => (
+    <RoomList
+      apiUrl={apiUrl}
+      user={state.user}
+      activeRoom={state.activeRoom}
+      groups={Object.values(state.groupGather)}
+      contacts={Object.values(state.contactGather)}
+      typing={state.typing}
+      onChangeChat={onChangeChat}
+    />
+  );
+
+  const GetConference = () => (
+    <Conference url={state.conference || undefined} onClose={onVideoEnd} />
+  );
+
+  return (
+    <Container maxWidth="lg" className={classes.root}>
+      <Box className={classes.innerBox}>
+        {isMobile ? (
+          state.conference ? (
+            <GetConference />
+          ) : state.activeRoom ? (
+            GetRoom
+          ) : (
+            <GetRoomList />
+          )
+        ) : (
+          <Grid container spacing={1} className={classes.innerGrid}>
+            <Grid item sm={4} className={classes.innerGrid}>
+              {state.conference ? <GetConference /> : <GetRoomList />}
+            </Grid>
+            <Grid item sm={8} className={classes.innerGrid}>
+              {GetRoom}
+            </Grid>
+          </Grid>
+        )}
+      </Box>
+      <Snackbar
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+        open={!!state.error}
+        autoHideDuration={6000}
+        onClose={handleError}
+      >
+        <Alert onClose={handleError} severity="error">
+          {state.error}
+        </Alert>
+      </Snackbar>
+    </Container>
+  );
+};
