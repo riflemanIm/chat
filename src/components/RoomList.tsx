@@ -83,7 +83,7 @@ export default function RoomList(props: RoomListProps) {
   }, []);
 
   const onSearchChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
-    console.log("e.target.value", e.target.value);
+    //    console.log("e.target.value", e.target.value);
 
     setChats(
       sortChats(
@@ -94,6 +94,7 @@ export default function RoomList(props: RoomListProps) {
     );
   };
 
+  const activeItem = (id: number) => id === props.activeRoom?.userId;
   return (
     <Card elevation={1} className={classes.root}>
       <CardHeader
@@ -116,9 +117,11 @@ export default function RoomList(props: RoomListProps) {
               key={getChatId(chat)}
               apiUrl={props.apiUrl}
               chat={chat}
-              active={chat === props.activeRoom}
+              active={activeItem(chat.userId)}
               typing={props.typing}
-              onClick={() => props.onChangeChat && props.onChangeChat(chat)}
+              onClick={() =>
+                props.onChangeChat != null && props.onChangeChat(chat)
+              }
             />
           ))}
       </List>

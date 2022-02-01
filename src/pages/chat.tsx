@@ -7,7 +7,7 @@ import {
   createStyles,
   Theme,
   Snackbar,
-  useMediaQuery
+  useMediaQuery,
 } from "@material-ui/core";
 import { Alert } from "@material-ui/lab";
 import { Room, RoomList, Conference } from "../components";
@@ -25,21 +25,21 @@ const useStyles = makeStyles((theme: Theme) =>
       padding: 0,
       [theme.breakpoints.down("xs")]: {
         height: "100vh",
-        minHeight: 200
-      }
+        minHeight: 200,
+      },
     },
     innerBox: {
       height: "100%",
       width: "100%",
       margin: `${theme.spacing(4)}px 0`,
       [theme.breakpoints.down("xs")]: {
-        margin: 0
-      }
+        margin: 0,
+      },
     },
     innerGrid: {
       height: "100%",
-      width: "100%"
-    }
+      width: "100%",
+    },
   })
 );
 
@@ -51,22 +51,18 @@ export const ChatPage = () => {
   const { state, dispatch } = React.useContext(ChatContext);
   const { socket } = React.useContext(SocketContext);
 
-  const {
-    apiUrl,
-    pageSize,
-    getPrivateMessages,
-    getGroupMessages
-  } = React.useContext(RestContext);
+  const { apiUrl, pageSize, getPrivateMessages, getGroupMessages } =
+    React.useContext(RestContext);
 
   const onExitActiveRoom = React.useCallback(() => {
     dispatch({
       type: "SET_ACTIVE_ROOM",
-      payload: { ifNotExists: false }
+      payload: { ifNotExists: false },
     });
   }, [dispatch]);
 
   const onNeedMoreMessages = React.useCallback(
-    async chat => {
+    async (chat) => {
       if ((chat as Group).groupId) await getGroupMessages(chat as Group);
       else await getPrivateMessages(chat as Contact);
     },
@@ -78,7 +74,7 @@ export const ChatPage = () => {
       socket?.emit("revokeMessage", {
         groupId: (chat as Group).groupId, // Идентификатор группы
         contactId: chat.userId, // Идентификатор контакта
-        _id: message._id // Идентификатор удаленного сообщения
+        _id: message._id, // Идентификатор удаленного сообщения
       });
     },
     [socket?.id]
@@ -88,7 +84,7 @@ export const ChatPage = () => {
     (chat: ChatRoom) => {
       socket?.emit("typing", {
         groupId: (chat as Group)?.groupId,
-        contactId: chat?.userId
+        contactId: chat?.userId,
       });
     },
     [socket?.id]
@@ -104,7 +100,7 @@ export const ChatPage = () => {
           height: data.height,
           fileName: data.fileName,
           messageType: data.messageType,
-          size: data.size
+          size: data.size,
         });
       } else {
         socket?.emit("privateMessage", {
@@ -114,7 +110,7 @@ export const ChatPage = () => {
           height: data.height,
           fileName: data.fileName,
           messageType: data.messageType,
-          size: data.size
+          size: data.size,
         });
       }
     },
@@ -128,8 +124,8 @@ export const ChatPage = () => {
         payload: {
           groupId: (chat as Group)?.groupId,
           contactId: chat?.userId,
-          ifNotExists: false
-        }
+          ifNotExists: false,
+        },
       });
     },
     [socket?.id, dispatch]
@@ -141,12 +137,12 @@ export const ChatPage = () => {
       if ((chat as Group).groupId) {
         socket?.emit("markAsRead", {
           groupId: (chat as Group).groupId,
-          _id: chat.messages[chat.messages.length - 1]._id
+          _id: chat.messages[chat.messages.length - 1]._id,
         });
       } else {
         socket?.emit("markAsRead", {
           contactId: (chat as Group).userId,
-          _id: chat.messages[chat.messages.length - 1]._id
+          _id: chat.messages[chat.messages.length - 1]._id,
         });
       }
     },
@@ -157,7 +153,7 @@ export const ChatPage = () => {
     (chat: ChatRoom) => {
       socket?.emit("startConference", {
         groupId: (chat as Group).groupId,
-        contactId: chat.userId
+        contactId: chat.userId,
       });
     },
     [socket?.id]
@@ -171,7 +167,7 @@ export const ChatPage = () => {
     dispatch({ type: "SET_ERROR" });
   }, [dispatch]);
 
-  const GetRoom = (
+  const renderRoom = state.activeRoom != null && (
     <Room
       apiUrl={apiUrl}
       user={state.user}
@@ -207,24 +203,26 @@ export const ChatPage = () => {
     <Conference url={state.conference || undefined} onClose={onVideoEnd} />
   );
 
+  const Contacts = React.useMemo(
+    () => (state.conference ? <GetConference /> : <GetRoomList />),
+    [state.conference, state.activeRoom?.userId]
+  );
+
   return (
     <Container maxWidth="lg" className={classes.root}>
       <Box className={classes.innerBox}>
         {isMobile ? (
-          state.conference ? (
-            <GetConference />
-          ) : state.activeRoom ? (
-            GetRoom
-          ) : (
-            <GetRoomList />
-          )
+          <>
+            {Contacts}
+            {renderRoom}
+          </>
         ) : (
           <Grid container spacing={1} className={classes.innerGrid}>
             <Grid item sm={4} className={classes.innerGrid}>
-              {state.conference ? <GetConference /> : <GetRoomList />}
+              {Contacts}
             </Grid>
             <Grid item sm={8} className={classes.innerGrid}>
-              {GetRoom}
+              {renderRoom}
             </Grid>
           </Grid>
         )}
