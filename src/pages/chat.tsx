@@ -9,12 +9,20 @@ import {
   Snackbar,
   useMediaQuery,
 } from "@material-ui/core";
+import cn from "classnames";
 import { Alert } from "@material-ui/lab";
 import { Room, RoomList, Conference } from "../components";
 import { ChatContext } from "../context/ChatContext";
 import { RestContext } from "../context/RestContext";
 import { SocketContext } from "../context/SocketContext";
-import { Group, Contact, ChatMessage, ChatRoom, SendMessage } from "../types";
+import {
+  ChatPa,
+  Group,
+  Contact,
+  ChatMessage,
+  ChatRoom,
+  SendMessage,
+} from "../types";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -22,12 +30,14 @@ const useStyles = makeStyles((theme: Theme) =>
       minWidth: 300,
       minHeight: 470,
       height: `calc(100vh - ${theme.spacing(8)}px)`,
+      //
       padding: 0,
       [theme.breakpoints.down("xs")]: {
         height: "100vh",
         minHeight: 200,
       },
     },
+    inModale: { height: "100%" },
     innerBox: {
       height: "100%",
       width: "100%",
@@ -43,11 +53,12 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-export const ChatPage = () => {
+export const ChatPage: React.FC<ChatPa> = ({ inModale }: ChatPa) => {
   const classes = useStyles();
   const isMobile = useMediaQuery((theme: Theme) =>
     theme.breakpoints.down("sm")
   );
+
   const { state, dispatch } = React.useContext(ChatContext);
   const { socket } = React.useContext(SocketContext);
 
@@ -209,7 +220,10 @@ export const ChatPage = () => {
   );
 
   return (
-    <Container maxWidth="lg" className={classes.root}>
+    <Container
+      maxWidth="lg"
+      className={cn(classes.root, inModale && classes.inModale)}
+    >
       <Box className={classes.innerBox}>
         {isMobile ? (
           <>

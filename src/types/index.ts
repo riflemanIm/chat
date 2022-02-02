@@ -1,9 +1,13 @@
+export interface ChatPa {
+  inModale?: boolean;
+}
+
 // Тип сообщения
 export type MessageType = "text" | "image" | "file" | "video" | "notify";
 
 export enum MessageStatus {
   sent = 0,
-  read = 1
+  read = 1,
 }
 
 export enum Role {
@@ -11,7 +15,7 @@ export enum Role {
   Client = 1,
   Agent = 2,
   Specialist = 3,
-  Operator = 4
+  Operator = 4,
 }
 
 export interface User {
@@ -205,5 +209,5 @@ export enum ContextMenuType {
   TOP_REVERT = "TOP_REVERT", // Открепить
   TOP = "TOP", // Закрепить
   READ = "READ", // Прочесть всё
-  DELETE = "DELETE" // Удалить
+  DELETE = "DELETE", // Удалить
 }
