@@ -4,7 +4,6 @@ import {
   Box,
   Grid,
   makeStyles,
-  createStyles,
   Theme,
   Snackbar,
   useMediaQuery,
@@ -23,35 +22,37 @@ import {
   ChatRoom,
   SendMessage,
 } from "../types";
+import { isEmpty } from "../utils/common";
 
-export const ChatPage: React.FC<ChatPa> = ({ inModale }: ChatPa) => {
-  const useStyles = makeStyles((theme: Theme) =>
-    createStyles({
-      root: {
-        minWidth: 300,
-        minHeight: 470,
-        height: inModale ? "100%" : `calc(100vh - ${theme.spacing(8)}px)`,
-        //
-        padding: 0,
-        [theme.breakpoints.down("xs")]: {
-          height: "100vh",
-          minHeight: 200,
-        },
+export const ChatPage: React.FC<ChatPa> = ({
+  inModale,
+  doctorChatUserId,
+}: ChatPa) => {
+  const useStyles = makeStyles((theme: Theme) => ({
+    root: {
+      minWidth: 300,
+      minHeight: 470,
+      height: inModale ? "100%" : `calc(100vh - ${theme.spacing(8)}px)`,
+      //
+      padding: 0,
+      [theme.breakpoints.down("xs")]: {
+        height: "100vh",
+        minHeight: 200,
       },
-      innerBox: {
-        height: "100%",
-        width: "100%",
-        margin: inModale ? 0 : `${theme.spacing(4)}px 0`,
-        [theme.breakpoints.down("xs")]: {
-          margin: 0,
-        },
+    },
+    innerBox: {
+      height: "100%",
+      width: "100%",
+      margin: inModale ? 0 : `${theme.spacing(4)}px 0`,
+      [theme.breakpoints.down("xs")]: {
+        margin: 0,
       },
-      innerGrid: {
-        height: "100%",
-        width: "100%",
-      },
-    })
-  );
+    },
+    innerGrid: {
+      height: "100%",
+      width: "100%",
+    },
+  }));
   const classes = useStyles();
   const isMobile = useMediaQuery((theme: Theme) =>
     theme.breakpoints.down("sm")
@@ -176,6 +177,24 @@ export const ChatPage: React.FC<ChatPa> = ({ inModale }: ChatPa) => {
     dispatch({ type: "SET_ERROR" });
   }, [dispatch]);
 
+  //console.log("state", state);
+  React.useEffect(() => {
+    if (
+      doctorChatUserId != null &&
+      !state.loading &&
+      !isEmpty(state.contactGather)
+    ) {
+      const doctorChat = Object.values(state.contactGather).find(
+        (item) => item.userId === doctorChatUserId
+      );
+
+      console.log("doctorChat", doctorChat);
+      if (!isEmpty(doctorChat)) {
+        onChangeChat(doctorChat);
+      }
+    }
+  }, [doctorChatUserId, state.loading]);
+
   const renderRoom = state.activeRoom != null && (
     <Room
       apiUrl={apiUrl}
@@ -222,15 +241,21 @@ export const ChatPage: React.FC<ChatPa> = ({ inModale }: ChatPa) => {
       <Box className={classes.innerBox}>
         {isMobile ? (
           <>
-            {Contacts}
+            {doctorChatUserId == null && Contacts}
             {renderRoom}
           </>
         ) : (
           <Grid container spacing={1} className={classes.innerGrid}>
-            <Grid item sm={4} className={classes.innerGrid}>
-              {Contacts}
-            </Grid>
-            <Grid item sm={8} className={classes.innerGrid}>
+            {doctorChatUserId == null && (
+              <Grid item sm={4} className={classes.innerGrid}>
+                {Contacts}
+              </Grid>
+            )}
+            <Grid
+              item
+              sm={doctorChatUserId == null ? 8 : 12}
+              className={classes.innerGrid}
+            >
               {renderRoom}
             </Grid>
           </Grid>

@@ -1,5 +1,6 @@
 export interface ChatPa {
   inModale?: boolean;
+  doctorChatUserId?: number;
 }
 
 // Тип сообщения
