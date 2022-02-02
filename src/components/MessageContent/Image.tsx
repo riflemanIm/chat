@@ -31,6 +31,7 @@ const Image = ({
   return (
     <React.Fragment>
       <Viewer
+        zIndex={2000}
         visible={viewerVisible}
         changeable={false}
         onClose={() => {
