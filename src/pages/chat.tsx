@@ -177,7 +177,7 @@ export const ChatPage: React.FC<ChatPa> = ({
     dispatch({ type: "SET_ERROR" });
   }, [dispatch]);
 
-  //console.log("state", state);
+  console.log("state", state);
   React.useEffect(() => {
     if (
       doctorChatUserId != null &&
@@ -188,7 +188,7 @@ export const ChatPage: React.FC<ChatPa> = ({
         (item) => item.userId === doctorChatUserId
       );
 
-      console.log("doctorChat", doctorChat);
+      //console.log("doctorChat", doctorChat);
       if (!isEmpty(doctorChat)) {
         onChangeChat(doctorChat);
       }
@@ -204,7 +204,9 @@ export const ChatPage: React.FC<ChatPa> = ({
       conference={state.conference}
       loading={state.loading}
       pageSize={pageSize}
-      onExitRoom={isMobile ? onExitActiveRoom : undefined}
+      onExitRoom={
+        isMobile && doctorChatUserId == null ? onExitActiveRoom : undefined
+      }
       onEnterRoom={onEnterRoom}
       onNeedMoreMessages={onNeedMoreMessages}
       onMeesageDelete={onMessageDelete}
