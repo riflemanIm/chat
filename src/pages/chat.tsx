@@ -9,7 +9,7 @@ import {
   Snackbar,
   useMediaQuery,
 } from "@material-ui/core";
-import cn from "classnames";
+
 import { Alert } from "@material-ui/lab";
 import { Room, RoomList, Conference } from "../components";
 import { ChatContext } from "../context/ChatContext";
@@ -24,36 +24,34 @@ import {
   SendMessage,
 } from "../types";
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    root: {
-      minWidth: 300,
-      minHeight: 470,
-      height: `calc(100vh - ${theme.spacing(8)}px)`,
-      //
-      padding: 0,
-      [theme.breakpoints.down("xs")]: {
-        height: "100vh",
-        minHeight: 200,
-      },
-    },
-    inModale: { height: "100%" },
-    innerBox: {
-      height: "100%",
-      width: "100%",
-      margin: `${theme.spacing(4)}px 0`,
-      [theme.breakpoints.down("xs")]: {
-        margin: 0,
-      },
-    },
-    innerGrid: {
-      height: "100%",
-      width: "100%",
-    },
-  })
-);
-
 export const ChatPage: React.FC<ChatPa> = ({ inModale }: ChatPa) => {
+  const useStyles = makeStyles((theme: Theme) =>
+    createStyles({
+      root: {
+        minWidth: 300,
+        minHeight: 470,
+        height: inModale ? "100%" : `calc(100vh - ${theme.spacing(8)}px)`,
+        //
+        padding: 0,
+        [theme.breakpoints.down("xs")]: {
+          height: "100vh",
+          minHeight: 200,
+        },
+      },
+      innerBox: {
+        height: "100%",
+        width: "100%",
+        margin: inModale ? 0 : `${theme.spacing(4)}px 0`,
+        [theme.breakpoints.down("xs")]: {
+          margin: 0,
+        },
+      },
+      innerGrid: {
+        height: "100%",
+        width: "100%",
+      },
+    })
+  );
   const classes = useStyles();
   const isMobile = useMediaQuery((theme: Theme) =>
     theme.breakpoints.down("sm")
@@ -220,10 +218,7 @@ export const ChatPage: React.FC<ChatPa> = ({ inModale }: ChatPa) => {
   );
 
   return (
-    <Container
-      maxWidth="lg"
-      className={cn(classes.root, inModale && classes.inModale)}
-    >
+    <Container maxWidth="lg" className={classes.root}>
       <Box className={classes.innerBox}>
         {isMobile ? (
           <>
