@@ -184,13 +184,13 @@ export const ChatPage: React.FC<ChatPa> = ({
       !state.loading &&
       !isEmpty(state.contactGather)
     ) {
-      const doctorChat = Object.values(state.contactGather).find(
+      const onlyChat = Object.values(state.contactGather).find(
         (item) => item.userId === onlyChatUserId
       );
 
-      //console.log("doctorChat", doctorChat);
-      if (!isEmpty(doctorChat)) {
-        onChangeChat(doctorChat);
+      //console.log("onlyChat", onlyChat);
+      if (!isEmpty(onlyChat)) {
+        onChangeChat(onlyChat);
       }
     }
   }, [onlyChatUserId, state.loading]);
