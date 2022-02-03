@@ -26,7 +26,7 @@ import { isEmpty } from "../utils/common";
 
 export const ChatPage: React.FC<ChatPa> = ({
   inModale,
-  doctorChatUserId,
+  onlyChatUserId,
 }: ChatPa) => {
   const useStyles = makeStyles((theme: Theme) => ({
     root: {
@@ -180,12 +180,12 @@ export const ChatPage: React.FC<ChatPa> = ({
   console.log("state", state);
   React.useEffect(() => {
     if (
-      doctorChatUserId != null &&
+      onlyChatUserId != null &&
       !state.loading &&
       !isEmpty(state.contactGather)
     ) {
       const doctorChat = Object.values(state.contactGather).find(
-        (item) => item.userId === doctorChatUserId
+        (item) => item.userId === onlyChatUserId
       );
 
       //console.log("doctorChat", doctorChat);
@@ -193,7 +193,7 @@ export const ChatPage: React.FC<ChatPa> = ({
         onChangeChat(doctorChat);
       }
     }
-  }, [doctorChatUserId, state.loading]);
+  }, [onlyChatUserId, state.loading]);
 
   const renderRoom = state.activeRoom != null && (
     <Room
@@ -205,7 +205,7 @@ export const ChatPage: React.FC<ChatPa> = ({
       loading={state.loading}
       pageSize={pageSize}
       onExitRoom={
-        isMobile && doctorChatUserId == null ? onExitActiveRoom : undefined
+        isMobile && onlyChatUserId == null ? onExitActiveRoom : undefined
       }
       onEnterRoom={onEnterRoom}
       onNeedMoreMessages={onNeedMoreMessages}
@@ -243,19 +243,19 @@ export const ChatPage: React.FC<ChatPa> = ({
       <Box className={classes.innerBox}>
         {isMobile ? (
           <>
-            {doctorChatUserId == null && Contacts}
+            {onlyChatUserId == null && Contacts}
             {renderRoom}
           </>
         ) : (
           <Grid container spacing={1} className={classes.innerGrid}>
-            {doctorChatUserId == null && (
+            {onlyChatUserId == null && (
               <Grid item sm={4} className={classes.innerGrid}>
                 {Contacts}
               </Grid>
             )}
             <Grid
               item
-              sm={doctorChatUserId == null ? 8 : 12}
+              sm={onlyChatUserId == null ? 8 : 12}
               className={classes.innerGrid}
             >
               {renderRoom}
