@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback } from 'react';
 import {
   Box,
   Card,
@@ -13,63 +13,71 @@ import {
   makeStyles,
   Theme,
   IconButton,
-} from "@material-ui/core";
-import FileCopyIcon from "@material-ui/icons/FileCopy";
-import DeleteIcon from "@material-ui/icons/Delete";
-import ArrowBackIcon from "@material-ui/icons/ArrowBack";
-import Entry from "./Entry";
-import Message from "./Message";
-import RoomHeader from "./RoomHeader";
-import { useTranslation } from "react-i18next";
-import { getChatId, isEmpty } from "../utils/common";
-import { ChatMessage, ChatRoom, SendMessage, SetTyping, User } from "../types";
+} from '@material-ui/core';
+import FileCopyIcon from '@material-ui/icons/FileCopy';
+import DeleteIcon from '@material-ui/icons/Delete';
+import ArrowBackIcon from '@material-ui/icons/ArrowBack';
+import Entry from './Entry';
+import Message from './Message';
+import RoomHeader from './RoomHeader';
+import { useTranslation } from 'react-i18next';
+import { getChatId, isEmpty } from '../utils/common';
+import {
+  ChatMessage,
+  ChatRoom,
+  SendMessage,
+  SetTyping,
+  User,
+} from '../types';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
-      width: "100%",
+      width: '100%',
       minWidth: 360,
-      height: "100%",
-      display: "flex",
-      flexDirection: "column",
+      height: '100%',
+      display: 'flex',
+      flexDirection: 'column',
     },
     inline: {
-      display: "inline",
+      display: 'inline',
     },
     messageListOuter: {
       flex: 1,
-      overflowY: "auto",
+      overflowY: 'auto',
       margin: 0,
       padding: 0,
-      scrollbarWidth: "thin",
-      scrollbarColor: "#6b6b6b #fff",
-      "&::-webkit-scrollbar, & *::-webkit-scrollbar": {
-        backgroundColor: "#fff",
+      scrollbarWidth: 'thin',
+      scrollbarColor: '#6b6b6b #fff',
+      '&::-webkit-scrollbar, & *::-webkit-scrollbar': {
+        backgroundColor: '#fff',
       },
-      "&::-webkit-scrollbar-thumb, & *::-webkit-scrollbar-thumb": {
+      '&::-webkit-scrollbar-thumb, & *::-webkit-scrollbar-thumb': {
         borderRadius: 8,
-        backgroundColor: "#d5d9ef",
-        border: "5px solid #fff",
+        backgroundColor: '#d5d9ef',
+        border: '5px solid #fff',
       },
-      "&::-webkit-scrollbar-thumb:focus, & *::-webkit-scrollbar-thumb:focus": {
-        backgroundColor: "#fff",
-      },
-      "&::-webkit-scrollbar-thumb:active, & *::-webkit-scrollbar-thumb:active":
+      '&::-webkit-scrollbar-thumb:focus, & *::-webkit-scrollbar-thumb:focus':
         {
-          backgroundColor: "#73d7f5",
-          border: "3px solid #fff",
+          backgroundColor: '#fff',
         },
-      "&::-webkit-scrollbar-thumb:hover, & *::-webkit-scrollbar-thumb:hover": {
-        backgroundColor: "#73d7f5",
-        border: "3px solid #fff",
-      },
-      "&::-webkit-scrollbar-corner, & *::-webkit-scrollbar-corner": {
-        backgroundColor: "#fff",
+      '&::-webkit-scrollbar-thumb:active, & *::-webkit-scrollbar-thumb:active':
+        {
+          backgroundColor: '#73d7f5',
+          border: '3px solid #fff',
+        },
+      '&::-webkit-scrollbar-thumb:hover, & *::-webkit-scrollbar-thumb:hover':
+        {
+          backgroundColor: '#73d7f5',
+          border: '3px solid #fff',
+        },
+      '&::-webkit-scrollbar-corner, & *::-webkit-scrollbar-corner': {
+        backgroundColor: '#fff',
       },
     },
     messageList: {
-      height: "100%",
-      overflow: "auto",
+      height: '100%',
+      overflow: 'auto',
     },
     roomHeader: {
       flex: 1,
@@ -78,12 +86,12 @@ const useStyles = makeStyles((theme: Theme) =>
       padding: theme.spacing(2),
     },
     flexAll: {
-      flex: "1 1 auto",
+      flex: '1 1 auto',
     },
     flexEnd: {
-      justifyContent: "flex-end",
+      justifyContent: 'flex-end',
     },
-  })
+  }),
 );
 
 const initialMenuState = {
@@ -118,11 +126,21 @@ type RoomProps = {
 };
 
 export default function Room(props: RoomProps) {
-  const { apiUrl, user, chat, typing, conference, loading, pageSize } = props;
+  const {
+    apiUrl,
+    user,
+    chat,
+    typing,
+    conference,
+    loading,
+    pageSize,
+  } = props;
   const classes = useStyles();
   const { t } = useTranslation();
 
-  const [scrollState, setScrollState] = React.useState(initialScrollState);
+  const [scrollState, setScrollState] = React.useState(
+    initialScrollState,
+  );
 
   const messages = chat?.messages;
   const messageCount = messages?.length || 0;
@@ -161,7 +179,11 @@ export default function Room(props: RoomProps) {
       const { currentTarget } = event;
       if (!currentTarget || !chat || !!chat.noMoreData) return;
       if (currentTarget.scrollTop === 0) {
-        if (messageCount >= pageSize && !loading && props.onNeedMoreMessages) {
+        if (
+          messageCount >= pageSize &&
+          !loading &&
+          props.onNeedMoreMessages
+        ) {
           setScrollState({
             autoScroll: false,
             height: currentTarget.scrollHeight,
@@ -170,18 +192,19 @@ export default function Room(props: RoomProps) {
         }
       }
     },
-    [chat, loading]
+    [chat, loading],
   );
 
   const handleMenuPopup = (
     message: ChatMessage,
-    event: React.MouseEvent<HTMLElement>
+    event: React.MouseEvent<HTMLElement>,
   ) => {
-    const canCopy = message.messageType === "text";
+    const canCopy = message.messageType === 'text';
     const canDelete =
       user.userId === message.userId &&
       !!props.onMeesageDelete &&
-      new Date().getTime() - new Date(message.cdate).getTime() <= 1000 * 60 * 2;
+      new Date().getTime() - new Date(message.cdate).getTime() <=
+        1000 * 60 * 2;
     if (!canCopy && !canDelete) {
       setMenuState(initialMenuState);
       return;
@@ -246,13 +269,15 @@ export default function Room(props: RoomProps) {
         {!isEmpty(messages) ? (
           <List className={classes.messageList} onScroll={onScroll}>
             {messages != null &&
-              messages.map((message, inx) => (
+              (messages as ChatMessage[]).map((message, inx) => (
                 <Message
                   key={message._id}
                   apiUrl={apiUrl}
                   user={user}
                   message={message}
-                  onContextMenu={(event) => handleMenuPopup(message, event)}
+                  onContextMenu={(event) =>
+                    handleMenuPopup(message, event)
+                  }
                   refOnLastMess={
                     inx === messages.length - 1 ? refOnLastMess : null
                   }
@@ -281,14 +306,19 @@ export default function Room(props: RoomProps) {
         }
       >
         <MenuItem onClick={handleCopy} disabled={!menuState.canCopy}>
-          <span className={classes.flexAll}>{t("CHAT.MESSAGE.MENU.COPY")}</span>
+          <span className={classes.flexAll}>
+            {t('CHAT.MESSAGE.MENU.COPY')}
+          </span>
           <ListItemIcon className={classes.flexEnd}>
             <FileCopyIcon fontSize="small" />
           </ListItemIcon>
         </MenuItem>
-        <MenuItem onClick={handleDelete} disabled={!menuState.canDelete}>
+        <MenuItem
+          onClick={handleDelete}
+          disabled={!menuState.canDelete}
+        >
           <span className={classes.flexAll}>
-            {t("CHAT.MESSAGE.MENU.DELETE")}
+            {t('CHAT.MESSAGE.MENU.DELETE')}
           </span>
           <ListItemIcon className={classes.flexEnd}>
             <DeleteIcon fontSize="small" />

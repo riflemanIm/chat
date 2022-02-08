@@ -4,7 +4,12 @@ export interface ChatPa {
 }
 
 // Тип сообщения
-export type MessageType = "text" | "image" | "file" | "video" | "notify";
+export type MessageType =
+  | 'text'
+  | 'image'
+  | 'file'
+  | 'video'
+  | 'notify';
 
 export enum MessageStatus {
   sent = 0,
@@ -46,6 +51,7 @@ export interface PrivateMessage {
 // Контакт
 export interface Contact {
   userId: number;
+  groupId?: number;
   username: string;
   avatar?: string;
   role?: Role;
@@ -205,10 +211,10 @@ export type ChatMessage = GroupMessage | PrivateMessage;
 
 // Операции контекстного меню
 export enum ContextMenuType {
-  COPY = "COPY", // Скопировать
-  REVOKE = "REVOKE", // Удалить сообщение
-  TOP_REVERT = "TOP_REVERT", // Открепить
-  TOP = "TOP", // Закрепить
-  READ = "READ", // Прочесть всё
-  DELETE = "DELETE", // Удалить
+  COPY = 'COPY', // Скопировать
+  REVOKE = 'REVOKE', // Удалить сообщение
+  TOP_REVERT = 'TOP_REVERT', // Открепить
+  TOP = 'TOP', // Закрепить
+  READ = 'READ', // Прочесть всё
+  DELETE = 'DELETE', // Удалить
 }
