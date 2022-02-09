@@ -154,7 +154,7 @@ export const ChatPage: React.FC<ChatPa> = ({
         });
       } else {
         socket?.emit('markAsRead', {
-          contactId: (chat as Group).userId,
+          contactId: chat.userId,
           _id: chat.messages[chat.messages.length - 1]._id,
         });
       }
