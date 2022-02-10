@@ -1,4 +1,4 @@
-import * as React from 'react';
+import * as React from "react";
 import {
   Container,
   Box,
@@ -6,178 +6,185 @@ import {
   makeStyles,
   Theme,
   Snackbar,
-  useMediaQuery,
-} from '@material-ui/core';
+  useMediaQuery
+} from "@material-ui/core";
 
-import { Alert } from '@material-ui/lab';
-import { Room, RoomList, Conference } from '../components';
-import { ChatContext } from '../context/ChatContext';
-import { RestContext } from '../context/RestContext';
-import { SocketContext } from '../context/SocketContext';
+import { Alert } from "@material-ui/lab";
+import { Room, RoomList, Conference } from "../components";
+import { ChatContext } from "../context/ChatContext";
+import { RestContext } from "../context/RestContext";
+import { SocketContext } from "../context/SocketContext";
 import {
   ChatPa,
   Group,
   Contact,
   ChatMessage,
   ChatRoom,
-  SendMessage,
-} from '../types';
-import { isEmpty } from '../utils/common';
+  SendMessage
+} from "../types";
+import { isEmpty } from "../utils/common";
 
 export const ChatPage: React.FC<ChatPa> = ({
   inModale,
-  onlyChatUserId,
+  onlyChatUserId
 }: ChatPa) => {
   const useStyles = makeStyles((theme: Theme) => ({
     root: {
       minWidth: 300,
       minHeight: 470,
-      height: inModale
-        ? '100%'
-        : `calc(100vh - ${theme.spacing(8)}px)`,
+      height: inModale ? "100%" : `calc(100vh - ${theme.spacing(8)}px)`,
       //
       padding: 0,
-      [theme.breakpoints.down('xs')]: {
-        height: '100vh',
-        minHeight: 200,
-      },
+      [theme.breakpoints.down("xs")]: {
+        height: "100vh",
+        minHeight: 200
+      }
     },
     innerBox: {
-      height: '100%',
-      width: '100%',
+      height: "100%",
+      width: "100%",
       margin: inModale ? 0 : `${theme.spacing(4)}px 0`,
-      [theme.breakpoints.down('xs')]: {
-        margin: 0,
-      },
+      [theme.breakpoints.down("xs")]: {
+        margin: 0
+      }
     },
     innerGrid: {
-      height: '100%',
-      width: '100%',
-    },
+      height: "100%",
+      width: "100%"
+    }
   }));
   const classes = useStyles();
   const isMobile = useMediaQuery((theme: Theme) =>
-    theme.breakpoints.down('sm'),
+    theme.breakpoints.down("sm")
   );
 
   const { state, dispatch } = React.useContext(ChatContext);
   const { socket } = React.useContext(SocketContext);
 
-  const { apiUrl, pageSize, getPrivateMessages, getGroupMessages } =
-    React.useContext(RestContext);
+  const {
+    apiUrl,
+    pageSize,
+    getPrivateMessages,
+    getGroupMessages
+  } = React.useContext(RestContext);
 
   const onExitActiveRoom = React.useCallback(() => {
     dispatch({
-      type: 'SET_ACTIVE_ROOM',
-      payload: { ifNotExists: false },
+      type: "SET_ACTIVE_ROOM",
+      payload: { ifNotExists: false }
     });
   }, [dispatch]);
 
   const onNeedMoreMessages = React.useCallback(
-    async (chat) => {
-      if ((chat as Group).groupId)
-        await getGroupMessages(chat as Group);
+    async chat => {
+      if ((chat as Group).groupId) await getGroupMessages(chat as Group);
       else await getPrivateMessages(chat as Contact);
     },
-    [getPrivateMessages, getGroupMessages],
+    [getPrivateMessages, getGroupMessages]
   );
 
   const onMessageDelete = React.useCallback(
     (chat: ChatRoom, message: ChatMessage) => {
-      socket?.emit('revokeMessage', {
+      socket?.emit("revokeMessage", {
         groupId: (chat as Group).groupId, // Идентификатор группы
         contactId: chat.userId, // Идентификатор контакта
-        _id: message._id, // Идентификатор удаленного сообщения
+        _id: message._id // Идентификатор удаленного сообщения
       });
     },
-    [socket?.id],
+    [socket?.id]
   );
 
   const onTyping = React.useCallback(
     (chat: ChatRoom) => {
-      socket?.emit('typing', {
+      socket?.emit("typing", {
         groupId: (chat as Group)?.groupId,
-        contactId: chat?.userId,
+        contactId: chat?.userId
       });
     },
-    [socket?.id],
+    [socket?.id]
   );
 
   const onSendMessage = React.useCallback(
     (chat: ChatRoom, data: SendMessage) => {
       if ((chat as Group).groupId) {
-        socket?.emit('groupMessage', {
+        socket?.emit("groupMessage", {
           groupId: (chat as Group)?.groupId,
           content: data.message,
           width: data.width,
           height: data.height,
           fileName: data.fileName,
           messageType: data.messageType,
-          size: data.size,
+          size: data.size
         });
       } else {
-        socket?.emit('privateMessage', {
+        socket?.emit("privateMessage", {
           contactId: chat?.userId,
           content: data.message,
           width: data.width,
           height: data.height,
           fileName: data.fileName,
           messageType: data.messageType,
-          size: data.size,
+          size: data.size
         });
       }
     },
-    [socket?.id],
+    [socket?.id]
   );
 
   const onChangeChat = React.useCallback(
     (chat: ChatRoom) => {
       dispatch({
-        type: 'SET_ACTIVE_ROOM',
+        type: "SET_ACTIVE_ROOM",
         payload: {
           groupId: (chat as Group)?.groupId,
           contactId: chat?.userId,
-          ifNotExists: false,
-        },
+          ifNotExists: false
+        }
       });
     },
-    [socket?.id, dispatch],
+    [socket?.id, dispatch]
   );
 
   const onEnterRoom = React.useCallback(
     (chat: ChatRoom) => {
       if (!chat.messages || chat.messages.length === 0) return;
       if ((chat as Group).groupId) {
-        socket?.emit('markAsRead', {
+        socket?.emit("markAsRead", {
           groupId: (chat as Group).groupId,
-          _id: chat.messages[chat.messages.length - 1]._id,
+          _id: chat.messages[chat.messages.length - 1]._id
         });
       } else {
-        socket?.emit('markAsRead', {
+        socket?.emit("markAsRead", {
           contactId: chat.userId,
-          _id: chat.messages[chat.messages.length - 1]._id,
+          _id: chat.messages[chat.messages.length - 1]._id
         });
       }
     },
-    [socket?.id],
+    [socket?.id]
   );
 
   const onVideoCall = React.useCallback(
     (chat: ChatRoom) => {
-      socket?.emit('startConference', {
+      socket?.emit("startConference", {
         groupId: (chat as Group).groupId,
-        contactId: chat.userId,
+        contactId: chat.userId
       });
     },
-    [socket?.id],
+    [socket?.id]
   );
 
-  const onVideoEnd = React.useCallback(() => {
-    dispatch({ type: 'SET_CONFERENCE', payload: null });
-  }, [dispatch]);
+  const onVideoEnd = React.useCallback(
+    (chat: ChatRoom) => {
+      socket?.emit("stopConference", {
+        groupId: (chat as Group).groupId,
+        contactId: chat.userId
+      });
+    },
+    [socket?.id]
+  );
 
   const handleError = React.useCallback(() => {
-    dispatch({ type: 'SET_ERROR' });
+    dispatch({ type: "SET_ERROR" });
   }, [dispatch]);
 
   React.useEffect(() => {
@@ -187,7 +194,7 @@ export const ChatPage: React.FC<ChatPa> = ({
       !isEmpty(state.contactGather)
     ) {
       const onlyChat = Object.values(state.contactGather).find(
-        (item) => item.userId === onlyChatUserId,
+        item => item.userId === onlyChatUserId
       );
 
       //console.log("onlyChat", onlyChat);
@@ -207,9 +214,7 @@ export const ChatPage: React.FC<ChatPa> = ({
       loading={state.loading}
       pageSize={pageSize}
       onExitRoom={
-        isMobile && onlyChatUserId == null
-          ? onExitActiveRoom
-          : undefined
+        isMobile && onlyChatUserId == null ? onExitActiveRoom : undefined
       }
       onEnterRoom={onEnterRoom}
       onNeedMoreMessages={onNeedMoreMessages}
@@ -234,10 +239,7 @@ export const ChatPage: React.FC<ChatPa> = ({
   );
 
   const GetConference = () => (
-    <Conference
-      url={state.conference || undefined}
-      onClose={onVideoEnd}
-    />
+    <Conference url={state.conference || undefined} onClose={onVideoEnd} />
   );
 
   const Contacts = React.useMemo(
@@ -247,15 +249,10 @@ export const ChatPage: React.FC<ChatPa> = ({
       state.activeRoom?.groupId,
       state.activeRoom?.userId,
       state.activeRoom?.messages?.length,
-      state.activeRoom?.unreadCount,
-    ],
+      state.activeRoom?.unreadCount
+    ]
   );
-  console.log(
-    '---------------state chat',
-    state,
-    '----state.activeRoom',
-    state.activeRoom,
-  );
+
   return (
     <Container maxWidth="lg" className={classes.root}>
       <Box className={classes.innerBox}>
@@ -282,7 +279,7 @@ export const ChatPage: React.FC<ChatPa> = ({
         )}
       </Box>
       <Snackbar
-        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
         open={!!state.error}
         autoHideDuration={6000}
         onClose={handleError}

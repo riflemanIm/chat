@@ -122,7 +122,7 @@ type RoomProps = {
   onTyping?: (chat: ChatRoom) => void;
   onSendMessage?: (chat: ChatRoom, data: SendMessage) => void;
   onVideoCall?: (chat: ChatRoom) => void;
-  onVideoEnd?: () => void;
+  onVideoEnd?: (chat: ChatRoom) => void;
 };
 
 export default function Room(props: RoomProps) {

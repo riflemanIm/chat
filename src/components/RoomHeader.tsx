@@ -34,7 +34,7 @@ type RoomHeaderProps = {
   conference: string | null;
   className: string;
   onVideoCall?: (chat: ChatRoom) => void;
-  onVideoEnd?: () => void;
+  onVideoEnd?: (chat: ChatRoom) => void;
 };
 
 const getGroupStatus = (group: Group, t: (key: string) => string) => {
@@ -149,7 +149,7 @@ export default function RoomHeader({
       action={
         <React.Fragment>
           {!!conference && onVideoEnd && (
-            <IconButton aria-label="cancel call" onClick={() => onVideoEnd()}>
+            <IconButton aria-label="cancel call" onClick={() => onVideoEnd(contact)}>
               <CallEndIcon color="error" />
             </IconButton>
           )}
