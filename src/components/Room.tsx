@@ -28,6 +28,7 @@ import {
   SendMessage,
   SetTyping,
   User,
+  ConferenceData,
 } from '../types';
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -112,7 +113,7 @@ type RoomProps = {
   user: User;
   chat: ChatRoom | null;
   typing: SetTyping | null;
-  conference: string | null;
+  conference: ConferenceData | null;
   loading: boolean;
   pageSize: number;
   onExitRoom?: (chat: ChatRoom) => void;
@@ -122,7 +123,7 @@ type RoomProps = {
   onTyping?: (chat: ChatRoom) => void;
   onSendMessage?: (chat: ChatRoom, data: SendMessage) => void;
   onVideoCall?: (chat: ChatRoom) => void;
-  onVideoEnd?: (chat: ChatRoom) => void;
+  onVideoEnd?: (conference: ConferenceData) => void;
 };
 
 export default function Room(props: RoomProps) {

@@ -4,7 +4,7 @@ import {
   CardHeader,
   IconButton,
   Popover,
-  Theme,
+  Theme
 } from "@material-ui/core";
 import GroupIcon from "@material-ui/icons/Group";
 import { useTranslation } from "react-i18next";
@@ -13,16 +13,23 @@ import CallEndIcon from "@material-ui/icons/CallEnd";
 import { createStyles, makeStyles } from "@material-ui/styles";
 import ContactStatus from "./ContactStatus";
 import ContactList from "./ContactList";
-import { ChatRoom, Contact, Group, SetTyping, User } from "../types";
+import {
+  ChatRoom,
+  Contact,
+  Group,
+  SetTyping,
+  User,
+  ConferenceData
+} from "../types";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     popover: {
-      pointerEvents: "none",
+      pointerEvents: "none"
     },
     paper: {
-      padding: theme.spacing(1),
-    },
+      padding: theme.spacing(1)
+    }
   })
 );
 
@@ -31,10 +38,10 @@ type RoomHeaderProps = {
   user: User;
   chat: ChatRoom | null;
   typing: SetTyping | null;
-  conference: string | null;
+  conference: ConferenceData | null;
   className: string;
   onVideoCall?: (chat: ChatRoom) => void;
-  onVideoEnd?: (chat: ChatRoom) => void;
+  onVideoEnd?: (conference: ConferenceData) => void;
 };
 
 const getGroupStatus = (group: Group, t: (key: string) => string) => {
@@ -55,7 +62,7 @@ export default function RoomHeader({
   conference,
   className,
   onVideoCall,
-  onVideoEnd,
+  onVideoEnd
 }: RoomHeaderProps) {
   const classes = useStyles();
   const { t } = useTranslation();
@@ -106,17 +113,17 @@ export default function RoomHeader({
               id="mouse-over-popover"
               className={classes.popover}
               classes={{
-                paper: classes.paper,
+                paper: classes.paper
               }}
               open={!!anchorEl}
               anchorEl={anchorEl}
               anchorOrigin={{
                 vertical: "bottom",
-                horizontal: "left",
+                horizontal: "left"
               }}
               transformOrigin={{
                 vertical: "top",
-                horizontal: "left",
+                horizontal: "left"
               }}
               onClose={handlePopoverClose}
               disableRestoreFocus
@@ -138,10 +145,7 @@ export default function RoomHeader({
   return (
     <CardHeader
       avatar={
-        <Avatar
-          alt={contact.username}
-          src={`${apiUrl}${contact.avatar}`}
-        />
+        <Avatar alt={contact.username} src={`${apiUrl}${contact.avatar}`} />
       }
       title={contact.username}
       subheader={<ContactStatus contact={contact} isTyping={isTyping} />}
@@ -149,7 +153,10 @@ export default function RoomHeader({
       action={
         <React.Fragment>
           {!!conference && onVideoEnd && (
-            <IconButton aria-label="cancel call" onClick={() => onVideoEnd(contact)}>
+            <IconButton
+              aria-label="cancel call"
+              onClick={() => onVideoEnd(conference)}
+            >
               <CallEndIcon color="error" />
             </IconButton>
           )}

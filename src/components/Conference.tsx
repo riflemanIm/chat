@@ -1,20 +1,21 @@
 import React, { useEffect } from "react";
 import { makeStyles } from "@material-ui/core";
+import { ConferenceData } from "../types";
 
 const useStyles = makeStyles(() => ({
   root: {
     width: "100%",
     height: "100%",
-    borderRadius: "8px",
-  },
+    borderRadius: "8px"
+  }
 }));
 
 type ConferenceProps = {
-  url?: string | undefined;
-  onClose: () => void;
+  conference: ConferenceData | null;
+  onClose: (conference: ConferenceData | null) => void;
 };
 
-export default function Conference({ url, onClose }: ConferenceProps) {
+export default function Conference({ conference, onClose }: ConferenceProps) {
   const classes = useStyles();
   const ref = React.useRef<HTMLIFrameElement>(null);
 
@@ -29,11 +30,11 @@ export default function Conference({ url, onClose }: ConferenceProps) {
             // "loginFail",
             "callFail",
             "hangUp",
-            "remoteHangUp",
+            "remoteHangUp"
             // "onParticipantLeft"
           ].includes(type)
         )
-          onClose();
+          onClose(conference);
       }
     };
     window.addEventListener("message", listener);
@@ -45,7 +46,7 @@ export default function Conference({ url, onClose }: ConferenceProps) {
   return (
     <iframe
       className={classes.root}
-      src={url}
+      src={conference?.url}
       allowFullScreen
       allow="microphone; camera; autoplay; display-capture"
       ref={ref}

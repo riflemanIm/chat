@@ -206,6 +206,11 @@ export interface SetUser {
   token: string;
 }
 
+export interface ConferenceData {
+  id: string;
+  url?: string;
+}
+
 export type ChatRoom = Group | Contact;
 export type ChatMessage = GroupMessage | PrivateMessage;
 

@@ -15,6 +15,7 @@ import {
   SetUser,
   SetTyping,
   User,
+  ConferenceData
 } from '../types';
 import { chatRoomComparer } from '../utils/common';
 
@@ -28,7 +29,7 @@ export interface ChatState {
   userGather: ContactGather;
   contactGather: ContactGather;
   initialContactId: number | null;
-  conference: string | null;
+  conference: ConferenceData | null;
   typing: SetTyping | null;
   loading: boolean;
   error?: string;
@@ -84,6 +85,7 @@ type ChatActionType =
   | 'UPDATE_USER_INFO'
   | 'SET_INITIAL_CONTACT_ID'
   | 'SET_CONFERENCE'
+  | 'STOP_CONFERENCE'
   | 'SET_TYPING'
   | 'MARK_AS_READ'
   | 'UPDATE_GROUP_INFO'
@@ -112,7 +114,8 @@ type Action = {
     | AddPrivateMessages
     | AddGroupMessages
     | SetActiveRoom
-    | SetUser;
+    | SetUser
+    | ConferenceData;
 };
 
 const getFreshActiveRoom = (state: ChatState) => {
@@ -538,6 +541,14 @@ const clearUser = (state: ChatState): ChatState => {
   };
 };
 
+const stopConference = (state: ChatState, conference: ConferenceData): ChatState => {
+  if (state.conference?.id !== conference?.id) return state;
+  return {
+    ...state,
+    conference: null
+  };
+}
+
 function chatReducer(state: ChatState, action: Action): ChatState {
   switch (action.type) {
     case 'SET_GROUP_GATHER':
@@ -620,7 +631,9 @@ function chatReducer(state: ChatState, action: Action): ChatState {
     case 'ADD_GROUP_MEMBER':
       return addGroupMember(state, action.payload as GroupMember);
     case 'SET_CONFERENCE':
-      return { ...state, conference: action.payload as string };
+      return { ...state, conference: action.payload as ConferenceData };
+    case 'STOP_CONFERENCE':
+      return stopConference(state, action.payload as ConferenceData);
     case 'MARK_PRIVATE_MESSAGES_READ':
       return markPrivateMessagesRead(state, action.payload as number);
     case 'ADD_PRIVATE_MESSAGES':

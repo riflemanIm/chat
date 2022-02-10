@@ -20,7 +20,8 @@ import {
   Contact,
   ChatMessage,
   ChatRoom,
-  SendMessage
+  SendMessage,
+  ConferenceData
 } from "../types";
 import { isEmpty } from "../utils/common";
 
@@ -174,11 +175,11 @@ export const ChatPage: React.FC<ChatPa> = ({
   );
 
   const onVideoEnd = React.useCallback(
-    (chat: ChatRoom) => {
-      socket?.emit("stopConference", {
-        groupId: (chat as Group).groupId,
-        contactId: chat.userId
-      });
+    (conference: ConferenceData | null) => {
+      if (conference)
+        socket?.emit("stopConference", {
+          id: conference.id
+        });
     },
     [socket?.id]
   );
@@ -239,7 +240,10 @@ export const ChatPage: React.FC<ChatPa> = ({
   );
 
   const GetConference = () => (
-    <Conference url={state.conference || undefined} onClose={onVideoEnd} />
+    <Conference
+      conference={state.conference || undefined}
+      onClose={onVideoEnd}
+    />
   );
 
   const Contacts = React.useMemo(
