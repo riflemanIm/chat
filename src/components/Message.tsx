@@ -105,7 +105,7 @@ const wrapMessage = (
       </Link>
     );
   }
-  const isMedia = messageType === "image" || messageType === "video";
+  const isMedia = messageType === "image" || messageType === "video" || messageType === "conference_video";
   return (
     <Box
       display="flex"

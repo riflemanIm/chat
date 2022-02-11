@@ -6,7 +6,7 @@ import { ChatMessage } from "../../types";
 
 const MessageContent = ({
   apiUrl,
-  message,
+  message
 }: {
   apiUrl: string;
   message: ChatMessage;
@@ -15,7 +15,8 @@ const MessageContent = ({
     case "text":
       return <React.Fragment>{message.content}</React.Fragment>;
     case "video":
-      return <Video message={message} apiUrl={apiUrl} />;
+    case "conference_video":
+      return <Video message={message} apiUrl={apiUrl} isConference={message.messageType === "conference_video"} />;
     case "image":
       return <Image message={message} apiUrl={apiUrl} />;
     case "file":
