@@ -15,8 +15,8 @@ const MessageContent = ({
     case "text":
       return <React.Fragment>{message.content}</React.Fragment>;
     case "video":
-    case "conference_video":
-      return <Video message={message} apiUrl={apiUrl} isConference={message.messageType === "conference_video"} />;
+    case "video_conference":
+      return <Video message={message} apiUrl={apiUrl} isConference={message.messageType === "video_conference"} />;
     case "image":
       return <Image message={message} apiUrl={apiUrl} />;
     case "file":

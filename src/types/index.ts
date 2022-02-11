@@ -10,7 +10,7 @@ export type MessageType =
   | 'file'
   | 'video'
   | 'notify'
-  | 'conference_video';
+  | 'video_conference';
 
 export enum MessageStatus {
   sent = 0,
