@@ -83,17 +83,6 @@ export function getImageMeta(content: string) {
   };
 }
 
-export function getConferenceVideoMeta(content: string) {
-  // Формат [visitId]$[size]$[name]
-  const meta = content.split("$");
-  const [visitId, size, name] = meta;
-  return {
-    visitId,
-    size,
-    name
-  };
-}
-
 export function splitFileName(name: string) {
   const idx = name.lastIndexOf(".");
   if (idx === -1)

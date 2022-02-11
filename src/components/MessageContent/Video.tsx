@@ -22,7 +22,7 @@ const Video = ({
   const classes = useStyles();
   let src = "";
   if (isConference) {
-    const meta = getConferenceVideoMeta(message.content);
+    const meta = JSON.parse(message.content);
     src = `${apiUrl}/static/conf/${meta.visitId}/${meta.name}`;
   } else src = `${apiUrl}/static/file/${message.content}`;
   return (
