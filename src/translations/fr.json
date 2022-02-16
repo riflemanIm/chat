@@ -22,7 +22,9 @@
       }
     },
     "CONFERENCE": {
-      "JOIN": "Join"
+      "JOIN": "Join",
+      "START": "Start",
+      "FINISH": "Finish"
     },
     "INPUT_MESSAGE": "Please write a message...",
     "INPUT_SEARCH_CONTACT": "Surname Name",

@@ -1,11 +1,5 @@
 import React from "react";
-import {
-  Avatar,
-  CardHeader,
-  IconButton,
-  Popover,
-  Theme
-} from "@material-ui/core";
+import { Avatar, CardHeader, Button, Popover, Theme } from "@material-ui/core";
 import GroupIcon from "@material-ui/icons/Group";
 import { useTranslation } from "react-i18next";
 import VideoCallIcon from "@material-ui/icons/VideoCall";
@@ -153,22 +147,30 @@ export default function RoomHeader({
       action={
         <React.Fragment>
           {!!conference && onVideoEnd && (
-            <IconButton
+            <Button
               aria-label="cancel call"
+              variant="contained"
+              color="primary"
+              size="small"
+              disabled={!contact.online}
+              startIcon={<CallEndIcon color="error" />}
               onClick={() => onVideoEnd(conference)}
             >
-              <CallEndIcon color="error" />
-            </IconButton>
+              {t("CHAT.CONFERENCE.FINISH")}
+            </Button>
           )}
           {!conference && onVideoCall && user.role === 3 && (
-            <IconButton
+            <Button
               aria-label="video call"
+              variant="contained"
               color="primary"
+              size="small"
               disabled={!contact.online}
+              startIcon={<VideoCallIcon />}
               onClick={() => onVideoCall && onVideoCall(contact)}
             >
-              <VideoCallIcon />
-            </IconButton>
+              {t("CHAT.CONFERENCE.START")}
+            </Button>
           )}
         </React.Fragment>
       }
