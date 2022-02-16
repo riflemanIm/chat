@@ -89,6 +89,7 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({
       const contactArr = payload.contactData;
       const userArr = payload.userData;
       dispatch({ type: "CLEAR_CHAT_DATA" });
+      dispatch({ type: "SET_USER", payload: payload.user });
       if (groupArr.length) {
         for (const group of groupArr) {
           socket?.emit("joinGroupSocket", {
@@ -483,7 +484,10 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({
         dispatch({ type: "SET_ERROR", payload: res.msg });
         return;
       }
-      dispatch({ type: "PAUSE_CONFERENCE", payload: res.data as ConferenceData });
+      dispatch({
+        type: "PAUSE_CONFERENCE",
+        payload: res.data as ConferenceData
+      });
     };
     socket?.on("pauseConference", listener);
     return () => {
@@ -497,7 +501,10 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({
         dispatch({ type: "SET_ERROR", payload: res.msg });
         return;
       }
-      dispatch({ type: "STOP_CONFERENCE", payload: res.data as ConferenceData });
+      dispatch({
+        type: "STOP_CONFERENCE",
+        payload: res.data as ConferenceData
+      });
     };
     socket?.on("stopConference", listener);
     return () => {

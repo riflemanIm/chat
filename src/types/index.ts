@@ -170,6 +170,7 @@ export interface MessageOperation {
 
 // Данные чата
 export interface ChatData {
+  user: User;
   groupData: Group[];
   contactData: Contact[];
   userData: User[];
