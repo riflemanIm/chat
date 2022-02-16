@@ -4,6 +4,7 @@ import Room from './Room'
 import Message from './Message'
 import RoomList from './RoomList'
 import Conference from './Conference'
+import ConferenceCall from './ConferenceCall'
 
 export {
     Emoji,
@@ -11,5 +12,6 @@ export {
     Room,
     Message,
     RoomList,
-    Conference
+    Conference,
+    ConferenceCall
 }

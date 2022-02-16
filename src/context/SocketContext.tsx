@@ -483,6 +483,20 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({
         dispatch({ type: "SET_ERROR", payload: res.msg });
         return;
       }
+      dispatch({ type: "PAUSE_CONFERENCE", payload: res.data as ConferenceData });
+    };
+    socket?.on("pauseConference", listener);
+    return () => {
+      socket?.off("pauseConference", listener);
+    };
+  }, [socket?.id]);
+
+  useEffect(() => {
+    const listener = (res: ServerRes) => {
+      if (res.code) {
+        dispatch({ type: "SET_ERROR", payload: res.msg });
+        return;
+      }
       dispatch({ type: "STOP_CONFERENCE", payload: res.data as ConferenceData });
     };
     socket?.on("stopConference", listener);

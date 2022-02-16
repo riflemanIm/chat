@@ -6,7 +6,7 @@ import {
   makeStyles,
   Theme,
   Snackbar,
-  useMediaQuery
+  useMediaQuery,
 } from "@material-ui/core";
 
 import { Alert } from "@material-ui/lab";
@@ -21,13 +21,20 @@ import {
   ChatMessage,
   ChatRoom,
   SendMessage,
-  ConferenceData
+  ConferenceData,
 } from "../types";
 import { isEmpty } from "../utils/common";
+import ConferenceCall from "../components/ConferenceCall";
+
+const getRingAudio = (): HTMLAudioElement => {
+  const audio = new Audio(process.env.PUBLIC_URL + "/audio/ring-in.ogg");
+  audio.loop = true;
+  return audio;
+};
 
 export const ChatPage: React.FC<ChatPa> = ({
   inModale,
-  onlyChatUserId
+  onlyChatUserId,
 }: ChatPa) => {
   const useStyles = makeStyles((theme: Theme) => ({
     root: {
@@ -38,21 +45,21 @@ export const ChatPage: React.FC<ChatPa> = ({
       padding: 0,
       [theme.breakpoints.down("xs")]: {
         height: "100vh",
-        minHeight: 200
-      }
+        minHeight: 200,
+      },
     },
     innerBox: {
       height: "100%",
       width: "100%",
       margin: inModale ? 0 : `${theme.spacing(4)}px 0`,
       [theme.breakpoints.down("xs")]: {
-        margin: 0
-      }
+        margin: 0,
+      },
     },
     innerGrid: {
       height: "100%",
-      width: "100%"
-    }
+      width: "100%",
+    },
   }));
   const classes = useStyles();
   const isMobile = useMediaQuery((theme: Theme) =>
@@ -62,22 +69,20 @@ export const ChatPage: React.FC<ChatPa> = ({
   const { state, dispatch } = React.useContext(ChatContext);
   const { socket } = React.useContext(SocketContext);
 
-  const {
-    apiUrl,
-    pageSize,
-    getPrivateMessages,
-    getGroupMessages
-  } = React.useContext(RestContext);
+  const { apiUrl, pageSize, getPrivateMessages, getGroupMessages } =
+    React.useContext(RestContext);
+
+  const [ringAudio] = React.useState(getRingAudio());
 
   const onExitActiveRoom = React.useCallback(() => {
     dispatch({
       type: "SET_ACTIVE_ROOM",
-      payload: { ifNotExists: false }
+      payload: { ifNotExists: false },
     });
   }, [dispatch]);
 
   const onNeedMoreMessages = React.useCallback(
-    async chat => {
+    async (chat) => {
       if ((chat as Group).groupId) await getGroupMessages(chat as Group);
       else await getPrivateMessages(chat as Contact);
     },
@@ -89,7 +94,7 @@ export const ChatPage: React.FC<ChatPa> = ({
       socket?.emit("revokeMessage", {
         groupId: (chat as Group).groupId, // Идентификатор группы
         contactId: chat.userId, // Идентификатор контакта
-        _id: message._id // Идентификатор удаленного сообщения
+        _id: message._id, // Идентификатор удаленного сообщения
       });
     },
     [socket?.id]
@@ -99,7 +104,7 @@ export const ChatPage: React.FC<ChatPa> = ({
     (chat: ChatRoom) => {
       socket?.emit("typing", {
         groupId: (chat as Group)?.groupId,
-        contactId: chat?.userId
+        contactId: chat?.userId,
       });
     },
     [socket?.id]
@@ -115,7 +120,7 @@ export const ChatPage: React.FC<ChatPa> = ({
           height: data.height,
           fileName: data.fileName,
           messageType: data.messageType,
-          size: data.size
+          size: data.size,
         });
       } else {
         socket?.emit("privateMessage", {
@@ -125,7 +130,7 @@ export const ChatPage: React.FC<ChatPa> = ({
           height: data.height,
           fileName: data.fileName,
           messageType: data.messageType,
-          size: data.size
+          size: data.size,
         });
       }
     },
@@ -139,8 +144,8 @@ export const ChatPage: React.FC<ChatPa> = ({
         payload: {
           groupId: (chat as Group)?.groupId,
           contactId: chat?.userId,
-          ifNotExists: false
-        }
+          ifNotExists: false,
+        },
       });
     },
     [socket?.id, dispatch]
@@ -152,12 +157,12 @@ export const ChatPage: React.FC<ChatPa> = ({
       if ((chat as Group).groupId) {
         socket?.emit("markAsRead", {
           groupId: (chat as Group).groupId,
-          _id: chat.messages[chat.messages.length - 1]._id
+          _id: chat.messages[chat.messages.length - 1]._id,
         });
       } else {
         socket?.emit("markAsRead", {
           contactId: chat.userId,
-          _id: chat.messages[chat.messages.length - 1]._id
+          _id: chat.messages[chat.messages.length - 1]._id,
         });
       }
     },
@@ -168,7 +173,7 @@ export const ChatPage: React.FC<ChatPa> = ({
     (chat: ChatRoom) => {
       socket?.emit("startConference", {
         groupId: (chat as Group).groupId,
-        contactId: chat.userId
+        contactId: chat.userId,
       });
     },
     [socket?.id]
@@ -178,10 +183,27 @@ export const ChatPage: React.FC<ChatPa> = ({
     (conference: ConferenceData | null) => {
       if (conference)
         socket?.emit("stopConference", {
-          id: conference.id
+          id: conference.id,
         });
     },
     [socket?.id]
+  );
+
+  const onConferencePause = React.useCallback(
+    (conference: ConferenceData | null) => {
+      if (conference)
+        socket?.emit("pauseConference", {
+          id: conference.id,
+        });
+    },
+    [socket?.id]
+  );
+
+  const onConferenceCallAccept = React.useCallback(
+    (conference: ConferenceData) => {
+      dispatch({ type: "JOIN_CONFERENCE", payload: conference });
+    },
+    [dispatch]
   );
 
   const handleError = React.useCallback(() => {
@@ -195,7 +217,7 @@ export const ChatPage: React.FC<ChatPa> = ({
       !isEmpty(state.contactGather)
     ) {
       const onlyChat = Object.values(state.contactGather).find(
-        item => item.userId === onlyChatUserId
+        (item) => item.userId === onlyChatUserId
       );
 
       //console.log("onlyChat", onlyChat);
@@ -205,13 +227,18 @@ export const ChatPage: React.FC<ChatPa> = ({
     }
   }, [onlyChatUserId, state.loading]);
 
+  React.useEffect(() => {
+    if (!!state.conference.data && !state.conference.ringPlayed) ringAudio.play();
+    else ringAudio.pause();
+  }, [state.conference]);
+
   const renderRoom = state.activeRoom != null && (
     <Room
       apiUrl={apiUrl}
       user={state.user}
       chat={state.activeRoom}
       typing={state.typing}
-      conference={state.conference}
+      conference={state.conference.data}
       loading={state.loading}
       pageSize={pageSize}
       onExitRoom={
@@ -239,21 +266,44 @@ export const ChatPage: React.FC<ChatPa> = ({
     />
   );
 
+  const GetConferenceCall = () =>
+    state.conference.data && (
+      <ConferenceCall
+        apiUrl={apiUrl}
+        contact={state.contactGather[
+          state.user.userId === state.conference.data.userId
+          ? state.conference.data.contactId
+          : state.conference.data.userId
+        ]}
+        conference={state.conference.data}
+        onAccept={onConferenceCallAccept}
+      />
+    );
+
   const GetConference = () => (
     <Conference
-      conference={state.conference || undefined}
-      onClose={onVideoEnd}
+      conference={state.conference.data}
+      onClose={onConferencePause}
     />
   );
 
   const Contacts = React.useMemo(
-    () => (state.conference ? <GetConference /> : <GetRoomList />),
+    () =>
+      state.conference.data ? (
+        state.conference.joined ? (
+          <GetConference />
+        ) : (
+          <GetConferenceCall />
+        )
+      ) : (
+        <GetRoomList />
+      ),
     [
       state.conference,
       state.activeRoom?.groupId,
       state.activeRoom?.userId,
       state.activeRoom?.messages?.length,
-      state.activeRoom?.unreadCount
+      state.activeRoom?.unreadCount,
     ]
   );
 

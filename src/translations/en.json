@@ -21,6 +21,9 @@
         "CONTACT": "deleted the message"
       }
     },
+    "CONFERENCE": {
+      "JOIN": "Join"
+    },
     "INPUT_MESSAGE": "Please write a message...",
     "INPUT_SEARCH_CONTACT": "Surname Name",
     "MEMBERS": "members"

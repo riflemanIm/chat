@@ -208,6 +208,8 @@ export interface SetUser {
 }
 
 export interface ConferenceData {
+  userId: number;
+  contactId: number;
   id: string;
   url?: string;
 }
