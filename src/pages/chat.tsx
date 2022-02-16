@@ -228,7 +228,8 @@ export const ChatPage: React.FC<ChatPa> = ({
   }, [onlyChatUserId, state.loading]);
 
   React.useEffect(() => {
-    if (!!state.conference.data && !state.conference.ringPlayed) ringAudio.play();
+    if (!!state.conference.data && !state.conference.ringPlayed)
+      ringAudio.play();
     else ringAudio.pause();
   }, [state.conference]);
 
@@ -270,11 +271,13 @@ export const ChatPage: React.FC<ChatPa> = ({
     state.conference.data && (
       <ConferenceCall
         apiUrl={apiUrl}
-        contact={state.contactGather[
-          state.user.userId === state.conference.data.userId
-          ? state.conference.data.contactId
-          : state.conference.data.userId
-        ]}
+        contact={
+          state.contactGather[
+            state.user.userId === state.conference.data.userId
+              ? state.conference.data.contactId
+              : state.conference.data.userId
+          ]
+        }
         conference={state.conference.data}
         onAccept={onConferenceCallAccept}
       />
@@ -289,7 +292,7 @@ export const ChatPage: React.FC<ChatPa> = ({
 
   const Contacts = React.useMemo(
     () =>
-      state.conference.data ? (
+      !isEmpty(state.conference.data) ? (
         state.conference.joined ? (
           <GetConference />
         ) : (
@@ -306,27 +309,23 @@ export const ChatPage: React.FC<ChatPa> = ({
       state.activeRoom?.unreadCount,
     ]
   );
-
+  const isLeftPart = onlyChatUserId == null || !isEmpty(state.conference.data);
   return (
     <Container maxWidth="lg" className={classes.root}>
       <Box className={classes.innerBox}>
         {isMobile ? (
           <>
-            {onlyChatUserId == null && Contacts}
+            {isLeftPart && Contacts}
             {renderRoom}
           </>
         ) : (
           <Grid container spacing={1} className={classes.innerGrid}>
-            {onlyChatUserId == null && (
+            {isLeftPart && (
               <Grid item sm={4} className={classes.innerGrid}>
                 {Contacts}
               </Grid>
             )}
-            <Grid
-              item
-              sm={onlyChatUserId == null ? 8 : 12}
-              className={classes.innerGrid}
-            >
+            <Grid item sm={isLeftPart ? 8 : 12} className={classes.innerGrid}>
               {renderRoom}
             </Grid>
           </Grid>
