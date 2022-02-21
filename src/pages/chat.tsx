@@ -211,21 +211,16 @@ export const ChatPage: React.FC<ChatPa> = ({
   }, [dispatch]);
 
   React.useEffect(() => {
-    if (
-      onlyChatUserId != null &&
-      !state.loading &&
-      !isEmpty(state.contactGather)
-    ) {
+    if (onlyChatUserId != null) {
       const onlyChat = Object.values(state.contactGather).find(
         (item) => item.userId === onlyChatUserId
       );
 
-      //console.log("onlyChat", onlyChat);
       if (!isEmpty(onlyChat)) {
         onChangeChat(onlyChat);
       }
     }
-  }, [onlyChatUserId, state.loading]);
+  }, [state.contactGather]);
 
   React.useEffect(() => {
     if (!!state.conference.data && !state.conference.ringPlayed)
