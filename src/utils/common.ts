@@ -94,7 +94,7 @@ export const getChatId = (chat: ChatRoom | null): string | null => {
     : `user:${chat.userId}`;
 };
 
-export const getChatName = (chat: ChatRoom): string | null => {
+export const getChatName = (chat: ChatRoom): string => {
   return (chat as Group).groupId
     ? (chat as Group).name
     : (chat as Contact).username;
