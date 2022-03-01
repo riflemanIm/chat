@@ -67,7 +67,12 @@ export function getFileMeta(content: string): {
   };
 }
 
-export function getImageMeta(content: string): unknown {
+export function getImageMeta(content: string): {
+  date: string;
+  userId: string;
+  width: string;
+  height: string;
+} {
   // Формат [date]$[userId]$[width]$[height]$...
   const meta = content.split("$");
   const [date, userId, width, height] = meta;
