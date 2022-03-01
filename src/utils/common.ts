@@ -49,7 +49,12 @@ export function formatTime(
  * Раскрыть содержимое
  * @param content - данные в строке
  */
-export function getFileMeta(content: string): unknown {
+export function getFileMeta(content: string): {
+  date: string;
+  userId: string;
+  size: string;
+  name: string;
+} {
   // Формат  [date]$[userId]$[size]$[fileName]
   // Например fileName = 1606980397047$1a01e20f-3780-4227-84b5-5c69ca766ee5$15.41KB$123.docx
   const meta = content.split("$");
@@ -74,7 +79,7 @@ export function getImageMeta(content: string): unknown {
   };
 }
 
-export function splitFileName(name: string): unknown {
+export function splitFileName(name: string): { name: string; ext: string } {
   const idx = name.lastIndexOf(".");
   if (idx === -1)
     return {
