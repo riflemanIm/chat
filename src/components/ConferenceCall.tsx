@@ -75,12 +75,12 @@ type ConferenceCallProps = {
   onAccept: (conference: ConferenceData) => void;
 };
 
-export default function ConferenceCall({
+const ConferenceCall: React.FC<ConferenceCallProps> = ({
   conference,
   contact,
   apiUrl,
   onAccept,
-}: ConferenceCallProps) {
+}: ConferenceCallProps) => {
   const classes = useStyles();
   const { t } = useTranslation();
 
@@ -108,4 +108,6 @@ export default function ConferenceCall({
       </div>
     </Paper>
   );
-}
+};
+
+export default ConferenceCall;

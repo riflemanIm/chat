@@ -6,8 +6,8 @@ const useStyles = makeStyles(() => ({
   root: {
     width: "100%",
     height: "100%",
-    borderRadius: "8px"
-  }
+    borderRadius: "8px",
+  },
 }));
 
 type ConferenceProps = {
@@ -15,7 +15,10 @@ type ConferenceProps = {
   onClose: (conference: ConferenceData | null) => void;
 };
 
-export default function Conference({ conference, onClose }: ConferenceProps) {
+const Conference: React.FC<ConferenceProps> = ({
+  conference,
+  onClose,
+}: ConferenceProps) => {
   const classes = useStyles();
   const ref = React.useRef<HTMLIFrameElement>(null);
 
@@ -30,7 +33,7 @@ export default function Conference({ conference, onClose }: ConferenceProps) {
             // "loginFail",
             "callFail",
             "hangUp",
-            "remoteHangUp"
+            "remoteHangUp",
             // "onParticipantLeft"
           ].includes(type)
         )
@@ -41,10 +44,11 @@ export default function Conference({ conference, onClose }: ConferenceProps) {
     return () => {
       window.removeEventListener("message", listener);
     };
-  }, []);
+  }, [conference, onClose]);
 
   return (
     <iframe
+      title="conference"
       className={classes.root}
       src={conference?.url}
       allowFullScreen
@@ -52,4 +56,5 @@ export default function Conference({ conference, onClose }: ConferenceProps) {
       ref={ref}
     />
   );
-}
+};
+export default Conference;

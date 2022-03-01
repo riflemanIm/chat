@@ -1,8 +1,7 @@
 import moment from "moment";
 import { ChatRoom, Contact, Group } from "../types";
-export function isEmpty(
-  value: number | string | object | [] | undefined | null
-): boolean {
+
+export function isEmpty(value: unknown): boolean {
   return (
     value == null ||
     (typeof value === "object" && Object.keys(value).length === 0) ||
@@ -11,7 +10,7 @@ export function isEmpty(
 }
 
 // string contains string
-export function isContainStr(str1: string, str2: string) {
+export function isContainStr(str1: string, str2: string): boolean {
   return str2.indexOf(str1) >= 0;
 }
 
@@ -19,9 +18,8 @@ export function isContainStr(str1: string, str2: string) {
  * check URL
  * @param text
  */
-export function isUrl(text: string) {
+export function isUrl(text: string): boolean {
   // parse url
-  // eslint-disable-next-line no-useless-escape
   const UrlReg = new RegExp(/http(s)?:\/\/([\w-]+\.)+[\w-]+(\/[\w- ./?%&=]*)?/);
   return UrlReg.test(text);
 }
@@ -30,24 +28,17 @@ export function isUrl(text: string) {
  * Формитирование времени сообщения
  * @param time
  */
-export function formatTime(time: Date | string | undefined) {
+export function formatTime(
+  time: Date | string | undefined
+): string | Date | null {
   if (typeof time === "undefined") return null;
   if (typeof time === "string") time = new Date(time);
   // больше чем вчера
-  if (
-    moment()
-      .add(-1, "days")
-      .startOf("day")
-      .isAfter(time)
-  ) {
+  if (moment().add(-1, "days").startOf("day").isAfter(time)) {
     return moment(time).format("DD.MM.YYYY HH:mm");
   }
   // вчера
-  if (
-    moment()
-      .startOf("day")
-      .isAfter(time)
-  ) {
+  if (moment().startOf("day").isAfter(time)) {
     return `Вчера в ${moment(time).format("HH:mm")}`;
   }
 
@@ -58,7 +49,7 @@ export function formatTime(time: Date | string | undefined) {
  * Раскрыть содержимое
  * @param content - данные в строке
  */
-export function getFileMeta(content: string) {
+export function getFileMeta(content: string): unknown {
   // Формат  [date]$[userId]$[size]$[fileName]
   // Например fileName = 1606980397047$1a01e20f-3780-4227-84b5-5c69ca766ee5$15.41KB$123.docx
   const meta = content.split("$");
@@ -67,11 +58,11 @@ export function getFileMeta(content: string) {
     date,
     userId,
     size,
-    name
+    name,
   };
 }
 
-export function getImageMeta(content: string) {
+export function getImageMeta(content: string): unknown {
   // Формат [date]$[userId]$[width]$[height]$...
   const meta = content.split("$");
   const [date, userId, width, height] = meta;
@@ -79,37 +70,37 @@ export function getImageMeta(content: string) {
     date,
     userId,
     width,
-    height
+    height,
   };
 }
 
-export function splitFileName(name: string) {
+export function splitFileName(name: string): unknown {
   const idx = name.lastIndexOf(".");
   if (idx === -1)
     return {
       name,
-      ext: ""
+      ext: "",
     };
   return {
     name: name.slice(0, idx),
-    ext: name.slice(idx + 1)
+    ext: name.slice(idx + 1),
   };
 }
 
-export const getChatId = (chat: ChatRoom | null) => {
+export const getChatId = (chat: ChatRoom | null): string | null => {
   if (!chat) return null;
   return (chat as Group).groupId
     ? `group:${(chat as Group).groupId}`
     : `user:${chat.userId}`;
 };
 
-export const getChatName = (chat: ChatRoom) => {
+export const getChatName = (chat: ChatRoom): string | null => {
   return (chat as Group).groupId
     ? (chat as Group).name
     : (chat as Contact).username;
 };
 
-export const chatRoomComparer = (a: ChatRoom, b: ChatRoom) => {
+export const chatRoomComparer = (a: ChatRoom, b: ChatRoom): number => {
   if (a.messages && b.messages) {
     return (
       new Date(b.messages[b.messages.length - 1].cdate).getTime() -

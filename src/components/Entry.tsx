@@ -52,7 +52,7 @@ const getImageSize = (data: ImageSize) => {
   };
 };
 
-export default function Entry(props: EntryProps) {
+const Entry: React.FC<EntryProps> = (props: EntryProps) => {
   const classes = useStyles();
   const { chat } = props;
 
@@ -235,4 +235,5 @@ export default function Entry(props: EntryProps) {
       </Popover>
     </Box>
   );
-}
+};
+export default Entry;

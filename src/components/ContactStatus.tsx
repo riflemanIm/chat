@@ -9,7 +9,9 @@ type ContactStatusProps = {
   isTyping: boolean;
 };
 
-const ContactStatus = (props: ContactStatusProps) => {
+const ContactStatus: React.FC<ContactStatusProps> = (
+  props: ContactStatusProps
+) => {
   const { t } = useTranslation();
 
   if (props.isTyping) return <Typing message={t("CHAT.STATUS.TYPING")} />;

@@ -20,8 +20,11 @@ const useStyles = makeStyles((theme: Theme) =>
     },
   })
 );
+type FileProps = {
+  message: ChatMessage;
+};
 
-const File = ({ message }: { message: ChatMessage }) => {
+const File: React.FC<FileProps> = ({ message }: FileProps) => {
   const classes = useStyles();
   const meta = getFileMeta(message.content);
   const { name, ext } = splitFileName(meta.name);

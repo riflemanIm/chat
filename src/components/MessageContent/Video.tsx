@@ -5,19 +5,21 @@ import { ChatMessage } from "../../types";
 const useStyles = makeStyles(() => ({
   mediaContent: {
     maxWidth: "350px",
-    maxHeight: "350px"
-  }
+    maxHeight: "350px",
+  },
 }));
 
-const Video = ({
-  apiUrl,
-  message,
-  isConference
-}: {
+type VideoProps = {
   apiUrl: string;
   message: ChatMessage;
   isConference: boolean;
-}) => {
+};
+
+const Video: React.FC<VideoProps> = ({
+  apiUrl,
+  message,
+  isConference,
+}: VideoProps) => {
   const classes = useStyles();
   let src = "";
   if (isConference) {

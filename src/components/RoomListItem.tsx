@@ -112,10 +112,7 @@ const contactAvatar = (
   typing: SetTyping | null
 ): JSX.Element => {
   const avatar = (
-    <Avatar
-      alt={contact.username}
-      src={`${apiUrl}${contact.avatar}`}
-    />
+    <Avatar alt={contact.username} src={`${apiUrl}${contact.avatar}`} />
   );
 
   const isTyping = !!typing?.contactId && typing?.userId === contact.userId;
@@ -150,7 +147,9 @@ const contactAvatar = (
   return avatar;
 };
 
-export default function RoomListItem(props: RoomListItemProps) {
+const RoomListItem: React.FC<RoomListItemProps> = (
+  props: RoomListItemProps
+) => {
   const classes = useStyles();
   const { t } = useTranslation();
   const { apiUrl, chat, typing } = props;
@@ -200,4 +199,5 @@ export default function RoomListItem(props: RoomListItemProps) {
       />
     </ListItem>
   );
-}
+};
+export default RoomListItem;

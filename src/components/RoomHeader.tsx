@@ -13,17 +13,17 @@ import {
   Group,
   SetTyping,
   User,
-  ConferenceData
+  ConferenceData,
 } from "../types";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     popover: {
-      pointerEvents: "none"
+      pointerEvents: "none",
     },
     paper: {
-      padding: theme.spacing(1)
-    }
+      padding: theme.spacing(1),
+    },
   })
 );
 
@@ -48,7 +48,7 @@ const getGroupStatus = (group: Group, t: (key: string) => string) => {
   return status.join(", ");
 };
 
-export default function RoomHeader({
+const RoomHeader: React.FC<RoomHeaderProps> = ({
   apiUrl,
   user,
   chat,
@@ -56,8 +56,8 @@ export default function RoomHeader({
   conference,
   className,
   onVideoCall,
-  onVideoEnd
-}: RoomHeaderProps) {
+  onVideoEnd,
+}: RoomHeaderProps) => {
   const classes = useStyles();
   const { t } = useTranslation();
   const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
@@ -107,17 +107,17 @@ export default function RoomHeader({
               id="mouse-over-popover"
               className={classes.popover}
               classes={{
-                paper: classes.paper
+                paper: classes.paper,
               }}
               open={!!anchorEl}
               anchorEl={anchorEl}
               anchorOrigin={{
                 vertical: "bottom",
-                horizontal: "left"
+                horizontal: "left",
               }}
               transformOrigin={{
                 vertical: "top",
-                horizontal: "left"
+                horizontal: "left",
               }}
               onClose={handlePopoverClose}
               disableRestoreFocus
@@ -176,4 +176,6 @@ export default function RoomHeader({
       }
     />
   );
-}
+};
+
+export default RoomHeader;

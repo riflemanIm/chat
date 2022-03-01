@@ -17,14 +17,12 @@ const useStyles = makeStyles((theme: Theme) =>
     },
   })
 );
-
-const Image = ({
-  apiUrl,
-  message,
-}: {
+type ImageProrps = {
   apiUrl: string;
   message: ChatMessage;
-}) => {
+};
+
+const Image: React.FC<ImageProrps> = ({ apiUrl, message }: ImageProrps) => {
   const classes = useStyles();
   const [viewerVisible, setViewerVisible] = React.useState(false);
   const meta = getImageMeta(message.content);

@@ -24,7 +24,7 @@ type ContactListProps = {
   contacts: Contact[];
 };
 
-export default function ContactList(props: ContactListProps) {
+const ContactList: React.FC<ContactListProps> = (props: ContactListProps) => {
   const classes = useStyles();
   const { apiUrl, contacts, owner } = props;
 
@@ -33,10 +33,7 @@ export default function ContactList(props: ContactListProps) {
       {contacts.map((contact) => (
         <ListItem key={contact.userId}>
           <ListItemAvatar>
-            <Avatar
-              alt={contact.username}
-              src={`${apiUrl}${contact.avatar}`}
-            />
+            <Avatar alt={contact.username} src={`${apiUrl}${contact.avatar}`} />
           </ListItemAvatar>
           <ListItemText
             primary={
@@ -53,4 +50,5 @@ export default function ContactList(props: ContactListProps) {
       ))}
     </List>
   );
-}
+};
+export default ContactList;

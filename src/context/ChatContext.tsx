@@ -694,20 +694,14 @@ type ChatProviderProps = {
   tokenKey: string;
   children: JSX.Element | JSX.Element[];
 };
-
+type ChatContextProps = {
+  state: ChatState;
+  dispatch: ChatDispatch;
+};
 export const ChatContext = React.createContext({
   state: emptyChatState,
   dispatch: emptyDispatch,
 });
-
-// const getUser = (userData: string | null) => {
-//   if (!userData) return emptyUser;
-//   try {
-//     return JSON.parse(userData) as User;
-//   } catch {
-//     return emptyUser;
-//   }
-// };
 
 export const ChatProvider: React.FC<ChatProviderProps> = (
   props: ChatProviderProps
@@ -729,4 +723,5 @@ export const ChatProvider: React.FC<ChatProviderProps> = (
   );
 };
 
-export const useChatContext = () => React.useContext(ChatContext);
+export const useChatContext: React.FC<ChatContextProps> = () =>
+  React.useContext(ChatContext);

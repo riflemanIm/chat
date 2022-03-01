@@ -41,7 +41,6 @@ export const ChatPage: React.FC<ChatPa> = ({
       minWidth: 300,
       minHeight: 470,
       height: inModale ? "100%" : `calc(100vh - ${theme.spacing(8)}px)`,
-      //
       padding: 0,
       [theme.breakpoints.down("xs")]: {
         height: "100vh",

@@ -6,7 +6,7 @@ import {
   ListItem,
   makeStyles,
   Theme,
-  Typography
+  Typography,
 } from "@material-ui/core";
 import { DoneAll, Done } from "@material-ui/icons";
 import { formatTime } from "../utils/common";
@@ -28,57 +28,57 @@ const useStyles = makeStyles((theme: Theme) =>
     rootContact: {
       "& span": {
         float: "right",
-        color: "#B2B6C2"
+        color: "#B2B6C2",
       },
       "& $message": {
         backgroundColor: "#F1F4FC",
         color: "black",
-        borderBottomLeftRadius: 0
-      }
+        borderBottomLeftRadius: 0,
+      },
     },
     rootUser: {
       justifyContent: "flex-end",
       "& span": {
         float: "right",
-        color: "#D9DEEC"
+        color: "#D9DEEC",
       },
       "& $message": {
         backgroundColor: theme.palette.primary.main,
         color: theme.palette.primary.contrastText,
-        borderBottomRightRadius: 0
-      }
+        borderBottomRightRadius: 0,
+      },
     },
     rootNotify: {
       "& > *": {
-        width: "100%"
-      }
+        width: "100%",
+      },
     },
     message: {
       maxWidth: "85%",
       borderRadius: "16px",
-      padding: theme.spacing(1)
+      padding: theme.spacing(1),
     },
     file: {
       display: "flex",
       flexDirection: "row",
       flexWrap: "wrap",
-      cursor: "pointer"
+      cursor: "pointer",
     },
     body: {
       flex: "1 1 auto",
       wordBreak: "break-word",
-      overflow: "hidden"
+      overflow: "hidden",
     },
     status: {
       paddingLeft: theme.spacing(1),
       flex: "1 1 auto",
-      alignSelf: "flex-end"
+      alignSelf: "flex-end",
     },
     statusImage: {
       fontSize: "1rem",
       marginRight: theme.spacing(0.5),
-      verticalAlign: "middle"
-    }
+      verticalAlign: "middle",
+    },
   })
 );
 
@@ -122,7 +122,7 @@ const wrapMessage = (
   );
 };
 
-export default function Message(props: MessageProps) {
+const Message: React.FC<MessageProps> = (props: MessageProps) => {
   const classes = useStyles();
   const { t } = useTranslation();
 
@@ -188,4 +188,5 @@ export default function Message(props: MessageProps) {
       )}
     </ListItem>
   );
-}
+};
+export default Message;
