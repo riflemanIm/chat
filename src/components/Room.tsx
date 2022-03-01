@@ -150,7 +150,7 @@ const Room: React.FC<RoomProps> = (props: RoomProps) => {
   }, [getChatId(chat)]);
 
   React.useLayoutEffect(() => {
-    if (refOnLastMess.current != null) {
+    if (scrollState.autoScroll && refOnLastMess.current) {
       refOnLastMess.current.scrollIntoView();
     }
   }, [getChatId(chat), messageCount]);
