@@ -28,7 +28,10 @@ import {
   SendMessage,
   SetTyping,
   User,
+  Contact,
   ConferenceData,
+  Group,
+  ContactGather,
 } from "../types";
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -109,11 +112,13 @@ const initialScrollState = {
 type RoomProps = {
   apiUrl: string;
   user: User;
+  users: ContactGather;
   chat: ChatRoom | null;
   typing: SetTyping | null;
   conference: ConferenceData | null;
   loading: boolean;
   pageSize: number;
+  operators: Contact[];
   onExitRoom?: (chat: ChatRoom) => void;
   onEnterRoom?: (chat: ChatRoom) => void;
   onNeedMoreMessages: (chat: ChatRoom) => Promise<void>;
@@ -122,10 +127,13 @@ type RoomProps = {
   onSendMessage?: (chat: ChatRoom, data: SendMessage) => void;
   onVideoCall?: (chat: ChatRoom) => void;
   onVideoEnd?: (conference: ConferenceData) => void;
+  onOperatorAdd?: (chat: Group, operator: Contact) => void;
+  onLeaveGroup?: (chat: Group) => void;
 };
 
 const Room: React.FC<RoomProps> = (props: RoomProps) => {
-  const { apiUrl, user, chat, typing, conference, loading, pageSize } = props;
+  const { apiUrl, user, users, chat, typing, conference, loading, pageSize } =
+    props;
   const classes = useStyles();
   const { t } = useTranslation();
 
@@ -238,9 +246,12 @@ const Room: React.FC<RoomProps> = (props: RoomProps) => {
           chat={chat}
           typing={typing}
           conference={conference}
+          operators={props.operators}
           className={classes.roomHeader}
           onVideoCall={props.onVideoCall}
           onVideoEnd={props.onVideoEnd}
+          onOperatorAdd={props.onOperatorAdd}
+          onLeaveGroup={props.onLeaveGroup}
         />
         {loading && (
           <div className={classes.roomProgress}>
@@ -259,6 +270,13 @@ const Room: React.FC<RoomProps> = (props: RoomProps) => {
                   apiUrl={apiUrl}
                   user={user}
                   message={message}
+                  owner={users[message.userId]}
+                  isGroupMessage={!!chat?.groupId}
+                  startsGroup={
+                    inx === 0 ||
+                    messages[inx - 1].messageType === "notify" ||
+                    messages[inx - 1].userId !== messages[inx].userId
+                  }
                   onContextMenu={(event) => handleMenuPopup(message, event)}
                   refOnLastMess={
                     inx === messages.length - 1 ? refOnLastMess : null

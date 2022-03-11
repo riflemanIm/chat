@@ -17,12 +17,12 @@ const ContactStatus: React.FC<ContactStatusProps> = (
   if (props.isTyping) return <Typing message={t("CHAT.STATUS.TYPING")} />;
   if (props.contact.online === 1)
     return (
-      <Typography variant="body2" color="primary">
+      <Typography variant="body2" color="primary" component="span">
         {t("CHAT.STATUS.ONLINE")}
       </Typography>
     );
   return (
-    <Typography variant="body2" color="textSecondary">
+    <Typography variant="body2" color="textSecondary" component="span">
       {t("CHAT.STATUS.OFFLINE")}
     </Typography>
   );

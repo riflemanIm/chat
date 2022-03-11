@@ -11,7 +11,9 @@ import {
   PrivateMessage,
   SetTyping,
   User,
-  ConferenceData
+  ConferenceData,
+  SetActiveRoom,
+  GroupMap,
 } from "../types";
 import { ChatContext } from "./ChatContext";
 
@@ -27,12 +29,11 @@ export interface ISocketContext {
   online: boolean;
 }
 const initialContext = {
-  online: false
+  online: false,
 } as ISocketContext;
 
-export const SocketContext: React.Context<ISocketContext> = createContext(
-  initialContext
-);
+export const SocketContext: React.Context<ISocketContext> =
+  createContext(initialContext);
 
 type SocketProviderProps = {
   wsUrl: string;
@@ -41,7 +42,7 @@ type SocketProviderProps = {
 
 export const SocketProvider: React.FC<SocketProviderProps> = ({
   wsUrl,
-  children
+  children,
 }: SocketProviderProps) => {
   const { state, dispatch } = useContext(ChatContext);
   const { socket, online, disconnectSocket, connectSocket } = useSocket(
@@ -93,7 +94,7 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({
       if (groupArr.length) {
         for (const group of groupArr) {
           socket?.emit("joinGroupSocket", {
-            groupId: group.groupId
+            groupId: group.groupId,
           });
           dispatch({ type: "SET_GROUP_GATHER", payload: group });
         }
@@ -101,11 +102,12 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({
       if (contactArr.length) {
         for (const contact of contactArr) {
           socket?.emit("joinPrivateSocket", {
-            contactId: contact.userId
+            contactId: contact.userId,
           });
           dispatch({ type: "SET_CONTACT_GATHER", payload: contact });
         }
       }
+      dispatch({ type: "SET_OPERATORS", payload: payload.operatorData });
       if (userArr.length) {
         for (const user_ of userArr) {
           dispatch({ type: "SET_USER_GATHER", payload: user_ });
@@ -171,7 +173,7 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({
       // Информация о присоединении к группе новых пользователей
       if (
         groupObj &&
-        !groupObj.members?.find(member => member.userId === newUser.userId)
+        !groupObj.members?.find((member) => member.userId === newUser.userId)
       ) {
         newUser.isManager = 0;
         groupObj.members?.push(newUser);
@@ -201,7 +203,7 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({
       ) {
         socket?.emit("markAsRead", {
           groupId: data.groupId,
-          _id: data._id
+          _id: data._id,
         });
       }
     };
@@ -225,7 +227,7 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({
       ) {
         dispatch({
           type: "ADD_PRIVATE_MESSAGE",
-          payload: data
+          payload: data,
         });
 
         // если есть активная комната и это приватная комната (!groupId && userId) с отправителем сообщения (userId)
@@ -236,7 +238,7 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({
         ) {
           socket?.emit("markAsRead", {
             contactId: data.userId,
-            _id: data._id
+            _id: data._id,
           });
         }
       }
@@ -280,19 +282,19 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({
         if (data.groupId) {
           dispatch({
             type: "LOSE_GROUP_UNREAD_GATHER",
-            payload: data.groupId
+            payload: data.groupId,
           });
         } else {
           dispatch({
             type: "LOSE_CONTACT_UNREAD_GATHER",
-            payload: data.contactId
+            payload: data.contactId,
           });
         }
       } else {
         if (data.contactId)
           dispatch({
             type: "MARK_PRIVATE_MESSAGES_READ",
-            payload: data.userId
+            payload: data.userId,
           });
       }
     };
@@ -341,7 +343,7 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({
       dispatch({ type: "SET_CONTACT_GATHER", payload: data });
       dispatch({ type: "SET_USER_GATHER", payload: data });
       socket?.emit("joinPrivateSocket", {
-        contactId: data.userId
+        contactId: data.userId,
       });
     };
     socket?.on("addContact", listener);
@@ -356,14 +358,19 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({
         dispatch({ type: "SET_ERROR", payload: res.msg });
         return;
       }
-      const data = res.data as Group;
-      dispatch({ type: "DEL_GROUP", payload: data });
+      const data = res.data as GroupMap;
+      if (data.userId === state.user.userId) {
+        // если удаляем себя из группы
+        dispatch({ type: "DEL_GROUP", payload: data.groupId });
+      } else {
+        dispatch({ type: "DEL_GROUP_MEMBER", payload: data });
+      }
     };
     socket?.on("deleteGroup", listener);
     return () => {
       socket?.off("deleteGroup", listener);
     };
-  }, [socket?.id]);
+  }, [socket?.id, state.user]);
 
   useEffect(() => {
     const listener = (res: ServerRes) => {
@@ -416,53 +423,28 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({
         dispatch({ type: "SET_ERROR", payload: res.msg });
         return;
       }
-      /*
-      const { invited, group, userId } = res.data as JoinGroup;
-      if (invited) {
-        const { contactIds } = res.data;
-        if (
-          contactIds.includes(user.userId) &&
-          !state.groupGather[group.groupId]
-        ) {
-          // Получить информацию пользователях в группе
-          socket?.emit("chatData");
-        } else if (userId === user.userId) {
-          dispatch({
-            type: "ADD_GROUP_MEMBER",
-            payload: {
-              groupId: group.groupId,
-              members: Object.values(state.contactGather).filter(
-                (contact) => contactIds.includes(contact.userId)
-              ),
-            },
-          });
-        }
-      } else {
-        */
       const { group, user: newUser } = res.data as JoinGroup;
-      newUser.online = 1;
-      // Новые пользователи присоединяются к группе
-      if (newUser.userId !== state.user.userId) {
+
+      if (!state.groupGather[group.groupId]) {
+        console.log("joined to a new group");
+        // Если группы еще у нас нет, то получаем информацию о пользователях в группе
+        socket?.emit("chatData");
+      } else if (newUser.userId !== state.user.userId) {
+        // Новые пользователи присоединяются к группе
         dispatch({
           type: "ADD_GROUP_MEMBER",
           payload: {
             groupId: group.groupId,
-            members: [newUser]
-          }
+            members: [newUser],
+          },
         });
       }
-      // Если это пользователь, присоединяем к группе
-      if (!state.groupGather[group.groupId]) {
-        // Получить информацию пользователях в группе
-        socket?.emit("chatData");
-      }
-      // }
     };
     socket?.on("joinGroup", listener);
     return () => {
       socket?.off("joinGroup", listener);
     };
-  }, [socket?.id, state.groupGather]);
+  }, [socket?.id, state.user, state.groupGather]);
 
   useEffect(() => {
     const listener = (res: ServerRes) => {
@@ -486,7 +468,7 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({
       }
       dispatch({
         type: "PAUSE_CONFERENCE",
-        payload: res.data as ConferenceData
+        payload: res.data as ConferenceData,
       });
     };
     socket?.on("pauseConference", listener);
@@ -503,12 +485,42 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({
       }
       dispatch({
         type: "STOP_CONFERENCE",
-        payload: res.data as ConferenceData
+        payload: res.data as ConferenceData,
       });
     };
     socket?.on("stopConference", listener);
     return () => {
       socket?.off("stopConference", listener);
+    };
+  }, [socket?.id]);
+
+  useEffect(() => {
+    const listener = (res: ServerRes) => {
+      if (res.code) {
+        dispatch({ type: "SET_ERROR", payload: res.msg });
+        return;
+      }
+    };
+    socket?.on("addOperator", listener);
+    return () => {
+      socket?.off("addOperator", listener);
+    };
+  }, [socket?.id]);
+
+  useEffect(() => {
+    const listener = (res: ServerRes) => {
+      if (res.code) {
+        dispatch({ type: "SET_ERROR", payload: res.msg });
+        return;
+      }
+      dispatch({
+        type: "SET_ACTIVE_ROOM",
+        payload: res.data as SetActiveRoom,
+      });
+    };
+    socket?.on("setActiveRoom", listener);
+    return () => {
+      socket?.off("setActiveRoom", listener);
     };
   }, [socket?.id]);
 

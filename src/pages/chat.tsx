@@ -205,6 +205,25 @@ export const ChatPage: React.FC<ChatPa> = ({
     [dispatch]
   );
 
+  const onOperatorAdd = React.useCallback(
+    (group: Group, operator: Contact) => {
+      socket?.emit("addOperator", {
+        groupId: group.groupId,
+        operatorId: operator.userId,
+      });
+    },
+    [socket?.id]
+  );
+
+  const onLeaveGroup = React.useCallback(
+    (group: Group) => {
+      socket?.emit("deleteGroup", {
+        groupId: group.groupId,
+      });
+    },
+    [socket?.id]
+  );
+
   const handleError = React.useCallback(() => {
     dispatch({ type: "SET_ERROR" });
   }, [dispatch]);
@@ -231,6 +250,8 @@ export const ChatPage: React.FC<ChatPa> = ({
     <Room
       apiUrl={apiUrl}
       user={state.user}
+      users={state.userGather}
+      operators={state.operators}
       chat={state.activeRoom}
       typing={state.typing}
       conference={state.conference.data}
@@ -246,6 +267,8 @@ export const ChatPage: React.FC<ChatPa> = ({
       onSendMessage={onSendMessage}
       onVideoCall={onVideoCall}
       onVideoEnd={onVideoEnd}
+      onOperatorAdd={onOperatorAdd}
+      onLeaveGroup={onLeaveGroup}
     />
   );
 

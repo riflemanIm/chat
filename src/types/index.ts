@@ -89,7 +89,7 @@ export interface Group {
   notice: string;
   messages?: GroupMessage[];
   unreadCount?: number;
-  createTime: number;
+  cdate: string;
   isTop?: boolean;
   members?: Contact[];
   noMoreData?: boolean;
@@ -174,6 +174,7 @@ export interface ChatData {
   groupData: Group[];
   contactData: Contact[];
   userData: User[];
+  operatorData: Contact[];
 }
 
 export interface GroupMember {
@@ -200,7 +201,7 @@ export interface SetActiveRoom {
 
 export interface JoinGroup {
   group: Group;
-  user: User;
+  user: Contact;
 }
 
 export interface SetUser {

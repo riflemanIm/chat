@@ -13,12 +13,15 @@ import { formatTime } from "../utils/common";
 import MessageContent from "./MessageContent";
 import { Alert } from "@material-ui/lab";
 import { useTranslation } from "react-i18next";
-import { ChatMessage, PrivateMessage, User } from "../types";
+import { ChatMessage, Contact, PrivateMessage, User } from "../types";
 
 type MessageProps = {
   apiUrl: string;
   user: User;
   message: ChatMessage;
+  owner: Contact;
+  isGroupMessage: boolean; // сообщение в группу
+  startsGroup: boolean; // начинает группу сообщений от одного пользователя
   refOnLastMess: React.RefObject<HTMLDivElement> | null;
   onContextMenu: (event: React.MouseEvent<HTMLElement>) => void;
 };
@@ -63,6 +66,11 @@ const useStyles = makeStyles((theme: Theme) =>
       flexDirection: "row",
       flexWrap: "wrap",
       cursor: "pointer",
+    },
+    header: {
+      flex: "0 0 100%",
+      overflow: "hidden",
+      fontWeight: "bold",
     },
     body: {
       flex: "1 1 auto",
@@ -126,7 +134,7 @@ const Message: React.FC<MessageProps> = (props: MessageProps) => {
   const classes = useStyles();
   const { t } = useTranslation();
 
-  const { apiUrl, message, refOnLastMess, user } = props;
+  const { apiUrl, message, owner, refOnLastMess, user, isGroupMessage, startsGroup } = props;
 
   if (message.messageType === "notify") {
     // Уведомление - особый случай
@@ -169,6 +177,9 @@ const Message: React.FC<MessageProps> = (props: MessageProps) => {
         classes,
         props.onContextMenu,
         <React.Fragment>
+          {!isMine && isGroupMessage && owner && startsGroup && (
+            <div className={classes.header}>{owner.username}</div>
+          )}
           <div className={classes.body}>
             <MessageContent message={message} apiUrl={apiUrl} />
           </div>

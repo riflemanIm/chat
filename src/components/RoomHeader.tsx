@@ -1,12 +1,22 @@
 import React from "react";
-import { Avatar, CardHeader, Button, Popover, Theme } from "@material-ui/core";
+import {
+  Avatar,
+  CardHeader,
+  Button,
+  Popover,
+  Theme,
+  IconButton,
+} from "@material-ui/core";
 import GroupIcon from "@material-ui/icons/Group";
 import { useTranslation } from "react-i18next";
 import VideoCallIcon from "@material-ui/icons/VideoCall";
 import CallEndIcon from "@material-ui/icons/CallEnd";
+import PersonAddIcon from "@material-ui/icons/PersonAdd";
+import DeleteIcon from "@material-ui/icons/Delete";
 import { createStyles, makeStyles } from "@material-ui/styles";
 import ContactStatus from "./ContactStatus";
 import ContactList from "./ContactList";
+import AddContact from "./AddContact";
 import {
   ChatRoom,
   Contact,
@@ -34,8 +44,11 @@ type RoomHeaderProps = {
   typing: SetTyping | null;
   conference: ConferenceData | null;
   className: string;
+  operators: Contact[];
   onVideoCall?: (chat: ChatRoom) => void;
   onVideoEnd?: (conference: ConferenceData) => void;
+  onOperatorAdd?: (chat: Group, operator: Contact) => void;
+  onLeaveGroup?: (chat: Group) => void;
 };
 
 const getGroupStatus = (group: Group, t: (key: string) => string) => {
@@ -55,12 +68,16 @@ const RoomHeader: React.FC<RoomHeaderProps> = ({
   typing,
   conference,
   className,
+  operators,
   onVideoCall,
   onVideoEnd,
+  onOperatorAdd,
+  onLeaveGroup,
 }: RoomHeaderProps) => {
   const classes = useStyles();
   const { t } = useTranslation();
   const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
+  const [addOperatorOpen, setAddOperatorOpen] = React.useState(false);
 
   if (!chat)
     return (
@@ -80,6 +97,16 @@ const RoomHeader: React.FC<RoomHeaderProps> = ({
 
   const handlePopoverClose = () => {
     setAnchorEl(null);
+  };
+
+  const handleAddOperatorOpen = () => {
+    setAddOperatorOpen(true);
+  };
+
+  const handleAddOperatorClose = (operator?: Contact) => {
+    setAddOperatorOpen(false);
+    if (onOperatorAdd && operator && chat)
+      onOperatorAdd(chat as Group, operator);
   };
 
   const group = chat as Group;
@@ -131,6 +158,38 @@ const RoomHeader: React.FC<RoomHeaderProps> = ({
           </React.Fragment>
         }
         className={className}
+        action={
+          <React.Fragment>
+            {user.role === 4 && (
+              <React.Fragment>
+                <IconButton
+                  aria-label="add user"
+                  onClick={handleAddOperatorOpen}
+                >
+                  <PersonAddIcon />
+                </IconButton>
+                <AddContact
+                  apiUrl={apiUrl}
+                  open={addOperatorOpen}
+                  contacts={operators}
+                  onClose={handleAddOperatorClose}
+                />
+              </React.Fragment>
+            )}
+            {user.role === 4 &&
+              group.members?.find(
+                (it) => it.userId !== user.userId && it.role === 4
+              ) &&
+              onLeaveGroup && (
+                <IconButton
+                  aria-label="leave group"
+                  onClick={() => onLeaveGroup(group)}
+                >
+                  <DeleteIcon />
+                </IconButton>
+              )}
+          </React.Fragment>
+        }
       />
     );
   }

@@ -111,13 +111,17 @@ export const getChatName = (chat: ChatRoom): string => {
 };
 
 export const chatRoomComparer = (a: ChatRoom, b: ChatRoom): number => {
-  if (a.messages && b.messages) {
+  const hasMessagesA = Array.isArray(a.messages) && (a.messages.length > 0);
+  const hasMessagesB = Array.isArray(b.messages) && (b.messages.length > 0);
+  if (hasMessagesA && hasMessagesB) {
     return (
+      // @ts-ignore
       new Date(b.messages[b.messages.length - 1].cdate).getTime() -
+      // @ts-ignore
       new Date(a.messages[a.messages.length - 1].cdate).getTime()
     );
   }
-  if (a.messages) {
+  if (hasMessagesA) {
     return -1;
   }
   return 1;

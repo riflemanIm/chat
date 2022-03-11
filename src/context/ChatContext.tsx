@@ -16,6 +16,7 @@ import {
   SetTyping,
   User,
   ConferenceData,
+  GroupMap,
 } from "../types";
 import { chatRoomComparer } from "../utils/common";
 
@@ -27,6 +28,7 @@ export interface ChatState {
   groupGather: GroupGather;
   userGather: ContactGather;
   contactGather: ContactGather;
+  operators: Contact[];
   initialContactId: number | null;
   conference: {
     data: ConferenceData | null;
@@ -54,6 +56,7 @@ const emptyChatState: ChatState = {
   groupGather: {}, // список групп
   userGather: {}, // список онлайн
   contactGather: {}, // контакты
+  operators: [], // операторы
   initialContactId: null, // начальный контакт
   conference: {
     data: null, // данные конференции
@@ -103,7 +106,8 @@ type ChatActionType =
   | "SET_USER"
   | "SET_TOKEN"
   | "CLEAR_USER"
-  | "CLEAR_CHAT_DATA";
+  | "CLEAR_CHAT_DATA"
+  | "SET_OPERATORS";
 
 type Action = {
   type: ChatActionType;
@@ -123,7 +127,9 @@ type Action = {
     | AddPrivateMessages
     | AddGroupMessages
     | SetActiveRoom
-    | ConferenceData;
+    | ConferenceData
+    | Contact[]
+    | GroupMap;
 };
 
 const getFreshActiveRoom = (state: ChatState) => {
@@ -175,6 +181,10 @@ const setUserOnline = (
       group.members[index] = { ...member, online };
     }
   }
+  // Обновить статус операторов
+  const idx = newState.operators.findIndex((it) => it.userId === userId);
+  if (idx !== -1)
+    newState.operators[idx] = { ...newState.operators[idx], online };
   // обновляем активный чат
   newState.activeRoom = getFreshActiveRoom(newState);
   return newState;
@@ -183,16 +193,18 @@ const setUserOnline = (
 const addGroupMessage = (state: ChatState, payload: GroupMessage) => {
   const newState = { ...state };
   const { groupId } = payload;
-  if (newState.groupGather[groupId].messages) {
-    newState.groupGather[groupId].messages = [
-      ...(newState.groupGather[groupId].messages as GroupMessage[]),
-      payload,
-    ];
-  } else {
-    newState.groupGather[groupId] = {
-      ...state.groupGather[groupId],
-      messages: [payload],
-    };
+  if (newState.groupGather[groupId]) {
+    if (newState.groupGather[groupId].messages) {
+      newState.groupGather[groupId].messages = [
+        ...(newState.groupGather[groupId].messages as GroupMessage[]),
+        payload,
+      ];
+    } else {
+      newState.groupGather[groupId] = {
+        ...state.groupGather[groupId],
+        messages: [payload],
+      };
+    }
   }
 
   // увеличиваем счетчик новых сообщений, если это не активная комната и сообщение не от нас
@@ -333,18 +345,31 @@ const revokeMessage = (state: ChatState, payload: MessageOperation) => {
 
 const delContact = (state: ChatState, userId: number) => {
   const newState = { ...state };
-  if (newState.activeRoom === newState.contactGather[userId])
-    newState.activeRoom = null;
+  const updateActiveRoom =
+    newState.activeRoom === newState.contactGather[userId];
   delete newState.contactGather[userId];
+  if (updateActiveRoom) newState.activeRoom = getActiveRoom(newState);
 
   return newState;
 };
 
 const delGroup = (state: ChatState, groupId: number) => {
   const newState = { ...state };
-  if (newState.activeRoom === newState.groupGather[groupId])
-    newState.activeRoom = null;
+  const updateActiveRoom =
+    newState.activeRoom === newState.groupGather[groupId];
   delete newState.groupGather[groupId];
+  if (updateActiveRoom) newState.activeRoom = getActiveRoom(newState);
+
+  return newState;
+};
+
+const delGroupMember = (state: ChatState, data: GroupMap) => {
+  const newState = { ...state };
+
+  const group = newState.groupGather[data.groupId];
+  if (group) {
+    group.members = group.members?.filter((it) => it.userId !== data.userId);
+  }
 
   return newState;
 };
@@ -577,7 +602,9 @@ function chatReducer(state: ChatState, action: Action): ChatState {
         },
       };
     case "DEL_GROUP":
-      return delGroup(state, (action.payload as Group).groupId);
+      return delGroup(state, action.payload as number);
+    case "DEL_GROUP_MEMBER":
+      return delGroupMember(state, action.payload as GroupMap);
     case "DEL_CONTACT":
       return delContact(state, (action.payload as Contact).userId);
     case "SET_USER_GATHER":
@@ -681,6 +708,11 @@ function chatReducer(state: ChatState, action: Action): ChatState {
         },
         typing: null,
       };
+    case "SET_OPERATORS":
+      return {
+        ...state,
+        operators: action.payload as Contact[],
+      };
   }
 
   return state;
@@ -694,10 +726,7 @@ type ChatProviderProps = {
   tokenKey: string;
   children: JSX.Element | JSX.Element[];
 };
-type ChatContextProps = {
-  state: ChatState;
-  dispatch: ChatDispatch;
-};
+
 export const ChatContext = React.createContext({
   state: emptyChatState,
   dispatch: emptyDispatch,
@@ -722,6 +751,3 @@ export const ChatProvider: React.FC<ChatProviderProps> = (
     </ChatContext.Provider>
   );
 };
-
-export const useChatContext: React.FC<ChatContextProps> = () =>
-  React.useContext(ChatContext);

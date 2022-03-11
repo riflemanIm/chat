@@ -47,7 +47,7 @@ type TypingProps = {
 const Typing: React.FC<TypingProps> = (props: TypingProps) => {
   const classes = useStyles();
   return (
-    <Typography color="primary" variant="body2">
+    <Typography color="primary" variant="body2" component="span">
       <span className={classes.typingDot} />
       <span className={classes.typingDot} />
       <span className={classes.typingDot} />

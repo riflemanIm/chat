@@ -5,6 +5,7 @@ import Message from './Message'
 import RoomList from './RoomList'
 import Conference from './Conference'
 import ConferenceCall from './ConferenceCall'
+import AddContact from './AddContact'
 
 export {
     Emoji,
@@ -13,5 +14,6 @@ export {
     Message,
     RoomList,
     Conference,
-    ConferenceCall
+    ConferenceCall,
+    AddContact
 }

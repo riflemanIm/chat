@@ -26,6 +26,7 @@
       "START": "Start",
       "FINISH": "Finish"
     },
+    "ADD_CONTACT": "Add contact",
     "INPUT_MESSAGE": "Please write a message...",
     "INPUT_SEARCH_CONTACT": "Surname Name",
     "MEMBERS": "members"

@@ -20,8 +20,9 @@ const useStyles = makeStyles(() => ({
 
 type ContactListProps = {
   apiUrl: string;
-  owner: number;
   contacts: Contact[];
+  owner?: number;
+  onClick?: (contact: Contact) => void;
 };
 
 const ContactList: React.FC<ContactListProps> = (props: ContactListProps) => {
@@ -31,7 +32,11 @@ const ContactList: React.FC<ContactListProps> = (props: ContactListProps) => {
   return (
     <List aria-label="contacts">
       {contacts.map((contact) => (
-        <ListItem key={contact.userId}>
+        <ListItem
+          button
+          key={contact.userId}
+          onClick={() => props.onClick && props.onClick(contact)}
+        >
           <ListItemAvatar>
             <Avatar alt={contact.username} src={`${apiUrl}${contact.avatar}`} />
           </ListItemAvatar>
