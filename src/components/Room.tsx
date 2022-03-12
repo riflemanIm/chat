@@ -272,10 +272,15 @@ const Room: React.FC<RoomProps> = (props: RoomProps) => {
                   message={message}
                   owner={users[message.userId]}
                   isGroupMessage={!!chat?.groupId}
-                  startsGroup={
+                  isUserFirst={
                     inx === 0 ||
                     messages[inx - 1].messageType === "notify" ||
                     messages[inx - 1].userId !== messages[inx].userId
+                  }
+                  isUserLast={
+                    inx === messages.length - 1 ||
+                    messages[inx + 1].messageType === "notify" ||
+                    messages[inx + 1].userId !== messages[inx].userId
                   }
                   onContextMenu={(event) => handleMenuPopup(message, event)}
                   refOnLastMess={

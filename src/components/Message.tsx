@@ -21,7 +21,8 @@ type MessageProps = {
   message: ChatMessage;
   owner: Contact;
   isGroupMessage: boolean; // сообщение в группу
-  startsGroup: boolean; // начинает группу сообщений от одного пользователя
+  isUserFirst: boolean; // начинает группу сообщений от одного пользователя
+  isUserLast: boolean; // завершает группу сообщений от одного пользователя
   refOnLastMess: React.RefObject<HTMLDivElement> | null;
   onContextMenu: (event: React.MouseEvent<HTMLElement>) => void;
 };
@@ -36,6 +37,8 @@ const useStyles = makeStyles((theme: Theme) =>
       "& $message": {
         backgroundColor: "#F1F4FC",
         color: "black",
+      },
+      "& $lastMessage": {
         borderBottomLeftRadius: 0,
       },
     },
@@ -48,12 +51,17 @@ const useStyles = makeStyles((theme: Theme) =>
       "& $message": {
         backgroundColor: theme.palette.primary.main,
         color: theme.palette.primary.contrastText,
+      },
+      "& $lastMessage": {
         borderBottomRightRadius: 0,
       },
     },
     rootNotify: {
+      justifyContent: "center",
       "& > *": {
-        width: "100%",
+        padding: `0px ${theme.spacing(1)}px`,
+        borderRadius: "16px",
+        fontWeight: "bold",
       },
     },
     message: {
@@ -61,6 +69,7 @@ const useStyles = makeStyles((theme: Theme) =>
       borderRadius: "16px",
       padding: theme.spacing(1),
     },
+    lastMessage: {},
     file: {
       display: "flex",
       flexDirection: "row",
@@ -94,15 +103,20 @@ const wrapMessage = (
   apiUrl: string,
   message: ChatMessage,
   classes: ReturnType<typeof useStyles>,
+  isUserLast: boolean,
   onContextMenu: ((event: React.MouseEvent<HTMLElement>) => void) | undefined,
   child: JSX.Element
 ) => {
   const { messageType } = message;
 
+  const className = isUserLast
+    ? `${classes.message} ${classes.lastMessage}`
+    : classes.message;
+
   if (messageType === "file") {
     return (
       <Link
-        className={`${classes.message} ${classes.file}`}
+        className={`${className} ${classes.file}`}
         underline="none"
         href={`${apiUrl}/static/file/${message.content}`}
         target="_blank"
@@ -122,7 +136,7 @@ const wrapMessage = (
       display="flex"
       flexDirection={isMedia ? "column" : "row"}
       flexWrap="wrap"
-      className={classes.message}
+      className={className}
       onContextMenu={onContextMenu}
     >
       {child}
@@ -134,7 +148,16 @@ const Message: React.FC<MessageProps> = (props: MessageProps) => {
   const classes = useStyles();
   const { t } = useTranslation();
 
-  const { apiUrl, message, owner, refOnLastMess, user, isGroupMessage, startsGroup } = props;
+  const {
+    apiUrl,
+    message,
+    owner,
+    refOnLastMess,
+    user,
+    isGroupMessage,
+    isUserFirst,
+    isUserLast,
+  } = props;
 
   if (message.messageType === "notify") {
     // Уведомление - особый случай
@@ -175,9 +198,10 @@ const Message: React.FC<MessageProps> = (props: MessageProps) => {
         apiUrl,
         message,
         classes,
+        isUserLast,
         props.onContextMenu,
         <React.Fragment>
-          {!isMine && isGroupMessage && owner && startsGroup && (
+          {!isMine && isGroupMessage && owner && isUserFirst && (
             <div className={classes.header}>{owner.username}</div>
           )}
           <div className={classes.body}>
