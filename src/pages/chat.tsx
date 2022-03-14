@@ -34,7 +34,7 @@ const getRingAudio = (): HTMLAudioElement => {
 
 export const ChatPage: React.FC<ChatPa> = ({
   inModale,
-  onlyChatUserId,
+  onlyChatGroupId,
 }: ChatPa) => {
   const useStyles = makeStyles((theme: Theme) => ({
     root: {
@@ -229,9 +229,9 @@ export const ChatPage: React.FC<ChatPa> = ({
   }, [dispatch]);
 
   React.useEffect(() => {
-    if (onlyChatUserId != null) {
+    if (onlyChatGroupId != null) {
       const onlyChat = Object.values(state.contactGather).find(
-        (item) => item.userId === onlyChatUserId
+        (item) => item.groupId === onlyChatGroupId
       );
 
       if (!isEmpty(onlyChat)) {
@@ -258,7 +258,7 @@ export const ChatPage: React.FC<ChatPa> = ({
       loading={state.loading}
       pageSize={pageSize}
       onExitRoom={
-        isMobile && onlyChatUserId == null ? onExitActiveRoom : undefined
+        isMobile && onlyChatGroupId == null ? onExitActiveRoom : undefined
       }
       onEnterRoom={onEnterRoom}
       onNeedMoreMessages={onNeedMoreMessages}
@@ -326,7 +326,7 @@ export const ChatPage: React.FC<ChatPa> = ({
       state.activeRoom?.unreadCount,
     ]
   );
-  const isLeftPart = onlyChatUserId == null || !isEmpty(state.conference.data);
+  const isLeftPart = onlyChatGroupId == null || !isEmpty(state.conference.data);
   return (
     <Container maxWidth="lg" className={classes.root}>
       <Box className={classes.innerBox}>

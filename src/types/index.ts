@@ -1,16 +1,16 @@
 export interface ChatPa {
   inModale?: boolean;
-  onlyChatUserId?: number;
+  onlyChatGroupId?: number;
 }
 
 // Тип сообщения
 export type MessageType =
-  | 'text'
-  | 'image'
-  | 'file'
-  | 'video'
-  | 'notify'
-  | 'video_conference';
+  | "text"
+  | "image"
+  | "file"
+  | "video"
+  | "notify"
+  | "video_conference";
 
 export enum MessageStatus {
   sent = 0,
@@ -221,10 +221,10 @@ export type ChatMessage = GroupMessage | PrivateMessage;
 
 // Операции контекстного меню
 export enum ContextMenuType {
-  COPY = 'COPY', // Скопировать
-  REVOKE = 'REVOKE', // Удалить сообщение
-  TOP_REVERT = 'TOP_REVERT', // Открепить
-  TOP = 'TOP', // Закрепить
-  READ = 'READ', // Прочесть всё
-  DELETE = 'DELETE', // Удалить
+  COPY = "COPY", // Скопировать
+  REVOKE = "REVOKE", // Удалить сообщение
+  TOP_REVERT = "TOP_REVERT", // Открепить
+  TOP = "TOP", // Закрепить
+  READ = "READ", // Прочесть всё
+  DELETE = "DELETE", // Удалить
 }
