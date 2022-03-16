@@ -34,6 +34,10 @@ const useStyles = makeStyles((theme: Theme) =>
     paper: {
       padding: theme.spacing(1),
     },
+    avatarGroup: {
+      backgroundColor: "#28B7C6",
+      color: "#fff",
+    },
   })
 );
 
@@ -115,7 +119,7 @@ const RoomHeader: React.FC<RoomHeaderProps> = ({
     return (
       <CardHeader
         avatar={
-          <Avatar alt={group.name}>
+          <Avatar alt={group.name} className={classes.avatarGroup}>
             <GroupIcon />{" "}
           </Avatar>
         }

@@ -42,6 +42,10 @@ const useStyles = makeStyles((theme: Theme) =>
       justifyContent: "flex-end",
       maxHeight: "20px",
     },
+    avatarGroup: {
+      backgroundColor: "#28B7C6",
+      color: "#fff",
+    },
   })
 );
 
@@ -156,7 +160,7 @@ const RoomListItem: React.FC<RoomListItemProps> = (
   const roomName = getChatName(chat);
 
   const avatar = (chat as Group).groupId ? (
-    <Avatar alt={roomName}>
+    <Avatar alt={roomName} className={classes.avatarGroup}>
       <GroupIcon />{" "}
     </Avatar>
   ) : (
