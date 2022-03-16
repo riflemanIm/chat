@@ -1,5 +1,13 @@
-import { Box } from "@material-ui/core";
 import * as React from "react";
+import { Box, createStyles, makeStyles } from "@material-ui/core";
+
+const useStyles = makeStyles(() =>
+  createStyles({
+    item: {
+      cursor: "pointer",
+    },
+  })
+);
 
 type EmojiProps = {
   onSelect?: (emoji: string) => void;
@@ -10,6 +18,7 @@ type EmojiItemProps = {
 };
 
 const Emoji: React.FC<EmojiProps> = (props: EmojiProps) => {
+  const classes = useStyles();
   const emojiClick = (e: React.MouseEvent<HTMLDivElement>) => {
     if (props.onSelect) {
       props.onSelect((e.target as HTMLDivElement).innerText);
@@ -18,7 +27,12 @@ const Emoji: React.FC<EmojiProps> = (props: EmojiProps) => {
 
   const Item = (itemProps: EmojiItemProps) => {
     return (
-      <Box m={0.25} component="span" onClick={emojiClick}>
+      <Box
+        m={0.5}
+        component="span"
+        onClick={emojiClick}
+        className={classes.item}
+      >
         {itemProps.emoji}
       </Box>
     );
