@@ -61,7 +61,7 @@ const useStyles = makeStyles((theme: Theme) =>
       "& > *": {
         padding: `0px ${theme.spacing(1)}px`,
         borderRadius: "16px",
-        fontWeight: "bold",
+        fontWeight: 500,
       },
     },
     message: {
