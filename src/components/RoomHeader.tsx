@@ -199,6 +199,9 @@ const RoomHeader: React.FC<RoomHeaderProps> = ({
   }
   const contact = chat as Contact;
   const isTyping = !!typing?.contactId && typing?.userId === contact.userId;
+
+  //console.log("conference", conference, "user", user, "contact", contact)
+
   return (
     <CardHeader
       avatar={
@@ -209,7 +212,7 @@ const RoomHeader: React.FC<RoomHeaderProps> = ({
       className={className}
       action={
         <React.Fragment>
-          {!!conference && onVideoEnd && (
+          {conference != null && onVideoEnd != null && (
             <Button
               aria-label="cancel call"
               variant="contained"
@@ -222,7 +225,7 @@ const RoomHeader: React.FC<RoomHeaderProps> = ({
               {t("CHAT.CONFERENCE.FINISH")}
             </Button>
           )}
-          {!conference && onVideoCall && user.role === 3 && (
+          {conference == null && onVideoCall != null && user.role === 3 && (
             <Button
               aria-label="video call"
               variant="contained"
@@ -230,7 +233,7 @@ const RoomHeader: React.FC<RoomHeaderProps> = ({
               size="small"
               disabled={!contact.online}
               startIcon={<VideoCallIcon />}
-              onClick={() => onVideoCall && onVideoCall(contact)}
+              onClick={() => onVideoCall(contact)}
             >
               {t("CHAT.CONFERENCE.START")}
             </Button>

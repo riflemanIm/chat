@@ -241,10 +241,12 @@ export const ChatPage: React.FC<ChatPa> = ({
   }, [state.contactGather]);
 
   React.useEffect(() => {
-    if (!!state.conference.data && !state.conference.ringPlayed)
+    if (state.conference?.data != null && !state.conference.ringPlayed)
       ringAudio.play();
     else ringAudio.pause();
-  }, [state.conference]);
+  }, [state.conference?.data?.id]);
+
+  //  console.log("state.conference", state.conference)
 
   const renderRoom = state.activeRoom != null && (
     <Room
@@ -290,9 +292,9 @@ export const ChatPage: React.FC<ChatPa> = ({
         apiUrl={apiUrl}
         contact={
           state.contactGather[
-            state.user.userId === state.conference.data.userId
-              ? state.conference.data.contactId
-              : state.conference.data.userId
+          state.user.userId === state.conference.data.userId
+            ? state.conference.data.contactId
+            : state.conference.data.userId
           ]
         }
         conference={state.conference.data}
