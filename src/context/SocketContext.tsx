@@ -114,6 +114,7 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({
         }
       }
       dispatch({ type: "UPDATE_ACTIVE_ROOM" });
+      dispatch({type: "SET_CONFERENCE", payload: payload.conferenceData})
     };
     socket?.on("chatData", listener);
     return () => {

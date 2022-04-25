@@ -168,6 +168,17 @@ export interface MessageOperation {
   _id: number;
 }
 
+// Данные конференции
+export interface ConferenceData {
+  userId: number;
+  contactId: number;
+  id: string;
+  url?: string;
+  serverAddress?: string;
+  user?: string;
+  password?: string;
+}
+
 // Данные чата
 export interface ChatData {
   user: User;
@@ -175,6 +186,7 @@ export interface ChatData {
   contactData: Contact[];
   userData: User[];
   operatorData: Contact[];
+  conferenceData: ConferenceData;
 }
 
 export interface GroupMember {
@@ -207,13 +219,6 @@ export interface JoinGroup {
 export interface SetUser {
   user: User;
   token: string;
-}
-
-export interface ConferenceData {
-  userId: number;
-  contactId: number;
-  id: string;
-  url?: string;
 }
 
 export type ChatRoom = Group | Contact;
