@@ -551,8 +551,8 @@ const setConference = (
     ...state,
     conference: {
       data: conference,
-      joined: conference.userId === state.user.userId,
-      ringPlayed: conference.userId === state.user.userId,
+      joined: conference?.userId === state.user.userId,
+      ringPlayed: conference?.userId === state.user.userId,
     },
   };
 };
