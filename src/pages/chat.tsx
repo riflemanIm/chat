@@ -180,9 +180,9 @@ export const ChatPage: React.FC<ChatPa> = ({
 
   const onVideoEnd = React.useCallback(
     (conference: ConferenceData | null) => {
-      if (conference)
+      if (conference?.id != null)
         socket?.emit("stopConference", {
-          id: conference.id,
+          id: conference?.id,
         });
     },
     [socket?.id]
@@ -190,7 +190,7 @@ export const ChatPage: React.FC<ChatPa> = ({
 
   const onConferencePause = React.useCallback(
     (conference: ConferenceData | null) => {
-      if (conference)
+      if (conference?.id != null)
         socket?.emit("pauseConference", {
           id: conference.id,
         });
