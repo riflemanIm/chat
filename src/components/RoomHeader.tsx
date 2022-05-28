@@ -4,16 +4,15 @@ import {
   CardHeader,
   Button,
   Popover,
-  Theme,
   IconButton,
-} from "@material-ui/core";
-import GroupIcon from "@material-ui/icons/Group";
+} from "@mui/material";
+import { Theme } from '@mui/material/styles';
+import GroupIcon from "@mui/icons-material/Group";
 import { useTranslation } from "react-i18next";
-import VideoCallIcon from "@material-ui/icons/VideoCall";
-import CallEndIcon from "@material-ui/icons/CallEnd";
-import PersonAddIcon from "@material-ui/icons/PersonAdd";
-import DeleteIcon from "@material-ui/icons/Delete";
-import { createStyles, makeStyles } from "@material-ui/styles";
+import VideoCallIcon from "@mui/icons-material/VideoCall";
+import CallEndIcon from "@mui/icons-material/CallEnd";
+import PersonAddIcon from "@mui/icons-material/PersonAdd";
+import DeleteIcon from "@mui/icons-material/Delete";
 import ContactStatus from "./ContactStatus";
 import ContactList from "./ContactList";
 import AddContact from "./AddContact";
@@ -25,7 +24,7 @@ import {
   User,
   ConferenceData,
 } from "../types";
-
+import { makeStyles, createStyles } from '@mui/styles';
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     popover: {

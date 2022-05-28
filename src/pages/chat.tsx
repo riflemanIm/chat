@@ -3,13 +3,13 @@ import {
   Container,
   Box,
   Grid,
-  makeStyles,
-  Theme,
+
   Snackbar,
   useMediaQuery,
-} from "@material-ui/core";
-
-import { Alert } from "@material-ui/lab";
+} from "@mui/material";
+import { makeStyles } from '@mui/styles';
+import { Theme } from '@mui/material/styles';
+import { Alert } from "@mui/lab";
 import { Room, RoomList, Conference } from "../components";
 import { ChatContext } from "../context/ChatContext";
 import { RestContext } from "../context/RestContext";
@@ -40,7 +40,7 @@ export const ChatPage: React.FC<ChatPa> = ({
     root: {
       minWidth: 300,
       minHeight: 470,
-      height: inModale ? "100%" : `calc(100vh - ${theme.spacing(8)}px)`,
+      height: inModale ? "100%" : `calc(100vh - ${theme.spacing(8)})`,
       padding: 0,
       [theme.breakpoints.down("xs")]: {
         height: "100vh",
@@ -50,7 +50,7 @@ export const ChatPage: React.FC<ChatPa> = ({
     innerBox: {
       height: "100%",
       width: "100%",
-      margin: inModale ? 0 : `${theme.spacing(4)}px 0`,
+      margin: inModale ? 0 : `${theme.spacing(4)} 0`,
       [theme.breakpoints.down("xs")]: {
         margin: 0,
       },

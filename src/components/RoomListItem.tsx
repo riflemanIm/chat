@@ -4,15 +4,14 @@ import {
   Badge,
   Box,
   Chip,
-  createStyles,
   ListItem,
   ListItemAvatar,
   ListItemText,
-  makeStyles,
-  Theme,
-  withStyles,
-} from "@material-ui/core";
-import GroupIcon from "@material-ui/icons/Group";
+} from "@mui/material";
+import { Theme } from '@mui/material/styles';
+import { makeStyles, createStyles, withStyles } from '@mui/styles';
+
+import GroupIcon from "@mui/icons-material/Group";
 import { formatTime, getChatName } from "../utils/common";
 import { useTranslation } from "react-i18next";
 import { ChatMessage, ChatRoom, Contact, Group, SetTyping } from "../types";
@@ -40,7 +39,7 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     unread: {
       justifyContent: "flex-end",
-      maxHeight: "20px",
+      maxHeight: 20,
     },
     avatarGroup: {
       backgroundColor: "#28B7C6",

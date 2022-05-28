@@ -4,11 +4,12 @@ import {
   IconButton,
   InputAdornment,
   TextField,
-  makeStyles,
   Popover,
   SvgIcon,
-} from "@material-ui/core";
-import { Send, InsertEmoticon } from "@material-ui/icons";
+} from "@mui/material";
+
+import { makeStyles } from '@mui/styles';
+import { Send, InsertEmoticon } from "@mui/icons-material";
 import Emoji from "./Emoji";
 import { useTranslation } from "react-i18next";
 import { ChatRoom, ImageSize, SendMessage } from "../types";

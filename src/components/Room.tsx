@@ -4,19 +4,19 @@ import {
   Card,
   CardContent,
   CircularProgress,
-  createStyles,
+
   Divider,
   List,
   ListItemIcon,
   Menu,
   MenuItem,
-  makeStyles,
-  Theme,
   IconButton,
-} from "@material-ui/core";
-import FileCopyIcon from "@material-ui/icons/FileCopy";
-import DeleteIcon from "@material-ui/icons/Delete";
-import ArrowBackIcon from "@material-ui/icons/ArrowBack";
+} from "@mui/material";
+import { Theme } from '@mui/material/styles';
+import { makeStyles, createStyles } from '@mui/styles';
+import FileCopyIcon from "@mui/icons-material/FileCopy";
+import DeleteIcon from "@mui/icons-material/Delete";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import Entry from "./Entry";
 import Message from "./Message";
 import RoomHeader from "./RoomHeader";
@@ -65,10 +65,10 @@ const useStyles = makeStyles((theme: Theme) =>
         backgroundColor: "#fff",
       },
       "&::-webkit-scrollbar-thumb:active, & *::-webkit-scrollbar-thumb:active":
-        {
-          backgroundColor: "#73d7f5",
-          border: "3px solid #fff",
-        },
+      {
+        backgroundColor: "#73d7f5",
+        border: "3px solid #fff",
+      },
       "&::-webkit-scrollbar-thumb:hover, & *::-webkit-scrollbar-thumb:hover": {
         backgroundColor: "#73d7f5",
         border: "3px solid #fff",
@@ -228,6 +228,8 @@ const Room: React.FC<RoomProps> = (props: RoomProps) => {
     if (props.onMeesageDelete && chat && message)
       props.onMeesageDelete(chat, message);
   }, [menuState.message]);
+
+  console.log("messages", messages)
 
   return (
     <Card elevation={1} className={classes.root}>

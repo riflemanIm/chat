@@ -1,5 +1,5 @@
 import React from "react";
-import { Typography } from "@material-ui/core";
+import { Typography } from "@mui/material";
 import Typing from "./Typing";
 import { useTranslation } from "react-i18next";
 import { Contact } from "../types";
