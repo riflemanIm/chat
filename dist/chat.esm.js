@@ -14,7 +14,6 @@ import VideoCallIcon from '@mui/icons-material/VideoCall';
 import CallEndIcon from '@mui/icons-material/CallEnd';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import StarIcon from '@mui/icons-material/Star';
-import { makeStyles as makeStyles$1 } from '@material-ui/styles';
 import List$1 from '@mui/material/List';
 import axios from 'axios';
 import io from 'socket.io-client';
@@ -1361,7 +1360,7 @@ var ContactStatus = function ContactStatus(props) {
   }, t("CHAT.STATUS.OFFLINE"));
 };
 
-var useStyles$7 = /*#__PURE__*/makeStyles$1(function () {
+var useStyles$7 = /*#__PURE__*/makeStyles(function () {
   return {
     star: {
       fontSize: "0.85rem",

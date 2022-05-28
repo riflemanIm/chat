@@ -21,7 +21,6 @@ var VideoCallIcon = _interopDefault(require('@mui/icons-material/VideoCall'));
 var CallEndIcon = _interopDefault(require('@mui/icons-material/CallEnd'));
 var PersonAddIcon = _interopDefault(require('@mui/icons-material/PersonAdd'));
 var StarIcon = _interopDefault(require('@mui/icons-material/Star'));
-var styles$1 = require('@material-ui/styles');
 var List = _interopDefault(require('@mui/material/List'));
 var axios = _interopDefault(require('axios'));
 var io = _interopDefault(require('socket.io-client'));
@@ -1361,7 +1360,7 @@ var ContactStatus = function ContactStatus(props) {
   }, t("CHAT.STATUS.OFFLINE"));
 };
 
-var useStyles$7 = /*#__PURE__*/styles$1.makeStyles(function () {
+var useStyles$7 = /*#__PURE__*/styles.makeStyles(function () {
   return {
     star: {
       fontSize: "0.85rem",
