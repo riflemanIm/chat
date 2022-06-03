@@ -81,7 +81,7 @@ export const ChatPage: React.FC<ChatPa> = ({
   }, [dispatch]);
 
   const onNeedMoreMessages = React.useCallback(
-    async (chat) => {
+    async (chat: ChatRoom) => {
       if ((chat as Group).groupId) await getGroupMessages(chat as Group);
       else await getPrivateMessages(chat as Contact);
     },
