@@ -10,7 +10,7 @@ export declare function isUrl(text: string): boolean;
  * Формитирование времени сообщения
  * @param time
  */
-export declare function formatTime(time: Date | string | undefined): string | Date | null;
+export declare function formatTime(time: Date | string | undefined): string | null;
 /**
  * Раскрыть содержимое
  * @param content - данные в строке
