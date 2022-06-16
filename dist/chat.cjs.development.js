@@ -6,23 +6,22 @@ function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'defau
 
 var React = require('react');
 var React__default = _interopDefault(React);
-var core = require('@material-ui/core');
-var FileCopyIcon = _interopDefault(require('@material-ui/icons/FileCopy'));
-var DeleteIcon = _interopDefault(require('@material-ui/icons/Delete'));
-var ArrowBackIcon = _interopDefault(require('@material-ui/icons/ArrowBack'));
-var icons = require('@material-ui/icons');
+var material = require('@mui/material');
+var styles = require('@mui/styles');
+var FileCopyIcon = _interopDefault(require('@mui/icons-material/FileCopy'));
+var DeleteIcon = _interopDefault(require('@mui/icons-material/Delete'));
+var ArrowBackIcon = _interopDefault(require('@mui/icons-material/ArrowBack'));
+var iconsMaterial = require('@mui/icons-material');
 var reactI18next = require('react-i18next');
 var moment = _interopDefault(require('moment'));
 var Viewer = _interopDefault(require('react-viewer'));
-var lab = require('@material-ui/lab');
-var GroupIcon = _interopDefault(require('@material-ui/icons/Group'));
-var VideoCallIcon = _interopDefault(require('@material-ui/icons/VideoCall'));
-var CallEndIcon = _interopDefault(require('@material-ui/icons/CallEnd'));
-var PersonAddIcon = _interopDefault(require('@material-ui/icons/PersonAdd'));
-var styles = require('@material-ui/styles');
-var StarIcon = _interopDefault(require('@material-ui/icons/Star'));
-var styles$1 = require('@material-ui/core/styles');
-var List = _interopDefault(require('@material-ui/core/List'));
+var lab = require('@mui/lab');
+var GroupIcon = _interopDefault(require('@mui/icons-material/Group'));
+var VideoCallIcon = _interopDefault(require('@mui/icons-material/VideoCall'));
+var CallEndIcon = _interopDefault(require('@mui/icons-material/CallEnd'));
+var PersonAddIcon = _interopDefault(require('@mui/icons-material/PersonAdd'));
+var StarIcon = _interopDefault(require('@mui/icons-material/Star'));
+var List = _interopDefault(require('@mui/material/List'));
 var axios = _interopDefault(require('axios'));
 var io = _interopDefault(require('socket.io-client'));
 
@@ -45,11 +44,11 @@ var io = _interopDefault(require('socket.io-client'));
   ContextMenuType["TOP_REVERT"] = "TOP_REVERT";
   ContextMenuType["TOP"] = "TOP";
   ContextMenuType["READ"] = "READ";
-  ContextMenuType["DELETE"] = "DELETE";
+  ContextMenuType["DELETE"] = "DELETE"; // Удалить
 })(exports.ContextMenuType || (exports.ContextMenuType = {}));
 
-var useStyles = /*#__PURE__*/core.makeStyles(function () {
-  return core.createStyles({
+var useStyles = /*#__PURE__*/styles.makeStyles(function () {
+  return styles.createStyles({
     item: {
       cursor: "pointer"
     }
@@ -66,7 +65,7 @@ var Emoji = function Emoji(props) {
   };
 
   var Item = function Item(itemProps) {
-    return /*#__PURE__*/React.createElement(core.Box, {
+    return /*#__PURE__*/React.createElement(material.Box, {
       m: 0.5,
       component: "span",
       onClick: emojiClick,
@@ -74,7 +73,7 @@ var Emoji = function Emoji(props) {
     }, itemProps.emoji);
   };
 
-  return /*#__PURE__*/React.createElement(core.Box, null, /*#__PURE__*/React.createElement(core.Box, {
+  return /*#__PURE__*/React.createElement(material.Box, null, /*#__PURE__*/React.createElement(material.Box, {
     display: "flex",
     flexDirection: "row"
   }, /*#__PURE__*/React.createElement(Item, {
@@ -95,7 +94,7 @@ var Emoji = function Emoji(props) {
     emoji: "\uD83D\uDE08"
   }), /*#__PURE__*/React.createElement(Item, {
     emoji: "\uD83D\uDE09"
-  })), /*#__PURE__*/React.createElement(core.Box, {
+  })), /*#__PURE__*/React.createElement(material.Box, {
     display: "flex",
     flexDirection: "row"
   }, /*#__PURE__*/React.createElement(Item, {
@@ -116,7 +115,7 @@ var Emoji = function Emoji(props) {
     emoji: "\uD83D\uDE12"
   }), /*#__PURE__*/React.createElement(Item, {
     emoji: "\uD83D\uDE13"
-  })), /*#__PURE__*/React.createElement(core.Box, {
+  })), /*#__PURE__*/React.createElement(material.Box, {
     display: "flex",
     flexDirection: "row"
   }, /*#__PURE__*/React.createElement(Item, {
@@ -137,7 +136,7 @@ var Emoji = function Emoji(props) {
     emoji: "\uD83D\uDE1C"
   }), /*#__PURE__*/React.createElement(Item, {
     emoji: "\uD83D\uDE1D"
-  })), /*#__PURE__*/React.createElement(core.Box, {
+  })), /*#__PURE__*/React.createElement(material.Box, {
     display: "flex",
     flexDirection: "row"
   }, /*#__PURE__*/React.createElement(Item, {
@@ -158,7 +157,7 @@ var Emoji = function Emoji(props) {
     emoji: "\uD83D\uDE25"
   }), /*#__PURE__*/React.createElement(Item, {
     emoji: "\uD83D\uDE26"
-  })), /*#__PURE__*/React.createElement(core.Box, {
+  })), /*#__PURE__*/React.createElement(material.Box, {
     display: "flex",
     flexDirection: "row"
   }, /*#__PURE__*/React.createElement(Item, {
@@ -179,7 +178,7 @@ var Emoji = function Emoji(props) {
     emoji: "\uD83D\uDE2F"
   }), /*#__PURE__*/React.createElement(Item, {
     emoji: "\uD83D\uDE30"
-  })), /*#__PURE__*/React.createElement(core.Box, {
+  })), /*#__PURE__*/React.createElement(material.Box, {
     display: "flex",
     flexDirection: "row"
   }, /*#__PURE__*/React.createElement(Item, {
@@ -200,7 +199,7 @@ var Emoji = function Emoji(props) {
     emoji: "\uD83D\uDE42"
   }), /*#__PURE__*/React.createElement(Item, {
     emoji: "\uD83D\uDE43"
-  })), /*#__PURE__*/React.createElement(core.Box, {
+  })), /*#__PURE__*/React.createElement(material.Box, {
     display: "flex",
     flexDirection: "row"
   }, /*#__PURE__*/React.createElement(Item, {
@@ -221,7 +220,7 @@ var Emoji = function Emoji(props) {
     emoji: "\uD83E\uDD21"
   }), /*#__PURE__*/React.createElement(Item, {
     emoji: "\uD83E\uDD22"
-  })), /*#__PURE__*/React.createElement(core.Box, {
+  })), /*#__PURE__*/React.createElement(material.Box, {
     display: "flex",
     flexDirection: "row"
   }, /*#__PURE__*/React.createElement(Item, {
@@ -245,16 +244,16 @@ var Emoji = function Emoji(props) {
   })));
 };
 
-var useStyles$1 = /*#__PURE__*/core.makeStyles(function (theme) {
-  return core.createStyles({
+var useStyles$1 = /*#__PURE__*/styles.makeStyles(function (theme) {
+  return styles.createStyles({
     typingText: {
       paddingLeft: theme.spacing(0.5)
     },
     typingDot: {
       display: "inline-block",
       verticalAlign: "middle",
-      width: "4px",
-      height: "4px",
+      width: 4,
+      height: 4,
       margin: "0px 2px",
       background: theme.palette.primary.main,
       borderRadius: "50%",
@@ -286,7 +285,7 @@ var useStyles$1 = /*#__PURE__*/core.makeStyles(function (theme) {
 
 var Typing = function Typing(props) {
   var classes = useStyles$1();
-  return /*#__PURE__*/React__default.createElement(core.Typography, {
+  return /*#__PURE__*/React__default.createElement(material.Typography, {
     color: "primary",
     variant: "body2",
     component: "span"
@@ -737,7 +736,7 @@ function _createForOfIteratorHelperLoose(o, allowArrayLike) {
   throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
 }
 
-var useStyles$2 = /*#__PURE__*/core.makeStyles(function () {
+var useStyles$2 = /*#__PURE__*/styles.makeStyles(function () {
   return {
     input: {
       flex: "auto"
@@ -893,17 +892,17 @@ var Entry = function Entry(props) {
 
   var emojiOpen = Boolean(empjiEl);
   var enojiId = emojiOpen ? "simple-popover" : undefined;
-  return /*#__PURE__*/React__default.createElement(core.Box, {
+  return /*#__PURE__*/React__default.createElement(material.Box, {
     display: "flex",
     flexDirection: "row"
-  }, /*#__PURE__*/React__default.createElement(core.TextField, {
+  }, /*#__PURE__*/React__default.createElement(material.TextField, {
     className: classes.input,
     placeholder: t("CHAT.INPUT_MESSAGE"),
     autoFocus: true,
     variant: "standard",
     InputProps: {
       disableUnderline: true,
-      startAdornment: /*#__PURE__*/React__default.createElement(core.InputAdornment, {
+      startAdornment: /*#__PURE__*/React__default.createElement(material.InputAdornment, {
         position: "start"
       }, /*#__PURE__*/React__default.createElement("input", {
         accept: "*",
@@ -913,12 +912,12 @@ var Entry = function Entry(props) {
         onChange: onSubmitFile
       }), /*#__PURE__*/React__default.createElement("label", {
         htmlFor: "icon-button-file"
-      }, /*#__PURE__*/React__default.createElement(core.IconButton, {
+      }, /*#__PURE__*/React__default.createElement(material.IconButton, {
         color: "primary",
         "aria-label": "upload",
         component: "span",
         size: "small"
-      }, /*#__PURE__*/React__default.createElement(core.SvgIcon, {
+      }, /*#__PURE__*/React__default.createElement(material.SvgIcon, {
         fill: "none",
         className: classes.attachmentIcon
       }, /*#__PURE__*/React__default.createElement("path", {
@@ -926,23 +925,23 @@ var Entry = function Entry(props) {
         strokeWidth: "1.6",
         strokeLinecap: "round",
         strokeLinejoin: "round"
-      })))), " ", /*#__PURE__*/React__default.createElement(core.IconButton, {
+      })))), " ", /*#__PURE__*/React__default.createElement(material.IconButton, {
         "aria-describedby": enojiId,
         onClick: handleEmojiClick,
         color: "primary",
         size: "small"
-      }, /*#__PURE__*/React__default.createElement(icons.InsertEmoticon, null))),
-      endAdornment: /*#__PURE__*/React__default.createElement(core.IconButton, {
+      }, /*#__PURE__*/React__default.createElement(iconsMaterial.InsertEmoticon, null))),
+      endAdornment: /*#__PURE__*/React__default.createElement(material.IconButton, {
         edge: "end",
         color: "inherit",
         size: "small",
         onClick: onSubmitClick
-      }, /*#__PURE__*/React__default.createElement(icons.Send, null))
+      }, /*#__PURE__*/React__default.createElement(iconsMaterial.Send, null))
     },
     value: text,
     onChange: onChange,
     onKeyPress: onKeyPress
-  }), /*#__PURE__*/React__default.createElement(core.Popover, {
+  }), /*#__PURE__*/React__default.createElement(material.Popover, {
     id: enojiId,
     open: emojiOpen,
     anchorEl: empjiEl,
@@ -1050,8 +1049,8 @@ var chatRoomComparer = function chatRoomComparer(a, b) {
   return 1;
 };
 
-var useStyles$3 = /*#__PURE__*/core.makeStyles(function (theme) {
-  return core.createStyles({
+var useStyles$3 = /*#__PURE__*/styles.makeStyles(function (theme) {
+  return styles.createStyles({
     fileIcon: {
       fontSize: "0.75rem"
     },
@@ -1070,23 +1069,23 @@ var File = function File(_ref) {
       name = _splitFileName.name,
       ext = _splitFileName.ext;
 
-  return /*#__PURE__*/React__default.createElement(core.Box, {
+  return /*#__PURE__*/React__default.createElement(material.Box, {
     display: "flex",
     flexDirection: "row"
-  }, /*#__PURE__*/React__default.createElement(core.Avatar, {
+  }, /*#__PURE__*/React__default.createElement(material.Avatar, {
     className: classes.fileIcon
-  }, ext.toUpperCase()), /*#__PURE__*/React__default.createElement(core.Box, {
+  }, ext.toUpperCase()), /*#__PURE__*/React__default.createElement(material.Box, {
     display: "flex",
     flexDirection: "column",
     className: classes.fileBody
   }, name, /*#__PURE__*/React__default.createElement("span", null, ext + " " + meta.size)));
 };
 
-var useStyles$4 = /*#__PURE__*/core.makeStyles(function () {
+var useStyles$4 = /*#__PURE__*/styles.makeStyles(function () {
   return {
     mediaContent: {
-      maxWidth: "350px",
-      maxHeight: "350px"
+      maxWidth: 350,
+      maxHeight: 350
     }
   };
 });
@@ -1111,17 +1110,17 @@ var Video = function Video(_ref) {
   }, "\u0412\u0430\u0448 \u0431\u0440\u0430\u0443\u0437\u0435\u0440 \u043D\u0435 \u043F\u043E\u0434\u0434\u0435\u0440\u0436\u0438\u0432\u0430\u0435\u0442 \u0442\u0435\u0433 video.");
 };
 
-var useStyles$5 = /*#__PURE__*/core.makeStyles(function (theme) {
+var useStyles$5 = /*#__PURE__*/styles.makeStyles(function (theme) {
   var _mediaContent;
 
-  return core.createStyles({
+  return styles.createStyles({
     mediaContent: (_mediaContent = {
-      maxWidth: "350px",
-      maxHeight: "350px",
+      maxWidth: 350,
+      maxHeight: 350,
       cursor: "pointer"
     }, _mediaContent[theme.breakpoints.down("xs")] = {
-      maxWidth: "250px",
-      maxHeight: "250px"
+      maxWidth: 250,
+      maxHeight: 250
     }, _mediaContent)
   });
 });
@@ -1188,8 +1187,8 @@ var MessageContent = function MessageContent(_ref) {
   return null;
 };
 
-var useStyles$6 = /*#__PURE__*/core.makeStyles(function (theme) {
-  return core.createStyles({
+var useStyles$6 = /*#__PURE__*/styles.makeStyles(function (theme) {
+  return styles.createStyles({
     rootContact: {
       "& span": {
         float: "right",
@@ -1220,14 +1219,14 @@ var useStyles$6 = /*#__PURE__*/core.makeStyles(function (theme) {
     rootNotify: {
       justifyContent: "center",
       "& > *": {
-        padding: "0px " + theme.spacing(1) + "px",
-        borderRadius: "16px",
+        padding: "0px " + theme.spacing(1),
+        borderRadius: 16,
         fontWeight: 500
       }
     },
     message: {
       maxWidth: "85%",
-      borderRadius: "16px",
+      borderRadius: 16,
       padding: theme.spacing(1)
     },
     lastMessage: {},
@@ -1265,7 +1264,7 @@ var wrapMessage = function wrapMessage(apiUrl, message, classes, isUserLast, onC
   var className = isUserLast ? classes.message + " " + classes.lastMessage : classes.message;
 
   if (messageType === "file") {
-    return /*#__PURE__*/React.createElement(core.Link, {
+    return /*#__PURE__*/React.createElement(material.Link, {
       className: className + " " + classes.file,
       underline: "none",
       href: apiUrl + "/static/file/" + message.content,
@@ -1276,7 +1275,7 @@ var wrapMessage = function wrapMessage(apiUrl, message, classes, isUserLast, onC
   }
 
   var isMedia = messageType === "image" || messageType === "video" || messageType === "video_conference";
-  return /*#__PURE__*/React.createElement(core.Box, {
+  return /*#__PURE__*/React.createElement(material.Box, {
     display: "flex",
     flexDirection: isMedia ? "column" : "row",
     flexWrap: "wrap",
@@ -1303,7 +1302,7 @@ var Message = function Message(props) {
   if (message.messageType === "notify") {
     // Уведомление - особый случай
     var content = message.content[0] === "{" ? JSON.parse(message.content) : message.content;
-    return /*#__PURE__*/React.createElement(core.ListItem, {
+    return /*#__PURE__*/React.createElement(material.ListItem, {
       className: classes.rootNotify
     }, /*#__PURE__*/React.createElement(lab.Alert, {
       severity: typeof content === "string" ? "info" : content.severity,
@@ -1313,9 +1312,9 @@ var Message = function Message(props) {
 
   if (message.isRevoke) {
     // Удаленное сообщение
-    return /*#__PURE__*/React.createElement(core.ListItem, {
+    return /*#__PURE__*/React.createElement(material.ListItem, {
       className: classes.rootNotify
-    }, /*#__PURE__*/React.createElement(core.Typography, {
+    }, /*#__PURE__*/React.createElement(material.Typography, {
       variant: "body2",
       ref: refOnLastMess,
       align: "center"
@@ -1323,7 +1322,7 @@ var Message = function Message(props) {
   }
 
   var isMine = user.userId === message.userId;
-  return /*#__PURE__*/React.createElement(core.ListItem, {
+  return /*#__PURE__*/React.createElement(material.ListItem, {
     className: isMine ? classes.rootUser : classes.rootContact
   }, wrapMessage(apiUrl, message, classes, isUserLast, props.onContextMenu, /*#__PURE__*/React.createElement(React.Fragment, null, !isMine && isGroupMessage && owner && isUserFirst && /*#__PURE__*/React.createElement("div", {
     className: classes.header
@@ -1335,9 +1334,9 @@ var Message = function Message(props) {
   })), /*#__PURE__*/React.createElement("div", {
     className: classes.status,
     ref: refOnLastMess
-  }, /*#__PURE__*/React.createElement("span", null, isMine ? message.status === 0 ? /*#__PURE__*/React.createElement(icons.Done, {
+  }, /*#__PURE__*/React.createElement("span", null, isMine ? message.status === 0 ? /*#__PURE__*/React.createElement(iconsMaterial.Done, {
     className: classes.statusImage
-  }) : /*#__PURE__*/React.createElement(icons.DoneAll, {
+  }) : /*#__PURE__*/React.createElement(iconsMaterial.DoneAll, {
     className: classes.statusImage
   }) : null, formatTime(message.cdate))))));
 };
@@ -1349,12 +1348,12 @@ var ContactStatus = function ContactStatus(props) {
   if (props.isTyping) return /*#__PURE__*/React__default.createElement(Typing, {
     message: t("CHAT.STATUS.TYPING")
   });
-  if (props.contact.online === 1) return /*#__PURE__*/React__default.createElement(core.Typography, {
+  if (props.contact.online === 1) return /*#__PURE__*/React__default.createElement(material.Typography, {
     variant: "body2",
     color: "primary",
     component: "span"
   }, t("CHAT.STATUS.ONLINE"));
-  return /*#__PURE__*/React__default.createElement(core.Typography, {
+  return /*#__PURE__*/React__default.createElement(material.Typography, {
     variant: "body2",
     color: "textSecondary",
     component: "span"
@@ -1375,19 +1374,19 @@ var ContactList = function ContactList(props) {
   var apiUrl = props.apiUrl,
       contacts = props.contacts,
       owner = props.owner;
-  return /*#__PURE__*/React__default.createElement(core.List, {
+  return /*#__PURE__*/React__default.createElement(material.List, {
     "aria-label": "contacts"
   }, contacts.map(function (contact) {
-    return /*#__PURE__*/React__default.createElement(core.ListItem, {
+    return /*#__PURE__*/React__default.createElement(material.ListItem, {
       button: true,
       key: contact.userId,
       onClick: function onClick() {
         return props.onClick && props.onClick(contact);
       }
-    }, /*#__PURE__*/React__default.createElement(core.ListItemAvatar, null, /*#__PURE__*/React__default.createElement(core.Avatar, {
+    }, /*#__PURE__*/React__default.createElement(material.ListItemAvatar, null, /*#__PURE__*/React__default.createElement(material.Avatar, {
       alt: contact.username,
       src: "" + apiUrl + contact.avatar
-    })), /*#__PURE__*/React__default.createElement(core.ListItemText, {
+    })), /*#__PURE__*/React__default.createElement(material.ListItemText, {
       primary: /*#__PURE__*/React__default.createElement("span", null, contact.username, " ", owner === contact.userId && /*#__PURE__*/React__default.createElement(StarIcon, {
         className: classes.star,
         color: "primary"
@@ -1417,11 +1416,11 @@ var AddContact = function AddContact(props) {
     onClose(contact);
   };
 
-  return /*#__PURE__*/React__default.createElement(core.Dialog, {
+  return /*#__PURE__*/React__default.createElement(material.Dialog, {
     onClose: handleClose,
     "aria-labelledby": "add-contact-title",
     open: open
-  }, /*#__PURE__*/React__default.createElement(core.DialogTitle, {
+  }, /*#__PURE__*/React__default.createElement(material.DialogTitle, {
     id: "switch-operator-title"
   }, t("CHAT.ADD_CONTACT")), /*#__PURE__*/React__default.createElement(ContactList, {
     apiUrl: apiUrl,
@@ -1481,8 +1480,8 @@ var RoomHeader = function RoomHeader(_ref) {
       addOperatorOpen = _React$useState2[0],
       setAddOperatorOpen = _React$useState2[1];
 
-  if (!chat) return /*#__PURE__*/React__default.createElement(core.CardHeader, {
-    avatar: /*#__PURE__*/React__default.createElement(core.Avatar, null),
+  if (!chat) return /*#__PURE__*/React__default.createElement(material.CardHeader, {
+    avatar: /*#__PURE__*/React__default.createElement(material.Avatar, null),
     title: "",
     subheader: "",
     className: className
@@ -1511,8 +1510,8 @@ var RoomHeader = function RoomHeader(_ref) {
     var _group$members2;
 
     // группа
-    return /*#__PURE__*/React__default.createElement(core.CardHeader, {
-      avatar: /*#__PURE__*/React__default.createElement(core.Avatar, {
+    return /*#__PURE__*/React__default.createElement(material.CardHeader, {
+      avatar: /*#__PURE__*/React__default.createElement(material.Avatar, {
         alt: group.name,
         className: classes.avatarGroup
       }, /*#__PURE__*/React__default.createElement(GroupIcon, null), " "),
@@ -1522,7 +1521,7 @@ var RoomHeader = function RoomHeader(_ref) {
         "aria-haspopup": "true",
         onMouseEnter: handlePopoverOpen,
         onMouseLeave: handlePopoverClose
-      }, getGroupStatus(group, t)), /*#__PURE__*/React__default.createElement(core.Popover, {
+      }, getGroupStatus(group, t)), /*#__PURE__*/React__default.createElement(material.Popover, {
         id: "mouse-over-popover",
         className: classes.popover,
         classes: {
@@ -1546,7 +1545,7 @@ var RoomHeader = function RoomHeader(_ref) {
         owner: group.userId
       }))),
       className: className,
-      action: /*#__PURE__*/React__default.createElement(React__default.Fragment, null, user.role === 4 && /*#__PURE__*/React__default.createElement(React__default.Fragment, null, /*#__PURE__*/React__default.createElement(core.IconButton, {
+      action: /*#__PURE__*/React__default.createElement(React__default.Fragment, null, user.role === 4 && /*#__PURE__*/React__default.createElement(React__default.Fragment, null, /*#__PURE__*/React__default.createElement(material.IconButton, {
         "aria-label": "add user",
         onClick: handleAddOperatorOpen
       }, /*#__PURE__*/React__default.createElement(PersonAddIcon, null)), /*#__PURE__*/React__default.createElement(AddContact, {
@@ -1556,7 +1555,7 @@ var RoomHeader = function RoomHeader(_ref) {
         onClose: handleAddOperatorClose
       })), user.role === 4 && ((_group$members2 = group.members) == null ? void 0 : _group$members2.find(function (it) {
         return it.userId !== user.userId && it.role === 4;
-      })) && onLeaveGroup && /*#__PURE__*/React__default.createElement(core.IconButton, {
+      })) && onLeaveGroup && /*#__PURE__*/React__default.createElement(material.IconButton, {
         "aria-label": "leave group",
         onClick: function onClick() {
           return onLeaveGroup(group);
@@ -1568,8 +1567,8 @@ var RoomHeader = function RoomHeader(_ref) {
   var contact = chat;
   var isTyping = !!(typing != null && typing.contactId) && (typing == null ? void 0 : typing.userId) === contact.userId; //console.log("conference", conference, "user", user, "contact", contact)
 
-  return /*#__PURE__*/React__default.createElement(core.CardHeader, {
-    avatar: /*#__PURE__*/React__default.createElement(core.Avatar, {
+  return /*#__PURE__*/React__default.createElement(material.CardHeader, {
+    avatar: /*#__PURE__*/React__default.createElement(material.Avatar, {
       alt: contact.username,
       src: "" + apiUrl + contact.avatar
     }),
@@ -1579,7 +1578,7 @@ var RoomHeader = function RoomHeader(_ref) {
       isTyping: isTyping
     }),
     className: className,
-    action: /*#__PURE__*/React__default.createElement(React__default.Fragment, null, conference != null && onVideoEnd != null && /*#__PURE__*/React__default.createElement(core.Button, {
+    action: /*#__PURE__*/React__default.createElement(React__default.Fragment, null, conference != null && onVideoEnd != null && /*#__PURE__*/React__default.createElement(material.Button, {
       "aria-label": "cancel call",
       variant: "contained",
       color: "primary",
@@ -1591,7 +1590,7 @@ var RoomHeader = function RoomHeader(_ref) {
       onClick: function onClick() {
         return onVideoEnd(conference);
       }
-    }, t("CHAT.CONFERENCE.FINISH")), conference == null && onVideoCall != null && user.role === 3 && /*#__PURE__*/React__default.createElement(core.Button, {
+    }, t("CHAT.CONFERENCE.FINISH")), conference == null && onVideoCall != null && user.role === 3 && /*#__PURE__*/React__default.createElement(material.Button, {
       "aria-label": "video call",
       variant: "contained",
       color: "primary",
@@ -1605,8 +1604,8 @@ var RoomHeader = function RoomHeader(_ref) {
   });
 };
 
-var useStyles$9 = /*#__PURE__*/core.makeStyles(function (theme) {
-  return core.createStyles({
+var useStyles$9 = /*#__PURE__*/styles.makeStyles(function (theme) {
+  return styles.createStyles({
     root: {
       width: "100%",
       minWidth: 360,
@@ -1792,13 +1791,14 @@ var Room = function Room(props) {
     setMenuState(initialMenuState);
     if (props.onMeesageDelete && chat && message) props.onMeesageDelete(chat, message);
   }, [menuState.message]);
-  return /*#__PURE__*/React__default.createElement(core.Card, {
+  console.log("messages", messages);
+  return /*#__PURE__*/React__default.createElement(material.Card, {
     elevation: 1,
     className: classes.root
-  }, /*#__PURE__*/React__default.createElement(core.Box, {
+  }, /*#__PURE__*/React__default.createElement(material.Box, {
     display: "flex",
     flexDirection: "row"
-  }, props.onExitRoom && chat && /*#__PURE__*/React__default.createElement(core.IconButton, {
+  }, props.onExitRoom && chat && /*#__PURE__*/React__default.createElement(material.IconButton, {
     "aria-label": "exit room",
     onClick: function onClick() {
       return props.onExitRoom && props.onExitRoom(chat);
@@ -1817,11 +1817,11 @@ var Room = function Room(props) {
     onLeaveGroup: props.onLeaveGroup
   }), loading && /*#__PURE__*/React__default.createElement("div", {
     className: classes.roomProgress
-  }, /*#__PURE__*/React__default.createElement(core.CircularProgress, {
+  }, /*#__PURE__*/React__default.createElement(material.CircularProgress, {
     size: 20
-  }))), /*#__PURE__*/React__default.createElement(core.Divider, null), /*#__PURE__*/React__default.createElement(core.CardContent, {
+  }))), /*#__PURE__*/React__default.createElement(material.Divider, null), /*#__PURE__*/React__default.createElement(material.CardContent, {
     className: classes.messageListOuter
-  }, !isEmpty(messages) ? /*#__PURE__*/React__default.createElement(core.List, {
+  }, !isEmpty(messages) ? /*#__PURE__*/React__default.createElement(material.List, {
     className: classes.messageList,
     onScroll: onScroll
   }, messages != null && messages.map(function (message, inx) {
@@ -1839,11 +1839,11 @@ var Room = function Room(props) {
       },
       refOnLastMess: inx === messages.length - 1 ? refOnLastMess : null
     });
-  })) : null), /*#__PURE__*/React__default.createElement(core.Divider, null), /*#__PURE__*/React__default.createElement(core.CardContent, null, /*#__PURE__*/React__default.createElement(Entry, {
+  })) : null), /*#__PURE__*/React__default.createElement(material.Divider, null), /*#__PURE__*/React__default.createElement(material.CardContent, null, /*#__PURE__*/React__default.createElement(Entry, {
     chat: chat,
     onTyping: props.onTyping,
     onSendMessage: props.onSendMessage
-  })), /*#__PURE__*/React__default.createElement(core.Menu, {
+  })), /*#__PURE__*/React__default.createElement(material.Menu, {
     keepMounted: true,
     open: menuState.mouseY !== null,
     onClose: handleMenuClose,
@@ -1852,29 +1852,29 @@ var Room = function Room(props) {
       top: menuState.mouseY,
       left: menuState.mouseX
     } : undefined
-  }, /*#__PURE__*/React__default.createElement(core.MenuItem, {
+  }, /*#__PURE__*/React__default.createElement(material.MenuItem, {
     onClick: handleCopy,
     disabled: !menuState.canCopy
   }, /*#__PURE__*/React__default.createElement("span", {
     className: classes.flexAll
-  }, t("CHAT.MESSAGE.MENU.COPY")), /*#__PURE__*/React__default.createElement(core.ListItemIcon, {
+  }, t("CHAT.MESSAGE.MENU.COPY")), /*#__PURE__*/React__default.createElement(material.ListItemIcon, {
     className: classes.flexEnd
   }, /*#__PURE__*/React__default.createElement(FileCopyIcon, {
     fontSize: "small"
-  }))), /*#__PURE__*/React__default.createElement(core.MenuItem, {
+  }))), /*#__PURE__*/React__default.createElement(material.MenuItem, {
     onClick: handleDelete,
     disabled: !menuState.canDelete
   }, /*#__PURE__*/React__default.createElement("span", {
     className: classes.flexAll
-  }, t("CHAT.MESSAGE.MENU.DELETE")), /*#__PURE__*/React__default.createElement(core.ListItemIcon, {
+  }, t("CHAT.MESSAGE.MENU.DELETE")), /*#__PURE__*/React__default.createElement(material.ListItemIcon, {
     className: classes.flexEnd
   }, /*#__PURE__*/React__default.createElement(DeleteIcon, {
     fontSize: "small"
   })))));
 };
 
-var useStyles$a = /*#__PURE__*/core.makeStyles(function (theme) {
-  return core.createStyles({
+var useStyles$a = /*#__PURE__*/styles.makeStyles(function (theme) {
+  return styles.createStyles({
     main: {
       flex: "1 1 auto",
       whiteSpace: "nowrap",
@@ -1888,7 +1888,7 @@ var useStyles$a = /*#__PURE__*/core.makeStyles(function (theme) {
     },
     unread: {
       justifyContent: "flex-end",
-      maxHeight: "20px"
+      maxHeight: 20
     },
     avatarGroup: {
       backgroundColor: "#28B7C6",
@@ -1921,8 +1921,8 @@ var getMessageText = function getMessageText(message, t) {
   }
 };
 
-var TypingBadge = /*#__PURE__*/core.withStyles(function (theme) {
-  return core.createStyles({
+var TypingBadge = /*#__PURE__*/styles.withStyles(function (theme) {
+  return styles.createStyles({
     badge: {
       backgroundColor: "#44b700",
       color: "#44b700",
@@ -1950,18 +1950,18 @@ var TypingBadge = /*#__PURE__*/core.withStyles(function (theme) {
       }
     }
   });
-})(core.Badge);
-var OnlineBadge = /*#__PURE__*/core.withStyles(function (theme) {
-  return core.createStyles({
+})(material.Badge);
+var OnlineBadge = /*#__PURE__*/styles.withStyles(function (theme) {
+  return styles.createStyles({
     badge: {
       backgroundColor: theme.palette.primary.main,
       boxShadow: "0 0 0 2px " + theme.palette.background.paper
     }
   });
-})(core.Badge);
+})(material.Badge);
 
 var contactAvatar = function contactAvatar(apiUrl, contact, typing) {
-  var avatar = /*#__PURE__*/React__default.createElement(core.Avatar, {
+  var avatar = /*#__PURE__*/React__default.createElement(material.Avatar, {
     alt: contact.username,
     src: "" + apiUrl + contact.avatar
   });
@@ -1995,22 +1995,22 @@ var RoomListItem = function RoomListItem(props) {
       chat = props.chat,
       typing = props.typing;
   var roomName = getChatName(chat);
-  var avatar = chat.groupId ? /*#__PURE__*/React__default.createElement(core.Avatar, {
+  var avatar = chat.groupId ? /*#__PURE__*/React__default.createElement(material.Avatar, {
     alt: roomName,
     className: classes.avatarGroup
   }, /*#__PURE__*/React__default.createElement(GroupIcon, null), " ") : contactAvatar(apiUrl, chat, typing);
   var lastMessage = chat.messages && chat.messages.length > 0 ? chat.messages[chat.messages.length - 1] : null;
   var roomText = getMessageText(lastMessage, t);
   var roomTime = lastMessage == null ? void 0 : lastMessage.cdate;
-  return /*#__PURE__*/React__default.createElement(core.ListItem, {
+  return /*#__PURE__*/React__default.createElement(material.ListItem, {
     button: true,
     selected: props.active,
     onClick: props.onClick
-  }, /*#__PURE__*/React__default.createElement(core.ListItemAvatar, null, avatar), /*#__PURE__*/React__default.createElement(core.ListItemText, {
+  }, /*#__PURE__*/React__default.createElement(material.ListItemAvatar, null, avatar), /*#__PURE__*/React__default.createElement(material.ListItemText, {
     secondaryTypographyProps: {
       component: "span"
     },
-    primary: /*#__PURE__*/React__default.createElement(core.Box, {
+    primary: /*#__PURE__*/React__default.createElement(material.Box, {
       display: "flex",
       flexDirection: "row"
     }, /*#__PURE__*/React__default.createElement("span", {
@@ -2018,12 +2018,12 @@ var RoomListItem = function RoomListItem(props) {
     }, roomName), /*#__PURE__*/React__default.createElement("span", {
       className: classes.time
     }, formatTime(roomTime))),
-    secondary: /*#__PURE__*/React__default.createElement(core.Box, {
+    secondary: /*#__PURE__*/React__default.createElement(material.Box, {
       display: "flex",
       flexDirection: "row"
     }, /*#__PURE__*/React__default.createElement("span", {
       className: classes.main
-    }, roomText), chat.unreadCount ? /*#__PURE__*/React__default.createElement(core.Chip, {
+    }, roomText), chat.unreadCount ? /*#__PURE__*/React__default.createElement(material.Chip, {
       className: classes.unread,
       component: "span",
       size: "small",
@@ -2033,7 +2033,7 @@ var RoomListItem = function RoomListItem(props) {
   }));
 };
 
-var useStyles$b = /*#__PURE__*/styles$1.makeStyles(function () {
+var useStyles$b = /*#__PURE__*/styles.makeStyles(function () {
   return {
     root: {
       width: "100%",
@@ -2099,11 +2099,11 @@ var RoomList = function RoomList(props) {
   //const activeItem = (id: number) => id === props.activeRoom?.userId;
 
 
-  return /*#__PURE__*/React__default.createElement(core.Card, {
+  return /*#__PURE__*/React__default.createElement(material.Card, {
     elevation: 1,
     className: classes.root
-  }, /*#__PURE__*/React__default.createElement(core.CardHeader, {
-    title: /*#__PURE__*/React__default.createElement(core.TextField, {
+  }, /*#__PURE__*/React__default.createElement(material.CardHeader, {
+    title: /*#__PURE__*/React__default.createElement(material.TextField, {
       className: classes.searchField,
       label: t("CHAT.INPUT_SEARCH_CONTACT"),
       variant: "outlined",
@@ -2111,7 +2111,7 @@ var RoomList = function RoomList(props) {
       fullWidth: true,
       onChange: onSearchChange
     })
-  }), /*#__PURE__*/React__default.createElement(core.Divider, null), /*#__PURE__*/React__default.createElement(List, {
+  }), /*#__PURE__*/React__default.createElement(material.Divider, null), /*#__PURE__*/React__default.createElement(List, {
     component: "nav",
     "aria-label": "rooms"
   }, !isEmpty(chats) && chats.map(function (chat) {
@@ -2128,12 +2128,12 @@ var RoomList = function RoomList(props) {
   })));
 };
 
-var useStyles$c = /*#__PURE__*/core.makeStyles(function () {
+var useStyles$c = /*#__PURE__*/styles.makeStyles(function () {
   return {
     root: {
       width: "100%",
       height: "100%",
-      borderRadius: "8px"
+      borderRadius: 8
     }
   };
 });
@@ -2161,7 +2161,7 @@ var Conference = function Conference(_ref) {
     return function () {
       window.removeEventListener("message", listener);
     };
-  }, [conference, onClose]);
+  }, [conference == null ? void 0 : conference.id]);
   return /*#__PURE__*/React__default.createElement("iframe", {
     title: "conference",
     className: classes.root,
@@ -2172,20 +2172,20 @@ var Conference = function Conference(_ref) {
   });
 };
 
-var useStyles$d = /*#__PURE__*/core.makeStyles(function () {
+var useStyles$d = /*#__PURE__*/styles.makeStyles(function () {
   return {
     root: {
       width: "100%",
       height: "100%",
-      borderRadius: "8px",
+      borderRadius: 8,
       display: "flex",
       flexDirection: "column",
       justifyContent: "center",
       alignItems: "center"
     },
     pulse: {
-      height: "100px",
-      width: "100px",
+      height: 100,
+      width: 100,
       borderRadius: "50%",
       display: "flex",
       justifyContent: "center",
@@ -2218,7 +2218,7 @@ var useStyles$d = /*#__PURE__*/core.makeStyles(function () {
     footer: {
       width: "100%",
       alignSelf: "flex-end",
-      paddingTop: "64px",
+      paddingTop: 64,
       display: "flex",
       justifyContent: "center"
     },
@@ -2249,19 +2249,19 @@ var ConferenceCall = function ConferenceCall(_ref) {
   var _useTranslation = reactI18next.useTranslation(),
       t = _useTranslation.t;
 
-  return /*#__PURE__*/React__default.createElement(core.Paper, {
+  return /*#__PURE__*/React__default.createElement(material.Paper, {
     className: classes.root
   }, /*#__PURE__*/React__default.createElement("div", {
     className: classes.pulse
-  }, contact ? /*#__PURE__*/React__default.createElement(core.Avatar, {
+  }, contact ? /*#__PURE__*/React__default.createElement(material.Avatar, {
     className: classes.avatar,
     alt: contact.username,
     src: "" + apiUrl + contact.avatar
-  }) : /*#__PURE__*/React__default.createElement(core.Avatar, {
+  }) : /*#__PURE__*/React__default.createElement(material.Avatar, {
     className: classes.avatar
   })), /*#__PURE__*/React__default.createElement("div", {
     className: classes.footer
-  }, /*#__PURE__*/React__default.createElement(core.Button, {
+  }, /*#__PURE__*/React__default.createElement(material.Button, {
     variant: "contained",
     color: "primary",
     onClick: function onClick() {
@@ -3832,18 +3832,18 @@ var getRingAudio = function getRingAudio() {
 };
 
 var ChatPage = function ChatPage(_ref) {
-  var _state$conference2, _state$conference2$da, _state$activeRoom, _state$activeRoom2, _state$activeRoom3, _state$activeRoom3$me, _state$activeRoom4;
+  var _state$conference2, _state$conference2$da, _state$conference3, _state$activeRoom, _state$activeRoom2, _state$activeRoom3;
 
   var inModale = _ref.inModale,
       onlyChatGroupId = _ref.onlyChatGroupId;
-  var useStyles = core.makeStyles(function (theme) {
+  var useStyles = styles.makeStyles(function (theme) {
     var _root, _innerBox;
 
     return {
       root: (_root = {
         minWidth: 300,
         minHeight: 470,
-        height: inModale ? "100%" : "calc(100vh - " + theme.spacing(8) + "px)",
+        height: inModale ? "100%" : "calc(100vh - " + theme.spacing(8) + ")",
         padding: 0
       }, _root[theme.breakpoints.down("xs")] = {
         height: "100vh",
@@ -3852,7 +3852,7 @@ var ChatPage = function ChatPage(_ref) {
       innerBox: (_innerBox = {
         height: "100%",
         width: "100%",
-        margin: inModale ? 0 : theme.spacing(4) + "px 0"
+        margin: inModale ? 0 : theme.spacing(4) + " 0"
       }, _innerBox[theme.breakpoints.down("xs")] = {
         margin: 0
       }, _innerBox),
@@ -3863,7 +3863,7 @@ var ChatPage = function ChatPage(_ref) {
     };
   });
   var classes = useStyles();
-  var isMobile = core.useMediaQuery(function (theme) {
+  var isMobile = material.useMediaQuery(function (theme) {
     return theme.breakpoints.down("sm");
   });
 
@@ -4093,26 +4093,28 @@ var ChatPage = function ChatPage(_ref) {
 
   var Contacts = React.useMemo(function () {
     return !isEmpty(state.conference.data) ? state.conference.joined ? /*#__PURE__*/React.createElement(GetConference, null) : /*#__PURE__*/React.createElement(GetConferenceCall, null) : /*#__PURE__*/React.createElement(GetRoomList, null);
-  }, [state.conference, (_state$activeRoom = state.activeRoom) == null ? void 0 : _state$activeRoom.groupId, (_state$activeRoom2 = state.activeRoom) == null ? void 0 : _state$activeRoom2.userId, (_state$activeRoom3 = state.activeRoom) == null ? void 0 : (_state$activeRoom3$me = _state$activeRoom3.messages) == null ? void 0 : _state$activeRoom3$me.length, (_state$activeRoom4 = state.activeRoom) == null ? void 0 : _state$activeRoom4.unreadCount]);
-  var isLeftPart = onlyChatGroupId == null || !isEmpty(state.conference.data);
-  return /*#__PURE__*/React.createElement(core.Container, {
+  }, [(_state$conference3 = state.conference) == null ? void 0 : _state$conference3.data, (_state$activeRoom = state.activeRoom) == null ? void 0 : _state$activeRoom.groupId, (_state$activeRoom2 = state.activeRoom) == null ? void 0 : _state$activeRoom2.userId, //state.activeRoom?.messages?.length,
+  (_state$activeRoom3 = state.activeRoom) == null ? void 0 : _state$activeRoom3.unreadCount]);
+  var isLeftPart = onlyChatGroupId == null || !isEmpty(state.conference.data); //console.log("state.conference", state.conference)
+
+  return /*#__PURE__*/React.createElement(material.Container, {
     maxWidth: "lg",
     className: classes.root
-  }, /*#__PURE__*/React.createElement(core.Box, {
+  }, /*#__PURE__*/React.createElement(material.Box, {
     className: classes.innerBox
-  }, isMobile ? /*#__PURE__*/React.createElement(React.Fragment, null, isLeftPart && Contacts, renderRoom) : /*#__PURE__*/React.createElement(core.Grid, {
+  }, isMobile ? /*#__PURE__*/React.createElement(React.Fragment, null, isLeftPart && Contacts, renderRoom) : /*#__PURE__*/React.createElement(material.Grid, {
     container: true,
     spacing: 1,
     className: classes.innerGrid
-  }, isLeftPart && /*#__PURE__*/React.createElement(core.Grid, {
+  }, isLeftPart && /*#__PURE__*/React.createElement(material.Grid, {
     item: true,
     sm: 4,
     className: classes.innerGrid
-  }, Contacts), /*#__PURE__*/React.createElement(core.Grid, {
+  }, Contacts), /*#__PURE__*/React.createElement(material.Grid, {
     item: true,
     sm: isLeftPart ? 8 : 12,
     className: classes.innerGrid
-  }, renderRoom))), /*#__PURE__*/React.createElement(core.Snackbar, {
+  }, renderRoom))), /*#__PURE__*/React.createElement(material.Snackbar, {
     anchorOrigin: {
       vertical: "top",
       horizontal: "center"

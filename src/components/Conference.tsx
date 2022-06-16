@@ -1,12 +1,12 @@
 import React, { useEffect } from "react";
-import { makeStyles } from "@material-ui/core";
+import { makeStyles } from '@mui/styles';
 import { ConferenceData } from "../types";
 
 const useStyles = makeStyles(() => ({
   root: {
     width: "100%",
     height: "100%",
-    borderRadius: "8px",
+    borderRadius: 8,
   },
 }));
 
@@ -23,6 +23,7 @@ const Conference: React.FC<ConferenceProps> = ({
   const ref = React.useRef<HTMLIFrameElement>(null);
 
   useEffect(() => {
+
     const listener = ({ source, data }: MessageEvent) => {
       if (source === ref.current?.contentWindow) {
         const { type } = data;
@@ -44,7 +45,7 @@ const Conference: React.FC<ConferenceProps> = ({
     return () => {
       window.removeEventListener("message", listener);
     };
-  }, [conference, onClose]);
+  }, [conference?.id]);
 
   return (
     <iframe

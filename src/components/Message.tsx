@@ -1,17 +1,16 @@
 import * as React from "react";
 import {
   Box,
-  createStyles,
   Link,
   ListItem,
-  makeStyles,
-  Theme,
   Typography,
-} from "@material-ui/core";
-import { DoneAll, Done } from "@material-ui/icons";
+} from "@mui/material";
+import { Theme } from '@mui/material/styles';
+import { makeStyles, createStyles } from '@mui/styles';
+import { DoneAll, Done } from "@mui/icons-material";
 import { formatTime } from "../utils/common";
 import MessageContent from "./MessageContent";
-import { Alert } from "@material-ui/lab";
+import { Alert } from "@mui/lab";
 import { useTranslation } from "react-i18next";
 import { ChatMessage, Contact, PrivateMessage, User } from "../types";
 
@@ -59,14 +58,14 @@ const useStyles = makeStyles((theme: Theme) =>
     rootNotify: {
       justifyContent: "center",
       "& > *": {
-        padding: `0px ${theme.spacing(1)}px`,
-        borderRadius: "16px",
+        padding: `0px ${theme.spacing(1)}`,
+        borderRadius: 16,
         fontWeight: 500,
       },
     },
     message: {
       maxWidth: "85%",
-      borderRadius: "16px",
+      borderRadius: 16,
       padding: theme.spacing(1),
     },
     lastMessage: {},

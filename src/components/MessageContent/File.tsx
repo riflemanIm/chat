@@ -2,11 +2,9 @@ import React from "react";
 import {
   Avatar,
   Box,
-  createStyles,
-  makeStyles,
-  Theme,
-} from "@material-ui/core";
-
+} from "@mui/material";
+import { Theme } from '@mui/material/styles';
+import { makeStyles, createStyles } from '@mui/styles';
 import { getFileMeta, splitFileName } from "../../utils/common";
 import { ChatMessage } from "../../types";
 

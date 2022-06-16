@@ -28,17 +28,24 @@ export function isUrl(text: string): boolean {
  * Формитирование времени сообщения
  * @param time
  */
-export function formatTime(
-  time: Date | string | undefined
-): string | Date | null {
+export function formatTime(time: Date | string | undefined) {
   if (typeof time === "undefined") return null;
   if (typeof time === "string") time = new Date(time);
   // больше чем вчера
-  if (moment().add(-1, "days").startOf("day").isAfter(time)) {
+  if (
+    moment()
+      .add(-1, "days")
+      .startOf("day")
+      .isAfter(time)
+  ) {
     return moment(time).format("DD.MM.YYYY HH:mm");
   }
   // вчера
-  if (moment().startOf("day").isAfter(time)) {
+  if (
+    moment()
+      .startOf("day")
+      .isAfter(time)
+  ) {
     return `Вчера в ${moment(time).format("HH:mm")}`;
   }
 
@@ -49,7 +56,9 @@ export function formatTime(
  * Раскрыть содержимое
  * @param content - данные в строке
  */
-export function getFileMeta(content: string): {
+export function getFileMeta(
+  content: string
+): {
   date: string;
   userId: string;
   size: string;
@@ -63,11 +72,13 @@ export function getFileMeta(content: string): {
     date,
     userId,
     size,
-    name,
+    name
   };
 }
 
-export function getImageMeta(content: string): {
+export function getImageMeta(
+  content: string
+): {
   date: string;
   userId: string;
   width: string;
@@ -80,7 +91,7 @@ export function getImageMeta(content: string): {
     date,
     userId,
     width,
-    height,
+    height
   };
 }
 
@@ -89,11 +100,11 @@ export function splitFileName(name: string): { name: string; ext: string } {
   if (idx === -1)
     return {
       name,
-      ext: "",
+      ext: ""
     };
   return {
     name: name.slice(0, idx),
-    ext: name.slice(idx + 1),
+    ext: name.slice(idx + 1)
   };
 }
 

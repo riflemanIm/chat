@@ -5,10 +5,10 @@ import {
   ListItem,
   ListItemAvatar,
   ListItemText,
-} from "@material-ui/core";
-import StarIcon from "@material-ui/icons/Star";
+} from "@mui/material";
+import StarIcon from "@mui/icons-material/Star";
 import ContactStatus from "./ContactStatus";
-import { makeStyles } from "@material-ui/styles";
+import { makeStyles } from '@mui/styles';
 import { Contact } from "../types";
 
 const useStyles = makeStyles(() => ({

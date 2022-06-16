@@ -1,7 +1,6 @@
 import React, { useEffect } from "react";
-import { makeStyles } from "@material-ui/core/styles";
-import List from "@material-ui/core/List";
-import { Card, CardHeader, Divider, TextField } from "@material-ui/core";
+import List from "@mui/material/List";
+import { Card, CardHeader, Divider, TextField } from "@mui/material";
 import RoomListItem from "./RoomListItem";
 import {
   chatRoomComparer,
@@ -11,6 +10,7 @@ import {
 } from "../utils/common";
 import { useTranslation } from "react-i18next";
 import { ChatRoom, Contact, Group, SetTyping, User } from "../types";
+import { makeStyles } from '@mui/styles';
 
 const useStyles = makeStyles(() => ({
   root: {

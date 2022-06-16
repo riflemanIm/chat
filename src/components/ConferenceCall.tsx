@@ -1,21 +1,22 @@
 import React from "react";
-import { Avatar, Button, makeStyles, Paper } from "@material-ui/core";
+import { Avatar, Button,  Paper } from "@mui/material";
 import { ConferenceData, Contact } from "../types";
 import { useTranslation } from "react-i18next";
+import { makeStyles } from '@mui/styles';
 
 const useStyles = makeStyles(() => ({
   root: {
     width: "100%",
     height: "100%",
-    borderRadius: "8px",
+    borderRadius: 8,
     display: "flex",
     flexDirection: "column",
     justifyContent: "center",
     alignItems: "center",
   },
   pulse: {
-    height: "100px",
-    width: "100px",
+    height: 100,
+    width: 100,
     borderRadius: "50%",
     display: "flex",
     justifyContent: "center",
@@ -48,7 +49,7 @@ const useStyles = makeStyles(() => ({
   footer: {
     width: "100%",
     alignSelf: "flex-end",
-    paddingTop: "64px",
+    paddingTop: 64,
     display: "flex",
     justifyContent: "center",
   },

@@ -1,5 +1,7 @@
 import React from "react";
-import { createStyles, makeStyles, Theme, Typography } from "@material-ui/core";
+import { Typography } from "@mui/material";
+import { Theme } from '@mui/material/styles';
+import { makeStyles, createStyles } from '@mui/styles';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -9,8 +11,8 @@ const useStyles = makeStyles((theme: Theme) =>
     typingDot: {
       display: "inline-block",
       verticalAlign: "middle",
-      width: "4px",
-      height: "4px",
+      width: 4,
+      height: 4,
       margin: "0px 2px",
       background: theme.palette.primary.main,
       borderRadius: "50%",

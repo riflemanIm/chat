@@ -1,21 +1,20 @@
 import React__default, { createElement, Fragment, useCallback, useEffect, createContext, useContext, useState, useMemo } from 'react';
-import { Box, makeStyles, createStyles, Typography, TextField, InputAdornment, IconButton, SvgIcon, Popover, Avatar, ListItem, Link, List, ListItemAvatar, ListItemText, Dialog, DialogTitle, CardHeader, Button, Card, CircularProgress, Divider, CardContent, Menu, MenuItem, ListItemIcon, Chip, withStyles, Badge, Paper, useMediaQuery, Container, Grid, Snackbar } from '@material-ui/core';
-import FileCopyIcon from '@material-ui/icons/FileCopy';
-import DeleteIcon from '@material-ui/icons/Delete';
-import ArrowBackIcon from '@material-ui/icons/ArrowBack';
-import { InsertEmoticon, Send, Done, DoneAll } from '@material-ui/icons';
+import { Box, Typography, TextField, InputAdornment, IconButton, SvgIcon, Popover, Avatar, ListItem, Link, List, ListItemAvatar, ListItemText, Dialog, DialogTitle, CardHeader, Button, Card, CircularProgress, Divider, CardContent, Menu, MenuItem, ListItemIcon, Chip, Badge, Paper, useMediaQuery, Container, Grid, Snackbar } from '@mui/material';
+import { makeStyles, createStyles, withStyles } from '@mui/styles';
+import FileCopyIcon from '@mui/icons-material/FileCopy';
+import DeleteIcon from '@mui/icons-material/Delete';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import { InsertEmoticon, Send, Done, DoneAll } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 import moment from 'moment';
 import Viewer from 'react-viewer';
-import { Alert } from '@material-ui/lab';
-import GroupIcon from '@material-ui/icons/Group';
-import VideoCallIcon from '@material-ui/icons/VideoCall';
-import CallEndIcon from '@material-ui/icons/CallEnd';
-import PersonAddIcon from '@material-ui/icons/PersonAdd';
-import { makeStyles as makeStyles$1, createStyles as createStyles$1 } from '@material-ui/styles';
-import StarIcon from '@material-ui/icons/Star';
-import { makeStyles as makeStyles$2 } from '@material-ui/core/styles';
-import List$1 from '@material-ui/core/List';
+import { Alert } from '@mui/lab';
+import GroupIcon from '@mui/icons-material/Group';
+import VideoCallIcon from '@mui/icons-material/VideoCall';
+import CallEndIcon from '@mui/icons-material/CallEnd';
+import PersonAddIcon from '@mui/icons-material/PersonAdd';
+import StarIcon from '@mui/icons-material/Star';
+import List$1 from '@mui/material/List';
 import axios from 'axios';
 import io from 'socket.io-client';
 
@@ -45,7 +44,7 @@ var ContextMenuType;
   ContextMenuType["TOP_REVERT"] = "TOP_REVERT";
   ContextMenuType["TOP"] = "TOP";
   ContextMenuType["READ"] = "READ";
-  ContextMenuType["DELETE"] = "DELETE";
+  ContextMenuType["DELETE"] = "DELETE"; // Удалить
 })(ContextMenuType || (ContextMenuType = {}));
 
 var useStyles = /*#__PURE__*/makeStyles(function () {
@@ -253,8 +252,8 @@ var useStyles$1 = /*#__PURE__*/makeStyles(function (theme) {
     typingDot: {
       display: "inline-block",
       verticalAlign: "middle",
-      width: "4px",
-      height: "4px",
+      width: 4,
+      height: 4,
       margin: "0px 2px",
       background: theme.palette.primary.main,
       borderRadius: "50%",
@@ -1085,8 +1084,8 @@ var File = function File(_ref) {
 var useStyles$4 = /*#__PURE__*/makeStyles(function () {
   return {
     mediaContent: {
-      maxWidth: "350px",
-      maxHeight: "350px"
+      maxWidth: 350,
+      maxHeight: 350
     }
   };
 });
@@ -1116,12 +1115,12 @@ var useStyles$5 = /*#__PURE__*/makeStyles(function (theme) {
 
   return createStyles({
     mediaContent: (_mediaContent = {
-      maxWidth: "350px",
-      maxHeight: "350px",
+      maxWidth: 350,
+      maxHeight: 350,
       cursor: "pointer"
     }, _mediaContent[theme.breakpoints.down("xs")] = {
-      maxWidth: "250px",
-      maxHeight: "250px"
+      maxWidth: 250,
+      maxHeight: 250
     }, _mediaContent)
   });
 });
@@ -1220,14 +1219,14 @@ var useStyles$6 = /*#__PURE__*/makeStyles(function (theme) {
     rootNotify: {
       justifyContent: "center",
       "& > *": {
-        padding: "0px " + theme.spacing(1) + "px",
-        borderRadius: "16px",
+        padding: "0px " + theme.spacing(1),
+        borderRadius: 16,
         fontWeight: 500
       }
     },
     message: {
       maxWidth: "85%",
-      borderRadius: "16px",
+      borderRadius: 16,
       padding: theme.spacing(1)
     },
     lastMessage: {},
@@ -1361,7 +1360,7 @@ var ContactStatus = function ContactStatus(props) {
   }, t("CHAT.STATUS.OFFLINE"));
 };
 
-var useStyles$7 = /*#__PURE__*/makeStyles$1(function () {
+var useStyles$7 = /*#__PURE__*/makeStyles(function () {
   return {
     star: {
       fontSize: "0.85rem",
@@ -1430,8 +1429,8 @@ var AddContact = function AddContact(props) {
   }));
 };
 
-var useStyles$8 = /*#__PURE__*/makeStyles$1(function (theme) {
-  return createStyles$1({
+var useStyles$8 = /*#__PURE__*/makeStyles(function (theme) {
+  return createStyles({
     popover: {
       pointerEvents: "none"
     },
@@ -1792,6 +1791,7 @@ var Room = function Room(props) {
     setMenuState(initialMenuState);
     if (props.onMeesageDelete && chat && message) props.onMeesageDelete(chat, message);
   }, [menuState.message]);
+  console.log("messages", messages);
   return /*#__PURE__*/React__default.createElement(Card, {
     elevation: 1,
     className: classes.root
@@ -1888,7 +1888,7 @@ var useStyles$a = /*#__PURE__*/makeStyles(function (theme) {
     },
     unread: {
       justifyContent: "flex-end",
-      maxHeight: "20px"
+      maxHeight: 20
     },
     avatarGroup: {
       backgroundColor: "#28B7C6",
@@ -2033,7 +2033,7 @@ var RoomListItem = function RoomListItem(props) {
   }));
 };
 
-var useStyles$b = /*#__PURE__*/makeStyles$2(function () {
+var useStyles$b = /*#__PURE__*/makeStyles(function () {
   return {
     root: {
       width: "100%",
@@ -2133,7 +2133,7 @@ var useStyles$c = /*#__PURE__*/makeStyles(function () {
     root: {
       width: "100%",
       height: "100%",
-      borderRadius: "8px"
+      borderRadius: 8
     }
   };
 });
@@ -2161,7 +2161,7 @@ var Conference = function Conference(_ref) {
     return function () {
       window.removeEventListener("message", listener);
     };
-  }, [conference, onClose]);
+  }, [conference == null ? void 0 : conference.id]);
   return /*#__PURE__*/React__default.createElement("iframe", {
     title: "conference",
     className: classes.root,
@@ -2177,15 +2177,15 @@ var useStyles$d = /*#__PURE__*/makeStyles(function () {
     root: {
       width: "100%",
       height: "100%",
-      borderRadius: "8px",
+      borderRadius: 8,
       display: "flex",
       flexDirection: "column",
       justifyContent: "center",
       alignItems: "center"
     },
     pulse: {
-      height: "100px",
-      width: "100px",
+      height: 100,
+      width: 100,
       borderRadius: "50%",
       display: "flex",
       justifyContent: "center",
@@ -2218,7 +2218,7 @@ var useStyles$d = /*#__PURE__*/makeStyles(function () {
     footer: {
       width: "100%",
       alignSelf: "flex-end",
-      paddingTop: "64px",
+      paddingTop: 64,
       display: "flex",
       justifyContent: "center"
     },
@@ -3832,7 +3832,7 @@ var getRingAudio = function getRingAudio() {
 };
 
 var ChatPage = function ChatPage(_ref) {
-  var _state$conference2, _state$conference2$da, _state$activeRoom, _state$activeRoom2, _state$activeRoom3, _state$activeRoom3$me, _state$activeRoom4;
+  var _state$conference2, _state$conference2$da, _state$conference3, _state$activeRoom, _state$activeRoom2, _state$activeRoom3;
 
   var inModale = _ref.inModale,
       onlyChatGroupId = _ref.onlyChatGroupId;
@@ -3843,7 +3843,7 @@ var ChatPage = function ChatPage(_ref) {
       root: (_root = {
         minWidth: 300,
         minHeight: 470,
-        height: inModale ? "100%" : "calc(100vh - " + theme.spacing(8) + "px)",
+        height: inModale ? "100%" : "calc(100vh - " + theme.spacing(8) + ")",
         padding: 0
       }, _root[theme.breakpoints.down("xs")] = {
         height: "100vh",
@@ -3852,7 +3852,7 @@ var ChatPage = function ChatPage(_ref) {
       innerBox: (_innerBox = {
         height: "100%",
         width: "100%",
-        margin: inModale ? 0 : theme.spacing(4) + "px 0"
+        margin: inModale ? 0 : theme.spacing(4) + " 0"
       }, _innerBox[theme.breakpoints.down("xs")] = {
         margin: 0
       }, _innerBox),
@@ -4093,8 +4093,10 @@ var ChatPage = function ChatPage(_ref) {
 
   var Contacts = useMemo(function () {
     return !isEmpty(state.conference.data) ? state.conference.joined ? /*#__PURE__*/createElement(GetConference, null) : /*#__PURE__*/createElement(GetConferenceCall, null) : /*#__PURE__*/createElement(GetRoomList, null);
-  }, [state.conference, (_state$activeRoom = state.activeRoom) == null ? void 0 : _state$activeRoom.groupId, (_state$activeRoom2 = state.activeRoom) == null ? void 0 : _state$activeRoom2.userId, (_state$activeRoom3 = state.activeRoom) == null ? void 0 : (_state$activeRoom3$me = _state$activeRoom3.messages) == null ? void 0 : _state$activeRoom3$me.length, (_state$activeRoom4 = state.activeRoom) == null ? void 0 : _state$activeRoom4.unreadCount]);
-  var isLeftPart = onlyChatGroupId == null || !isEmpty(state.conference.data);
+  }, [(_state$conference3 = state.conference) == null ? void 0 : _state$conference3.data, (_state$activeRoom = state.activeRoom) == null ? void 0 : _state$activeRoom.groupId, (_state$activeRoom2 = state.activeRoom) == null ? void 0 : _state$activeRoom2.userId, //state.activeRoom?.messages?.length,
+  (_state$activeRoom3 = state.activeRoom) == null ? void 0 : _state$activeRoom3.unreadCount]);
+  var isLeftPart = onlyChatGroupId == null || !isEmpty(state.conference.data); //console.log("state.conference", state.conference)
+
   return /*#__PURE__*/createElement(Container, {
     maxWidth: "lg",
     className: classes.root

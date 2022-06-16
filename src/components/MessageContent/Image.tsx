@@ -1,18 +1,18 @@
 import React from "react";
 import Viewer from "react-viewer";
-import { createStyles, makeStyles, Theme } from "@material-ui/core";
+import { Theme } from '@mui/material/styles';
 import { getImageMeta } from "../../utils/common";
 import { ChatMessage } from "../../types";
-
+import { makeStyles, createStyles } from '@mui/styles';
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     mediaContent: {
-      maxWidth: "350px",
-      maxHeight: "350px",
+      maxWidth: 350,
+      maxHeight: 350,
       cursor: "pointer",
       [theme.breakpoints.down("xs")]: {
-        maxWidth: "250px",
-        maxHeight: "250px",
+        maxWidth: 250,
+        maxHeight: 250,
       },
     },
   })

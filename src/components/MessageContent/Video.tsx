@@ -1,11 +1,11 @@
 import React from "react";
-import { makeStyles } from "@material-ui/core";
+import { makeStyles } from '@mui/styles';
 import { ChatMessage } from "../../types";
 
 const useStyles = makeStyles(() => ({
   mediaContent: {
-    maxWidth: "350px",
-    maxHeight: "350px",
+    maxWidth: 350,
+    maxHeight: 350,
   },
 }));
 
