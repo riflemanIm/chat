@@ -44,7 +44,7 @@ var io = _interopDefault(require('socket.io-client'));
   ContextMenuType["TOP_REVERT"] = "TOP_REVERT";
   ContextMenuType["TOP"] = "TOP";
   ContextMenuType["READ"] = "READ";
-  ContextMenuType["DELETE"] = "DELETE";
+  ContextMenuType["DELETE"] = "DELETE"; // Удалить
 })(exports.ContextMenuType || (exports.ContextMenuType = {}));
 
 var useStyles = /*#__PURE__*/styles.makeStyles(function () {
@@ -2161,7 +2161,7 @@ var Conference = function Conference(_ref) {
     return function () {
       window.removeEventListener("message", listener);
     };
-  }, [conference, onClose]);
+  }, [conference == null ? void 0 : conference.id]);
   return /*#__PURE__*/React__default.createElement("iframe", {
     title: "conference",
     className: classes.root,
@@ -3832,7 +3832,7 @@ var getRingAudio = function getRingAudio() {
 };
 
 var ChatPage = function ChatPage(_ref) {
-  var _state$conference2, _state$conference2$da, _state$activeRoom, _state$activeRoom2, _state$activeRoom3, _state$activeRoom3$me, _state$activeRoom4;
+  var _state$conference2, _state$conference2$da, _state$conference3, _state$activeRoom, _state$activeRoom2, _state$activeRoom3;
 
   var inModale = _ref.inModale,
       onlyChatGroupId = _ref.onlyChatGroupId;
@@ -4093,8 +4093,10 @@ var ChatPage = function ChatPage(_ref) {
 
   var Contacts = React.useMemo(function () {
     return !isEmpty(state.conference.data) ? state.conference.joined ? /*#__PURE__*/React.createElement(GetConference, null) : /*#__PURE__*/React.createElement(GetConferenceCall, null) : /*#__PURE__*/React.createElement(GetRoomList, null);
-  }, [state.conference, (_state$activeRoom = state.activeRoom) == null ? void 0 : _state$activeRoom.groupId, (_state$activeRoom2 = state.activeRoom) == null ? void 0 : _state$activeRoom2.userId, (_state$activeRoom3 = state.activeRoom) == null ? void 0 : (_state$activeRoom3$me = _state$activeRoom3.messages) == null ? void 0 : _state$activeRoom3$me.length, (_state$activeRoom4 = state.activeRoom) == null ? void 0 : _state$activeRoom4.unreadCount]);
-  var isLeftPart = onlyChatGroupId == null || !isEmpty(state.conference.data);
+  }, [(_state$conference3 = state.conference) == null ? void 0 : _state$conference3.data, (_state$activeRoom = state.activeRoom) == null ? void 0 : _state$activeRoom.groupId, (_state$activeRoom2 = state.activeRoom) == null ? void 0 : _state$activeRoom2.userId, //state.activeRoom?.messages?.length,
+  (_state$activeRoom3 = state.activeRoom) == null ? void 0 : _state$activeRoom3.unreadCount]);
+  var isLeftPart = onlyChatGroupId == null || !isEmpty(state.conference.data); //console.log("state.conference", state.conference)
+
   return /*#__PURE__*/React.createElement(material.Container, {
     maxWidth: "lg",
     className: classes.root
