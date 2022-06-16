@@ -321,14 +321,16 @@ export const ChatPage: React.FC<ChatPa> = ({
         <GetRoomList />
       ),
     [
-      state.conference,
+      state.conference?.data,
       state.activeRoom?.groupId,
       state.activeRoom?.userId,
-      state.activeRoom?.messages?.length,
+      //state.activeRoom?.messages?.length,
       state.activeRoom?.unreadCount,
     ]
   );
   const isLeftPart = onlyChatGroupId == null || !isEmpty(state.conference.data);
+
+  //console.log("state.conference", state.conference)
   return (
     <Container maxWidth="lg" className={classes.root}>
       <Box className={classes.innerBox}>
