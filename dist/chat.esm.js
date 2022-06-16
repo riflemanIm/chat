@@ -1118,7 +1118,7 @@ var useStyles$5 = /*#__PURE__*/makeStyles(function (theme) {
       maxWidth: 350,
       maxHeight: 350,
       cursor: "pointer"
-    }, _mediaContent[theme.breakpoints.down("xs")] = {
+    }, _mediaContent[theme.breakpoints.down("sm")] = {
       maxWidth: 250,
       maxHeight: 250
     }, _mediaContent)
@@ -3841,19 +3841,21 @@ var ChatPage = function ChatPage(_ref) {
 
     return {
       root: (_root = {
-        minWidth: 300,
+        minWidth: 640,
         minHeight: 470,
         height: inModale ? "100%" : "calc(100vh - " + theme.spacing(8) + ")",
         padding: 0
-      }, _root[theme.breakpoints.down("xs")] = {
-        height: "100vh",
-        minHeight: 200
+      }, _root[theme.breakpoints.down("sm")] = {
+        height: "calc(100vh - " + theme.spacing(8) + ")",
+        minWidth: 'auto',
+        minHeight: 'auto',
+        overflow: "hidden"
       }, _root),
       innerBox: (_innerBox = {
         height: "100%",
         width: "100%",
         margin: inModale ? 0 : theme.spacing(4) + " 0"
-      }, _innerBox[theme.breakpoints.down("xs")] = {
+      }, _innerBox[theme.breakpoints.down("sm")] = {
         margin: 0
       }, _innerBox),
       innerGrid: {
@@ -3993,7 +3995,7 @@ var ChatPage = function ChatPage(_ref) {
     });
   }, [socket == null ? void 0 : socket.id]);
   var onVideoEnd = useCallback(function (conference) {
-    if ((conference == null ? void 0 : conference.id) != null) socket == null ? void 0 : socket.emit("stopConference", {
+    if ((conference == null ? void 0 : conference.id) != null) socket == null ? void 0 : socket.emit("pauseConference", {
       id: conference == null ? void 0 : conference.id
     });
   }, [socket == null ? void 0 : socket.id]);

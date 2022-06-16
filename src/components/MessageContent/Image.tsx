@@ -10,7 +10,7 @@ const useStyles = makeStyles((theme: Theme) =>
       maxWidth: 350,
       maxHeight: 350,
       cursor: "pointer",
-      [theme.breakpoints.down("xs")]: {
+      [theme.breakpoints.down("sm")]: {
         maxWidth: 250,
         maxHeight: 250,
       },

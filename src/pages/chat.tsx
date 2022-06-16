@@ -38,20 +38,22 @@ export const ChatPage: React.FC<ChatPa> = ({
 }: ChatPa) => {
   const useStyles = makeStyles((theme: Theme) => ({
     root: {
-      minWidth: 300,
+      minWidth: 640,
       minHeight: 470,
       height: inModale ? "100%" : `calc(100vh - ${theme.spacing(8)})`,
       padding: 0,
-      [theme.breakpoints.down("xs")]: {
-        height: "100vh",
-        minHeight: 200,
+      [theme.breakpoints.down("sm")]: {
+        height: `calc(100vh - ${theme.spacing(8)})`,
+        minWidth: 'auto',
+        minHeight: 'auto',
+        overflow: "hidden"
       },
     },
     innerBox: {
       height: "100%",
       width: "100%",
       margin: inModale ? 0 : `${theme.spacing(4)} 0`,
-      [theme.breakpoints.down("xs")]: {
+      [theme.breakpoints.down("sm")]: {
         margin: 0,
       },
     },
