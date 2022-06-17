@@ -183,7 +183,7 @@ export const ChatPage: React.FC<ChatPa> = ({
   const onVideoEnd = React.useCallback(
     (conference: ConferenceData | null) => {
       if (conference?.id != null)
-        socket?.emit("pauseConference", {
+        socket?.emit("stopConference", {
           id: conference?.id,
         });
     },
@@ -271,6 +271,7 @@ export const ChatPage: React.FC<ChatPa> = ({
       onSendMessage={onSendMessage}
       onVideoCall={onVideoCall}
       onVideoEnd={onVideoEnd}
+      onConferencePause={onConferencePause}
       onOperatorAdd={onOperatorAdd}
       onLeaveGroup={onLeaveGroup}
     />

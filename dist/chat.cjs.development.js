@@ -1465,6 +1465,7 @@ var RoomHeader = function RoomHeader(_ref) {
       operators = _ref.operators,
       onVideoCall = _ref.onVideoCall,
       onVideoEnd = _ref.onVideoEnd,
+      onConferencePause = _ref.onConferencePause,
       onOperatorAdd = _ref.onOperatorAdd,
       onLeaveGroup = _ref.onLeaveGroup;
   var classes = useStyles$8();
@@ -1565,8 +1566,8 @@ var RoomHeader = function RoomHeader(_ref) {
   }
 
   var contact = chat;
-  var isTyping = !!(typing != null && typing.contactId) && (typing == null ? void 0 : typing.userId) === contact.userId; //console.log("conference", conference, "user", user, "contact", contact)
-
+  var isTyping = !!(typing != null && typing.contactId) && (typing == null ? void 0 : typing.userId) === contact.userId;
+  console.log("conference", conference, "user", user, "contact", contact);
   return /*#__PURE__*/React__default.createElement(material.CardHeader, {
     avatar: /*#__PURE__*/React__default.createElement(material.Avatar, {
       alt: contact.username,
@@ -1578,7 +1579,19 @@ var RoomHeader = function RoomHeader(_ref) {
       isTyping: isTyping
     }),
     className: className,
-    action: /*#__PURE__*/React__default.createElement(React__default.Fragment, null, conference != null && onVideoEnd != null && /*#__PURE__*/React__default.createElement(material.Button, {
+    action: /*#__PURE__*/React__default.createElement(React__default.Fragment, null, conference != null && !isEmpty(conference) && onConferencePause != null && /*#__PURE__*/React__default.createElement(material.Button, {
+      "aria-label": "cancel call",
+      variant: "contained",
+      color: "secondary",
+      size: "small",
+      disabled: !contact.online,
+      startIcon: /*#__PURE__*/React__default.createElement(CallEndIcon, {
+        color: "error"
+      }),
+      onClick: function onClick() {
+        return onConferencePause(conference);
+      }
+    }, t("CHAT.CONFERENCE.PAUSE")), conference != null && !isEmpty(conference) && onVideoEnd != null && user.role != null && [3, 4].includes(user.role) && /*#__PURE__*/React__default.createElement(material.Button, {
       "aria-label": "cancel call",
       variant: "contained",
       color: "primary",
@@ -1589,8 +1602,11 @@ var RoomHeader = function RoomHeader(_ref) {
       }),
       onClick: function onClick() {
         return onVideoEnd(conference);
+      },
+      style: {
+        marginLeft: 8
       }
-    }, t("CHAT.CONFERENCE.FINISH")), conference == null && onVideoCall != null && user.role === 3 && /*#__PURE__*/React__default.createElement(material.Button, {
+    }, t("CHAT.CONFERENCE.FINISH")), isEmpty(conference) && onVideoCall != null && user.role != null && [3, 4].includes(user.role) && /*#__PURE__*/React__default.createElement(material.Button, {
       "aria-label": "video call",
       variant: "contained",
       color: "primary",
@@ -1813,6 +1829,7 @@ var Room = function Room(props) {
     className: classes.roomHeader,
     onVideoCall: props.onVideoCall,
     onVideoEnd: props.onVideoEnd,
+    onConferencePause: props.onConferencePause,
     onOperatorAdd: props.onOperatorAdd,
     onLeaveGroup: props.onLeaveGroup
   }), loading && /*#__PURE__*/React__default.createElement("div", {
@@ -2683,7 +2700,7 @@ var clearUser = function clearUser(state) {
 var setConference = function setConference(state, conference) {
   return _extends({}, state, {
     conference: {
-      data: conference,
+      data: _extends({}, conference),
       joined: (conference == null ? void 0 : conference.userId) === state.user.userId,
       ringPlayed: (conference == null ? void 0 : conference.userId) === state.user.userId
     }
@@ -2696,7 +2713,7 @@ var pauseConference = function pauseConference(state, conference) {
   if (((_state$conference$dat = state.conference.data) == null ? void 0 : _state$conference$dat.id) !== (conference == null ? void 0 : conference.id)) return state;
   return _extends({}, state, {
     conference: {
-      data: state.conference.data,
+      data: _extends({}, state.conference.data),
       joined: false,
       ringPlayed: true
     }
@@ -2807,7 +2824,7 @@ function chatReducer(state, action) {
     case "JOIN_CONFERENCE":
       return _extends({}, state, {
         conference: {
-          data: action.payload,
+          data: _extends({}, action.payload),
           joined: true,
           ringPlayed: true
         }
@@ -3995,7 +4012,7 @@ var ChatPage = function ChatPage(_ref) {
     });
   }, [socket == null ? void 0 : socket.id]);
   var onVideoEnd = React.useCallback(function (conference) {
-    if ((conference == null ? void 0 : conference.id) != null) socket == null ? void 0 : socket.emit("pauseConference", {
+    if ((conference == null ? void 0 : conference.id) != null) socket == null ? void 0 : socket.emit("stopConference", {
       id: conference == null ? void 0 : conference.id
     });
   }, [socket == null ? void 0 : socket.id]);
@@ -4061,6 +4078,7 @@ var ChatPage = function ChatPage(_ref) {
     onSendMessage: onSendMessage,
     onVideoCall: onVideoCall,
     onVideoEnd: onVideoEnd,
+    onConferencePause: onConferencePause,
     onOperatorAdd: onOperatorAdd,
     onLeaveGroup: onLeaveGroup
   });
@@ -4227,6 +4245,7 @@ var CHAT$2 = {
 	CONFERENCE: {
 		JOIN: "Присоединиться",
 		START: "Начать",
+		PAUSE: "Остановить",
 		FINISH: "Завершить"
 	},
 	ADD_CONTACT: "Добавить контакт",

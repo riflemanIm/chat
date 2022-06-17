@@ -25,6 +25,7 @@ import {
   ConferenceData,
 } from "../types";
 import { makeStyles, createStyles } from '@mui/styles';
+import { isEmpty } from "../utils/common";
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     popover: {
@@ -50,6 +51,7 @@ type RoomHeaderProps = {
   operators: Contact[];
   onVideoCall?: (chat: ChatRoom) => void;
   onVideoEnd?: (conference: ConferenceData) => void;
+  onConferencePause?: (conference: ConferenceData) => void;
   onOperatorAdd?: (chat: Group, operator: Contact) => void;
   onLeaveGroup?: (chat: Group) => void;
 };
@@ -74,8 +76,11 @@ const RoomHeader: React.FC<RoomHeaderProps> = ({
   operators,
   onVideoCall,
   onVideoEnd,
+  onConferencePause,
   onOperatorAdd,
   onLeaveGroup,
+
+
 }: RoomHeaderProps) => {
   const classes = useStyles();
   const { t } = useTranslation();
@@ -199,7 +204,7 @@ const RoomHeader: React.FC<RoomHeaderProps> = ({
   const contact = chat as Contact;
   const isTyping = !!typing?.contactId && typing?.userId === contact.userId;
 
-  //console.log("conference", conference, "user", user, "contact", contact)
+  console.log("conference", conference, "user", user, "contact", contact)
 
   return (
     <CardHeader
@@ -211,7 +216,21 @@ const RoomHeader: React.FC<RoomHeaderProps> = ({
       className={className}
       action={
         <React.Fragment>
-          {conference != null && onVideoEnd != null && (
+          {conference != null && !isEmpty(conference) && onConferencePause != null && (
+            <Button
+              aria-label="cancel call"
+              variant="contained"
+              color="secondary"
+              size="small"
+              disabled={!contact.online}
+              startIcon={<CallEndIcon color="error" />}
+              onClick={() => onConferencePause(conference)}
+            >
+              {t("CHAT.CONFERENCE.PAUSE")}
+            </Button>
+          )}
+
+          {conference != null && !isEmpty(conference) && onVideoEnd != null && user.role != null && [3, 4].includes(user.role) && (
             <Button
               aria-label="cancel call"
               variant="contained"
@@ -220,11 +239,13 @@ const RoomHeader: React.FC<RoomHeaderProps> = ({
               disabled={!contact.online}
               startIcon={<CallEndIcon color="error" />}
               onClick={() => onVideoEnd(conference)}
+              style={{ marginLeft: 8 }}
             >
               {t("CHAT.CONFERENCE.FINISH")}
             </Button>
           )}
-          {conference == null && onVideoCall != null && user.role === 3 && (
+
+          {isEmpty(conference) && onVideoCall != null && user.role != null && [3, 4].includes(user.role) && (
             <Button
               aria-label="video call"
               variant="contained"
@@ -233,6 +254,7 @@ const RoomHeader: React.FC<RoomHeaderProps> = ({
               disabled={!contact.online}
               startIcon={<VideoCallIcon />}
               onClick={() => onVideoCall(contact)}
+
             >
               {t("CHAT.CONFERENCE.START")}
             </Button>

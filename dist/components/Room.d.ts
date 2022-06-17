@@ -17,7 +17,8 @@ declare type RoomProps = {
     onTyping?: (chat: ChatRoom) => void;
     onSendMessage?: (chat: ChatRoom, data: SendMessage) => void;
     onVideoCall?: (chat: ChatRoom) => void;
-    onVideoEnd?: (conference: ConferenceData) => void;
+    onVideoEnd?: (chat: ConferenceData) => void;
+    onConferencePause?: (conference: ConferenceData) => void;
     onOperatorAdd?: (chat: Group, operator: Contact) => void;
     onLeaveGroup?: (chat: Group) => void;
 };

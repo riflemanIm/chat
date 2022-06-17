@@ -112,24 +112,24 @@ type ChatActionType =
 type Action = {
   type: ChatActionType;
   payload?:
-    | null
-    | boolean
-    | number
-    | string
-    | Group
-    | Contact
-    | User
-    | PrivateMessage
-    | GroupMessage
-    | SetTyping
-    | MessageOperation
-    | GroupMember
-    | AddPrivateMessages
-    | AddGroupMessages
-    | SetActiveRoom
-    | ConferenceData
-    | Contact[]
-    | GroupMap;
+  | null
+  | boolean
+  | number
+  | string
+  | Group
+  | Contact
+  | User
+  | PrivateMessage
+  | GroupMessage
+  | SetTyping
+  | MessageOperation
+  | GroupMember
+  | AddPrivateMessages
+  | AddGroupMessages
+  | SetActiveRoom
+  | ConferenceData
+  | Contact[]
+  | GroupMap;
 };
 
 const getFreshActiveRoom = (state: ChatState) => {
@@ -321,9 +321,9 @@ const revokeMessage = (state: ChatState, payload: MessageOperation) => {
   } else {
     const { messages } =
       newState.contactGather[
-        payload.contactId === userId
-          ? (payload.userId as number)
-          : (payload.contactId as number)
+      payload.contactId === userId
+        ? (payload.userId as number)
+        : (payload.contactId as number)
       ];
     // задаем isRevoke
     if (messages) {
@@ -521,8 +521,8 @@ const setActiveRoom = (state: ChatState, data: SetActiveRoom) => {
     activeRoom: data.groupId
       ? state.groupGather[data.groupId]
       : data.contactId
-      ? state.contactGather[data.contactId]
-      : null,
+        ? state.contactGather[data.contactId]
+        : null,
   };
 };
 
@@ -550,7 +550,7 @@ const setConference = (
   return {
     ...state,
     conference: {
-      data: conference,
+      data: { ...conference },
       joined: conference?.userId === state.user.userId,
       ringPlayed: conference?.userId === state.user.userId,
     },
@@ -565,7 +565,7 @@ const pauseConference = (
   return {
     ...state,
     conference: {
-      data: state.conference.data,
+      data: { ...state.conference.data },
       joined: false,
       ringPlayed: true,
     },
@@ -659,7 +659,7 @@ function chatReducer(state: ChatState, action: Action): ChatState {
       return {
         ...state,
         conference: {
-          data: action.payload as ConferenceData,
+          data: { ...action.payload as ConferenceData },
           joined: true,
           ringPlayed: true,
         },
