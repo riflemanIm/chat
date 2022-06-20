@@ -4663,6 +4663,7 @@ var CHAT$2 = {
 	CONFERENCE: {
 		JOIN: "Присоединиться",
 		START: "Начать",
+		PAUSE: "Остановить",
 		FINISH: "Завершить"
 	},
 	ADD_CONTACT: "Добавить контакт",
