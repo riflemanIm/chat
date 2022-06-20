@@ -1848,14 +1848,14 @@ var AddContact = function AddContact(props) {
 var useStyles$8 = /*#__PURE__*/styles.makeStyles(function (theme) {
   return styles.createStyles({
     popover: {
-      pointerEvents: "none"
+      pointerEvents: 'none'
     },
     paper: {
       padding: theme.spacing(1)
     },
     avatarGroup: {
-      backgroundColor: "#28B7C6",
-      color: "#fff"
+      backgroundColor: '#28B7C6',
+      color: '#fff'
     }
   });
 });
@@ -1863,12 +1863,12 @@ var useStyles$8 = /*#__PURE__*/styles.makeStyles(function (theme) {
 var getGroupStatus = function getGroupStatus(group, t) {
   var _group$members;
 
-  var status = [((_group$members = group.members) == null ? void 0 : _group$members.length) + " " + t("CHAT.MEMBERS")];
+  var status = [((_group$members = group.members) == null ? void 0 : _group$members.length) + " " + t('CHAT.MEMBERS')];
   var onlineCount = (group.members || []).reduce(function (sum, contact) {
     return contact.online ? sum + 1 : sum;
   }, 0);
-  if (onlineCount) status.push(onlineCount + " " + t("CHAT.STATUS.ONLINE"));
-  return status.join(", ");
+  if (onlineCount) status.push(onlineCount + " " + t('CHAT.STATUS.ONLINE'));
+  return status.join(', ');
 };
 
 var RoomHeader = function RoomHeader(_ref) {
@@ -1931,10 +1931,10 @@ var RoomHeader = function RoomHeader(_ref) {
       avatar: /*#__PURE__*/React__default.createElement(material.Avatar, {
         alt: group.name,
         className: classes.avatarGroup
-      }, /*#__PURE__*/React__default.createElement(GroupIcon, null), " "),
+      }, /*#__PURE__*/React__default.createElement(GroupIcon, null), ' '),
       title: group.name,
       subheader: /*#__PURE__*/React__default.createElement(React__default.Fragment, null, /*#__PURE__*/React__default.createElement("span", {
-        "aria-owns": anchorEl ? "mouse-over-popover" : undefined,
+        "aria-owns": anchorEl ? 'mouse-over-popover' : undefined,
         "aria-haspopup": "true",
         onMouseEnter: handlePopoverOpen,
         onMouseLeave: handlePopoverClose
@@ -1947,12 +1947,12 @@ var RoomHeader = function RoomHeader(_ref) {
         open: !!anchorEl,
         anchorEl: anchorEl,
         anchorOrigin: {
-          vertical: "bottom",
-          horizontal: "left"
+          vertical: 'bottom',
+          horizontal: 'left'
         },
         transformOrigin: {
-          vertical: "top",
-          horizontal: "left"
+          vertical: 'top',
+          horizontal: 'left'
         },
         onClose: handlePopoverClose,
         disableRestoreFocus: true
@@ -1983,7 +1983,7 @@ var RoomHeader = function RoomHeader(_ref) {
 
   var contact = chat;
   var isTyping = !!(typing != null && typing.contactId) && (typing == null ? void 0 : typing.userId) === contact.userId;
-  console.log("conference", conference, "user", user, "contact", contact);
+  console.log('conference', conference, 'user', user, 'contact', contact);
   return /*#__PURE__*/React__default.createElement(material.CardHeader, {
     avatar: /*#__PURE__*/React__default.createElement(material.Avatar, {
       alt: contact.username,
@@ -2000,19 +2000,17 @@ var RoomHeader = function RoomHeader(_ref) {
       variant: "contained",
       color: "secondary",
       size: "small",
-      disabled: !contact.online,
       startIcon: /*#__PURE__*/React__default.createElement(CallEndIcon, {
         color: "error"
       }),
       onClick: function onClick() {
         return onConferencePause(conference);
       }
-    }, t("CHAT.CONFERENCE.PAUSE")), conference != null && !isEmpty(conference) && onVideoEnd != null && user.role != null && [3, 4].includes(user.role) && /*#__PURE__*/React__default.createElement(material.Button, {
+    }, t('CHAT.CONFERENCE.PAUSE')), conference != null && !isEmpty(conference) && onVideoEnd != null && user.role != null && [3, 4].includes(user.role) && /*#__PURE__*/React__default.createElement(material.Button, {
       "aria-label": "cancel call",
       variant: "contained",
       color: "primary",
       size: "small",
-      disabled: !contact.online,
       startIcon: /*#__PURE__*/React__default.createElement(CallEndIcon, {
         color: "error"
       }),
@@ -2022,7 +2020,7 @@ var RoomHeader = function RoomHeader(_ref) {
       style: {
         marginLeft: 8
       }
-    }, t("CHAT.CONFERENCE.FINISH")), isEmpty(conference) && onVideoCall != null && user.role != null && [3, 4].includes(user.role) && /*#__PURE__*/React__default.createElement(material.Button, {
+    }, t('CHAT.CONFERENCE.FINISH')), isEmpty(conference) && onVideoCall != null && user.role != null && [3, 4].includes(user.role) && /*#__PURE__*/React__default.createElement(material.Button, {
       "aria-label": "video call",
       variant: "contained",
       color: "primary",
@@ -2031,7 +2029,7 @@ var RoomHeader = function RoomHeader(_ref) {
       onClick: function onClick() {
         return onVideoCall(contact);
       }
-    }, t("CHAT.CONFERENCE.START")))
+    }, t('CHAT.CONFERENCE.START')))
   });
 };
 
