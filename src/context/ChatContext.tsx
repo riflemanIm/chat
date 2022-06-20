@@ -552,7 +552,7 @@ const setConference = (
     conference: {
       data: { ...conference },
       joined: conference?.userId === state.user.userId,
-      ringPlayed: conference?.userId === state.user.userId,
+      ringPlayed: conference?.userId !== state.user.userId,
     },
   };
 };
@@ -567,7 +567,7 @@ const pauseConference = (
     conference: {
       data: { ...state.conference.data },
       joined: false,
-      ringPlayed: true,
+      ringPlayed: false,
     },
   };
 };
@@ -661,7 +661,7 @@ function chatReducer(state: ChatState, action: Action): ChatState {
         conference: {
           data: { ...action.payload as ConferenceData },
           joined: true,
-          ringPlayed: true,
+          ringPlayed: false,
         },
       };
     case "PAUSE_CONFERENCE":

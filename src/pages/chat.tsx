@@ -243,10 +243,10 @@ export const ChatPage: React.FC<ChatPa> = ({
   }, [state.contactGather]);
 
   React.useEffect(() => {
-    if (state.conference?.data != null && !state.conference.ringPlayed)
+    if (state.conference.data?.id && state.conference.ringPlayed && !state.conference.joined)
       ringAudio.play();
     else ringAudio.pause();
-  }, [state.conference?.data?.id]);
+  }, [state.conference.data?.id, state.conference.ringPlayed]);
 
   //  console.log("state.conference", state.conference)
 
@@ -314,7 +314,7 @@ export const ChatPage: React.FC<ChatPa> = ({
 
   const Contacts = React.useMemo(
     () =>
-      !isEmpty(state.conference.data) ? (
+      state.conference.data?.id ? (
         state.conference.joined ? (
           <GetConference />
         ) : (
@@ -324,14 +324,15 @@ export const ChatPage: React.FC<ChatPa> = ({
         <GetRoomList />
       ),
     [
-      state.conference?.data,
+      state.conference.joined,
+      state.conference.data?.id,
       state.activeRoom?.groupId,
       state.activeRoom?.userId,
       //state.activeRoom?.messages?.length,
       state.activeRoom?.unreadCount,
     ]
   );
-  const isLeftPart = onlyChatGroupId == null || !isEmpty(state.conference.data);
+  const isLeftPart = onlyChatGroupId == null || !!state.conference.data?.id;
 
   //console.log("state.conference", state.conference)
   return (
