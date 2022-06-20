@@ -251,7 +251,6 @@ const RoomHeader: React.FC<RoomHeaderProps> = ({
               variant="contained"
               color="primary"
               size="small"
-              disabled={!contact.online}
               startIcon={<VideoCallIcon />}
               onClick={() => onVideoCall(contact)}
 

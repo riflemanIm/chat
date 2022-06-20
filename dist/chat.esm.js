@@ -2027,7 +2027,6 @@ var RoomHeader = function RoomHeader(_ref) {
       variant: "contained",
       color: "primary",
       size: "small",
-      disabled: !contact.online,
       startIcon: /*#__PURE__*/React__default.createElement(VideoCallIcon, null),
       onClick: function onClick() {
         return onVideoCall(contact);
