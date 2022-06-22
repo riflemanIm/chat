@@ -3,6 +3,7 @@ import io, { Socket } from "socket.io-client";
 
 export const useSocket = (
   url: string,
+  path: string,
   accessToken: string
 ): {
   socket: Socket | null;
@@ -15,13 +16,14 @@ export const useSocket = (
   const connectSocket = useCallback(() => {
     // console.log("do connect");
     const socketTemp = io(url, {
+      path,
       reconnection: true,
       extraHeaders: {
         Authorization: `Bearer ${accessToken}`,
       },
     });
     setSocket(socketTemp);
-  }, [url, accessToken]);
+  }, [url, path, accessToken]);
 
   const disconnectSocket = useCallback(() => {
     // console.log("do disconnect");

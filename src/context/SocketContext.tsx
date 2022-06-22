@@ -37,16 +37,19 @@ export const SocketContext: React.Context<ISocketContext> =
 
 type SocketProviderProps = {
   wsUrl: string;
+  wsPath: string;
   children: JSX.Element;
 };
 
 export const SocketProvider: React.FC<SocketProviderProps> = ({
   wsUrl,
+  wsPath,
   children,
 }: SocketProviderProps) => {
   const { state, dispatch } = useContext(ChatContext);
   const { socket, online, disconnectSocket, connectSocket } = useSocket(
     wsUrl,
+    wsPath,
     state.token
   );
 
