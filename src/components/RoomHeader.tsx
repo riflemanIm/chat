@@ -47,6 +47,7 @@ type RoomHeaderProps = {
   chat: ChatRoom | null;
   typing: SetTyping | null;
   conference: ConferenceData | null;
+  conferenceJoined: boolean;
   className: string;
   operators: Contact[];
   onVideoCall?: (chat: ChatRoom) => void;
@@ -73,6 +74,7 @@ const RoomHeader: React.FC<RoomHeaderProps> = ({
   chat,
   typing,
   conference,
+  conferenceJoined,
   className,
   operators,
   onVideoCall,
@@ -205,7 +207,7 @@ const RoomHeader: React.FC<RoomHeaderProps> = ({
   const contact = chat as Contact;
   const isTyping =
     !!typing?.contactId && typing?.userId === contact.userId;
-
+/*
   console.log(
     'conference',
     conference,
@@ -214,7 +216,7 @@ const RoomHeader: React.FC<RoomHeaderProps> = ({
     'contact',
     contact,
   );
-
+*/
   return (
     <CardHeader
       avatar={
@@ -230,7 +232,8 @@ const RoomHeader: React.FC<RoomHeaderProps> = ({
       className={className}
       action={
         <React.Fragment>
-          {conference != null &&
+          {conferenceJoined &&
+            conference &&
             !isEmpty(conference) &&
             onConferencePause != null && (
               <Button
@@ -245,7 +248,7 @@ const RoomHeader: React.FC<RoomHeaderProps> = ({
               </Button>
             )}
 
-          {conference != null &&
+          {conference &&
             !isEmpty(conference) &&
             onVideoEnd != null &&
             user.role != null &&
@@ -265,7 +268,7 @@ const RoomHeader: React.FC<RoomHeaderProps> = ({
 
           {isEmpty(conference) &&
             onVideoCall != null &&
-            user.role != null &&
+            user.role &&
             [3, 4].includes(user.role) && (
               <Button
                 aria-label="video call"

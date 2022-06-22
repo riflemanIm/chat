@@ -116,6 +116,7 @@ type RoomProps = {
   chat: ChatRoom | null;
   typing: SetTyping | null;
   conference: ConferenceData | null;
+  conferenceJoined: boolean;
   loading: boolean;
   pageSize: number;
   operators: Contact[];
@@ -130,11 +131,10 @@ type RoomProps = {
   onConferencePause?: (conference: ConferenceData) => void;
   onOperatorAdd?: (chat: Group, operator: Contact) => void;
   onLeaveGroup?: (chat: Group) => void;
-
 };
 
 const Room: React.FC<RoomProps> = (props: RoomProps) => {
-  const { apiUrl, user, users, chat, typing, conference, loading, pageSize } =
+  const { apiUrl, user, users, chat, typing, conference, conferenceJoined, loading, pageSize } =
     props;
   const classes = useStyles();
   const { t } = useTranslation();
@@ -250,6 +250,7 @@ const Room: React.FC<RoomProps> = (props: RoomProps) => {
           chat={chat}
           typing={typing}
           conference={conference}
+          conferenceJoined={conferenceJoined}
           operators={props.operators}
           className={classes.roomHeader}
           onVideoCall={props.onVideoCall}

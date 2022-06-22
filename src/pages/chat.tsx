@@ -1,19 +1,18 @@
-import * as React from "react";
+import * as React from 'react';
 import {
   Container,
   Box,
   Grid,
-
   Snackbar,
   useMediaQuery,
-} from "@mui/material";
+} from '@mui/material';
 import { makeStyles } from '@mui/styles';
 import { Theme } from '@mui/material/styles';
-import { Alert } from "@mui/lab";
-import { Room, RoomList, Conference } from "../components";
-import { ChatContext } from "../context/ChatContext";
-import { RestContext } from "../context/RestContext";
-import { SocketContext } from "../context/SocketContext";
+import { Alert } from '@mui/lab';
+import { Room, RoomList, Conference } from '../components';
+import { ChatContext } from '../context/ChatContext';
+import { RestContext } from '../context/RestContext';
+import { SocketContext } from '../context/SocketContext';
 import {
   ChatPa,
   Group,
@@ -22,12 +21,14 @@ import {
   ChatRoom,
   SendMessage,
   ConferenceData,
-} from "../types";
-import { isEmpty } from "../utils/common";
-import ConferenceCall from "../components/ConferenceCall";
+} from '../types';
+import { isEmpty } from '../utils/common';
+import ConferenceCall from '../components/ConferenceCall';
 
 const getRingAudio = (): HTMLAudioElement => {
-  const audio = new Audio(process.env.PUBLIC_URL + "/audio/ring-in.ogg");
+  const audio = new Audio(
+    process.env.PUBLIC_URL + '/audio/ring-in.ogg',
+  );
   audio.loop = true;
   return audio;
 };
@@ -40,31 +41,31 @@ export const ChatPage: React.FC<ChatPa> = ({
     root: {
       minWidth: 640,
       minHeight: 470,
-      height: inModale ? "100%" : `calc(100vh - ${theme.spacing(8)})`,
+      height: inModale ? '100%' : `calc(100vh - ${theme.spacing(8)})`,
       padding: 0,
-      [theme.breakpoints.down("sm")]: {
+      [theme.breakpoints.down('sm')]: {
         height: `calc(100vh - ${theme.spacing(8)})`,
         minWidth: 'auto',
         minHeight: 'auto',
-        overflow: "hidden"
+        overflow: 'hidden',
       },
     },
     innerBox: {
-      height: "100%",
-      width: "100%",
+      height: '100%',
+      width: '100%',
       margin: inModale ? 0 : `${theme.spacing(4)} 0`,
-      [theme.breakpoints.down("sm")]: {
+      [theme.breakpoints.down('sm')]: {
         margin: 0,
       },
     },
     innerGrid: {
-      height: "100%",
-      width: "100%",
+      height: '100%',
+      width: '100%',
     },
   }));
   const classes = useStyles();
   const isMobile = useMediaQuery((theme: Theme) =>
-    theme.breakpoints.down("sm")
+    theme.breakpoints.down('sm'),
   );
 
   const { state, dispatch } = React.useContext(ChatContext);
@@ -77,44 +78,45 @@ export const ChatPage: React.FC<ChatPa> = ({
 
   const onExitActiveRoom = React.useCallback(() => {
     dispatch({
-      type: "SET_ACTIVE_ROOM",
+      type: 'SET_ACTIVE_ROOM',
       payload: { ifNotExists: false },
     });
   }, [dispatch]);
 
   const onNeedMoreMessages = React.useCallback(
     async (chat: ChatRoom) => {
-      if ((chat as Group).groupId) await getGroupMessages(chat as Group);
+      if ((chat as Group).groupId)
+        await getGroupMessages(chat as Group);
       else await getPrivateMessages(chat as Contact);
     },
-    [getPrivateMessages, getGroupMessages]
+    [getPrivateMessages, getGroupMessages],
   );
 
   const onMessageDelete = React.useCallback(
     (chat: ChatRoom, message: ChatMessage) => {
-      socket?.emit("revokeMessage", {
+      socket?.emit('revokeMessage', {
         groupId: (chat as Group).groupId, // Идентификатор группы
         contactId: chat.userId, // Идентификатор контакта
         _id: message._id, // Идентификатор удаленного сообщения
       });
     },
-    [socket?.id]
+    [socket?.id],
   );
 
   const onTyping = React.useCallback(
     (chat: ChatRoom) => {
-      socket?.emit("typing", {
+      socket?.emit('typing', {
         groupId: (chat as Group)?.groupId,
         contactId: chat?.userId,
       });
     },
-    [socket?.id]
+    [socket?.id],
   );
 
   const onSendMessage = React.useCallback(
     (chat: ChatRoom, data: SendMessage) => {
       if ((chat as Group).groupId) {
-        socket?.emit("groupMessage", {
+        socket?.emit('groupMessage', {
           groupId: (chat as Group)?.groupId,
           content: data.message,
           width: data.width,
@@ -124,7 +126,7 @@ export const ChatPage: React.FC<ChatPa> = ({
           size: data.size,
         });
       } else {
-        socket?.emit("privateMessage", {
+        socket?.emit('privateMessage', {
           contactId: chat?.userId,
           content: data.message,
           width: data.width,
@@ -135,13 +137,13 @@ export const ChatPage: React.FC<ChatPa> = ({
         });
       }
     },
-    [socket?.id]
+    [socket?.id],
   );
 
   const onChangeChat = React.useCallback(
     (chat: ChatRoom) => {
       dispatch({
-        type: "SET_ACTIVE_ROOM",
+        type: 'SET_ACTIVE_ROOM',
         payload: {
           groupId: (chat as Group)?.groupId,
           contactId: chat?.userId,
@@ -149,91 +151,96 @@ export const ChatPage: React.FC<ChatPa> = ({
         },
       });
     },
-    [socket?.id, dispatch]
+    [socket?.id, dispatch],
   );
 
   const onEnterRoom = React.useCallback(
     (chat: ChatRoom) => {
       if (!chat.messages || chat.messages.length === 0) return;
       if ((chat as Group).groupId) {
-        socket?.emit("markAsRead", {
+        socket?.emit('markAsRead', {
           groupId: (chat as Group).groupId,
           _id: chat.messages[chat.messages.length - 1]._id,
         });
       } else {
-        socket?.emit("markAsRead", {
+        socket?.emit('markAsRead', {
           contactId: chat.userId,
           _id: chat.messages[chat.messages.length - 1]._id,
         });
       }
     },
-    [socket?.id]
+    [socket?.id],
   );
 
   const onVideoCall = React.useCallback(
     (chat: ChatRoom) => {
-      socket?.emit("startConference", {
+      socket?.emit('startConference', {
         groupId: (chat as Group).groupId,
         contactId: chat.userId,
       });
     },
-    [socket?.id]
+    [socket?.id],
   );
 
   const onVideoEnd = React.useCallback(
     (conference: ConferenceData | null) => {
       if (conference?.id != null)
-        socket?.emit("stopConference", {
+        socket?.emit('stopConference', {
           id: conference?.id,
         });
     },
-    [socket?.id]
+    [socket?.id],
   );
 
   const onConferencePause = React.useCallback(
     (conference: ConferenceData | null) => {
       if (conference?.id != null)
-        socket?.emit("pauseConference", {
+        socket?.emit('pauseConference', {
           id: conference.id,
         });
     },
-    [socket?.id]
+    [socket?.id],
   );
 
   const onConferenceCallAccept = React.useCallback(
     (conference: ConferenceData) => {
-      dispatch({ type: "JOIN_CONFERENCE", payload: conference });
+      // отправляем startConference чтобы возобновить запись
+      if (conference?.id != null)
+        socket?.emit('resumeConference', {
+          id: conference.id,
+        });
+      dispatch({ type: 'JOIN_CONFERENCE', payload: conference });
     },
-    [dispatch]
+    [dispatch],
   );
 
   const onOperatorAdd = React.useCallback(
     (group: Group, operator: Contact) => {
-      socket?.emit("addOperator", {
+      socket?.emit('addOperator', {
         groupId: group.groupId,
         operatorId: operator.userId,
       });
     },
-    [socket?.id]
+    [socket?.id],
   );
 
   const onLeaveGroup = React.useCallback(
     (group: Group) => {
-      socket?.emit("deleteGroup", {
+      socket?.emit('deleteGroup', {
         groupId: group.groupId,
       });
     },
-    [socket?.id]
+    [socket?.id],
   );
 
   const handleError = React.useCallback(() => {
-    dispatch({ type: "SET_ERROR" });
+    dispatch({ type: 'SET_ERROR' });
   }, [dispatch]);
 
   React.useEffect(() => {
     if (onlyChatGroupId != null) {
       const onlyChat = Object.values(state.contactGather).find(
-        (item) => item.groupId === onlyChatGroupId
+        (item) => item.groupId === onlyChatGroupId,
       );
 
       if (!isEmpty(onlyChat)) {
@@ -243,7 +250,11 @@ export const ChatPage: React.FC<ChatPa> = ({
   }, [state.contactGather]);
 
   React.useEffect(() => {
-    if (state.conference.data?.id && state.conference.ringPlayed && !state.conference.joined)
+    if (
+      state.conference.data?.id &&
+      state.conference.ringPlayed &&
+      !state.conference.joined
+    )
       ringAudio.play();
     else ringAudio.pause();
   }, [state.conference.data?.id, state.conference.ringPlayed]);
@@ -259,10 +270,13 @@ export const ChatPage: React.FC<ChatPa> = ({
       chat={state.activeRoom}
       typing={state.typing}
       conference={state.conference.data}
+      conferenceJoined={state.conference.joined}
       loading={state.loading}
       pageSize={pageSize}
       onExitRoom={
-        isMobile && onlyChatGroupId == null ? onExitActiveRoom : undefined
+        isMobile && onlyChatGroupId == null
+          ? onExitActiveRoom
+          : undefined
       }
       onEnterRoom={onEnterRoom}
       onNeedMoreMessages={onNeedMoreMessages}
@@ -295,9 +309,9 @@ export const ChatPage: React.FC<ChatPa> = ({
         apiUrl={apiUrl}
         contact={
           state.contactGather[
-          state.user.userId === state.conference.data.userId
-            ? state.conference.data.contactId
-            : state.conference.data.userId
+            state.user.userId === state.conference.data.userId
+              ? state.conference.data.contactId
+              : state.conference.data.userId
           ]
         }
         conference={state.conference.data}
@@ -330,9 +344,10 @@ export const ChatPage: React.FC<ChatPa> = ({
       state.activeRoom?.userId,
       //state.activeRoom?.messages?.length,
       state.activeRoom?.unreadCount,
-    ]
+    ],
   );
-  const isLeftPart = onlyChatGroupId == null || !!state.conference.data?.id;
+  const isLeftPart =
+    onlyChatGroupId == null || !!state.conference.data?.id;
 
   //console.log("state.conference", state.conference)
   return (
@@ -350,14 +365,18 @@ export const ChatPage: React.FC<ChatPa> = ({
                 {Contacts}
               </Grid>
             )}
-            <Grid item sm={isLeftPart ? 8 : 12} className={classes.innerGrid}>
+            <Grid
+              item
+              sm={isLeftPart ? 8 : 12}
+              className={classes.innerGrid}
+            >
               {renderRoom}
             </Grid>
           </Grid>
         )}
       </Box>
       <Snackbar
-        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
         open={!!state.error}
         autoHideDuration={6000}
         onClose={handleError}
