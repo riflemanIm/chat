@@ -6,6 +6,7 @@ declare type RoomHeaderProps = {
     chat: ChatRoom | null;
     typing: SetTyping | null;
     conference: ConferenceData | null;
+    conferenceJoined: boolean;
     className: string;
     operators: Contact[];
     onVideoCall?: (chat: ChatRoom) => void;

@@ -7,6 +7,7 @@ declare type RoomProps = {
     chat: ChatRoom | null;
     typing: SetTyping | null;
     conference: ConferenceData | null;
+    conferenceJoined: boolean;
     loading: boolean;
     pageSize: number;
     operators: Contact[];
