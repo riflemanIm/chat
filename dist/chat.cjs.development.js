@@ -2321,7 +2321,8 @@ var emptyChatState = {
   },
   typing: null,
   loading: false,
-  error: undefined
+  error: undefined // ошибка
+
 };
 
 var getFreshActiveRoom = function getFreshActiveRoom(state) {
@@ -2646,8 +2647,8 @@ var addPrivateMessages = function addPrivateMessages(state, data) {
 
   if (newState.contactGather[contactId]) {
     newState.contactGather[contactId] = _extends({}, newState.contactGather[contactId], {
-      messages: [].concat(messages, newState.contactGather[contactId].messages || []),
-      noMoreData: messages.length < data.pageSize
+      messages: [].concat(messages || [], newState.contactGather[contactId].messages || []),
+      noMoreData: messages != null && messages.length ? (messages == null ? void 0 : messages.length) < data.pageSize : false
     });
   } // обновляем активный чат
 
@@ -2665,8 +2666,8 @@ var addGroupMessages = function addGroupMessages(state, data) {
 
   if (newState.groupGather[groupId]) {
     newState.groupGather[groupId] = _extends({}, newState.groupGather[groupId], {
-      messages: [].concat(messages, newState.groupGather[groupId].messages || []),
-      noMoreData: messages.length < data.pageSize
+      messages: [].concat(messages || [], newState.groupGather[groupId].messages || []),
+      noMoreData: messages != null && messages.length ? (messages == null ? void 0 : messages.length) < data.pageSize : false
     });
   }
 
