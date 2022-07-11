@@ -4,16 +4,15 @@ import {
   Card,
   CardContent,
   CircularProgress,
-
   Divider,
   List,
   ListItemIcon,
   Menu,
   MenuItem,
-  IconButton,
+  IconButton
 } from "@mui/material";
-import { Theme } from '@mui/material/styles';
-import { makeStyles, createStyles } from '@mui/styles';
+import { Theme } from "@mui/material/styles";
+import { makeStyles, createStyles } from "@mui/styles";
 import FileCopyIcon from "@mui/icons-material/FileCopy";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
@@ -31,7 +30,7 @@ import {
   Contact,
   ConferenceData,
   Group,
-  ContactGather,
+  ContactGather
 } from "../types";
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -41,10 +40,10 @@ const useStyles = makeStyles((theme: Theme) =>
       minWidth: 360,
       height: "100%",
       display: "flex",
-      flexDirection: "column",
+      flexDirection: "column"
     },
     inline: {
-      display: "inline",
+      display: "inline"
     },
     messageListOuter: {
       flex: 1,
@@ -54,45 +53,44 @@ const useStyles = makeStyles((theme: Theme) =>
       scrollbarWidth: "thin",
       scrollbarColor: "#6b6b6b #fff",
       "&::-webkit-scrollbar, & *::-webkit-scrollbar": {
-        backgroundColor: "#fff",
+        backgroundColor: "#fff"
       },
       "&::-webkit-scrollbar-thumb, & *::-webkit-scrollbar-thumb": {
         borderRadius: 8,
         backgroundColor: "#d5d9ef",
-        border: "5px solid #fff",
+        border: "5px solid #fff"
       },
       "&::-webkit-scrollbar-thumb:focus, & *::-webkit-scrollbar-thumb:focus": {
-        backgroundColor: "#fff",
+        backgroundColor: "#fff"
       },
-      "&::-webkit-scrollbar-thumb:active, & *::-webkit-scrollbar-thumb:active":
-      {
+      "&::-webkit-scrollbar-thumb:active, & *::-webkit-scrollbar-thumb:active": {
         backgroundColor: "#73d7f5",
-        border: "3px solid #fff",
+        border: "3px solid #fff"
       },
       "&::-webkit-scrollbar-thumb:hover, & *::-webkit-scrollbar-thumb:hover": {
         backgroundColor: "#73d7f5",
-        border: "3px solid #fff",
+        border: "3px solid #fff"
       },
       "&::-webkit-scrollbar-corner, & *::-webkit-scrollbar-corner": {
-        backgroundColor: "#fff",
-      },
+        backgroundColor: "#fff"
+      }
     },
     messageList: {
       height: "100%",
-      overflow: "auto",
+      overflow: "auto"
     },
     roomHeader: {
-      flex: 1,
+      flex: 1
     },
     roomProgress: {
-      padding: theme.spacing(2),
+      padding: theme.spacing(2)
     },
     flexAll: {
-      flex: "1 1 auto",
+      flex: "1 1 auto"
     },
     flexEnd: {
-      justifyContent: "flex-end",
-    },
+      justifyContent: "flex-end"
+    }
   })
 );
 
@@ -101,12 +99,12 @@ const initialMenuState = {
   mouseX: null,
   mouseY: null,
   canCopy: false,
-  canDelete: false,
+  canDelete: false
 };
 
 const initialScrollState = {
   autoScroll: true,
-  height: 0,
+  height: 0
 };
 
 type RoomProps = {
@@ -134,8 +132,17 @@ type RoomProps = {
 };
 
 const Room: React.FC<RoomProps> = (props: RoomProps) => {
-  const { apiUrl, user, users, chat, typing, conference, conferenceJoined, loading, pageSize } =
-    props;
+  const {
+    apiUrl,
+    user,
+    users,
+    chat,
+    typing,
+    conference,
+    conferenceJoined,
+    loading,
+    pageSize
+  } = props;
   const classes = useStyles();
   const { t } = useTranslation();
 
@@ -181,7 +188,7 @@ const Room: React.FC<RoomProps> = (props: RoomProps) => {
         if (messageCount >= pageSize && !loading && props.onNeedMoreMessages) {
           setScrollState({
             autoScroll: false,
-            height: currentTarget.scrollHeight,
+            height: currentTarget.scrollHeight
           });
           props.onNeedMoreMessages(chat);
         }
@@ -209,7 +216,7 @@ const Room: React.FC<RoomProps> = (props: RoomProps) => {
       mouseX: event.clientX - 2,
       mouseY: event.clientY - 4,
       canCopy,
-      canDelete,
+      canDelete
     });
   };
 
@@ -231,7 +238,7 @@ const Room: React.FC<RoomProps> = (props: RoomProps) => {
       props.onMeesageDelete(chat, message);
   }, [menuState.message]);
 
-  console.log("messages", messages)
+  //console.log("messages", messages)
 
   return (
     <Card elevation={1} className={classes.root}>
@@ -288,7 +295,7 @@ const Room: React.FC<RoomProps> = (props: RoomProps) => {
                     messages[inx + 1].messageType === "notify" ||
                     messages[inx + 1].userId !== messages[inx].userId
                   }
-                  onContextMenu={(event) => handleMenuPopup(message, event)}
+                  onContextMenu={event => handleMenuPopup(message, event)}
                   refOnLastMess={
                     inx === messages.length - 1 ? refOnLastMess : null
                   }

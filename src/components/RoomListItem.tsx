@@ -6,10 +6,10 @@ import {
   Chip,
   ListItem,
   ListItemAvatar,
-  ListItemText,
+  ListItemText
 } from "@mui/material";
-import { Theme } from '@mui/material/styles';
-import { makeStyles, createStyles, withStyles } from '@mui/styles';
+import { Theme } from "@mui/material/styles";
+import { makeStyles, createStyles, withStyles } from "@mui/styles";
 
 import GroupIcon from "@mui/icons-material/Group";
 import { formatTime, getChatName } from "../utils/common";
@@ -30,21 +30,21 @@ const useStyles = makeStyles((theme: Theme) =>
       flex: "1 1 auto",
       whiteSpace: "nowrap",
       overflow: "hidden",
-      textOverflow: "ellipsis",
+      textOverflow: "ellipsis"
     },
     time: {
       paddingLeft: theme.spacing(1),
       justifyContent: "flex-end",
-      whiteSpace: "nowrap",
+      whiteSpace: "nowrap"
     },
     unread: {
       justifyContent: "flex-end",
-      maxHeight: 20,
+      maxHeight: 20
     },
     avatarGroup: {
       backgroundColor: "#28B7C6",
-      color: "#fff",
-    },
+      color: "#fff"
+    }
   })
 );
 
@@ -84,19 +84,19 @@ const TypingBadge = withStyles((theme: Theme) =>
         borderRadius: "50%",
         animation: "$ripple 1.2s infinite ease-in-out",
         border: "1px solid currentColor",
-        content: '""',
-      },
+        content: '""'
+      }
     },
     "@keyframes ripple": {
       "0%": {
         transform: "scale(.8)",
-        opacity: 1,
+        opacity: 1
       },
       "100%": {
         transform: "scale(2.4)",
-        opacity: 0,
-      },
-    },
+        opacity: 0
+      }
+    }
   })
 )(Badge);
 
@@ -104,8 +104,8 @@ const OnlineBadge = withStyles((theme: Theme) =>
   createStyles({
     badge: {
       backgroundColor: theme.palette.primary.main,
-      boxShadow: `0 0 0 2px ${theme.palette.background.paper}`,
-    },
+      boxShadow: `0 0 0 2px ${theme.palette.background.paper}`
+    }
   })
 )(Badge);
 
@@ -125,7 +125,7 @@ const contactAvatar = (
         overlap="circular"
         anchorOrigin={{
           vertical: "bottom",
-          horizontal: "right",
+          horizontal: "right"
         }}
         variant="dot"
       >
@@ -139,7 +139,7 @@ const contactAvatar = (
         overlap="circular"
         anchorOrigin={{
           vertical: "bottom",
-          horizontal: "right",
+          horizontal: "right"
         }}
         variant="dot"
       >
@@ -150,57 +150,56 @@ const contactAvatar = (
   return avatar;
 };
 
-const RoomListItem: React.FC<RoomListItemProps> = (
-  props: RoomListItemProps
-) => {
-  const classes = useStyles();
-  const { t } = useTranslation();
-  const { apiUrl, chat, typing } = props;
-  const roomName = getChatName(chat);
+const RoomListItem: React.FC<RoomListItemProps> = (props: RoomListItemProps) =>
+  React.useMemo(() => {
+    const classes = useStyles();
+    const { t } = useTranslation();
+    const { apiUrl, chat, typing } = props;
+    const roomName = getChatName(chat);
+    console.log("props.chat?.messages?.length", props.chat?.messages?.length);
+    const avatar = (chat as Group).groupId ? (
+      <Avatar alt={roomName} className={classes.avatarGroup}>
+        <GroupIcon />{" "}
+      </Avatar>
+    ) : (
+      contactAvatar(apiUrl, chat as Contact, typing)
+    );
 
-  const avatar = (chat as Group).groupId ? (
-    <Avatar alt={roomName} className={classes.avatarGroup}>
-      <GroupIcon />{" "}
-    </Avatar>
-  ) : (
-    contactAvatar(apiUrl, chat as Contact, typing)
-  );
+    const lastMessage =
+      chat.messages && chat.messages.length > 0
+        ? chat.messages[chat.messages.length - 1]
+        : null;
 
-  const lastMessage =
-    chat.messages && chat.messages.length > 0
-      ? chat.messages[chat.messages.length - 1]
-      : null;
+    const roomText = getMessageText(lastMessage, t);
+    const roomTime = lastMessage?.cdate;
 
-  const roomText = getMessageText(lastMessage, t);
-  const roomTime = lastMessage?.cdate;
-
-  return (
-    <ListItem button selected={props.active} onClick={props.onClick}>
-      <ListItemAvatar>{avatar}</ListItemAvatar>
-      <ListItemText
-        secondaryTypographyProps={{ component: "span" }}
-        primary={
-          <Box display="flex" flexDirection="row">
-            <span className={classes.main}>{roomName}</span>
-            <span className={classes.time}>{formatTime(roomTime)}</span>
-          </Box>
-        }
-        secondary={
-          <Box display="flex" flexDirection="row">
-            <span className={classes.main}>{roomText}</span>
-            {chat.unreadCount ? (
-              <Chip
-                className={classes.unread}
-                component="span"
-                size="small"
-                color="primary"
-                label={chat.unreadCount}
-              />
-            ) : null}
-          </Box>
-        }
-      />
-    </ListItem>
-  );
-};
+    return (
+      <ListItem button selected={props.active} onClick={props.onClick}>
+        <ListItemAvatar>{avatar}</ListItemAvatar>
+        <ListItemText
+          secondaryTypographyProps={{ component: "span" }}
+          primary={
+            <Box display="flex" flexDirection="row">
+              <span className={classes.main}>{roomName}</span>
+              <span className={classes.time}>{formatTime(roomTime)}</span>
+            </Box>
+          }
+          secondary={
+            <Box display="flex" flexDirection="row">
+              <span className={classes.main}>{roomText}</span>
+              {chat.unreadCount ? (
+                <Chip
+                  className={classes.unread}
+                  component="span"
+                  size="small"
+                  color="primary"
+                  label={chat.unreadCount}
+                />
+              ) : null}
+            </Box>
+          }
+        />
+      </ListItem>
+    );
+  }, [props.chat?.messages?.length]);
 export default RoomListItem;
