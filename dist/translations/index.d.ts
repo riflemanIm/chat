@@ -25,6 +25,7 @@ export declare const chatResources: {
             CONFERENCE: {
                 JOIN: string;
                 START: string;
+                PAUSE: string;
                 FINISH: string;
             };
             ADD_CONTACT: string;

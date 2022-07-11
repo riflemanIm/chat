@@ -279,7 +279,7 @@ const Room: React.FC<RoomProps> = (props: RoomProps) => {
             {messages != null &&
               (messages as ChatMessage[]).map((message, inx) => (
                 <Message
-                  key={message._id}
+                  key={inx}
                   apiUrl={apiUrl}
                   user={user}
                   message={message}

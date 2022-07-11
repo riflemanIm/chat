@@ -1853,7 +1853,7 @@ var Room = function Room(props) {
     onScroll: onScroll
   }, messages != null && messages.map(function (message, inx) {
     return /*#__PURE__*/React__default.createElement(Message, {
-      key: message._id,
+      key: inx,
       apiUrl: apiUrl,
       user: user,
       message: message,
@@ -2013,58 +2013,51 @@ var contactAvatar = function contactAvatar(apiUrl, contact, typing) {
 };
 
 var RoomListItem = function RoomListItem(props) {
-  var _props$chat2, _props$chat2$messages;
+  var classes = useStyles$a();
 
-  return React__default.useMemo(function () {
-    var _props$chat, _props$chat$messages;
+  var _useTranslation = useTranslation(),
+      t = _useTranslation.t;
 
-    var classes = useStyles$a();
-
-    var _useTranslation = useTranslation(),
-        t = _useTranslation.t;
-
-    var apiUrl = props.apiUrl,
-        chat = props.chat,
-        typing = props.typing;
-    var roomName = getChatName(chat);
-    console.log("props.chat?.messages?.length", (_props$chat = props.chat) == null ? void 0 : (_props$chat$messages = _props$chat.messages) == null ? void 0 : _props$chat$messages.length);
-    var avatar = chat.groupId ? /*#__PURE__*/React__default.createElement(Avatar, {
-      alt: roomName,
-      className: classes.avatarGroup
-    }, /*#__PURE__*/React__default.createElement(GroupIcon, null), " ") : contactAvatar(apiUrl, chat, typing);
-    var lastMessage = chat.messages && chat.messages.length > 0 ? chat.messages[chat.messages.length - 1] : null;
-    var roomText = getMessageText(lastMessage, t);
-    var roomTime = lastMessage == null ? void 0 : lastMessage.cdate;
-    return /*#__PURE__*/React__default.createElement(ListItem, {
-      button: true,
-      selected: props.active,
-      onClick: props.onClick
-    }, /*#__PURE__*/React__default.createElement(ListItemAvatar, null, avatar), /*#__PURE__*/React__default.createElement(ListItemText, {
-      secondaryTypographyProps: {
-        component: "span"
-      },
-      primary: /*#__PURE__*/React__default.createElement(Box, {
-        display: "flex",
-        flexDirection: "row"
-      }, /*#__PURE__*/React__default.createElement("span", {
-        className: classes.main
-      }, roomName), /*#__PURE__*/React__default.createElement("span", {
-        className: classes.time
-      }, formatTime(roomTime))),
-      secondary: /*#__PURE__*/React__default.createElement(Box, {
-        display: "flex",
-        flexDirection: "row"
-      }, /*#__PURE__*/React__default.createElement("span", {
-        className: classes.main
-      }, roomText), chat.unreadCount ? /*#__PURE__*/React__default.createElement(Chip, {
-        className: classes.unread,
-        component: "span",
-        size: "small",
-        color: "primary",
-        label: chat.unreadCount
-      }) : null)
-    }));
-  }, [(_props$chat2 = props.chat) == null ? void 0 : (_props$chat2$messages = _props$chat2.messages) == null ? void 0 : _props$chat2$messages.length]);
+  var apiUrl = props.apiUrl,
+      chat = props.chat,
+      typing = props.typing;
+  var roomName = getChatName(chat);
+  var avatar = chat.groupId ? /*#__PURE__*/React__default.createElement(Avatar, {
+    alt: roomName,
+    className: classes.avatarGroup
+  }, /*#__PURE__*/React__default.createElement(GroupIcon, null), " ") : contactAvatar(apiUrl, chat, typing);
+  var lastMessage = chat.messages && chat.messages.length > 0 ? chat.messages[chat.messages.length - 1] : null;
+  var roomText = getMessageText(lastMessage, t);
+  var roomTime = lastMessage == null ? void 0 : lastMessage.cdate;
+  return /*#__PURE__*/React__default.createElement(ListItem, {
+    button: true,
+    selected: props.active,
+    onClick: props.onClick
+  }, /*#__PURE__*/React__default.createElement(ListItemAvatar, null, avatar), /*#__PURE__*/React__default.createElement(ListItemText, {
+    secondaryTypographyProps: {
+      component: "span"
+    },
+    primary: /*#__PURE__*/React__default.createElement(Box, {
+      display: "flex",
+      flexDirection: "row"
+    }, /*#__PURE__*/React__default.createElement("span", {
+      className: classes.main
+    }, roomName), /*#__PURE__*/React__default.createElement("span", {
+      className: classes.time
+    }, formatTime(roomTime))),
+    secondary: /*#__PURE__*/React__default.createElement(Box, {
+      display: "flex",
+      flexDirection: "row"
+    }, /*#__PURE__*/React__default.createElement("span", {
+      className: classes.main
+    }, roomText), chat.unreadCount ? /*#__PURE__*/React__default.createElement(Chip, {
+      className: classes.unread,
+      component: "span",
+      size: "small",
+      color: "primary",
+      label: chat.unreadCount
+    }) : null)
+  }));
 };
 
 var useStyles$b = /*#__PURE__*/makeStyles(function () {
@@ -2116,29 +2109,19 @@ var RoomList = function RoomList(props) {
   var classes = useStyles$b();
 
   var _useTranslation = useTranslation(),
-      t = _useTranslation.t; //  const [chats, setChats] = React.useState<ChatRoom[]>([]);
+      t = _useTranslation.t;
 
-
-  var chats = sortChats(props.user.userId, filterChats(props.groups, null), filterChats(props.contacts, null));
+  var _React$useState = React__default.useState(sortChats(props.user.userId, filterChats(props.groups, null), filterChats(props.contacts, null))),
+      chats = _React$useState[0],
+      setChats = _React$useState[1];
 
   var onSearchChange = function onSearchChange(e) {
-    chats = sortChats(props.user.userId, filterChats(props.groups, null), filterChats(props.contacts, null));
+    //console.log("e.target.value", e.target.value);
+    setChats(sortChats(props.user.userId, filterChats(props.groups, e.target.value), filterChats(props.contacts, e.target.value)));
   }; //const activeItem = (id: number) => id === props.activeRoom?.userId;
+  //console.log("chats", chats);
 
 
-  var Contatcs = !isEmpty(chats) && chats.map(function (chat) {
-    return /*#__PURE__*/React__default.createElement(RoomListItem, {
-      key: getChatId(chat),
-      apiUrl: props.apiUrl,
-      chat: chat,
-      active: chat === props.activeRoom,
-      typing: props.typing,
-      onClick: function onClick() {
-        return props.onChangeChat != null && props.onChangeChat(chat);
-      }
-    });
-  });
-  console.log("chats", chats);
   return /*#__PURE__*/React__default.createElement(Card, {
     elevation: 1,
     className: classes.root
@@ -2154,7 +2137,18 @@ var RoomList = function RoomList(props) {
   }), /*#__PURE__*/React__default.createElement(Divider, null), /*#__PURE__*/React__default.createElement(List$1, {
     component: "nav",
     "aria-label": "rooms"
-  }, !isEmpty(chats) ? Contatcs : /*#__PURE__*/React__default.createElement(React__default.Fragment, null)));
+  }, !isEmpty(chats) && chats.map(function (chat) {
+    return !isEmpty(chat) && /*#__PURE__*/React__default.createElement(RoomListItem, {
+      key: getChatId(chat),
+      apiUrl: props.apiUrl,
+      chat: chat,
+      active: chat === props.activeRoom,
+      typing: props.typing,
+      onClick: function onClick() {
+        return props.onChangeChat != null && props.onChangeChat(chat);
+      }
+    });
+  })));
 };
 
 var useStyles$c = /*#__PURE__*/makeStyles(function () {
@@ -3963,8 +3957,7 @@ var ChatPage = function ChatPage(_ref) {
     socket == null ? void 0 : socket.emit("revokeMessage", {
       groupId: chat.groupId,
       contactId: chat.userId,
-      _id: message._id // Идентификатор удаленного сообщения
-
+      _id: message._id
     });
   }, [socket == null ? void 0 : socket.id]);
   var onTyping = useCallback(function (chat) {
@@ -4134,7 +4127,7 @@ var ChatPage = function ChatPage(_ref) {
 
   var gather = !isEmpty(state.groupGather) ? state.groupGather : state.contactGather;
   var messages = Object.values(gather).map(function (it) {
-    return it == null ? void 0 : it.messages.length;
+    return (it == null ? void 0 : it.messages.length) || 0;
   });
   var messCount = messages.reduce(function (a, b) {
     return a + b;
