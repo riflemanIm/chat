@@ -3858,7 +3858,7 @@ var getRingAudio = function getRingAudio() {
 };
 
 var ChatPage = function ChatPage(_ref) {
-  var _state$conference$dat2, _state$conference$dat4, _state$activeRoom, _state$activeRoom2, _state$conference$dat5;
+  var _state$conference$dat2, _state$conference$dat3, _state$conference$dat4, _state$activeRoom, _state$activeRoom2, _state$conference$dat6;
 
   var inModale = _ref.inModale,
       onlyChatGroupId = _ref.onlyChatGroupId;
@@ -4143,21 +4143,15 @@ var ChatPage = function ChatPage(_ref) {
   var messCount = messages.reduce(function (a, b) {
     return a + b;
   }, 0);
+  var depsContats = (_state$conference$dat3 = state.conference.data) != null && _state$conference$dat3.id ? [state.conference.joined, (_state$conference$dat4 = state.conference.data) == null ? void 0 : _state$conference$dat4.id] : [(_state$activeRoom = state.activeRoom) == null ? void 0 : _state$activeRoom.groupId, (_state$activeRoom2 = state.activeRoom) == null ? void 0 : _state$activeRoom2.userId, //state.activeRoom?.messages?.length,
+  //state.act
+  messCount];
   var Contacts = useMemo(function () {
-    var _state$conference$dat3;
+    var _state$conference$dat5;
 
-    return (_state$conference$dat3 = state.conference.data) != null && _state$conference$dat3.id ? state.conference.joined ? /*#__PURE__*/createElement(GetConference, null) : /*#__PURE__*/createElement(GetConferenceCall, null) : /*#__PURE__*/createElement(GetRoomList, null);
-  }, [state.conference.joined, (_state$conference$dat4 = state.conference.data) == null ? void 0 : _state$conference$dat4.id, (_state$activeRoom = state.activeRoom) == null ? void 0 : _state$activeRoom.groupId, (_state$activeRoom2 = state.activeRoom) == null ? void 0 : _state$activeRoom2.userId, //state.activeRoom?.messages?.length,
-  //state.activeRoom?.unreadCount,
-  messCount]);
-  var isLeftPart = onlyChatGroupId == null || !!((_state$conference$dat5 = state.conference.data) != null && _state$conference$dat5.id); // console.log(
-  //   "state",
-  //   state,
-  //   " === messages ===",
-  //   messages,
-  //   "messCount",
-  //   messCount
-  // );
+    return (_state$conference$dat5 = state.conference.data) != null && _state$conference$dat5.id ? state.conference.joined ? /*#__PURE__*/createElement(GetConference, null) : /*#__PURE__*/createElement(GetConferenceCall, null) : /*#__PURE__*/createElement(GetRoomList, null);
+  }, depsContats);
+  var isLeftPart = onlyChatGroupId == null || !!((_state$conference$dat6 = state.conference.data) != null && _state$conference$dat6.id); //console.log("depsContats", depsContats);
 
   return /*#__PURE__*/createElement(Container, {
     maxWidth: "lg",

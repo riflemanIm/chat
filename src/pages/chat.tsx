@@ -339,6 +339,16 @@ export const ChatPage: React.FC<ChatPa> = ({
   const messages = Object.values(gather).map(it => it?.messages.length || 0);
   const messCount = messages.reduce((a: number, b: number) => a + b, 0);
 
+  const depsContats = state.conference.data?.id
+    ? [state.conference.joined, state.conference.data?.id]
+    : [
+        state.activeRoom?.groupId,
+        state.activeRoom?.userId,
+        //state.activeRoom?.messages?.length,
+        //state.act
+        messCount
+      ];
+
   const Contacts = React.useMemo(
     () =>
       state.conference.data?.id ? (
@@ -350,26 +360,11 @@ export const ChatPage: React.FC<ChatPa> = ({
       ) : (
         <GetRoomList />
       ),
-    [
-      state.conference.joined,
-      state.conference.data?.id,
-      state.activeRoom?.groupId,
-      state.activeRoom?.userId,
-      //state.activeRoom?.messages?.length,
-      //state.activeRoom?.unreadCount,
-      messCount
-    ]
+    depsContats
   );
   const isLeftPart = onlyChatGroupId == null || !!state.conference.data?.id;
 
-  // console.log(
-  //   "state",
-  //   state,
-  //   " === messages ===",
-  //   messages,
-  //   "messCount",
-  //   messCount
-  // );
+  //console.log("depsContats", depsContats);
   return (
     <Container maxWidth="lg" className={classes.root}>
       <Box className={classes.innerBox}>
