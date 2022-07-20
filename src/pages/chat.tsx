@@ -14,7 +14,7 @@ import {
   ChatMessage,
   ChatRoom,
   SendMessage,
-  ConferenceData,
+  ConferenceData
 } from "../types";
 import { isEmpty } from "../utils/common";
 import ConferenceCall from "../components/ConferenceCall";
@@ -27,7 +27,7 @@ const getRingAudio = (): HTMLAudioElement => {
 
 export const ChatPage: React.FC<ChatPa> = ({
   inModale,
-  onlyChatGroupId,
+  onlyChatGroupId
 }: ChatPa) => {
   const useStyles = makeStyles((theme: Theme) => ({
     root: {
@@ -39,21 +39,21 @@ export const ChatPage: React.FC<ChatPa> = ({
         height: `calc(100vh - ${theme.spacing(8)})`,
         minWidth: "auto",
         minHeight: "auto",
-        overflow: "hidden",
-      },
+        overflow: "hidden"
+      }
     },
     innerBox: {
       height: "100%",
       width: "100%",
       margin: inModale ? 0 : `${theme.spacing(4)} 0`,
       [theme.breakpoints.down("sm")]: {
-        margin: 0,
-      },
+        margin: 0
+      }
     },
     innerGrid: {
       height: "100%",
-      width: "100%",
-    },
+      width: "100%"
+    }
   }));
   const classes = useStyles();
   const isMobile = useMediaQuery((theme: Theme) =>
@@ -63,15 +63,19 @@ export const ChatPage: React.FC<ChatPa> = ({
   const { state, dispatch } = React.useContext(ChatContext);
   const { socket } = React.useContext(SocketContext);
 
-  const { apiUrl, pageSize, getPrivateMessages, getGroupMessages } =
-    React.useContext(RestContext);
+  const {
+    apiUrl,
+    pageSize,
+    getPrivateMessages,
+    getGroupMessages
+  } = React.useContext(RestContext);
 
   const [ringAudio] = React.useState(getRingAudio());
 
   const onExitActiveRoom = React.useCallback(() => {
     dispatch({
       type: "SET_ACTIVE_ROOM",
-      payload: { ifNotExists: false },
+      payload: { ifNotExists: false }
     });
   }, [dispatch]);
 
@@ -88,7 +92,7 @@ export const ChatPage: React.FC<ChatPa> = ({
       socket?.emit("revokeMessage", {
         groupId: (chat as Group).groupId, // Идентификатор группы
         contactId: chat.userId, // Идентификатор контакта
-        _id: message._id, // Идентификатор удаленного сообщения
+        _id: message._id // Идентификатор удаленного сообщения
       });
     },
     [socket?.id]
@@ -98,7 +102,7 @@ export const ChatPage: React.FC<ChatPa> = ({
     (chat: ChatRoom) => {
       socket?.emit("typing", {
         groupId: (chat as Group)?.groupId,
-        contactId: chat?.userId,
+        contactId: chat?.userId
       });
     },
     [socket?.id]
@@ -114,7 +118,7 @@ export const ChatPage: React.FC<ChatPa> = ({
           height: data.height,
           fileName: data.fileName,
           messageType: data.messageType,
-          size: data.size,
+          size: data.size
         });
       } else {
         socket?.emit("privateMessage", {
@@ -124,7 +128,7 @@ export const ChatPage: React.FC<ChatPa> = ({
           height: data.height,
           fileName: data.fileName,
           messageType: data.messageType,
-          size: data.size,
+          size: data.size
         });
       }
     },
@@ -138,8 +142,8 @@ export const ChatPage: React.FC<ChatPa> = ({
         payload: {
           groupId: (chat as Group)?.groupId,
           contactId: chat?.userId,
-          ifNotExists: false,
-        },
+          ifNotExists: false
+        }
       });
     },
     [socket?.id, dispatch]
@@ -151,12 +155,12 @@ export const ChatPage: React.FC<ChatPa> = ({
       if ((chat as Group).groupId) {
         socket?.emit("markAsRead", {
           groupId: (chat as Group).groupId,
-          _id: chat.messages[chat.messages.length - 1]._id,
+          _id: chat.messages[chat.messages.length - 1]._id
         });
       } else {
         socket?.emit("markAsRead", {
           contactId: chat.userId,
-          _id: chat.messages[chat.messages.length - 1]._id,
+          _id: chat.messages[chat.messages.length - 1]._id
         });
       }
     },
@@ -167,7 +171,7 @@ export const ChatPage: React.FC<ChatPa> = ({
     (chat: ChatRoom) => {
       socket?.emit("startConference", {
         groupId: (chat as Group).groupId,
-        contactId: chat.userId,
+        contactId: chat.userId
       });
     },
     [socket?.id]
@@ -177,7 +181,7 @@ export const ChatPage: React.FC<ChatPa> = ({
     (conference: ConferenceData | null) => {
       if (conference?.id != null)
         socket?.emit("stopConference", {
-          id: conference?.id,
+          id: conference?.id
         });
     },
     [socket?.id]
@@ -187,7 +191,7 @@ export const ChatPage: React.FC<ChatPa> = ({
     (conference: ConferenceData | null) => {
       if (conference?.id != null)
         socket?.emit("pauseConference", {
-          id: conference.id,
+          id: conference.id
         });
     },
     [socket?.id]
@@ -198,7 +202,7 @@ export const ChatPage: React.FC<ChatPa> = ({
       // отправляем startConference чтобы возобновить запись
       if (conference?.id != null)
         socket?.emit("resumeConference", {
-          id: conference.id,
+          id: conference.id
         });
       dispatch({ type: "JOIN_CONFERENCE", payload: conference });
     },
@@ -209,7 +213,7 @@ export const ChatPage: React.FC<ChatPa> = ({
     (group: Group, operator: Contact) => {
       socket?.emit("addOperator", {
         groupId: group.groupId,
-        operatorId: operator.userId,
+        operatorId: operator.userId
       });
     },
     [socket?.id]
@@ -218,7 +222,7 @@ export const ChatPage: React.FC<ChatPa> = ({
   const onLeaveGroup = React.useCallback(
     (group: Group) => {
       socket?.emit("deleteGroup", {
-        groupId: group.groupId,
+        groupId: group.groupId
       });
     },
     [socket?.id]
@@ -229,10 +233,26 @@ export const ChatPage: React.FC<ChatPa> = ({
   }, [dispatch]);
 
   React.useEffect(() => {
-    if (onlyChatGroupId != null && !isEmpty(state.groupGather)) {
+    // console.log(
+    //   "onlyChatGroupId",
+    //   onlyChatGroupId,
+    //   "state",
+    //   state,
+    //   "state.groupGather",
+    //   state.groupGather,
+    //   "state.contactGather",
+    //   state.contactGather
+    // );
+
+    if (
+      state.user.role !== 4 &&
+      onlyChatGroupId != null &&
+      !isEmpty(state.groupGather)
+    ) {
       const onlyChat = Object.values(state.groupGather).find(
-        (item) => item.groupId === onlyChatGroupId
+        item => item.groupId === onlyChatGroupId
       );
+
       if (!isEmpty(onlyChat)) {
         onChangeChat(onlyChat);
       }
@@ -249,7 +269,7 @@ export const ChatPage: React.FC<ChatPa> = ({
     else ringAudio.pause();
   }, [state.conference.data?.id, state.conference.ringPlayed]);
 
-  //  console.log("state.conference", state.conference)
+  //
 
   const renderRoom = state.activeRoom != null && (
     <Room
@@ -316,7 +336,7 @@ export const ChatPage: React.FC<ChatPa> = ({
   const gather = !isEmpty(state.groupGather)
     ? state.groupGather
     : state.contactGather;
-  const messages = Object.values(gather).map((it) => it?.messages.length || 0);
+  const messages = Object.values(gather).map(it => it?.messages.length || 0);
   const messCount = messages.reduce((a: number, b: number) => a + b, 0);
 
   const Contacts = React.useMemo(
@@ -337,7 +357,7 @@ export const ChatPage: React.FC<ChatPa> = ({
       state.activeRoom?.userId,
       //state.activeRoom?.messages?.length,
       //state.activeRoom?.unreadCount,
-      messCount,
+      messCount
     ]
   );
   const isLeftPart = onlyChatGroupId == null || !!state.conference.data?.id;

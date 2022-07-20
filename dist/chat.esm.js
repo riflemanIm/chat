@@ -3957,7 +3957,8 @@ var ChatPage = function ChatPage(_ref) {
     socket == null ? void 0 : socket.emit("revokeMessage", {
       groupId: chat.groupId,
       contactId: chat.userId,
-      _id: message._id
+      _id: message._id // Идентификатор удаленного сообщения
+
     });
   }, [socket == null ? void 0 : socket.id]);
   var onTyping = useCallback(function (chat) {
@@ -4057,7 +4058,17 @@ var ChatPage = function ChatPage(_ref) {
     });
   }, [dispatch]);
   useEffect(function () {
-    if (onlyChatGroupId != null && !isEmpty(state.groupGather)) {
+    // console.log(
+    //   "onlyChatGroupId",
+    //   onlyChatGroupId,
+    //   "state",
+    //   state,
+    //   "state.groupGather",
+    //   state.groupGather,
+    //   "state.contactGather",
+    //   state.contactGather
+    // );
+    if (state.user.role !== 4 && onlyChatGroupId != null && !isEmpty(state.groupGather)) {
       var onlyChat = Object.values(state.groupGather).find(function (item) {
         return item.groupId === onlyChatGroupId;
       });
@@ -4071,7 +4082,7 @@ var ChatPage = function ChatPage(_ref) {
     var _state$conference$dat;
 
     if ((_state$conference$dat = state.conference.data) != null && _state$conference$dat.id && state.conference.ringPlayed && !state.conference.joined) ringAudio.play();else ringAudio.pause();
-  }, [(_state$conference$dat2 = state.conference.data) == null ? void 0 : _state$conference$dat2.id, state.conference.ringPlayed]); //  console.log("state.conference", state.conference)
+  }, [(_state$conference$dat2 = state.conference.data) == null ? void 0 : _state$conference$dat2.id, state.conference.ringPlayed]); //
 
   var renderRoom = state.activeRoom != null && /*#__PURE__*/createElement(Room, {
     apiUrl: apiUrl,
