@@ -107,7 +107,7 @@ export interface PagingParams {
     pageSize: number;
 }
 export interface PagingResponse {
-    messageArr: GroupMessage[];
+    messages: GroupMessage[];
     userArr: User[];
 }
 export interface ContactUserMap {

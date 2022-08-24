@@ -143,7 +143,8 @@ export interface PagingParams {
 
 // Постраничный ответ для групповых сообщений
 export interface PagingResponse {
-  messageArr: GroupMessage[];
+  // messageArr: GroupMessage[]; - fix on messages
+  messages:GroupMessage[];
   userArr: User[];
 }
 
@@ -203,6 +204,7 @@ export interface AddPrivateMessages {
 export interface AddGroupMessages extends PagingResponse {
   pageSize: number;
   groupId: number;
+  
 }
 
 export interface SetActiveRoom {

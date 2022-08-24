@@ -2295,15 +2295,15 @@ var ConferenceCall = function ConferenceCall(_ref) {
 
 var emptyUser = {
   userId: 0,
-  username: "",
-  password: "",
-  avatar: "",
-  langCode: ""
+  username: '',
+  password: '',
+  avatar: '',
+  langCode: ''
 };
 var emptyChatState = {
-  tokenKey: "",
+  tokenKey: '',
   user: emptyUser,
-  token: "",
+  token: '',
   activeRoom: null,
   groupGather: {},
   userGather: {},
@@ -2317,8 +2317,7 @@ var emptyChatState = {
   },
   typing: null,
   loading: false,
-  error: undefined // ошибка
-
+  error: undefined
 };
 
 var getFreshActiveRoom = function getFreshActiveRoom(state) {
@@ -2657,7 +2656,7 @@ var addGroupMessages = function addGroupMessages(state, data) {
   var newState = _extends({}, state);
 
   var groupId = data.groupId,
-      messages = data.messageArr,
+      messages = data.messages,
       users = data.userArr;
 
   if (newState.groupGather[groupId]) {
@@ -2699,7 +2698,7 @@ var setToken = function setToken(state, token) {
 var clearUser = function clearUser(state) {
   localStorage.removeItem(state.tokenKey);
   return _extends({}, state, {
-    token: "",
+    token: '',
     user: emptyUser
   });
 };
@@ -2744,91 +2743,91 @@ function chatReducer(state, action) {
   var _extends2, _extends3, _extends4;
 
   switch (action.type) {
-    case "SET_GROUP_GATHER":
+    case 'SET_GROUP_GATHER':
       return _extends({}, state, {
         groupGather: _extends({}, state.groupGather, (_extends2 = {}, _extends2[action.payload.groupId] = action.payload, _extends2))
       });
 
-    case "SET_CONTACT_GATHER":
+    case 'SET_CONTACT_GATHER':
       return _extends({}, state, {
         contactGather: _extends({}, state.contactGather, (_extends3 = {}, _extends3[action.payload.userId] = action.payload, _extends3))
       });
 
-    case "DEL_GROUP":
+    case 'DEL_GROUP':
       return delGroup(state, action.payload);
 
-    case "DEL_GROUP_MEMBER":
+    case 'DEL_GROUP_MEMBER':
       return delGroupMember(state, action.payload);
 
-    case "DEL_CONTACT":
+    case 'DEL_CONTACT':
       return delContact(state, action.payload.userId);
 
-    case "SET_USER_GATHER":
+    case 'SET_USER_GATHER':
       return _extends({}, state, {
         userGather: _extends({}, state.userGather, (_extends4 = {}, _extends4[action.payload.userId] = action.payload, _extends4))
       });
 
-    case "UPDATE_ACTIVE_ROOM":
+    case 'UPDATE_ACTIVE_ROOM':
       return _extends({}, state, {
         activeRoom: getActiveRoom(state)
       });
 
-    case "SET_ACTIVE_ROOM":
+    case 'SET_ACTIVE_ROOM':
       return setActiveRoom(state, action.payload);
 
-    case "USER_ONLINE":
+    case 'USER_ONLINE':
       return setUserOnline(state, action.payload, 1);
 
-    case "USER_OFFLINE":
+    case 'USER_OFFLINE':
       return setUserOnline(state, action.payload, 0);
 
-    case "ADD_GROUP_MESSAGE":
+    case 'ADD_GROUP_MESSAGE':
       return addGroupMessage(state, action.payload);
 
-    case "ADD_PRIVATE_MESSAGE":
+    case 'ADD_PRIVATE_MESSAGE':
       return addPrivateMessage(state, action.payload);
 
-    case "ADD_GROUP_UNREAD_GATHER":
+    case 'ADD_GROUP_UNREAD_GATHER':
       return groupUnreadGather(state, action.payload, function (x) {
         return (x || 0) + 1;
       });
 
-    case "ADD_CONTACT_UNREAD_GATHER":
+    case 'ADD_CONTACT_UNREAD_GATHER':
       return contactUnreadGather(state, action.payload, function (x) {
         return (x || 0) + 1;
       });
 
-    case "SET_TYPING":
+    case 'SET_TYPING':
       return _extends({}, state, {
         typing: action.payload
       });
 
-    case "LOSE_GROUP_UNREAD_GATHER":
+    case 'LOSE_GROUP_UNREAD_GATHER':
       return groupUnreadGather(state, action.payload, function () {
         return 0;
       });
 
-    case "LOSE_CONTACT_UNREAD_GATHER":
+    case 'LOSE_CONTACT_UNREAD_GATHER':
       return contactUnreadGather(state, action.payload, function () {
         return 0;
       });
 
-    case "REVOKE_MESSAGE":
+    case 'REVOKE_MESSAGE':
       return revokeMessage(state, action.payload);
 
-    case "UPDATE_GROUP_INFO":
+    case 'UPDATE_GROUP_INFO':
       return updateGroupInfo(state, action.payload);
 
-    case "UPDATE_USER_INFO":
+    case 'UPDATE_USER_INFO':
       return updateUserInfo(state, action.payload);
 
-    case "ADD_GROUP_MEMBER":
+    case 'ADD_GROUP_MEMBER':
       return addGroupMember(state, action.payload);
 
-    case "SET_CONFERENCE":
+    case 'SET_CONFERENCE':
       return setConference(state, action.payload);
 
-    case "JOIN_CONFERENCE":
+    case 'JOIN_CONFERENCE':
       return _extends({}, state, {
         conference: {
           data: _extends({}, action.payload),
@@ -2837,44 +2836,44 @@ function chatReducer(state, action) {
         }
       });
 
-    case "PAUSE_CONFERENCE":
+    case 'PAUSE_CONFERENCE':
       return pauseConference(state, action.payload);
 
-    case "STOP_CONFERENCE":
+    case 'STOP_CONFERENCE':
       return stopConference(state, action.payload);
 
-    case "MARK_PRIVATE_MESSAGES_READ":
+    case 'MARK_PRIVATE_MESSAGES_READ':
       return markPrivateMessagesRead(state, action.payload);
 
-    case "ADD_PRIVATE_MESSAGES":
+    case 'ADD_PRIVATE_MESSAGES':
       return addPrivateMessages(state, action.payload);
 
-    case "ADD_GROUP_MESSAGES":
+    case 'ADD_GROUP_MESSAGES':
       return addGroupMessages(state, action.payload);
 
-    case "SET_LOADING":
+    case 'SET_LOADING':
       return _extends({}, state, {
         loading: action.payload,
-        error: ""
+        error: ''
       });
 
-    case "SET_ERROR":
+    case 'SET_ERROR':
       return _extends({}, state, {
         error: action.payload
       });
 
-    case "SET_TOKEN":
+    case 'SET_TOKEN':
       return setToken(state, action.payload);
 
-    case "SET_USER":
+    case 'SET_USER':
       return _extends({}, state, {
         user: action.payload
       });
 
-    case "CLEAR_USER":
+    case 'CLEAR_USER':
       return clearUser(state);
 
-    case "CLEAR_CHAT_DATA":
+    case 'CLEAR_CHAT_DATA':
       return _extends({}, state, {
         activeRoom: null,
         groupGather: {},
@@ -2888,7 +2887,7 @@ function chatReducer(state, action) {
         typing: null
       });
 
-    case "SET_OPERATORS":
+    case 'SET_OPERATORS':
       return _extends({}, state, {
         operators: action.payload
       });
