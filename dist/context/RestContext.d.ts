@@ -1,13 +1,13 @@
 import React from 'react';
 import { AxiosInstance } from 'axios';
-import { Contact, Group, User } from '../types';
+import { Contact, Group } from '../types';
 export interface IRestContext {
     apiUrl: string;
     pageSize: number;
     fetch: AxiosInstance | null;
     getPrivateMessages: (chat: Contact) => Promise<void>;
     getGroupMessages: (chat: Group) => Promise<void>;
-    getUserByMmk: (mmkId: string) => Promise<User | undefined>;
+    getUserByMmk: (mmkId: string) => Promise<number | undefined>;
 }
 export declare const RestContext: React.Context<IRestContext>;
 declare type RestProviderProps = {

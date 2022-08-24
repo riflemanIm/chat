@@ -6,7 +6,6 @@ import {
   Group,
   PagingResponse,
   PrivateMessage,
-  User,
 } from '../types';
 
 export interface IRestContext {
@@ -15,7 +14,7 @@ export interface IRestContext {
   fetch: AxiosInstance | null;
   getPrivateMessages: (chat: Contact) => Promise<void>;
   getGroupMessages: (chat: Group) => Promise<void>;
-  getUserByMmk: (mmkId: string) => Promise<User | undefined>;
+  getUserByMmk: (mmkId: string) => Promise<number | undefined>;
 }
 const initialContext = {} as IRestContext;
 
@@ -118,7 +117,7 @@ export const RestProvider: React.FC<RestProviderProps> = ({
 
   const getUserByMmk = async (mmkId: string) => {
     try {
-      const { data }: { data: User } = await fetch.get(
+      const { data }: { data: number } = await fetch.get(
         '/contact/find',
         {
           params: {
