@@ -1048,6 +1048,11 @@ var chatRoomComparer = function chatRoomComparer(a, b) {
 
   return 1;
 };
+var getParam = function getParam(param) {
+  var QueryString = window.location.search;
+  var urlParams = new URLSearchParams(QueryString);
+  return urlParams.get(param);
+};
 
 var useStyles$3 = /*#__PURE__*/makeStyles(function (theme) {
   return createStyles({
@@ -2940,8 +2945,8 @@ var RestProvider = function RestProvider(_ref) {
     timeout: 60000,
     baseURL: baseURLApi,
     headers: {
-      "Cache-Control": "no-cache",
-      Pragma: "no-cache",
+      'Cache-Control': 'no-cache',
+      Pragma: 'no-cache',
       Authorization: "Bearer " + state.token
     },
     withCredentials: false
@@ -2960,11 +2965,11 @@ var RestProvider = function RestProvider(_ref) {
               current = (_chat$messages = chat.messages) == null ? void 0 : _chat$messages.length;
               _context.prev = 2;
               dispatch({
-                type: "SET_LOADING",
+                type: 'SET_LOADING',
                 payload: true
               });
               _context.next = 6;
-              return fetch.get("/contact/messages", {
+              return fetch.get('/contact/messages', {
                 params: {
                   contactId: contactId,
                   current: current,
@@ -2978,7 +2983,7 @@ var RestProvider = function RestProvider(_ref) {
 
               if (data) {
                 dispatch({
-                  type: "ADD_PRIVATE_MESSAGES",
+                  type: 'ADD_PRIVATE_MESSAGES',
                   payload: {
                     pageSize: pageSize,
                     contactId: contactId,
@@ -2995,14 +3000,14 @@ var RestProvider = function RestProvider(_ref) {
               _context.t0 = _context["catch"](2);
               err = _context.t0;
               dispatch({
-                type: "SET_ERROR",
+                type: 'SET_ERROR',
                 payload: err.message
               });
 
             case 15:
               _context.prev = 15;
               dispatch({
-                type: "SET_LOADING",
+                type: 'SET_LOADING',
                 payload: false
               });
               return _context.finish(15);
@@ -3033,11 +3038,11 @@ var RestProvider = function RestProvider(_ref) {
               current = (_chat$messages2 = chat.messages) == null ? void 0 : _chat$messages2.length;
               _context2.prev = 2;
               dispatch({
-                type: "SET_LOADING",
+                type: 'SET_LOADING',
                 payload: true
               });
               _context2.next = 6;
-              return fetch.get("/group/messages", {
+              return fetch.get('/group/messages', {
                 params: {
                   groupId: groupId,
                   current: current,
@@ -3051,7 +3056,7 @@ var RestProvider = function RestProvider(_ref) {
 
               if (data) {
                 dispatch({
-                  type: "ADD_GROUP_MESSAGES",
+                  type: 'ADD_GROUP_MESSAGES',
                   payload: _extends({
                     pageSize: pageSize,
                     groupId: groupId
@@ -3067,14 +3072,14 @@ var RestProvider = function RestProvider(_ref) {
               _context2.t0 = _context2["catch"](2);
               err = _context2.t0;
               dispatch({
-                type: "SET_ERROR",
+                type: 'SET_ERROR',
                 payload: err.message
               });
 
             case 15:
               _context2.prev = 15;
               dispatch({
-                type: "SET_LOADING",
+                type: 'SET_LOADING',
                 payload: false
               });
               return _context2.finish(15);
@@ -3091,13 +3096,64 @@ var RestProvider = function RestProvider(_ref) {
       return _ref3.apply(this, arguments);
     };
   }(), [dispatch]);
+
+  var getUserByMmk = /*#__PURE__*/function () {
+    var _ref4 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee3(mmkId) {
+      var _yield$fetch$get3, data;
+
+      return _regeneratorRuntime().wrap(function _callee3$(_context3) {
+        while (1) {
+          switch (_context3.prev = _context3.next) {
+            case 0:
+              _context3.prev = 0;
+              _context3.next = 3;
+              return fetch.get('/contact/find', {
+                params: {
+                  mmkId: mmkId
+                }
+              });
+
+            case 3:
+              _yield$fetch$get3 = _context3.sent;
+              data = _yield$fetch$get3.data;
+
+              if (!(data != null)) {
+                _context3.next = 7;
+                break;
+              }
+
+              return _context3.abrupt("return", data);
+
+            case 7:
+              _context3.next = 12;
+              break;
+
+            case 9:
+              _context3.prev = 9;
+              _context3.t0 = _context3["catch"](0);
+              console.log('err getUserByMmk', _context3.t0);
+
+            case 12:
+            case "end":
+              return _context3.stop();
+          }
+        }
+      }, _callee3, null, [[0, 9]]);
+    }));
+
+    return function getUserByMmk(_x3) {
+      return _ref4.apply(this, arguments);
+    };
+  }();
+
   return /*#__PURE__*/React__default.createElement(RestContext.Provider, {
     value: {
       apiUrl: baseURLApi,
       pageSize: pageSize,
       fetch: fetch,
       getPrivateMessages: getPrivateMessages,
-      getGroupMessages: getGroupMessages
+      getGroupMessages: getGroupMessages,
+      getUserByMmk: getUserByMmk
     }
   }, children);
 };
@@ -3851,7 +3907,7 @@ var SocketProvider = function SocketProvider(_ref) {
 };
 
 var getRingAudio = function getRingAudio() {
-  var audio = new Audio(process.env.PUBLIC_URL + "/audio/ring-in.ogg");
+  var audio = new Audio(process.env.PUBLIC_URL + '/audio/ring-in.ogg');
   audio.loop = true;
   return audio;
 };
@@ -3868,30 +3924,30 @@ var ChatPage = function ChatPage(_ref) {
       root: (_root = {
         minWidth: 640,
         minHeight: 470,
-        height: inModale ? "100%" : "calc(100vh - " + theme.spacing(8) + ")",
+        height: inModale ? '100%' : "calc(100vh - " + theme.spacing(8) + ")",
         padding: 0
-      }, _root[theme.breakpoints.down("sm")] = {
+      }, _root[theme.breakpoints.down('sm')] = {
         height: "calc(100vh - " + theme.spacing(8) + ")",
-        minWidth: "auto",
-        minHeight: "auto",
-        overflow: "hidden"
+        minWidth: 'auto',
+        minHeight: 'auto',
+        overflow: 'hidden'
       }, _root),
       innerBox: (_innerBox = {
-        height: "100%",
-        width: "100%",
+        height: '100%',
+        width: '100%',
         margin: inModale ? 0 : theme.spacing(4) + " 0"
-      }, _innerBox[theme.breakpoints.down("sm")] = {
+      }, _innerBox[theme.breakpoints.down('sm')] = {
         margin: 0
       }, _innerBox),
       innerGrid: {
-        height: "100%",
-        width: "100%"
+        height: '100%',
+        width: '100%'
       }
     };
   });
   var classes = useStyles();
   var isMobile = useMediaQuery(function (theme) {
-    return theme.breakpoints.down("sm");
+    return theme.breakpoints.down('sm');
   });
 
   var _React$useContext = useContext(ChatContext),
@@ -3905,14 +3961,15 @@ var ChatPage = function ChatPage(_ref) {
       apiUrl = _React$useContext3.apiUrl,
       pageSize = _React$useContext3.pageSize,
       getPrivateMessages = _React$useContext3.getPrivateMessages,
-      getGroupMessages = _React$useContext3.getGroupMessages;
+      getGroupMessages = _React$useContext3.getGroupMessages,
+      getUserByMmk = _React$useContext3.getUserByMmk;
 
   var _React$useState = useState(getRingAudio()),
       ringAudio = _React$useState[0];
 
   var onExitActiveRoom = useCallback(function () {
     dispatch({
-      type: "SET_ACTIVE_ROOM",
+      type: 'SET_ACTIVE_ROOM',
       payload: {
         ifNotExists: false
       }
@@ -3953,22 +4010,21 @@ var ChatPage = function ChatPage(_ref) {
     };
   }(), [getPrivateMessages, getGroupMessages]);
   var onMessageDelete = useCallback(function (chat, message) {
-    socket == null ? void 0 : socket.emit("revokeMessage", {
+    socket == null ? void 0 : socket.emit('revokeMessage', {
       groupId: chat.groupId,
       contactId: chat.userId,
-      _id: message._id // Идентификатор удаленного сообщения
-
+      _id: message._id
     });
   }, [socket == null ? void 0 : socket.id]);
   var onTyping = useCallback(function (chat) {
-    socket == null ? void 0 : socket.emit("typing", {
+    socket == null ? void 0 : socket.emit('typing', {
       groupId: chat == null ? void 0 : chat.groupId,
       contactId: chat == null ? void 0 : chat.userId
     });
   }, [socket == null ? void 0 : socket.id]);
   var onSendMessage = useCallback(function (chat, data) {
     if (chat.groupId) {
-      socket == null ? void 0 : socket.emit("groupMessage", {
+      socket == null ? void 0 : socket.emit('groupMessage', {
         groupId: chat == null ? void 0 : chat.groupId,
         content: data.message,
         width: data.width,
@@ -3978,7 +4034,7 @@ var ChatPage = function ChatPage(_ref) {
         size: data.size
       });
     } else {
-      socket == null ? void 0 : socket.emit("privateMessage", {
+      socket == null ? void 0 : socket.emit('privateMessage', {
         contactId: chat == null ? void 0 : chat.userId,
         content: data.message,
         width: data.width,
@@ -3991,7 +4047,7 @@ var ChatPage = function ChatPage(_ref) {
   }, [socket == null ? void 0 : socket.id]);
   var onChangeChat = useCallback(function (chat) {
     dispatch({
-      type: "SET_ACTIVE_ROOM",
+      type: 'SET_ACTIVE_ROOM',
       payload: {
         groupId: chat == null ? void 0 : chat.groupId,
         contactId: chat == null ? void 0 : chat.userId,
@@ -4003,70 +4059,101 @@ var ChatPage = function ChatPage(_ref) {
     if (!chat.messages || chat.messages.length === 0) return;
 
     if (chat.groupId) {
-      socket == null ? void 0 : socket.emit("markAsRead", {
+      socket == null ? void 0 : socket.emit('markAsRead', {
         groupId: chat.groupId,
         _id: chat.messages[chat.messages.length - 1]._id
       });
     } else {
-      socket == null ? void 0 : socket.emit("markAsRead", {
+      socket == null ? void 0 : socket.emit('markAsRead', {
         contactId: chat.userId,
         _id: chat.messages[chat.messages.length - 1]._id
       });
     }
   }, [socket == null ? void 0 : socket.id]);
   var onVideoCall = useCallback(function (chat) {
-    socket == null ? void 0 : socket.emit("startConference", {
+    socket == null ? void 0 : socket.emit('startConference', {
       groupId: chat.groupId,
       contactId: chat.userId
     });
   }, [socket == null ? void 0 : socket.id]);
   var onVideoEnd = useCallback(function (conference) {
-    if ((conference == null ? void 0 : conference.id) != null) socket == null ? void 0 : socket.emit("stopConference", {
+    if ((conference == null ? void 0 : conference.id) != null) socket == null ? void 0 : socket.emit('stopConference', {
       id: conference == null ? void 0 : conference.id
     });
   }, [socket == null ? void 0 : socket.id]);
   var onConferencePause = useCallback(function (conference) {
-    if ((conference == null ? void 0 : conference.id) != null) socket == null ? void 0 : socket.emit("pauseConference", {
+    if ((conference == null ? void 0 : conference.id) != null) socket == null ? void 0 : socket.emit('pauseConference', {
       id: conference.id
     });
   }, [socket == null ? void 0 : socket.id]);
   var onConferenceCallAccept = useCallback(function (conference) {
     // отправляем startConference чтобы возобновить запись
-    if ((conference == null ? void 0 : conference.id) != null) socket == null ? void 0 : socket.emit("resumeConference", {
+    if ((conference == null ? void 0 : conference.id) != null) socket == null ? void 0 : socket.emit('resumeConference', {
       id: conference.id
     });
     dispatch({
-      type: "JOIN_CONFERENCE",
+      type: 'JOIN_CONFERENCE',
       payload: conference
     });
   }, [dispatch]);
   var onOperatorAdd = useCallback(function (group, operator) {
-    socket == null ? void 0 : socket.emit("addOperator", {
+    socket == null ? void 0 : socket.emit('addOperator', {
       groupId: group.groupId,
       operatorId: operator.userId
     });
   }, [socket == null ? void 0 : socket.id]);
   var onLeaveGroup = useCallback(function (group) {
-    socket == null ? void 0 : socket.emit("deleteGroup", {
+    socket == null ? void 0 : socket.emit('deleteGroup', {
       groupId: group.groupId
     });
   }, [socket == null ? void 0 : socket.id]);
   var handleError = useCallback(function () {
     dispatch({
-      type: "SET_ERROR"
+      type: 'SET_ERROR'
     });
   }, [dispatch]);
   useEffect(function () {
-    // console.log(
-    //   "onlyChatGroupId",
-    //   onlyChatGroupId,
-    //   "state",
-    //   state,
-    //   "state.groupGather",
-    //   state.groupGather,
-    //   "state.contactGather",
-    //   state.contactGather
-    // );
+    var mmkId = getParam('mmk');
+
+    if (mmkId != null && !isEmpty(state.contactGather)) {
+      var changeChatByMmkId = /*#__PURE__*/function () {
+        var _ref3 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2() {
+          var userId, Chat;
+          return _regeneratorRuntime().wrap(function _callee2$(_context2) {
+            while (1) {
+              switch (_context2.prev = _context2.next) {
+                case 0:
+                  _context2.next = 2;
+                  return getUserByMmk(mmkId);
+
+                case 2:
+                  userId = _context2.sent;
+
+                  if (userId != null) {
+                    Chat = Object.values(state.contactGather).find(function (item) {
+                      return item.userId === userId;
+                    }); //console.log('Chat==', Chat, state);
+
+                    onChangeChat(Chat);
+                  }
+
+                case 4:
+                case "end":
+                  return _context2.stop();
+              }
+            }
+          }, _callee2);
+        }));
+
+        return function changeChatByMmkId() {
+          return _ref3.apply(this, arguments);
+        };
+      }();
+
+      changeChatByMmkId();
+    }
+  }, []);
+  useEffect(function () {
     if (state.user.role !== 4 && onlyChatGroupId != null && !isEmpty(state.groupGather)) {
       var onlyChat = Object.values(state.groupGather).find(function (item) {
         return item.groupId === onlyChatGroupId;
@@ -4171,8 +4258,8 @@ var ChatPage = function ChatPage(_ref) {
     className: classes.innerGrid
   }, renderRoom))), /*#__PURE__*/createElement(Snackbar, {
     anchorOrigin: {
-      vertical: "top",
-      horizontal: "center"
+      vertical: 'top',
+      horizontal: 'center'
     },
     open: !!state.error,
     autoHideDuration: 6000,

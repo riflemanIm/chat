@@ -140,3 +140,9 @@ export const chatRoomComparer = (a: ChatRoom, b: ChatRoom): number => {
   }
   return 1;
 };
+
+export const getParam = (param:string) => {
+  const QueryString = window.location.search;
+  const urlParams = new URLSearchParams(QueryString);
+  return urlParams.get(param);
+};
