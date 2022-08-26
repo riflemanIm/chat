@@ -350,16 +350,6 @@ export const ChatPage: React.FC<ChatPa> = ({
       onClose={onConferencePause}
     />
   );
-  const gather = !isEmpty(state.groupGather)
-    ? state.groupGather
-    : state.contactGather;
-  const messages = Object.values(gather).map(
-    it => it?.messages.length || 0,
-  );
-  const messCount = messages.reduce(
-    (a: number, b: number) => a + b,
-    0,
-  );
 
   const depsContats = state.conference.data?.id
     ? [
@@ -372,10 +362,9 @@ export const ChatPage: React.FC<ChatPa> = ({
     : [
         state.activeRoom?.groupId,
         state.activeRoom?.userId,
-
-        //state.activeRoom?.messages?.length,
-        //state.act
-        messCount,
+        state.activeRoom != null && state.activeRoom?.messages != null
+          ? state.activeRoom?.messages.length
+          : 0,
       ];
 
   const Contacts = React.useMemo(

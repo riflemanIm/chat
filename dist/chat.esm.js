@@ -3913,7 +3913,7 @@ var getRingAudio = function getRingAudio() {
 };
 
 var ChatPage = function ChatPage(_ref) {
-  var _state$conference$dat2, _state$conference$dat3, _state$conference$dat4, _state$conference$dat5, _state$activeRoom, _state$activeRoom2, _state$activeRoom3, _state$activeRoom4;
+  var _state$conference$dat2, _state$conference$dat3, _state$conference$dat4, _state$conference$dat5, _state$activeRoom, _state$activeRoom2, _state$activeRoom3, _state$activeRoom4, _state$activeRoom5, _state$activeRoom6;
 
   var inModale = _ref.inModale,
       activeGroupId = _ref.activeGroupId,
@@ -4230,20 +4230,11 @@ var ChatPage = function ChatPage(_ref) {
     });
   };
 
-  var gather = !isEmpty(state.groupGather) ? state.groupGather : state.contactGather;
-  var messages = Object.values(gather).map(function (it) {
-    return (it == null ? void 0 : it.messages.length) || 0;
-  });
-  var messCount = messages.reduce(function (a, b) {
-    return a + b;
-  }, 0);
-  var depsContats = (_state$conference$dat3 = state.conference.data) != null && _state$conference$dat3.id ? [state.conference.joined, (_state$conference$dat4 = state.conference.data) == null ? void 0 : _state$conference$dat4.id, (_state$conference$dat5 = state.conference.data) == null ? void 0 : _state$conference$dat5.contactId, (_state$activeRoom = state.activeRoom) == null ? void 0 : _state$activeRoom.groupId, (_state$activeRoom2 = state.activeRoom) == null ? void 0 : _state$activeRoom2.userId] : [(_state$activeRoom3 = state.activeRoom) == null ? void 0 : _state$activeRoom3.groupId, (_state$activeRoom4 = state.activeRoom) == null ? void 0 : _state$activeRoom4.userId, //state.activeRoom?.messages?.length,
-  //state.act
-  messCount];
+  var depsContats = (_state$conference$dat3 = state.conference.data) != null && _state$conference$dat3.id ? [state.conference.joined, (_state$conference$dat4 = state.conference.data) == null ? void 0 : _state$conference$dat4.id, (_state$conference$dat5 = state.conference.data) == null ? void 0 : _state$conference$dat5.contactId, (_state$activeRoom = state.activeRoom) == null ? void 0 : _state$activeRoom.groupId, (_state$activeRoom2 = state.activeRoom) == null ? void 0 : _state$activeRoom2.userId] : [(_state$activeRoom3 = state.activeRoom) == null ? void 0 : _state$activeRoom3.groupId, (_state$activeRoom4 = state.activeRoom) == null ? void 0 : _state$activeRoom4.userId, state.activeRoom != null && ((_state$activeRoom5 = state.activeRoom) == null ? void 0 : _state$activeRoom5.messages) != null ? (_state$activeRoom6 = state.activeRoom) == null ? void 0 : _state$activeRoom6.messages.length : 0];
   var Contacts = useMemo(function () {
-    var _state$conference$dat6, _state$conference$dat7, _state$activeRoom5;
+    var _state$conference$dat6, _state$conference$dat7, _state$activeRoom7;
 
-    return (_state$conference$dat6 = state.conference.data) != null && _state$conference$dat6.id && ((_state$conference$dat7 = state.conference.data) == null ? void 0 : _state$conference$dat7.contactId) === ((_state$activeRoom5 = state.activeRoom) == null ? void 0 : _state$activeRoom5.userId) ? state.conference.joined ? /*#__PURE__*/createElement(GetConference, null) : /*#__PURE__*/createElement(GetConferenceCall, null) : /*#__PURE__*/createElement(GetRoomList, null);
+    return (_state$conference$dat6 = state.conference.data) != null && _state$conference$dat6.id && ((_state$conference$dat7 = state.conference.data) == null ? void 0 : _state$conference$dat7.contactId) === ((_state$activeRoom7 = state.activeRoom) == null ? void 0 : _state$activeRoom7.userId) ? state.conference.joined ? /*#__PURE__*/createElement(GetConference, null) : /*#__PURE__*/createElement(GetConferenceCall, null) : /*#__PURE__*/createElement(GetRoomList, null);
   }, depsContats); //console.log('chat state', state);
 
   return /*#__PURE__*/createElement(Container, {
