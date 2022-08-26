@@ -35,7 +35,8 @@ const getRingAudio = (): HTMLAudioElement => {
 
 export const ChatPage: React.FC<ChatPa> = ({
   inModale,
-  onlyChatGroupId,
+  activeGroupId,
+  activeChatUserId,
 }: ChatPa) => {
   const useStyles = makeStyles((theme: Theme) => ({
     root: {
@@ -251,7 +252,6 @@ export const ChatPage: React.FC<ChatPa> = ({
           const Chat = Object.values(state.contactGather).find(
             item => item.userId === userId,
           );
-          //console.log('Chat==', Chat, state);
           onChangeChat(Chat);
         }
       };
@@ -260,13 +260,17 @@ export const ChatPage: React.FC<ChatPa> = ({
   }, []);
 
   React.useEffect(() => {
-    if (
-      state.user.role !== 4 &&
-      onlyChatGroupId != null &&
-      !isEmpty(state.groupGather)
-    ) {
+    if (activeChatUserId != null && !isEmpty(state.contactGather)) {
+      const Chat = Object.values(state.contactGather).find(
+        item => item.userId === activeChatUserId,
+      );
+      onChangeChat(Chat);
+    }
+  }, [state.contactGather]);
+  React.useEffect(() => {
+    if (activeGroupId != null && !isEmpty(state.groupGather)) {
       const onlyChat = Object.values(state.groupGather).find(
-        item => item.groupId === onlyChatGroupId,
+        item => item.groupId === activeGroupId,
       );
 
       if (!isEmpty(onlyChat)) {
@@ -299,11 +303,7 @@ export const ChatPage: React.FC<ChatPa> = ({
       conferenceJoined={state.conference.joined}
       loading={state.loading}
       pageSize={pageSize}
-      onExitRoom={
-        isMobile && onlyChatGroupId == null
-          ? onExitActiveRoom
-          : undefined
-      }
+      onExitRoom={onExitActiveRoom}
       onEnterRoom={onEnterRoom}
       onNeedMoreMessages={onNeedMoreMessages}
       onMeesageDelete={onMessageDelete}
@@ -363,10 +363,17 @@ export const ChatPage: React.FC<ChatPa> = ({
   );
 
   const depsContats = state.conference.data?.id
-    ? [state.conference.joined, state.conference.data?.id]
+    ? [
+        state.conference.joined,
+        state.conference.data?.id,
+        state.conference.data?.contactId,
+        state.activeRoom?.groupId,
+        state.activeRoom?.userId,
+      ]
     : [
         state.activeRoom?.groupId,
         state.activeRoom?.userId,
+
         //state.activeRoom?.messages?.length,
         //state.act
         messCount,
@@ -374,7 +381,9 @@ export const ChatPage: React.FC<ChatPa> = ({
 
   const Contacts = React.useMemo(
     () =>
-      state.conference.data?.id ? (
+      state.conference.data?.id &&
+      state.conference.data?.contactId ===
+        state.activeRoom?.userId ? (
         state.conference.joined ? (
           <GetConference />
         ) : (
@@ -385,30 +394,26 @@ export const ChatPage: React.FC<ChatPa> = ({
       ),
     depsContats,
   );
-  const isLeftPart =
-    onlyChatGroupId == null || !!state.conference.data?.id;
-
-  //console.log("depsContats", depsContats);
+  // console.log(
+  //   'chat state',
+  //   state.conference.data?.contactId,
+  //   state.activeRoom?.userId,
+  // );
   return (
     <Container maxWidth="lg" className={classes.root}>
       <Box className={classes.innerBox}>
         {isMobile ? (
           <>
-            {isLeftPart && Contacts}
+            {Contacts}
             {renderRoom}
           </>
         ) : (
           <Grid container spacing={1} className={classes.innerGrid}>
-            {isLeftPart && (
-              <Grid item sm={4} className={classes.innerGrid}>
-                {Contacts}
-              </Grid>
-            )}
-            <Grid
-              item
-              sm={isLeftPart ? 8 : 12}
-              className={classes.innerGrid}
-            >
+            <Grid item sm={4} className={classes.innerGrid}>
+              {Contacts}
+            </Grid>
+
+            <Grid item sm={8} className={classes.innerGrid}>
               {renderRoom}
             </Grid>
           </Grid>

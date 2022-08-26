@@ -3913,10 +3913,11 @@ var getRingAudio = function getRingAudio() {
 };
 
 var ChatPage = function ChatPage(_ref) {
-  var _state$conference$dat2, _state$conference$dat3, _state$conference$dat4, _state$activeRoom, _state$activeRoom2, _state$conference$dat6;
+  var _state$conference$dat2, _state$conference$dat3, _state$conference$dat4, _state$conference$dat5, _state$activeRoom, _state$activeRoom2, _state$activeRoom3, _state$activeRoom4;
 
   var inModale = _ref.inModale,
-      onlyChatGroupId = _ref.onlyChatGroupId;
+      activeGroupId = _ref.activeGroupId,
+      activeChatUserId = _ref.activeChatUserId;
   var useStyles = styles.makeStyles(function (theme) {
     var _root, _innerBox;
 
@@ -4132,8 +4133,7 @@ var ChatPage = function ChatPage(_ref) {
                   if (userId != null) {
                     Chat = Object.values(state.contactGather).find(function (item) {
                       return item.userId === userId;
-                    }); //console.log('Chat==', Chat, state);
-
+                    });
                     onChangeChat(Chat);
                   }
 
@@ -4154,9 +4154,17 @@ var ChatPage = function ChatPage(_ref) {
     }
   }, []);
   React.useEffect(function () {
-    if (state.user.role !== 4 && onlyChatGroupId != null && !isEmpty(state.groupGather)) {
+    if (activeChatUserId != null && !isEmpty(state.contactGather)) {
+      var Chat = Object.values(state.contactGather).find(function (item) {
+        return item.userId === activeChatUserId;
+      });
+      onChangeChat(Chat);
+    }
+  }, [state.contactGather]);
+  React.useEffect(function () {
+    if (activeGroupId != null && !isEmpty(state.groupGather)) {
       var onlyChat = Object.values(state.groupGather).find(function (item) {
-        return item.groupId === onlyChatGroupId;
+        return item.groupId === activeGroupId;
       });
 
       if (!isEmpty(onlyChat)) {
@@ -4181,7 +4189,7 @@ var ChatPage = function ChatPage(_ref) {
     conferenceJoined: state.conference.joined,
     loading: state.loading,
     pageSize: pageSize,
-    onExitRoom: isMobile && onlyChatGroupId == null ? onExitActiveRoom : undefined,
+    onExitRoom: onExitActiveRoom,
     onEnterRoom: onEnterRoom,
     onNeedMoreMessages: onNeedMoreMessages,
     onMeesageDelete: onMessageDelete,
@@ -4229,32 +4237,35 @@ var ChatPage = function ChatPage(_ref) {
   var messCount = messages.reduce(function (a, b) {
     return a + b;
   }, 0);
-  var depsContats = (_state$conference$dat3 = state.conference.data) != null && _state$conference$dat3.id ? [state.conference.joined, (_state$conference$dat4 = state.conference.data) == null ? void 0 : _state$conference$dat4.id] : [(_state$activeRoom = state.activeRoom) == null ? void 0 : _state$activeRoom.groupId, (_state$activeRoom2 = state.activeRoom) == null ? void 0 : _state$activeRoom2.userId, //state.activeRoom?.messages?.length,
+  var depsContats = (_state$conference$dat3 = state.conference.data) != null && _state$conference$dat3.id ? [state.conference.joined, (_state$conference$dat4 = state.conference.data) == null ? void 0 : _state$conference$dat4.id, (_state$conference$dat5 = state.conference.data) == null ? void 0 : _state$conference$dat5.contactId, (_state$activeRoom = state.activeRoom) == null ? void 0 : _state$activeRoom.groupId, (_state$activeRoom2 = state.activeRoom) == null ? void 0 : _state$activeRoom2.userId] : [(_state$activeRoom3 = state.activeRoom) == null ? void 0 : _state$activeRoom3.groupId, (_state$activeRoom4 = state.activeRoom) == null ? void 0 : _state$activeRoom4.userId, //state.activeRoom?.messages?.length,
   //state.act
   messCount];
   var Contacts = React.useMemo(function () {
-    var _state$conference$dat5;
+    var _state$conference$dat6, _state$conference$dat7, _state$activeRoom5;
 
-    return (_state$conference$dat5 = state.conference.data) != null && _state$conference$dat5.id ? state.conference.joined ? /*#__PURE__*/React.createElement(GetConference, null) : /*#__PURE__*/React.createElement(GetConferenceCall, null) : /*#__PURE__*/React.createElement(GetRoomList, null);
-  }, depsContats);
-  var isLeftPart = onlyChatGroupId == null || !!((_state$conference$dat6 = state.conference.data) != null && _state$conference$dat6.id); //console.log("depsContats", depsContats);
+    return (_state$conference$dat6 = state.conference.data) != null && _state$conference$dat6.id && ((_state$conference$dat7 = state.conference.data) == null ? void 0 : _state$conference$dat7.contactId) === ((_state$activeRoom5 = state.activeRoom) == null ? void 0 : _state$activeRoom5.userId) ? state.conference.joined ? /*#__PURE__*/React.createElement(GetConference, null) : /*#__PURE__*/React.createElement(GetConferenceCall, null) : /*#__PURE__*/React.createElement(GetRoomList, null);
+  }, depsContats); // console.log(
+  //   'chat state',
+  //   state.conference.data?.contactId,
+  //   state.activeRoom?.userId,
+  // );
 
   return /*#__PURE__*/React.createElement(material.Container, {
     maxWidth: "lg",
     className: classes.root
   }, /*#__PURE__*/React.createElement(material.Box, {
     className: classes.innerBox
-  }, isMobile ? /*#__PURE__*/React.createElement(React.Fragment, null, isLeftPart && Contacts, renderRoom) : /*#__PURE__*/React.createElement(material.Grid, {
+  }, isMobile ? /*#__PURE__*/React.createElement(React.Fragment, null, Contacts, renderRoom) : /*#__PURE__*/React.createElement(material.Grid, {
     container: true,
     spacing: 1,
     className: classes.innerGrid
-  }, isLeftPart && /*#__PURE__*/React.createElement(material.Grid, {
+  }, /*#__PURE__*/React.createElement(material.Grid, {
     item: true,
     sm: 4,
     className: classes.innerGrid
   }, Contacts), /*#__PURE__*/React.createElement(material.Grid, {
     item: true,
-    sm: isLeftPart ? 8 : 12,
+    sm: 8,
     className: classes.innerGrid
   }, renderRoom))), /*#__PURE__*/React.createElement(material.Snackbar, {
     anchorOrigin: {

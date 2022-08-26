@@ -1,6 +1,7 @@
 export interface ChatPa {
     inModale?: boolean;
-    onlyChatGroupId?: number;
+    activeGroupId?: number;
+    activeChatUserId?: number;
 }
 export declare type MessageType = "text" | "image" | "file" | "video" | "notify" | "video_conference";
 export declare enum MessageStatus {

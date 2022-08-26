@@ -1,6 +1,7 @@
 export interface ChatPa {
   inModale?: boolean;
-  onlyChatGroupId?: number;
+  activeGroupId?: number;
+  activeChatUserId?: number;
 }
 
 // Тип сообщения
