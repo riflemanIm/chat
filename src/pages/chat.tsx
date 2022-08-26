@@ -244,6 +244,13 @@ export const ChatPage: React.FC<ChatPa> = ({
   }, [dispatch]);
 
   React.useEffect(() => {
+    if (activeChatUserId != null && !isEmpty(state.contactGather)) {
+      const Chat = Object.values(state.contactGather).find(
+        item => item.userId === activeChatUserId,
+      );
+      onChangeChat(Chat);
+    }
+
     const mmkId = getParam('mmk');
     if (mmkId != null && !isEmpty(state.contactGather)) {
       const changeChatByMmkId = async () => {
@@ -257,16 +264,8 @@ export const ChatPage: React.FC<ChatPa> = ({
       };
       changeChatByMmkId();
     }
-  }, []);
-
-  React.useEffect(() => {
-    if (activeChatUserId != null && !isEmpty(state.contactGather)) {
-      const Chat = Object.values(state.contactGather).find(
-        item => item.userId === activeChatUserId,
-      );
-      onChangeChat(Chat);
-    }
   }, [state.contactGather]);
+
   React.useEffect(() => {
     if (activeGroupId != null && !isEmpty(state.groupGather)) {
       const onlyChat = Object.values(state.groupGather).find(
@@ -394,11 +393,9 @@ export const ChatPage: React.FC<ChatPa> = ({
       ),
     depsContats,
   );
-  // console.log(
-  //   'chat state',
-  //   state.conference.data?.contactId,
-  //   state.activeRoom?.userId,
-  // );
+
+  //console.log('chat state', state);
+
   return (
     <Container maxWidth="lg" className={classes.root}>
       <Box className={classes.innerBox}>

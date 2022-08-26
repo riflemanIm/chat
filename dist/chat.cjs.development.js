@@ -4114,12 +4114,20 @@ var ChatPage = function ChatPage(_ref) {
     });
   }, [dispatch]);
   React.useEffect(function () {
+    if (activeChatUserId != null && !isEmpty(state.contactGather)) {
+      var Chat = Object.values(state.contactGather).find(function (item) {
+        return item.userId === activeChatUserId;
+      });
+      onChangeChat(Chat);
+    }
+
     var mmkId = getParam('mmk');
 
     if (mmkId != null && !isEmpty(state.contactGather)) {
       var changeChatByMmkId = /*#__PURE__*/function () {
         var _ref3 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2() {
-          var userId, Chat;
+          var userId, _Chat;
+
           return _regeneratorRuntime().wrap(function _callee2$(_context2) {
             while (1) {
               switch (_context2.prev = _context2.next) {
@@ -4131,10 +4139,10 @@ var ChatPage = function ChatPage(_ref) {
                   userId = _context2.sent;
 
                   if (userId != null) {
-                    Chat = Object.values(state.contactGather).find(function (item) {
+                    _Chat = Object.values(state.contactGather).find(function (item) {
                       return item.userId === userId;
                     });
-                    onChangeChat(Chat);
+                    onChangeChat(_Chat);
                   }
 
                 case 4:
@@ -4151,14 +4159,6 @@ var ChatPage = function ChatPage(_ref) {
       }();
 
       changeChatByMmkId();
-    }
-  }, []);
-  React.useEffect(function () {
-    if (activeChatUserId != null && !isEmpty(state.contactGather)) {
-      var Chat = Object.values(state.contactGather).find(function (item) {
-        return item.userId === activeChatUserId;
-      });
-      onChangeChat(Chat);
     }
   }, [state.contactGather]);
   React.useEffect(function () {
@@ -4244,11 +4244,7 @@ var ChatPage = function ChatPage(_ref) {
     var _state$conference$dat6, _state$conference$dat7, _state$activeRoom5;
 
     return (_state$conference$dat6 = state.conference.data) != null && _state$conference$dat6.id && ((_state$conference$dat7 = state.conference.data) == null ? void 0 : _state$conference$dat7.contactId) === ((_state$activeRoom5 = state.activeRoom) == null ? void 0 : _state$activeRoom5.userId) ? state.conference.joined ? /*#__PURE__*/React.createElement(GetConference, null) : /*#__PURE__*/React.createElement(GetConferenceCall, null) : /*#__PURE__*/React.createElement(GetRoomList, null);
-  }, depsContats); // console.log(
-  //   'chat state',
-  //   state.conference.data?.contactId,
-  //   state.activeRoom?.userId,
-  // );
+  }, depsContats); //console.log('chat state', state);
 
   return /*#__PURE__*/React.createElement(material.Container, {
     maxWidth: "lg",
