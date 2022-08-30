@@ -3912,41 +3912,40 @@ var getRingAudio = function getRingAudio() {
   return audio;
 };
 
+var useStyles$e = /*#__PURE__*/styles.makeStyles(function (theme) {
+  var _root, _innerBox;
+
+  return {
+    root: (_root = {
+      minWidth: 640,
+      minHeight: 470,
+      height: '100%',
+      padding: 0
+    }, _root[theme.breakpoints.down('sm')] = {
+      height: "calc(100vh - " + theme.spacing(8) + ")",
+      minWidth: 'auto',
+      minHeight: 'auto',
+      overflow: 'hidden'
+    }, _root),
+    innerBox: (_innerBox = {
+      height: '100%',
+      width: '100%',
+      margin: 0
+    }, _innerBox[theme.breakpoints.down('sm')] = {
+      margin: 0
+    }, _innerBox),
+    innerGrid: {
+      height: '100%',
+      width: '100%'
+    }
+  };
+});
 var ChatPage = function ChatPage(_ref) {
   var _state$conference$dat2, _state$conference$dat3, _state$conference$dat4, _state$conference$dat5, _state$activeRoom, _state$activeRoom2, _state$activeRoom3, _state$activeRoom4, _state$activeRoom5, _state$activeRoom6;
 
-  var inModale = _ref.inModale,
-      activeGroupId = _ref.activeGroupId,
+  var activeGroupId = _ref.activeGroupId,
       activeChatUserId = _ref.activeChatUserId;
-  var useStyles = styles.makeStyles(function (theme) {
-    var _root, _innerBox;
-
-    return {
-      root: (_root = {
-        minWidth: 640,
-        minHeight: 470,
-        height: inModale ? '100%' : "calc(100vh - " + theme.spacing(8) + ")",
-        padding: 0
-      }, _root[theme.breakpoints.down('sm')] = {
-        height: "calc(100vh - " + theme.spacing(8) + ")",
-        minWidth: 'auto',
-        minHeight: 'auto',
-        overflow: 'hidden'
-      }, _root),
-      innerBox: (_innerBox = {
-        height: '100%',
-        width: '100%',
-        margin: inModale ? 0 : theme.spacing(4) + " 0"
-      }, _innerBox[theme.breakpoints.down('sm')] = {
-        margin: 0
-      }, _innerBox),
-      innerGrid: {
-        height: '100%',
-        width: '100%'
-      }
-    };
-  });
-  var classes = useStyles();
+  var classes = useStyles$e();
   var isMobile = material.useMediaQuery(function (theme) {
     return theme.breakpoints.down('sm');
   });
@@ -4176,7 +4175,7 @@ var ChatPage = function ChatPage(_ref) {
     var _state$conference$dat;
 
     if ((_state$conference$dat = state.conference.data) != null && _state$conference$dat.id && state.conference.ringPlayed && !state.conference.joined) ringAudio.play();else ringAudio.pause();
-  }, [(_state$conference$dat2 = state.conference.data) == null ? void 0 : _state$conference$dat2.id, state.conference.ringPlayed]); //
+  }, [(_state$conference$dat2 = state.conference.data) == null ? void 0 : _state$conference$dat2.id, state.conference.ringPlayed]); //console.log('state', state);
 
   var renderRoom = state.activeRoom != null && /*#__PURE__*/React.createElement(Room, {
     apiUrl: apiUrl,

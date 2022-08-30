@@ -1,5 +1,4 @@
-export interface ChatPa {
-  inModale?: boolean;
+export interface ChatPa {  
   activeGroupId?: number;
   activeChatUserId?: number;
 }

@@ -32,38 +32,37 @@ const getRingAudio = (): HTMLAudioElement => {
   audio.loop = true;
   return audio;
 };
+const useStyles = makeStyles((theme: Theme) => ({
+  root: {
+    minWidth: 640,
+    minHeight: 470,
+    height: '100%',
+    padding: 0,
+    [theme.breakpoints.down('sm')]: {
+      height: `calc(100vh - ${theme.spacing(8)})`,
+      minWidth: 'auto',
+      minHeight: 'auto',
+      overflow: 'hidden',
+    },
+  },
+  innerBox: {
+    height: '100%',
+    width: '100%',
+    margin: 0,
+    [theme.breakpoints.down('sm')]: {
+      margin: 0,
+    },
+  },
+  innerGrid: {
+    height: '100%',
+    width: '100%',
+  },
+}));
 
 export const ChatPage: React.FC<ChatPa> = ({
-  inModale,
   activeGroupId,
   activeChatUserId,
 }: ChatPa) => {
-  const useStyles = makeStyles((theme: Theme) => ({
-    root: {
-      minWidth: 640,
-      minHeight: 470,
-      height: inModale ? '100%' : `calc(100vh - ${theme.spacing(8)})`,
-      padding: 0,
-      [theme.breakpoints.down('sm')]: {
-        height: `calc(100vh - ${theme.spacing(8)})`,
-        minWidth: 'auto',
-        minHeight: 'auto',
-        overflow: 'hidden',
-      },
-    },
-    innerBox: {
-      height: '100%',
-      width: '100%',
-      margin: inModale ? 0 : `${theme.spacing(4)} 0`,
-      [theme.breakpoints.down('sm')]: {
-        margin: 0,
-      },
-    },
-    innerGrid: {
-      height: '100%',
-      width: '100%',
-    },
-  }));
   const classes = useStyles();
   const isMobile = useMediaQuery((theme: Theme) =>
     theme.breakpoints.down('sm'),
@@ -288,7 +287,7 @@ export const ChatPage: React.FC<ChatPa> = ({
     else ringAudio.pause();
   }, [state.conference.data?.id, state.conference.ringPlayed]);
 
-  //
+  //console.log('state', state);
 
   const renderRoom = state.activeRoom != null && (
     <Room
