@@ -960,7 +960,7 @@ var Entry = function Entry(props) {
 };
 
 function isEmpty(value) {
-  return value == null || typeof value === 'object' && Object.keys(value).length === 0 || typeof value === 'string' && value.trim().length === 0;
+  return value == null || typeof value === "object" && Object.keys(value).length === 0 || typeof value === "string" && value.trim().length === 0;
 } // string contains string
 /**
  * Формитирование времени сообщения
@@ -968,19 +968,19 @@ function isEmpty(value) {
  */
 
 function formatTime(time) {
-  if (typeof time === 'undefined') return null;
-  if (typeof time === 'string') time = new Date(time); // больше чем вчера
+  if (typeof time === "undefined") return null;
+  if (typeof time === "string") time = new Date(time); // больше чем вчера
 
-  if (moment().add(-1, 'days').startOf('day').isAfter(time)) {
-    return moment(time).format('DD.MM.YYYY HH:mm');
+  if (moment().add(-1, "days").startOf("day").isAfter(time)) {
+    return moment(time).format("DD.MM.YYYY HH:mm");
   } // вчера
 
 
-  if (moment().startOf('day').isAfter(time)) {
-    return "\u0412\u0447\u0435\u0440\u0430 \u0432 " + moment(time).format('HH:mm');
+  if (moment().startOf("day").isAfter(time)) {
+    return "\u0412\u0447\u0435\u0440\u0430 \u0432 " + moment(time).format("HH:mm");
   }
 
-  return moment(time).format('HH:mm');
+  return moment(time).format("HH:mm");
 }
 /**
  * Раскрыть содержимое
@@ -990,7 +990,7 @@ function formatTime(time) {
 function getFileMeta(content) {
   // Формат  [date]$[userId]$[size]$[fileName]
   // Например fileName = 1606980397047$1a01e20f-3780-4227-84b5-5c69ca766ee5$15.41KB$123.docx
-  var meta = content.split('$');
+  var meta = content.split("$");
   var date = meta[0],
       userId = meta[1],
       size = meta[2],
@@ -1004,7 +1004,7 @@ function getFileMeta(content) {
 }
 function getImageMeta(content) {
   // Формат [date]$[userId]$[width]$[height]$...
-  var meta = content.split('$');
+  var meta = content.split("$");
   var date = meta[0],
       userId = meta[1],
       width = meta[2],
@@ -1017,10 +1017,10 @@ function getImageMeta(content) {
   };
 }
 function splitFileName(name) {
-  var idx = name.lastIndexOf('.');
+  var idx = name.lastIndexOf(".");
   if (idx === -1) return {
     name: name,
-    ext: ''
+    ext: ""
   };
   return {
     name: name.slice(0, idx),
@@ -1033,6 +1033,13 @@ var getChatId = function getChatId(chat) {
 };
 var getChatName = function getChatName(chat) {
   return chat.groupId ? chat.name : chat.username;
+};
+var allMessCount = function allMessCount(chats) {
+  return Object.values(chats).map(function (it) {
+    return (it == null ? void 0 : it.messages) != null ? it == null ? void 0 : it.messages.length : 0;
+  }).reduce(function (a, b) {
+    return a + b;
+  }, 0);
 };
 var chatRoomComparer = function chatRoomComparer(a, b) {
   var hasMessagesA = Array.isArray(a.messages) && a.messages.length > 0;
@@ -3940,7 +3947,7 @@ var SocketProvider = function SocketProvider(_ref) {
 };
 
 var getRingAudio = function getRingAudio() {
-  var audio = new Audio(process.env.PUBLIC_URL + '/audio/ring-in.ogg');
+  var audio = new Audio(process.env.PUBLIC_URL + "/audio/ring-in.ogg");
   audio.loop = true;
   return audio;
 };
@@ -3952,24 +3959,24 @@ var useStyles$e = /*#__PURE__*/styles.makeStyles(function (theme) {
     root: (_root = {
       minWidth: 640,
       minHeight: 470,
-      height: '100%',
+      height: "100%",
       padding: 0
-    }, _root[theme.breakpoints.down('sm')] = {
+    }, _root[theme.breakpoints.down("sm")] = {
       height: "calc(100vh - " + theme.spacing(8) + ")",
-      minWidth: 'auto',
-      minHeight: 'auto',
-      overflow: 'hidden'
+      minWidth: "auto",
+      minHeight: "auto",
+      overflow: "hidden"
     }, _root),
     innerBox: (_innerBox = {
-      height: '100%',
-      width: '100%',
+      height: "100%",
+      width: "100%",
       margin: 0
-    }, _innerBox[theme.breakpoints.down('sm')] = {
+    }, _innerBox[theme.breakpoints.down("sm")] = {
       margin: 0
     }, _innerBox),
     innerGrid: {
-      height: '100%',
-      width: '100%'
+      height: "100%",
+      width: "100%"
     }
   };
 });
@@ -3980,7 +3987,7 @@ var ChatPage = function ChatPage(_ref) {
       activeChatUserId = _ref.activeChatUserId;
   var classes = useStyles$e();
   var isMobile = material.useMediaQuery(function (theme) {
-    return theme.breakpoints.down('sm');
+    return theme.breakpoints.down("sm");
   });
 
   var _React$useContext = React.useContext(ChatContext),
@@ -4002,7 +4009,7 @@ var ChatPage = function ChatPage(_ref) {
 
   var onExitActiveRoom = React.useCallback(function () {
     dispatch({
-      type: 'SET_ACTIVE_ROOM',
+      type: "SET_ACTIVE_ROOM",
       payload: {
         ifNotExists: false
       }
@@ -4043,21 +4050,22 @@ var ChatPage = function ChatPage(_ref) {
     };
   }(), [getPrivateMessages, getGroupMessages]);
   var onMessageDelete = React.useCallback(function (chat, message) {
-    socket == null ? void 0 : socket.emit('revokeMessage', {
+    socket == null ? void 0 : socket.emit("revokeMessage", {
       groupId: chat.groupId,
       contactId: chat.userId,
-      _id: message._id
+      _id: message._id // Идентификатор удаленного сообщения
+
     });
   }, [socket == null ? void 0 : socket.id]);
   var onTyping = React.useCallback(function (chat) {
-    socket == null ? void 0 : socket.emit('typing', {
+    socket == null ? void 0 : socket.emit("typing", {
       groupId: chat == null ? void 0 : chat.groupId,
       contactId: chat == null ? void 0 : chat.userId
     });
   }, [socket == null ? void 0 : socket.id]);
   var onSendMessage = React.useCallback(function (chat, data) {
     if (chat.groupId) {
-      socket == null ? void 0 : socket.emit('groupMessage', {
+      socket == null ? void 0 : socket.emit("groupMessage", {
         groupId: chat == null ? void 0 : chat.groupId,
         content: data.message,
         width: data.width,
@@ -4067,7 +4075,7 @@ var ChatPage = function ChatPage(_ref) {
         size: data.size
       });
     } else {
-      socket == null ? void 0 : socket.emit('privateMessage', {
+      socket == null ? void 0 : socket.emit("privateMessage", {
         contactId: chat == null ? void 0 : chat.userId,
         content: data.message,
         width: data.width,
@@ -4080,7 +4088,7 @@ var ChatPage = function ChatPage(_ref) {
   }, [socket == null ? void 0 : socket.id]);
   var onChangeChat = React.useCallback(function (chat) {
     dispatch({
-      type: 'SET_ACTIVE_ROOM',
+      type: "SET_ACTIVE_ROOM",
       payload: {
         groupId: chat == null ? void 0 : chat.groupId,
         contactId: chat == null ? void 0 : chat.userId,
@@ -4092,57 +4100,57 @@ var ChatPage = function ChatPage(_ref) {
     if (!chat.messages || chat.messages.length === 0) return;
 
     if (chat.groupId) {
-      socket == null ? void 0 : socket.emit('markAsRead', {
+      socket == null ? void 0 : socket.emit("markAsRead", {
         groupId: chat.groupId,
         _id: chat.messages[chat.messages.length - 1]._id
       });
     } else {
-      socket == null ? void 0 : socket.emit('markAsRead', {
+      socket == null ? void 0 : socket.emit("markAsRead", {
         contactId: chat.userId,
         _id: chat.messages[chat.messages.length - 1]._id
       });
     }
   }, [socket == null ? void 0 : socket.id]);
   var onVideoCall = React.useCallback(function (chat) {
-    socket == null ? void 0 : socket.emit('startConference', {
+    socket == null ? void 0 : socket.emit("startConference", {
       groupId: chat.groupId,
       contactId: chat.userId
     });
   }, [socket == null ? void 0 : socket.id]);
   var onVideoEnd = React.useCallback(function (conference) {
-    if ((conference == null ? void 0 : conference.id) != null) socket == null ? void 0 : socket.emit('stopConference', {
+    if ((conference == null ? void 0 : conference.id) != null) socket == null ? void 0 : socket.emit("stopConference", {
       id: conference == null ? void 0 : conference.id
     });
   }, [socket == null ? void 0 : socket.id]);
   var onConferencePause = React.useCallback(function (conference) {
-    if ((conference == null ? void 0 : conference.id) != null) socket == null ? void 0 : socket.emit('pauseConference', {
+    if ((conference == null ? void 0 : conference.id) != null) socket == null ? void 0 : socket.emit("pauseConference", {
       id: conference.id
     });
   }, [socket == null ? void 0 : socket.id]);
   var onConferenceCallAccept = React.useCallback(function (conference) {
     // отправляем startConference чтобы возобновить запись
-    if ((conference == null ? void 0 : conference.id) != null) socket == null ? void 0 : socket.emit('resumeConference', {
+    if ((conference == null ? void 0 : conference.id) != null) socket == null ? void 0 : socket.emit("resumeConference", {
       id: conference.id
     });
     dispatch({
-      type: 'JOIN_CONFERENCE',
+      type: "JOIN_CONFERENCE",
       payload: conference
     });
   }, [dispatch]);
   var onOperatorAdd = React.useCallback(function (group, operator) {
-    socket == null ? void 0 : socket.emit('addOperator', {
+    socket == null ? void 0 : socket.emit("addOperator", {
       groupId: group.groupId,
       operatorId: operator.userId
     });
   }, [socket == null ? void 0 : socket.id]);
   var onLeaveGroup = React.useCallback(function (group) {
-    socket == null ? void 0 : socket.emit('deleteGroup', {
+    socket == null ? void 0 : socket.emit("deleteGroup", {
       groupId: group.groupId
     });
   }, [socket == null ? void 0 : socket.id]);
   var handleError = React.useCallback(function () {
     dispatch({
-      type: 'SET_ERROR'
+      type: "SET_ERROR"
     });
   }, [dispatch]);
   React.useEffect(function () {
@@ -4153,7 +4161,7 @@ var ChatPage = function ChatPage(_ref) {
       onChangeChat(Chat);
     }
 
-    var mmkId = getParam('mmk');
+    var mmkId = getParam("mmk");
 
     if (mmkId != null && !isEmpty(state.contactGather)) {
       var changeChatByMmkId = /*#__PURE__*/function () {
@@ -4266,15 +4274,7 @@ var ChatPage = function ChatPage(_ref) {
   // };
 
 
-  var depsContats = (_state$conference$dat3 = state.conference.data) != null && _state$conference$dat3.id ? [state.conference.joined, (_state$conference$dat4 = state.conference.data) == null ? void 0 : _state$conference$dat4.id, (_state$conference$dat5 = state.conference.data) == null ? void 0 : _state$conference$dat5.contactId, (_state$activeRoom = state.activeRoom) == null ? void 0 : _state$activeRoom.groupId, (_state$activeRoom2 = state.activeRoom) == null ? void 0 : _state$activeRoom2.userId] : [state.activeRoom, Object.values(state.groupGather).map(function (it) {
-    return (it == null ? void 0 : it.messages.length) || 0;
-  }).reduce(function (a, b) {
-    return a + b;
-  }, 0), Object.values(state.contactGather).map(function (it) {
-    return (it == null ? void 0 : it.messages.length) || 0;
-  }).reduce(function (a, b) {
-    return a + b;
-  }, 0)];
+  var depsContats = (_state$conference$dat3 = state.conference.data) != null && _state$conference$dat3.id ? [state.conference.joined, (_state$conference$dat4 = state.conference.data) == null ? void 0 : _state$conference$dat4.id, (_state$conference$dat5 = state.conference.data) == null ? void 0 : _state$conference$dat5.contactId, (_state$activeRoom = state.activeRoom) == null ? void 0 : _state$activeRoom.groupId, (_state$activeRoom2 = state.activeRoom) == null ? void 0 : _state$activeRoom2.userId] : [state.activeRoom, allMessCount(state.groupGather), allMessCount(state.contactGather)];
   var Contacts = React.useMemo(function () {
     var _state$conference$dat6, _state$conference$dat7, _state$activeRoom3;
 
@@ -4300,8 +4300,8 @@ var ChatPage = function ChatPage(_ref) {
     className: classes.innerGrid
   }, renderRoom))), /*#__PURE__*/React.createElement(material.Snackbar, {
     anchorOrigin: {
-      vertical: 'top',
-      horizontal: 'center'
+      vertical: "top",
+      horizontal: "center"
     },
     open: !!state.error,
     autoHideDuration: 6000,

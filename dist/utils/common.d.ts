@@ -1,4 +1,4 @@
-import { ChatRoom } from '../types';
+import { ChatRoom, ContactGather, GroupGather } from "../types";
 export declare function isEmpty(value: unknown): boolean;
 export declare function isContainStr(str1: string, str2: string): boolean;
 /**
@@ -33,5 +33,6 @@ export declare function splitFileName(name: string): {
 };
 export declare const getChatId: (chat: ChatRoom | null) => string | null;
 export declare const getChatName: (chat: ChatRoom) => string;
+export declare const allMessCount: (chats: GroupGather | ContactGather) => any;
 export declare const chatRoomComparer: (a: ChatRoom, b: ChatRoom) => number;
 export declare const getParam: (param: string) => string | null;
