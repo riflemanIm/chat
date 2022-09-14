@@ -960,7 +960,7 @@ var Entry = function Entry(props) {
 };
 
 function isEmpty(value) {
-  return value == null || typeof value === "object" && Object.keys(value).length === 0 || typeof value === "string" && value.trim().length === 0;
+  return value == null || typeof value === 'object' && Object.keys(value).length === 0 || typeof value === 'string' && value.trim().length === 0;
 } // string contains string
 /**
  * Формитирование времени сообщения
@@ -968,19 +968,19 @@ function isEmpty(value) {
  */
 
 function formatTime(time) {
-  if (typeof time === "undefined") return null;
-  if (typeof time === "string") time = new Date(time); // больше чем вчера
+  if (typeof time === 'undefined') return null;
+  if (typeof time === 'string') time = new Date(time); // больше чем вчера
 
-  if (moment().add(-1, "days").startOf("day").isAfter(time)) {
-    return moment(time).format("DD.MM.YYYY HH:mm");
+  if (moment().add(-1, 'days').startOf('day').isAfter(time)) {
+    return moment(time).format('DD.MM.YYYY HH:mm');
   } // вчера
 
 
-  if (moment().startOf("day").isAfter(time)) {
-    return "\u0412\u0447\u0435\u0440\u0430 \u0432 " + moment(time).format("HH:mm");
+  if (moment().startOf('day').isAfter(time)) {
+    return "\u0412\u0447\u0435\u0440\u0430 \u0432 " + moment(time).format('HH:mm');
   }
 
-  return moment(time).format("HH:mm");
+  return moment(time).format('HH:mm');
 }
 /**
  * Раскрыть содержимое
@@ -990,7 +990,7 @@ function formatTime(time) {
 function getFileMeta(content) {
   // Формат  [date]$[userId]$[size]$[fileName]
   // Например fileName = 1606980397047$1a01e20f-3780-4227-84b5-5c69ca766ee5$15.41KB$123.docx
-  var meta = content.split("$");
+  var meta = content.split('$');
   var date = meta[0],
       userId = meta[1],
       size = meta[2],
@@ -1004,7 +1004,7 @@ function getFileMeta(content) {
 }
 function getImageMeta(content) {
   // Формат [date]$[userId]$[width]$[height]$...
-  var meta = content.split("$");
+  var meta = content.split('$');
   var date = meta[0],
       userId = meta[1],
       width = meta[2],
@@ -1017,10 +1017,10 @@ function getImageMeta(content) {
   };
 }
 function splitFileName(name) {
-  var idx = name.lastIndexOf(".");
+  var idx = name.lastIndexOf('.');
   if (idx === -1) return {
     name: name,
-    ext: ""
+    ext: ''
   };
   return {
     name: name.slice(0, idx),
@@ -1039,7 +1039,12 @@ var chatRoomComparer = function chatRoomComparer(a, b) {
   var hasMessagesB = Array.isArray(b.messages) && b.messages.length > 0;
 
   if (hasMessagesA && hasMessagesB && b.messages != null && a.messages != null) {
-    return new Date(b.messages[b.messages.length - 1].cdate).getTime() - new Date(a.messages[a.messages.length - 1].cdate).getTime();
+    // !!! if cdate === undefined !!!
+    var bb = b.messages[b.messages.length - 1].cdate != null ? new Date(b.messages[b.messages.length - 1].cdate).getTime() : new Date().getTime();
+    var aa = a.messages[a.messages.length - 1].cdate != null ? new Date(a.messages[a.messages.length - 1].cdate).getTime() : new Date().getTime() - 1;
+    var res = bb - aa; //console.log('res', res);
+
+    return res;
   }
 
   if (hasMessagesA) {
@@ -2068,11 +2073,38 @@ var RoomListItem = function RoomListItem(props) {
 var useStyles$b = /*#__PURE__*/makeStyles(function () {
   return {
     root: {
-      width: "100%",
-      height: "100%"
+      width: '100%',
+      height: '100%'
     },
     searchField: {
-      width: "100%"
+      width: '100%'
+    },
+    listStyle: {
+      maxHeight: '100%',
+      overflowY: 'auto',
+      scrollbarColor: '#6b6b6b #fff',
+      '&::-webkit-scrollbar, & *::-webkit-scrollbar': {
+        backgroundColor: '#fff'
+      },
+      '&::-webkit-scrollbar-thumb, & *::-webkit-scrollbar-thumb': {
+        borderRadius: 8,
+        backgroundColor: '#d5d9ef',
+        border: '5px solid #fff'
+      },
+      '&::-webkit-scrollbar-thumb:focus, & *::-webkit-scrollbar-thumb:focus': {
+        backgroundColor: '#fff'
+      },
+      '&::-webkit-scrollbar-thumb:active, & *::-webkit-scrollbar-thumb:active': {
+        backgroundColor: '#73d7f5',
+        border: '3px solid #fff'
+      },
+      '&::-webkit-scrollbar-thumb:hover, & *::-webkit-scrollbar-thumb:hover': {
+        backgroundColor: '#73d7f5',
+        border: '3px solid #fff'
+      },
+      '&::-webkit-scrollbar-corner, & *::-webkit-scrollbar-corner': {
+        backgroundColor: '#fff'
+      }
     }
   };
 });
@@ -2086,7 +2118,8 @@ var filterChats = function filterChats(chats, filter) {
 };
 
 var sortChats = function sortChats(userId, groups, contacts) {
-  var roomArr = [].concat(groups, contacts); // Сортировать окно чата (по времени последних сообщений)
+  var roomArr = [].concat(groups, contacts); //console.log('groups', groups, 'contacts', contacts);
+  // Сортировать окно чата (по времени последних сообщений)
 
   roomArr = roomArr.sort(chatRoomComparer); // Проверяем, есть ли список, который нужно закрепить
 
@@ -2133,15 +2166,15 @@ var RoomList = function RoomList(props) {
   }, /*#__PURE__*/React__default.createElement(CardHeader, {
     title: /*#__PURE__*/React__default.createElement(TextField, {
       className: classes.searchField,
-      label: t("CHAT.INPUT_SEARCH_CONTACT"),
+      label: t('CHAT.INPUT_SEARCH_CONTACT'),
       variant: "outlined",
       size: "small",
       fullWidth: true,
       onChange: onSearchChange
     })
   }), /*#__PURE__*/React__default.createElement(Divider, null), /*#__PURE__*/React__default.createElement(List$1, {
-    component: "nav",
-    "aria-label": "rooms"
+    "aria-label": "rooms",
+    className: classes.listStyle
   }, !isEmpty(chats) && chats.map(function (chat) {
     return !isEmpty(chat) && /*#__PURE__*/React__default.createElement(RoomListItem, {
       key: getChatId(chat),
@@ -3941,7 +3974,7 @@ var useStyles$e = /*#__PURE__*/makeStyles(function (theme) {
   };
 });
 var ChatPage = function ChatPage(_ref) {
-  var _state$conference$dat2, _state$conference$dat3, _state$conference$dat4, _state$conference$dat5, _state$activeRoom, _state$activeRoom2, _state$activeRoom3, _state$activeRoom4, _state$activeRoom5, _state$activeRoom6;
+  var _state$conference$dat2, _state$conference$dat3, _state$conference$dat4, _state$conference$dat5, _state$activeRoom, _state$activeRoom2;
 
   var activeGroupId = _ref.activeGroupId,
       activeChatUserId = _ref.activeChatUserId;
@@ -4227,14 +4260,26 @@ var ChatPage = function ChatPage(_ref) {
       conference: state.conference.data,
       onClose: onConferencePause
     });
-  };
+  }; // const getMessCount = (data: GroupGather) => {
+  //   const messages = ;
+  //   return messages.reduce((a: number, b: number) => a + b, 0);
+  // };
 
-  var depsContats = (_state$conference$dat3 = state.conference.data) != null && _state$conference$dat3.id ? [state.conference.joined, (_state$conference$dat4 = state.conference.data) == null ? void 0 : _state$conference$dat4.id, (_state$conference$dat5 = state.conference.data) == null ? void 0 : _state$conference$dat5.contactId, (_state$activeRoom = state.activeRoom) == null ? void 0 : _state$activeRoom.groupId, (_state$activeRoom2 = state.activeRoom) == null ? void 0 : _state$activeRoom2.userId] : [(_state$activeRoom3 = state.activeRoom) == null ? void 0 : _state$activeRoom3.groupId, (_state$activeRoom4 = state.activeRoom) == null ? void 0 : _state$activeRoom4.userId, state.activeRoom != null && ((_state$activeRoom5 = state.activeRoom) == null ? void 0 : _state$activeRoom5.messages) != null ? (_state$activeRoom6 = state.activeRoom) == null ? void 0 : _state$activeRoom6.messages.length : 0];
+
+  var depsContats = (_state$conference$dat3 = state.conference.data) != null && _state$conference$dat3.id ? [state.conference.joined, (_state$conference$dat4 = state.conference.data) == null ? void 0 : _state$conference$dat4.id, (_state$conference$dat5 = state.conference.data) == null ? void 0 : _state$conference$dat5.contactId, (_state$activeRoom = state.activeRoom) == null ? void 0 : _state$activeRoom.groupId, (_state$activeRoom2 = state.activeRoom) == null ? void 0 : _state$activeRoom2.userId] : [state.activeRoom, Object.values(state.groupGather).map(function (it) {
+    return (it == null ? void 0 : it.messages.length) || 0;
+  }).reduce(function (a, b) {
+    return a + b;
+  }, 0), Object.values(state.contactGather).map(function (it) {
+    return (it == null ? void 0 : it.messages.length) || 0;
+  }).reduce(function (a, b) {
+    return a + b;
+  }, 0)];
   var Contacts = useMemo(function () {
-    var _state$conference$dat6, _state$conference$dat7, _state$activeRoom7;
+    var _state$conference$dat6, _state$conference$dat7, _state$activeRoom3;
 
-    return (_state$conference$dat6 = state.conference.data) != null && _state$conference$dat6.id && ((_state$conference$dat7 = state.conference.data) == null ? void 0 : _state$conference$dat7.contactId) === ((_state$activeRoom7 = state.activeRoom) == null ? void 0 : _state$activeRoom7.userId) ? state.conference.joined ? /*#__PURE__*/createElement(GetConference, null) : /*#__PURE__*/createElement(GetConferenceCall, null) : /*#__PURE__*/createElement(GetRoomList, null);
-  }, depsContats); //console.log('chat state', state);
+    return (_state$conference$dat6 = state.conference.data) != null && _state$conference$dat6.id && ((_state$conference$dat7 = state.conference.data) == null ? void 0 : _state$conference$dat7.contactId) === ((_state$activeRoom3 = state.activeRoom) == null ? void 0 : _state$activeRoom3.userId) ? state.conference.joined ? /*#__PURE__*/createElement(GetConference, null) : /*#__PURE__*/createElement(GetConferenceCall, null) : /*#__PURE__*/createElement(GetRoomList, null);
+  }, depsContats); // console.log('chat state', state);
 
   return /*#__PURE__*/createElement(Container, {
     maxWidth: "lg",

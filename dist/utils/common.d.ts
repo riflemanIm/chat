@@ -1,4 +1,4 @@
-import { ChatRoom } from "../types";
+import { ChatRoom } from '../types';
 export declare function isEmpty(value: unknown): boolean;
 export declare function isContainStr(str1: string, str2: string): boolean;
 /**
