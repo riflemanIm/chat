@@ -25,13 +25,15 @@ import {
 import { getParam, isEmpty, allMessCount } from '../utils/common';
 import ConferenceCall from '../components/ConferenceCall';
 
-const getRingAudio = (): HTMLAudioElement => {
-  const audio = new Audio(
-    process.env.PUBLIC_URL + '/audio/ring-in.ogg',
-  );
-  audio.loop = true;
-  return audio;
-};
+// Отключили проигрыш звука
+// const getRingAudio = (): HTMLAudioElement => {
+//   const audio = new Audio(
+//     process.env.PUBLIC_URL + '/audio/ring-in.ogg',
+//   );
+//   audio.loop = true;
+//   return audio;
+// };
+
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
     minWidth: 640,
@@ -79,7 +81,7 @@ export const ChatPage: React.FC<ChatPa> = ({
     getUserByMmk,
   } = React.useContext(RestContext);
 
-  const [ringAudio] = React.useState(getRingAudio());
+  // const [ringAudio] = React.useState(getRingAudio());
 
   const onExitActiveRoom = React.useCallback(() => {
     dispatch({
@@ -277,17 +279,16 @@ export const ChatPage: React.FC<ChatPa> = ({
     }
   }, [state.groupGather]);
 
-  React.useEffect(() => {
-    if (
-      state.conference.data?.id &&
-      state.conference.ringPlayed &&
-      !state.conference.joined
-    )
-      ringAudio.play();
-    else ringAudio.pause();
-  }, [state.conference.data?.id, state.conference.ringPlayed]);
-
-  //console.log('state', state);
+  // Отключили проигрыш звука
+  // React.useEffect(() => {
+  //   if (
+  //     state.conference.data?.id &&
+  //     state.conference.ringPlayed &&
+  //     !state.conference.joined
+  //   )
+  //     ringAudio.play();
+  //   else ringAudio.pause();
+  // }, [state.conference.data?.id, state.conference.ringPlayed]);
 
   const renderRoom = state.activeRoom != null && (
     <Room
