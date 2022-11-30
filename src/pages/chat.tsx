@@ -250,6 +250,7 @@ export const ChatPage: React.FC<ChatPa> = ({
         item => item.userId === activeChatUserId,
       );
       onChangeChat(Chat);
+      onEnterRoom(Chat);
     }
 
     const mmkId = getParam('mmk');
@@ -261,6 +262,7 @@ export const ChatPage: React.FC<ChatPa> = ({
             item => item.userId === userId,
           );
           onChangeChat(Chat);
+          onEnterRoom(Chat);
         }
       };
       changeChatByMmkId();
@@ -275,6 +277,7 @@ export const ChatPage: React.FC<ChatPa> = ({
 
       if (!isEmpty(onlyChat)) {
         onChangeChat(onlyChat);
+        onEnterRoom(onlyChat);
       }
     }
   }, [state.groupGather]);
