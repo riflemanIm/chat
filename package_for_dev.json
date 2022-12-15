@@ -1,0 +1,20 @@
+{
+    "name": "@pmt/chat",
+    "version": "1.2.4",
+    "main": "src/index.ts",
+    "types": "src/index.ts",
+    "files": [
+        "src"
+    ],
+    "repository": {
+        "type": "git",
+        "url": "git@gitlab.postmodern.ru:pmt/react/chat.git"
+    },
+    "publishConfig": {
+        "@pmt:registry": "https://gitlab.postmodern.ru/api/v4/projects/50/packages/npm/"
+    },
+    "keywords": [
+        "chat, telechat"
+    ],
+    "author": "Pavel Ishenin"
+}
