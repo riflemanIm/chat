@@ -2985,8 +2985,8 @@ var RestProvider = function RestProvider(_ref) {
     timeout: 60000,
     baseURL: baseURLApi,
     headers: {
-      'Cache-Control': 'no-cache',
-      Pragma: 'no-cache',
+      "Cache-Control": "no-cache",
+      Pragma: "no-cache",
       Authorization: "Bearer " + state.token
     },
     withCredentials: false
@@ -3005,11 +3005,11 @@ var RestProvider = function RestProvider(_ref) {
               current = (_chat$messages = chat.messages) == null ? void 0 : _chat$messages.length;
               _context.prev = 2;
               dispatch({
-                type: 'SET_LOADING',
+                type: "SET_LOADING",
                 payload: true
               });
               _context.next = 6;
-              return fetch.get('/contact/messages', {
+              return fetch.get("/contact/messages", {
                 params: {
                   contactId: contactId,
                   current: current,
@@ -3023,7 +3023,7 @@ var RestProvider = function RestProvider(_ref) {
 
               if (data) {
                 dispatch({
-                  type: 'ADD_PRIVATE_MESSAGES',
+                  type: "ADD_PRIVATE_MESSAGES",
                   payload: {
                     pageSize: pageSize,
                     contactId: contactId,
@@ -3040,14 +3040,14 @@ var RestProvider = function RestProvider(_ref) {
               _context.t0 = _context["catch"](2);
               err = _context.t0;
               dispatch({
-                type: 'SET_ERROR',
+                type: "SET_ERROR",
                 payload: err.message
               });
 
             case 15:
               _context.prev = 15;
               dispatch({
-                type: 'SET_LOADING',
+                type: "SET_LOADING",
                 payload: false
               });
               return _context.finish(15);
@@ -3078,11 +3078,11 @@ var RestProvider = function RestProvider(_ref) {
               current = (_chat$messages2 = chat.messages) == null ? void 0 : _chat$messages2.length;
               _context2.prev = 2;
               dispatch({
-                type: 'SET_LOADING',
+                type: "SET_LOADING",
                 payload: true
               });
               _context2.next = 6;
-              return fetch.get('/group/messages', {
+              return fetch.get("/group/messages", {
                 params: {
                   groupId: groupId,
                   current: current,
@@ -3096,7 +3096,7 @@ var RestProvider = function RestProvider(_ref) {
 
               if (data) {
                 dispatch({
-                  type: 'ADD_GROUP_MESSAGES',
+                  type: "ADD_GROUP_MESSAGES",
                   payload: _extends({
                     pageSize: pageSize,
                     groupId: groupId
@@ -3112,14 +3112,14 @@ var RestProvider = function RestProvider(_ref) {
               _context2.t0 = _context2["catch"](2);
               err = _context2.t0;
               dispatch({
-                type: 'SET_ERROR',
+                type: "SET_ERROR",
                 payload: err.message
               });
 
             case 15:
               _context2.prev = 15;
               dispatch({
-                type: 'SET_LOADING',
+                type: "SET_LOADING",
                 payload: false
               });
               return _context2.finish(15);
@@ -3138,7 +3138,7 @@ var RestProvider = function RestProvider(_ref) {
   }(), [dispatch]);
 
   var getUserByMmk = /*#__PURE__*/function () {
-    var _ref4 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee3(mmkId) {
+    var _ref4 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee3(mmkId, guid) {
       var _yield$fetch$get3, data;
 
       return _regeneratorRuntime().wrap(function _callee3$(_context3) {
@@ -3147,9 +3147,10 @@ var RestProvider = function RestProvider(_ref) {
             case 0:
               _context3.prev = 0;
               _context3.next = 3;
-              return fetch.get('/contact/find', {
+              return fetch.get("/contact/find", {
                 params: {
-                  mmkId: mmkId
+                  mmkId: mmkId,
+                  guid: guid
                 }
               });
 
@@ -3171,7 +3172,7 @@ var RestProvider = function RestProvider(_ref) {
             case 9:
               _context3.prev = 9;
               _context3.t0 = _context3["catch"](0);
-              console.log('err getUserByMmk', _context3.t0);
+              console.log("err getUserByMmk", _context3.t0);
 
             case 12:
             case "end":
@@ -3181,7 +3182,7 @@ var RestProvider = function RestProvider(_ref) {
       }, _callee3, null, [[0, 9]]);
     }));
 
-    return function getUserByMmk(_x3) {
+    return function getUserByMmk(_x3, _x4) {
       return _ref4.apply(this, arguments);
     };
   }();
@@ -3946,11 +3947,13 @@ var SocketProvider = function SocketProvider(_ref) {
   }, children);
 };
 
-var getRingAudio = function getRingAudio() {
-  var audio = new Audio(process.env.PUBLIC_URL + '/audio/ring-in.ogg');
-  audio.loop = true;
-  return audio;
-};
+// const getRingAudio = (): HTMLAudioElement => {
+//   const audio = new Audio(
+//     process.env.PUBLIC_URL + '/audio/ring-in.ogg',
+//   );
+//   audio.loop = true;
+//   return audio;
+// };
 
 var useStyles$e = /*#__PURE__*/styles.makeStyles(function (theme) {
   var _root, _innerBox;
@@ -3959,35 +3962,35 @@ var useStyles$e = /*#__PURE__*/styles.makeStyles(function (theme) {
     root: (_root = {
       minWidth: 640,
       minHeight: 470,
-      height: '100%',
+      height: "100%",
       padding: 0
-    }, _root[theme.breakpoints.down('sm')] = {
+    }, _root[theme.breakpoints.down("sm")] = {
       height: "calc(100vh - " + theme.spacing(8) + ")",
-      minWidth: 'auto',
-      minHeight: 'auto',
-      overflow: 'hidden'
+      minWidth: "auto",
+      minHeight: "auto",
+      overflow: "hidden"
     }, _root),
     innerBox: (_innerBox = {
-      height: '100%',
-      width: '100%',
+      height: "100%",
+      width: "100%",
       margin: 0
-    }, _innerBox[theme.breakpoints.down('sm')] = {
+    }, _innerBox[theme.breakpoints.down("sm")] = {
       margin: 0
     }, _innerBox),
     innerGrid: {
-      height: '100%',
-      width: '100%'
+      height: "100%",
+      width: "100%"
     }
   };
 });
 var ChatPage = function ChatPage(_ref) {
-  var _state$conference$dat2, _state$conference$dat3, _state$conference$dat4, _state$conference$dat5, _state$activeRoom, _state$activeRoom2;
+  var _state$conference$dat, _state$conference$dat2, _state$conference$dat3, _state$activeRoom, _state$activeRoom2;
 
   var activeGroupId = _ref.activeGroupId,
       activeChatUserId = _ref.activeChatUserId;
   var classes = useStyles$e();
   var isMobile = material.useMediaQuery(function (theme) {
-    return theme.breakpoints.down('sm');
+    return theme.breakpoints.down("sm");
   });
 
   var _React$useContext = React.useContext(ChatContext),
@@ -4002,14 +4005,12 @@ var ChatPage = function ChatPage(_ref) {
       pageSize = _React$useContext3.pageSize,
       getPrivateMessages = _React$useContext3.getPrivateMessages,
       getGroupMessages = _React$useContext3.getGroupMessages,
-      getUserByMmk = _React$useContext3.getUserByMmk;
+      getUserByMmk = _React$useContext3.getUserByMmk; // const [ringAudio] = React.useState(getRingAudio());
 
-  var _React$useState = React.useState(getRingAudio()),
-      ringAudio = _React$useState[0];
 
   var onExitActiveRoom = React.useCallback(function () {
     dispatch({
-      type: 'SET_ACTIVE_ROOM',
+      type: "SET_ACTIVE_ROOM",
       payload: {
         ifNotExists: false
       }
@@ -4050,21 +4051,21 @@ var ChatPage = function ChatPage(_ref) {
     };
   }(), [getPrivateMessages, getGroupMessages]);
   var onMessageDelete = React.useCallback(function (chat, message) {
-    socket == null ? void 0 : socket.emit('revokeMessage', {
+    socket == null ? void 0 : socket.emit("revokeMessage", {
       groupId: chat.groupId,
       contactId: chat.userId,
       _id: message._id
     });
   }, [socket == null ? void 0 : socket.id]);
   var onTyping = React.useCallback(function (chat) {
-    socket == null ? void 0 : socket.emit('typing', {
+    socket == null ? void 0 : socket.emit("typing", {
       groupId: chat == null ? void 0 : chat.groupId,
       contactId: chat == null ? void 0 : chat.userId
     });
   }, [socket == null ? void 0 : socket.id]);
   var onSendMessage = React.useCallback(function (chat, data) {
     if (chat.groupId) {
-      socket == null ? void 0 : socket.emit('groupMessage', {
+      socket == null ? void 0 : socket.emit("groupMessage", {
         groupId: chat == null ? void 0 : chat.groupId,
         content: data.message,
         width: data.width,
@@ -4074,7 +4075,7 @@ var ChatPage = function ChatPage(_ref) {
         size: data.size
       });
     } else {
-      socket == null ? void 0 : socket.emit('privateMessage', {
+      socket == null ? void 0 : socket.emit("privateMessage", {
         contactId: chat == null ? void 0 : chat.userId,
         content: data.message,
         width: data.width,
@@ -4087,7 +4088,7 @@ var ChatPage = function ChatPage(_ref) {
   }, [socket == null ? void 0 : socket.id]);
   var onChangeChat = React.useCallback(function (chat) {
     dispatch({
-      type: 'SET_ACTIVE_ROOM',
+      type: "SET_ACTIVE_ROOM",
       payload: {
         groupId: chat == null ? void 0 : chat.groupId,
         contactId: chat == null ? void 0 : chat.userId,
@@ -4099,57 +4100,57 @@ var ChatPage = function ChatPage(_ref) {
     if (!chat.messages || chat.messages.length === 0) return;
 
     if (chat.groupId) {
-      socket == null ? void 0 : socket.emit('markAsRead', {
+      socket == null ? void 0 : socket.emit("markAsRead", {
         groupId: chat.groupId,
         _id: chat.messages[chat.messages.length - 1]._id
       });
     } else {
-      socket == null ? void 0 : socket.emit('markAsRead', {
+      socket == null ? void 0 : socket.emit("markAsRead", {
         contactId: chat.userId,
         _id: chat.messages[chat.messages.length - 1]._id
       });
     }
   }, [socket == null ? void 0 : socket.id]);
   var onVideoCall = React.useCallback(function (chat) {
-    socket == null ? void 0 : socket.emit('startConference', {
+    socket == null ? void 0 : socket.emit("startConference", {
       groupId: chat.groupId,
       contactId: chat.userId
     });
   }, [socket == null ? void 0 : socket.id]);
   var onVideoEnd = React.useCallback(function (conference) {
-    if ((conference == null ? void 0 : conference.id) != null) socket == null ? void 0 : socket.emit('stopConference', {
+    if ((conference == null ? void 0 : conference.id) != null) socket == null ? void 0 : socket.emit("stopConference", {
       id: conference == null ? void 0 : conference.id
     });
   }, [socket == null ? void 0 : socket.id]);
   var onConferencePause = React.useCallback(function (conference) {
-    if ((conference == null ? void 0 : conference.id) != null) socket == null ? void 0 : socket.emit('pauseConference', {
+    if ((conference == null ? void 0 : conference.id) != null) socket == null ? void 0 : socket.emit("pauseConference", {
       id: conference.id
     });
   }, [socket == null ? void 0 : socket.id]);
   var onConferenceCallAccept = React.useCallback(function (conference) {
     // отправляем startConference чтобы возобновить запись
-    if ((conference == null ? void 0 : conference.id) != null) socket == null ? void 0 : socket.emit('resumeConference', {
+    if ((conference == null ? void 0 : conference.id) != null) socket == null ? void 0 : socket.emit("resumeConference", {
       id: conference.id
     });
     dispatch({
-      type: 'JOIN_CONFERENCE',
+      type: "JOIN_CONFERENCE",
       payload: conference
     });
   }, [dispatch]);
   var onOperatorAdd = React.useCallback(function (group, operator) {
-    socket == null ? void 0 : socket.emit('addOperator', {
+    socket == null ? void 0 : socket.emit("addOperator", {
       groupId: group.groupId,
       operatorId: operator.userId
     });
   }, [socket == null ? void 0 : socket.id]);
   var onLeaveGroup = React.useCallback(function (group) {
-    socket == null ? void 0 : socket.emit('deleteGroup', {
+    socket == null ? void 0 : socket.emit("deleteGroup", {
       groupId: group.groupId
     });
   }, [socket == null ? void 0 : socket.id]);
   var handleError = React.useCallback(function () {
     dispatch({
-      type: 'SET_ERROR'
+      type: "SET_ERROR"
     });
   }, [dispatch]);
   React.useEffect(function () {
@@ -4158,11 +4159,15 @@ var ChatPage = function ChatPage(_ref) {
         return item.userId === activeChatUserId;
       });
       onChangeChat(Chat);
+      onEnterRoom(Chat);
     }
 
-    var mmkId = getParam('mmk');
+    var mmkId = getParam("mmk");
+    var guid = getParam("guid");
 
-    if (mmkId != null && !isEmpty(state.contactGather)) {
+    if ((mmkId != null || guid != null) && !isEmpty(state.contactGather)) {
+      console.log("mmkId", mmkId);
+
       var changeChatByMmkId = /*#__PURE__*/function () {
         var _ref3 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2() {
           var userId, _Chat;
@@ -4172,19 +4177,21 @@ var ChatPage = function ChatPage(_ref) {
               switch (_context2.prev = _context2.next) {
                 case 0:
                   _context2.next = 2;
-                  return getUserByMmk(mmkId);
+                  return getUserByMmk(mmkId, guid);
 
                 case 2:
                   userId = _context2.sent;
+                  console.log("userId", userId);
 
                   if (userId != null) {
                     _Chat = Object.values(state.contactGather).find(function (item) {
                       return item.userId === userId;
                     });
                     onChangeChat(_Chat);
+                    onEnterRoom(_Chat);
                   }
 
-                case 4:
+                case 5:
                 case "end":
                   return _context2.stop();
               }
@@ -4208,14 +4215,19 @@ var ChatPage = function ChatPage(_ref) {
 
       if (!isEmpty(onlyChat)) {
         onChangeChat(onlyChat);
+        onEnterRoom(onlyChat);
       }
     }
-  }, [state.groupGather]);
-  React.useEffect(function () {
-    var _state$conference$dat;
-
-    if ((_state$conference$dat = state.conference.data) != null && _state$conference$dat.id && state.conference.ringPlayed && !state.conference.joined) ringAudio.play();else ringAudio.pause();
-  }, [(_state$conference$dat2 = state.conference.data) == null ? void 0 : _state$conference$dat2.id, state.conference.ringPlayed]); //console.log('state', state);
+  }, [state.groupGather]); // Отключили проигрыш звука
+  // React.useEffect(() => {
+  //   if (
+  //     state.conference.data?.id &&
+  //     state.conference.ringPlayed &&
+  //     !state.conference.joined
+  //   )
+  //     ringAudio.play();
+  //   else ringAudio.pause();
+  // }, [state.conference.data?.id, state.conference.ringPlayed]);
 
   var renderRoom = state.activeRoom != null && /*#__PURE__*/React.createElement(Room, {
     apiUrl: apiUrl,
@@ -4273,11 +4285,11 @@ var ChatPage = function ChatPage(_ref) {
   // };
 
 
-  var depsContats = (_state$conference$dat3 = state.conference.data) != null && _state$conference$dat3.id ? [state.conference.joined, (_state$conference$dat4 = state.conference.data) == null ? void 0 : _state$conference$dat4.id, (_state$conference$dat5 = state.conference.data) == null ? void 0 : _state$conference$dat5.contactId, (_state$activeRoom = state.activeRoom) == null ? void 0 : _state$activeRoom.groupId, (_state$activeRoom2 = state.activeRoom) == null ? void 0 : _state$activeRoom2.userId] : [state.activeRoom, allMessCount(state.groupGather), allMessCount(state.contactGather)];
+  var depsContats = (_state$conference$dat = state.conference.data) != null && _state$conference$dat.id ? [state.conference.joined, (_state$conference$dat2 = state.conference.data) == null ? void 0 : _state$conference$dat2.id, (_state$conference$dat3 = state.conference.data) == null ? void 0 : _state$conference$dat3.contactId, (_state$activeRoom = state.activeRoom) == null ? void 0 : _state$activeRoom.groupId, (_state$activeRoom2 = state.activeRoom) == null ? void 0 : _state$activeRoom2.userId] : [state.activeRoom, allMessCount(state.groupGather), allMessCount(state.contactGather)];
   var Contacts = React.useMemo(function () {
-    var _state$conference$dat6, _state$conference$dat7, _state$activeRoom3;
+    var _state$conference$dat4, _state$conference$dat5, _state$activeRoom3;
 
-    return (_state$conference$dat6 = state.conference.data) != null && _state$conference$dat6.id && ((_state$conference$dat7 = state.conference.data) == null ? void 0 : _state$conference$dat7.contactId) === ((_state$activeRoom3 = state.activeRoom) == null ? void 0 : _state$activeRoom3.userId) ? state.conference.joined ? /*#__PURE__*/React.createElement(GetConference, null) : /*#__PURE__*/React.createElement(GetConferenceCall, null) : /*#__PURE__*/React.createElement(GetRoomList, null);
+    return (_state$conference$dat4 = state.conference.data) != null && _state$conference$dat4.id && ((_state$conference$dat5 = state.conference.data) == null ? void 0 : _state$conference$dat5.contactId) === ((_state$activeRoom3 = state.activeRoom) == null ? void 0 : _state$activeRoom3.userId) ? state.conference.joined ? /*#__PURE__*/React.createElement(GetConference, null) : /*#__PURE__*/React.createElement(GetConferenceCall, null) : /*#__PURE__*/React.createElement(GetRoomList, null);
   }, depsContats); // console.log('chat state', state);
 
   return /*#__PURE__*/React.createElement(material.Container, {
@@ -4299,8 +4311,8 @@ var ChatPage = function ChatPage(_ref) {
     className: classes.innerGrid
   }, renderRoom))), /*#__PURE__*/React.createElement(material.Snackbar, {
     anchorOrigin: {
-      vertical: 'top',
-      horizontal: 'center'
+      vertical: "top",
+      horizontal: "center"
     },
     open: !!state.error,
     autoHideDuration: 6000,
