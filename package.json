@@ -1,6 +1,6 @@
 {
   "name": "@pmt/chat",
-  "version": "1.8.1",
+  "version": "1.8.2",
   "description": "PMT Chat, last global change mui v5",
   "main": "dist/index.js",
   "module": "dist/index.es.js",

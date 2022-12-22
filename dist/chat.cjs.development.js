@@ -4054,7 +4054,8 @@ var ChatPage = function ChatPage(_ref) {
     socket == null ? void 0 : socket.emit("revokeMessage", {
       groupId: chat.groupId,
       contactId: chat.userId,
-      _id: message._id
+      _id: message._id // Идентификатор удаленного сообщения
+
     });
   }, [socket == null ? void 0 : socket.id]);
   var onTyping = React.useCallback(function (chat) {
@@ -4166,8 +4167,7 @@ var ChatPage = function ChatPage(_ref) {
     var guid = getParam("guid");
 
     if ((mmkId != null || guid != null) && !isEmpty(state.contactGather)) {
-      console.log("mmkId", mmkId);
-
+      //console.log("mmkId", mmkId);
       var changeChatByMmkId = /*#__PURE__*/function () {
         var _ref3 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2() {
           var userId, _Chat;
@@ -4287,11 +4287,11 @@ var ChatPage = function ChatPage(_ref) {
 
   var depsContats = (_state$conference$dat = state.conference.data) != null && _state$conference$dat.id ? [state.conference.joined, (_state$conference$dat2 = state.conference.data) == null ? void 0 : _state$conference$dat2.id, (_state$conference$dat3 = state.conference.data) == null ? void 0 : _state$conference$dat3.contactId, (_state$activeRoom = state.activeRoom) == null ? void 0 : _state$activeRoom.groupId, (_state$activeRoom2 = state.activeRoom) == null ? void 0 : _state$activeRoom2.userId] : [state.activeRoom, allMessCount(state.groupGather), allMessCount(state.contactGather)];
   var Contacts = React.useMemo(function () {
-    var _state$conference$dat4, _state$conference$dat5, _state$activeRoom3;
+    var _state$conference$dat4;
 
-    return (_state$conference$dat4 = state.conference.data) != null && _state$conference$dat4.id && ((_state$conference$dat5 = state.conference.data) == null ? void 0 : _state$conference$dat5.contactId) === ((_state$activeRoom3 = state.activeRoom) == null ? void 0 : _state$activeRoom3.userId) ? state.conference.joined ? /*#__PURE__*/React.createElement(GetConference, null) : /*#__PURE__*/React.createElement(GetConferenceCall, null) : /*#__PURE__*/React.createElement(GetRoomList, null);
-  }, depsContats); // console.log('chat state', state);
-
+    return (_state$conference$dat4 = state.conference.data) != null && _state$conference$dat4.id ? state.conference.joined ? /*#__PURE__*/React.createElement(GetConference, null) : /*#__PURE__*/React.createElement(GetConferenceCall, null) : /*#__PURE__*/React.createElement(GetRoomList, null);
+  }, depsContats);
+  console.log("chat state", state);
   return /*#__PURE__*/React.createElement(material.Container, {
     maxWidth: "lg",
     className: classes.root
