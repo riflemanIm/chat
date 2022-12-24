@@ -1228,7 +1228,7 @@ var useStyles$6 = /*#__PURE__*/makeStyles(function (theme) {
       },
       "& $firstMessage": {
         borderTopRightRadius: theme.spacing(2.4),
-        //borderTopLeftRadius: theme.spacing(2.4),
+        borderTopLeftRadius: theme.spacing(2.4),
         marginTop: theme.spacing(2.4)
       },
       "& $lastMessage": {
@@ -1252,7 +1252,7 @@ var useStyles$6 = /*#__PURE__*/makeStyles(function (theme) {
       },
       "& $firstMessage": {
         borderTopLeftRadius: theme.spacing(2.4),
-        //borderTopRightRadius: theme.spacing(2.4),
+        borderTopRightRadius: theme.spacing(2.4),
         marginTop: theme.spacing(2.4)
       },
       "& $lastMessage": {
