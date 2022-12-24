@@ -17,7 +17,7 @@ export default makeStyles((theme: Theme) =>
       },
       "& $firstMessage": {
         borderTopRightRadius: theme.spacing(2.4),
-        //borderTopLeftRadius: theme.spacing(2.4),
+        borderTopLeftRadius: theme.spacing(2.4),
         marginTop: theme.spacing(2.4)
       },
       "& $lastMessage": {
@@ -41,7 +41,7 @@ export default makeStyles((theme: Theme) =>
       },
       "& $firstMessage": {
         borderTopLeftRadius: theme.spacing(2.4),
-        //borderTopRightRadius: theme.spacing(2.4),
+        borderTopRightRadius: theme.spacing(2.4),
         marginTop: theme.spacing(2.4)
       },
       "& $lastMessage": {
