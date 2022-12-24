@@ -1,12 +1,17 @@
 import React from "react";
-import { makeStyles } from '@mui/styles';
+import { makeStyles } from "@mui/styles";
+import { Theme } from "@mui/material/styles";
 import { ChatMessage } from "../../types";
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles((theme: Theme) => ({
   mediaContent: {
-    maxWidth: 350,
-    maxHeight: 350,
-  },
+    maxWidth: 284,
+    maxHeight: 190,
+    [theme.breakpoints.down("sm")]: {
+      maxWidth: 250,
+      maxHeight: 210
+    }
+  }
 }));
 
 type VideoProps = {
@@ -18,7 +23,7 @@ type VideoProps = {
 const Video: React.FC<VideoProps> = ({
   apiUrl,
   message,
-  isConference,
+  isConference
 }: VideoProps) => {
   const classes = useStyles();
   let src = "";

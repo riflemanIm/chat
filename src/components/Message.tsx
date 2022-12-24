@@ -1,18 +1,15 @@
 import * as React from "react";
-import {
-  Box,
-  Link,
-  ListItem,
-  Typography,
-} from "@mui/material";
-import { Theme } from '@mui/material/styles';
-import { makeStyles, createStyles } from '@mui/styles';
+import { Box, Link, ListItem, Typography } from "@mui/material";
+
 import { DoneAll, Done } from "@mui/icons-material";
 import { formatTime } from "../utils/common";
 import MessageContent from "./MessageContent";
 import { Alert } from "@mui/lab";
 import { useTranslation } from "react-i18next";
 import { ChatMessage, Contact, PrivateMessage, User } from "../types";
+
+/* styles */
+import useStyles from "./styles";
 
 type MessageProps = {
   apiUrl: string;
@@ -26,91 +23,25 @@ type MessageProps = {
   onContextMenu: (event: React.MouseEvent<HTMLElement>) => void;
 };
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    rootContact: {
-      "& span": {
-        float: "right",
-        color: "#B2B6C2",
-      },
-      "& $message": {
-        backgroundColor: "#F1F4FC",
-        color: "black",
-      },
-      "& $lastMessage": {
-        borderBottomLeftRadius: 0,
-      },
-    },
-    rootUser: {
-      justifyContent: "flex-end",
-      "& span": {
-        float: "right",
-        color: "#D9DEEC",
-      },
-      "& $message": {
-        backgroundColor: theme.palette.primary.main,
-        color: theme.palette.primary.contrastText,
-      },
-      "& $lastMessage": {
-        borderBottomRightRadius: 0,
-      },
-    },
-    rootNotify: {
-      justifyContent: "center",
-      "& > *": {
-        padding: `0px ${theme.spacing(1)}`,
-        borderRadius: 16,
-        fontWeight: 500,
-      },
-    },
-    message: {
-      maxWidth: "85%",
-      borderRadius: 16,
-      padding: theme.spacing(1),
-    },
-    lastMessage: {},
-    file: {
-      display: "flex",
-      flexDirection: "row",
-      flexWrap: "wrap",
-      cursor: "pointer",
-    },
-    header: {
-      flex: "0 0 100%",
-      overflow: "hidden",
-      fontWeight: "bold",
-    },
-    body: {
-      flex: "1 1 auto",
-      wordBreak: "break-word",
-      overflow: "hidden",
-    },
-    status: {
-      paddingLeft: theme.spacing(1),
-      flex: "1 1 auto",
-      alignSelf: "flex-end",
-    },
-    statusImage: {
-      fontSize: "1rem",
-      marginRight: theme.spacing(0.5),
-      verticalAlign: "middle",
-    },
-  })
-);
-
 const wrapMessage = (
   apiUrl: string,
   message: ChatMessage,
   classes: ReturnType<typeof useStyles>,
+  isUserFirst: boolean,
   isUserLast: boolean,
   onContextMenu: ((event: React.MouseEvent<HTMLElement>) => void) | undefined,
   child: JSX.Element
 ) => {
   const { messageType } = message;
 
-  const className = isUserLast
-    ? `${classes.message} ${classes.lastMessage}`
-    : classes.message;
+  const className =
+    isUserFirst && isUserLast
+      ? `${classes.message} ${classes.firstMessage} ${classes.lastMessage}`
+      : isUserFirst
+      ? `${classes.message} ${classes.firstMessage}`
+      : isUserLast
+      ? `${classes.message} ${classes.lastMessage}`
+      : classes.message;
 
   if (messageType === "file") {
     return (
@@ -155,7 +86,7 @@ const Message: React.FC<MessageProps> = (props: MessageProps) => {
     user,
     isGroupMessage,
     isUserFirst,
-    isUserLast,
+    isUserLast
   } = props;
 
   if (message.messageType === "notify") {
@@ -197,6 +128,7 @@ const Message: React.FC<MessageProps> = (props: MessageProps) => {
         apiUrl,
         message,
         classes,
+        isUserFirst,
         isUserLast,
         props.onContextMenu,
         <React.Fragment>

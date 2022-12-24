@@ -1,20 +1,21 @@
 import React from "react";
 import Viewer from "react-viewer";
-import { Theme } from '@mui/material/styles';
+import { Theme } from "@mui/material/styles";
 import { getImageMeta } from "../../utils/common";
 import { ChatMessage } from "../../types";
-import { makeStyles, createStyles } from '@mui/styles';
+import { makeStyles, createStyles } from "@mui/styles";
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     mediaContent: {
-      maxWidth: 350,
-      maxHeight: 350,
       cursor: "pointer",
+      borderRadius: theme.spacing(1),
+      maxWidth: 284,
+      maxHeight: 190,
       [theme.breakpoints.down("sm")]: {
         maxWidth: 250,
-        maxHeight: 250,
-      },
-    },
+        maxHeight: 170
+      }
+    }
   })
 );
 type ImageProrps = {
@@ -37,8 +38,8 @@ const Image: React.FC<ImageProrps> = ({ apiUrl, message }: ImageProrps) => {
         }}
         images={[
           {
-            src: `${apiUrl}/static/image/${message.content}`,
-          },
+            src: `${apiUrl}/static/image/${message.content}`
+          }
         ]}
       />
       <img

@@ -1098,12 +1098,17 @@ var File = function File(_ref) {
   }, name, /*#__PURE__*/React__default.createElement("span", null, ext + " " + meta.size)));
 };
 
-var useStyles$4 = /*#__PURE__*/makeStyles(function () {
+var useStyles$4 = /*#__PURE__*/makeStyles(function (theme) {
+  var _mediaContent;
+
   return {
-    mediaContent: {
-      maxWidth: 350,
-      maxHeight: 350
-    }
+    mediaContent: (_mediaContent = {
+      maxWidth: 284,
+      maxHeight: 190
+    }, _mediaContent[theme.breakpoints.down("sm")] = {
+      maxWidth: 250,
+      maxHeight: 210
+    }, _mediaContent)
   };
 });
 
@@ -1132,12 +1137,13 @@ var useStyles$5 = /*#__PURE__*/makeStyles(function (theme) {
 
   return createStyles({
     mediaContent: (_mediaContent = {
-      maxWidth: 350,
-      maxHeight: 350,
-      cursor: "pointer"
+      cursor: "pointer",
+      borderRadius: theme.spacing(1),
+      maxWidth: 284,
+      maxHeight: 190
     }, _mediaContent[theme.breakpoints.down("sm")] = {
       maxWidth: 250,
-      maxHeight: 250
+      maxHeight: 170
     }, _mediaContent)
   });
 });
@@ -1205,47 +1211,72 @@ var MessageContent = function MessageContent(_ref) {
 };
 
 var useStyles$6 = /*#__PURE__*/makeStyles(function (theme) {
+  var _message;
+
   return createStyles({
     rootContact: {
+      padding: theme.spacing(0.2),
+      paddingLeft: theme.spacing(2),
       "& span": {
         float: "right",
-        color: "#B2B6C2"
+        color: theme.palette.text.secondary,
+        fontSize: "0.8rem"
       },
       "& $message": {
-        backgroundColor: "#F1F4FC",
-        color: "black"
+        backgroundColor: theme.palette.grey[200],
+        color: theme.palette.text.primary
+      },
+      "& $firstMessage": {
+        borderTopRightRadius: theme.spacing(2.4),
+        //borderTopLeftRadius: theme.spacing(2.4),
+        marginTop: theme.spacing(2.4)
       },
       "& $lastMessage": {
-        borderBottomLeftRadius: 0
+        borderBottomLeftRadius: 0,
+        borderBottomRightRadius: theme.spacing(2.4),
+        marginBottom: theme.spacing(2.4)
       }
     },
     rootUser: {
+      padding: theme.spacing(0.2),
+      paddingRight: theme.spacing(2),
       justifyContent: "flex-end",
       "& span": {
         float: "right",
-        color: "#D9DEEC"
+        color: "#D9DEEC",
+        fontSize: "0.8rem"
       },
       "& $message": {
         backgroundColor: theme.palette.primary.main,
         color: theme.palette.primary.contrastText
       },
+      "& $firstMessage": {
+        borderTopLeftRadius: theme.spacing(2.4),
+        //borderTopRightRadius: theme.spacing(2.4),
+        marginTop: theme.spacing(2.4)
+      },
       "& $lastMessage": {
-        borderBottomRightRadius: 0
+        borderBottomRightRadius: 0,
+        borderBottomLeftRadius: theme.spacing(2.4),
+        marginBottom: theme.spacing(2.4)
       }
     },
     rootNotify: {
       justifyContent: "center",
       "& > *": {
-        padding: "0px " + theme.spacing(1),
-        borderRadius: 16,
+        //padding: `0px ${theme.spacing(1)}`,
+        borderRadius: theme.spacing(2.4),
         fontWeight: 500
       }
     },
-    message: {
-      maxWidth: "85%",
-      borderRadius: 16,
-      padding: theme.spacing(1)
-    },
+    message: (_message = {
+      //maxWidth: "55%",
+      //minWidth: "50%",
+      width: "55%"
+    }, _message[theme.breakpoints.down("sm")] = {
+      width: "75%"
+    }, _message.borderRadius = theme.spacing(1.2), _message.padding = theme.spacing(1.8), _message),
+    firstMessage: {},
     lastMessage: {},
     file: {
       display: "flex",
@@ -1276,9 +1307,9 @@ var useStyles$6 = /*#__PURE__*/makeStyles(function (theme) {
   });
 });
 
-var wrapMessage = function wrapMessage(apiUrl, message, classes, isUserLast, onContextMenu, child) {
+var wrapMessage = function wrapMessage(apiUrl, message, classes, isUserFirst, isUserLast, onContextMenu, child) {
   var messageType = message.messageType;
-  var className = isUserLast ? classes.message + " " + classes.lastMessage : classes.message;
+  var className = isUserFirst && isUserLast ? classes.message + " " + classes.firstMessage + " " + classes.lastMessage : isUserFirst ? classes.message + " " + classes.firstMessage : isUserLast ? classes.message + " " + classes.lastMessage : classes.message;
 
   if (messageType === "file") {
     return /*#__PURE__*/createElement(Link, {
@@ -1341,7 +1372,7 @@ var Message = function Message(props) {
   var isMine = user.userId === message.userId;
   return /*#__PURE__*/createElement(ListItem, {
     className: isMine ? classes.rootUser : classes.rootContact
-  }, wrapMessage(apiUrl, message, classes, isUserLast, props.onContextMenu, /*#__PURE__*/createElement(Fragment, null, !isMine && isGroupMessage && owner && isUserFirst && /*#__PURE__*/createElement("div", {
+  }, wrapMessage(apiUrl, message, classes, isUserFirst, isUserLast, props.onContextMenu, /*#__PURE__*/createElement(Fragment, null, !isMine && isGroupMessage && owner && isUserFirst && /*#__PURE__*/createElement("div", {
     className: classes.header
   }, owner.username), /*#__PURE__*/createElement("div", {
     className: classes.body
