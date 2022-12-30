@@ -8,7 +8,7 @@ const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     mediaContent: {
       cursor: "pointer",
-      borderRadius: theme.spacing(1),
+      borderRadius: theme.spacing(1.2),
       maxWidth: 284,
       maxHeight: 190,
       [theme.breakpoints.down("sm")]: {

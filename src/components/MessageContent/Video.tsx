@@ -7,6 +7,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   mediaContent: {
     maxWidth: 284,
     maxHeight: 190,
+    borderRadius: theme.spacing(1.2),
     [theme.breakpoints.down("sm")]: {
       maxWidth: 250,
       maxHeight: 210
