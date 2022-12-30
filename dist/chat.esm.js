@@ -1072,7 +1072,7 @@ var useStyles$3 = /*#__PURE__*/makeStyles(function (theme) {
       fontSize: "0.75rem"
     },
     fileBody: {
-      paddingLeft: theme.spacing(1)
+      paddingLeft: theme.spacing(1.2)
     }
   });
 });
@@ -1104,7 +1104,8 @@ var useStyles$4 = /*#__PURE__*/makeStyles(function (theme) {
   return {
     mediaContent: (_mediaContent = {
       maxWidth: 284,
-      maxHeight: 190
+      maxHeight: 190,
+      borderRadius: theme.spacing(1.2)
     }, _mediaContent[theme.breakpoints.down("sm")] = {
       maxWidth: 250,
       maxHeight: 210
@@ -1138,7 +1139,7 @@ var useStyles$5 = /*#__PURE__*/makeStyles(function (theme) {
   return createStyles({
     mediaContent: (_mediaContent = {
       cursor: "pointer",
-      borderRadius: theme.spacing(1),
+      borderRadius: theme.spacing(1.2),
       maxWidth: 284,
       maxHeight: 190
     }, _mediaContent[theme.breakpoints.down("sm")] = {
