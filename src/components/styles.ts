@@ -13,17 +13,19 @@ export default makeStyles((theme: Theme) =>
       },
       "& $message": {
         backgroundColor: theme.palette.grey[200],
-        color: theme.palette.text.primary
+        color: theme.palette.text.primary,
+        borderTopRightRadius: theme.spacing(3),
+        borderBottomRightRadius: theme.spacing(3)
       },
       "& $firstMessage": {
-        borderTopRightRadius: theme.spacing(2.4),
-        borderTopLeftRadius: theme.spacing(2.4),
-        marginTop: theme.spacing(2.4)
+        borderTopLeftRadius: theme.spacing(3),
+        marginTop: theme.spacing(3)
       },
       "& $lastMessage": {
+        borderTopRightRadius: theme.spacing(3),
         borderBottomLeftRadius: 0,
-        borderBottomRightRadius: theme.spacing(2.4),
-        marginBottom: theme.spacing(2.4)
+        borderBottomRightRadius: theme.spacing(3),
+        marginBottom: theme.spacing(3)
       }
     },
     rootUser: {
@@ -37,33 +39,34 @@ export default makeStyles((theme: Theme) =>
       },
       "& $message": {
         backgroundColor: theme.palette.primary.main,
-        color: theme.palette.primary.contrastText
+        color: theme.palette.primary.contrastText,
+        borderTopLeftRadius: theme.spacing(3),
+        borderBottomLeftRadius: theme.spacing(3)
       },
       "& $firstMessage": {
-        borderTopLeftRadius: theme.spacing(2.4),
-        borderTopRightRadius: theme.spacing(2.4),
-        marginTop: theme.spacing(2.4)
+        borderTopRightRadius: theme.spacing(3),
+        marginTop: theme.spacing(3)
       },
       "& $lastMessage": {
+        borderTopLeftRadius: theme.spacing(3),
         borderBottomRightRadius: 0,
-        borderBottomLeftRadius: theme.spacing(2.4),
-        marginBottom: theme.spacing(2.4)
+        marginBottom: theme.spacing(3)
       }
     },
     rootNotify: {
       justifyContent: "center",
       "& > *": {
         //padding: `0px ${theme.spacing(1)}`,
-        borderRadius: theme.spacing(2.4),
+        borderRadius: theme.spacing(3),
         fontWeight: 500
       }
     },
     message: {
       //maxWidth: "55%",
       //minWidth: "50%",
-      width: "55%",
+      maxWidth: "55%",
       [theme.breakpoints.down("sm")]: {
-        width: "75%"
+        maxWidth: "85%"
       },
       borderRadius: theme.spacing(1.2),
       padding: theme.spacing(1.8)
