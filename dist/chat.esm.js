@@ -1276,7 +1276,9 @@ var useStyles$6 = /*#__PURE__*/makeStyles(function (theme) {
     message: (_message = {
       //maxWidth: "55%",
       //minWidth: "50%",
-      maxWidth: "55%"
+      maxWidth: "65%"
+    }, _message[theme.breakpoints.down("md")] = {
+      maxWidth: "95%"
     }, _message[theme.breakpoints.down("sm")] = {
       maxWidth: "85%"
     }, _message.borderRadius = theme.spacing(1.2), _message.padding = theme.spacing(1.8), _message),

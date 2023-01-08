@@ -64,10 +64,15 @@ export default makeStyles((theme: Theme) =>
     message: {
       //maxWidth: "55%",
       //minWidth: "50%",
-      maxWidth: "55%",
+      maxWidth: "65%",
+
+      [theme.breakpoints.down("md")]: {
+        maxWidth: "95%"
+      },
       [theme.breakpoints.down("sm")]: {
         maxWidth: "85%"
       },
+
       borderRadius: theme.spacing(1.2),
       padding: theme.spacing(1.8)
     },
