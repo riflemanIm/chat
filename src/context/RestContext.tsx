@@ -16,8 +16,9 @@ export interface IRestContext {
 }
 const initialContext = {} as IRestContext;
 
-export const RestContext: React.Context<IRestContext> =
-  createContext(initialContext);
+export const RestContext: React.Context<IRestContext> = createContext(
+  initialContext
+);
 
 type RestProviderProps = {
   baseURLApi: string;
@@ -28,7 +29,7 @@ type RestProviderProps = {
 export const RestProvider: React.FC<RestProviderProps> = ({
   baseURLApi,
   pageSize,
-  children,
+  children
 }: RestProviderProps) => {
   const { state, dispatch } = useContext(ChatContext);
 
@@ -38,9 +39,9 @@ export const RestProvider: React.FC<RestProviderProps> = ({
     headers: {
       "Cache-Control": "no-cache",
       Pragma: "no-cache",
-      Authorization: `Bearer ${state.token}`,
+      Authorization: `Bearer ${state.token}`
     },
-    withCredentials: false,
+    withCredentials: false
   });
 
   const getPrivateMessages = useCallback(
@@ -53,8 +54,8 @@ export const RestProvider: React.FC<RestProviderProps> = ({
           params: {
             contactId,
             current,
-            pageSize,
-          },
+            pageSize
+          }
         });
         if (data) {
           dispatch({
@@ -62,8 +63,8 @@ export const RestProvider: React.FC<RestProviderProps> = ({
             payload: {
               pageSize,
               contactId,
-              messages: data as PrivateMessage[],
-            },
+              messages: data as PrivateMessage[]
+            }
           });
         }
       } catch (error) {
@@ -88,8 +89,8 @@ export const RestProvider: React.FC<RestProviderProps> = ({
             params: {
               groupId,
               current,
-              pageSize,
-            },
+              pageSize
+            }
           }
         );
         if (data) {
@@ -98,8 +99,8 @@ export const RestProvider: React.FC<RestProviderProps> = ({
             payload: {
               pageSize,
               groupId,
-              ...data,
-            },
+              ...data
+            }
           });
         }
       } catch (error) {
@@ -117,8 +118,8 @@ export const RestProvider: React.FC<RestProviderProps> = ({
       const { data }: { data: number } = await fetch.get("/contact/find", {
         params: {
           mmkId,
-          guid,
-        },
+          guid
+        }
       });
       if (data != null) {
         return data;
@@ -135,7 +136,7 @@ export const RestProvider: React.FC<RestProviderProps> = ({
         fetch,
         getPrivateMessages,
         getGroupMessages,
-        getUserByMmk,
+        getUserByMmk
       }}
     >
       {children}
