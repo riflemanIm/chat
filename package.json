@@ -1,6 +1,6 @@
 {
   "name": "@pmt/chat",
-  "version": "1.10.2",
+  "version": "1.10.3",
   "description": "PMT Chat, last global change mui v5",
   "main": "dist/index.js",
   "module": "dist/index.es.js",
@@ -30,6 +30,7 @@
     "prepare": "yarn build"
   },
   "dependencies": {
+    "axios": "^1.2.2",
     "moment": "^2.29.1",
     "react-viewer": "^3.2.2",
     "socket.io-client": "^4.4.1"
@@ -39,7 +40,6 @@
     "@mui/lab": "^5.0.0-alpha.84",
     "@mui/material": "^5.8.2",
     "@mui/styles": "^5.8.0",
-    "axios": "^0.27.2",
     "i18next": "^21.8.7",
     "react": "^18.1.0",
     "react-dom": "^18.1.0",
