@@ -1,6 +1,6 @@
 {
   "name": "@pmt/chat",
-  "version": "1.10.5",
+  "version": "1.10.6",
   "description": "PMT Chat, last global change mui v5",
   "main": "dist/index.js",
   "module": "dist/index.es.js",
@@ -30,10 +30,7 @@
     "prepare": "yarn build"
   },
   "dependencies": {
-    "moment": "^2.29.1",
-    "react-viewer": "^3.2.2",
-    "socket.io-client": "^4.4.1",
-    "axios": "^0.27.2"
+    "socket.io-client": "^4.4.1"
   },
   "peerDependencies": {
     "@mui/icons-material": "^5.11.0",
