@@ -19,25 +19,20 @@ import axios from 'axios';
 import io from 'socket.io-client';
 
 var MessageStatus;
-
 (function (MessageStatus) {
   MessageStatus[MessageStatus["sent"] = 0] = "sent";
   MessageStatus[MessageStatus["read"] = 1] = "read";
 })(MessageStatus || (MessageStatus = {}));
-
 var Role;
-
 (function (Role) {
   Role[Role["Unknown"] = 0] = "Unknown";
   Role[Role["Client"] = 1] = "Client";
   Role[Role["Agent"] = 2] = "Agent";
   Role[Role["Specialist"] = 3] = "Specialist";
   Role[Role["Operator"] = 4] = "Operator";
-})(Role || (Role = {})); // Операции контекстного меню
-
-
+})(Role || (Role = {}));
+// Операции контекстного меню
 var ContextMenuType;
-
 (function (ContextMenuType) {
   ContextMenuType["COPY"] = "COPY";
   ContextMenuType["REVOKE"] = "REVOKE";
@@ -54,16 +49,13 @@ var useStyles = /*#__PURE__*/makeStyles(function () {
     }
   });
 });
-
 var Emoji = function Emoji(props) {
   var classes = useStyles();
-
   var emojiClick = function emojiClick(e) {
     if (props.onSelect) {
       props.onSelect(e.target.innerText);
     }
   };
-
   var Item = function Item(itemProps) {
     return /*#__PURE__*/createElement(Box, {
       m: 0.5,
@@ -72,7 +64,6 @@ var Emoji = function Emoji(props) {
       className: classes.item
     }, itemProps.emoji);
   };
-
   return /*#__PURE__*/createElement(Box, null, /*#__PURE__*/createElement(Box, {
     display: "flex",
     flexDirection: "row"
@@ -282,7 +273,6 @@ var useStyles$1 = /*#__PURE__*/makeStyles(function (theme) {
     }
   });
 });
-
 var Typing = function Typing(props) {
   var classes = useStyles$1();
   return /*#__PURE__*/React__default.createElement(Typography, {
@@ -301,20 +291,19 @@ var Typing = function Typing(props) {
 };
 
 function _regeneratorRuntime() {
-  /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/facebook/regenerator/blob/main/LICENSE */
-
   _regeneratorRuntime = function () {
     return exports;
   };
-
   var exports = {},
-      Op = Object.prototype,
-      hasOwn = Op.hasOwnProperty,
-      $Symbol = "function" == typeof Symbol ? Symbol : {},
-      iteratorSymbol = $Symbol.iterator || "@@iterator",
-      asyncIteratorSymbol = $Symbol.asyncIterator || "@@asyncIterator",
-      toStringTagSymbol = $Symbol.toStringTag || "@@toStringTag";
-
+    Op = Object.prototype,
+    hasOwn = Op.hasOwnProperty,
+    defineProperty = Object.defineProperty || function (obj, key, desc) {
+      obj[key] = desc.value;
+    },
+    $Symbol = "function" == typeof Symbol ? Symbol : {},
+    iteratorSymbol = $Symbol.iterator || "@@iterator",
+    asyncIteratorSymbol = $Symbol.asyncIterator || "@@asyncIterator",
+    toStringTagSymbol = $Symbol.toStringTag || "@@toStringTag";
   function define(obj, key, value) {
     return Object.defineProperty(obj, key, {
       value: value,
@@ -323,7 +312,6 @@ function _regeneratorRuntime() {
       writable: !0
     }), obj[key];
   }
-
   try {
     define({}, "");
   } catch (err) {
@@ -331,54 +319,14 @@ function _regeneratorRuntime() {
       return obj[key] = value;
     };
   }
-
   function wrap(innerFn, outerFn, self, tryLocsList) {
     var protoGenerator = outerFn && outerFn.prototype instanceof Generator ? outerFn : Generator,
-        generator = Object.create(protoGenerator.prototype),
-        context = new Context(tryLocsList || []);
-    return generator._invoke = function (innerFn, self, context) {
-      var state = "suspendedStart";
-      return function (method, arg) {
-        if ("executing" === state) throw new Error("Generator is already running");
-
-        if ("completed" === state) {
-          if ("throw" === method) throw arg;
-          return doneResult();
-        }
-
-        for (context.method = method, context.arg = arg;;) {
-          var delegate = context.delegate;
-
-          if (delegate) {
-            var delegateResult = maybeInvokeDelegate(delegate, context);
-
-            if (delegateResult) {
-              if (delegateResult === ContinueSentinel) continue;
-              return delegateResult;
-            }
-          }
-
-          if ("next" === context.method) context.sent = context._sent = context.arg;else if ("throw" === context.method) {
-            if ("suspendedStart" === state) throw state = "completed", context.arg;
-            context.dispatchException(context.arg);
-          } else "return" === context.method && context.abrupt("return", context.arg);
-          state = "executing";
-          var record = tryCatch(innerFn, self, context);
-
-          if ("normal" === record.type) {
-            if (state = context.done ? "completed" : "suspendedYield", record.arg === ContinueSentinel) continue;
-            return {
-              value: record.arg,
-              done: context.done
-            };
-          }
-
-          "throw" === record.type && (state = "completed", context.method = "throw", context.arg = record.arg);
-        }
-      };
-    }(innerFn, self, context), generator;
+      generator = Object.create(protoGenerator.prototype),
+      context = new Context(tryLocsList || []);
+    return defineProperty(generator, "_invoke", {
+      value: makeInvokeMethod(innerFn, self, context)
+    }), generator;
   }
-
   function tryCatch(fn, obj, arg) {
     try {
       return {
@@ -392,25 +340,19 @@ function _regeneratorRuntime() {
       };
     }
   }
-
   exports.wrap = wrap;
   var ContinueSentinel = {};
-
   function Generator() {}
-
   function GeneratorFunction() {}
-
   function GeneratorFunctionPrototype() {}
-
   var IteratorPrototype = {};
   define(IteratorPrototype, iteratorSymbol, function () {
     return this;
   });
   var getProto = Object.getPrototypeOf,
-      NativeIteratorPrototype = getProto && getProto(getProto(values([])));
+    NativeIteratorPrototype = getProto && getProto(getProto(values([])));
   NativeIteratorPrototype && NativeIteratorPrototype !== Op && hasOwn.call(NativeIteratorPrototype, iteratorSymbol) && (IteratorPrototype = NativeIteratorPrototype);
   var Gp = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(IteratorPrototype);
-
   function defineIteratorMethods(prototype) {
     ["next", "throw", "return"].forEach(function (method) {
       define(prototype, method, function (arg) {
@@ -418,14 +360,12 @@ function _regeneratorRuntime() {
       });
     });
   }
-
   function AsyncIterator(generator, PromiseImpl) {
     function invoke(method, arg, resolve, reject) {
       var record = tryCatch(generator[method], generator, arg);
-
       if ("throw" !== record.type) {
         var result = record.arg,
-            value = result.value;
+          value = result.value;
         return value && "object" == typeof value && hasOwn.call(value, "__await") ? PromiseImpl.resolve(value.__await).then(function (value) {
           invoke("next", value, resolve, reject);
         }, function (err) {
@@ -436,90 +376,109 @@ function _regeneratorRuntime() {
           return invoke("throw", error, resolve, reject);
         });
       }
-
       reject(record.arg);
     }
-
     var previousPromise;
-
-    this._invoke = function (method, arg) {
-      function callInvokeWithMethodAndArg() {
-        return new PromiseImpl(function (resolve, reject) {
-          invoke(method, arg, resolve, reject);
-        });
+    defineProperty(this, "_invoke", {
+      value: function (method, arg) {
+        function callInvokeWithMethodAndArg() {
+          return new PromiseImpl(function (resolve, reject) {
+            invoke(method, arg, resolve, reject);
+          });
+        }
+        return previousPromise = previousPromise ? previousPromise.then(callInvokeWithMethodAndArg, callInvokeWithMethodAndArg) : callInvokeWithMethodAndArg();
       }
-
-      return previousPromise = previousPromise ? previousPromise.then(callInvokeWithMethodAndArg, callInvokeWithMethodAndArg) : callInvokeWithMethodAndArg();
+    });
+  }
+  function makeInvokeMethod(innerFn, self, context) {
+    var state = "suspendedStart";
+    return function (method, arg) {
+      if ("executing" === state) throw new Error("Generator is already running");
+      if ("completed" === state) {
+        if ("throw" === method) throw arg;
+        return doneResult();
+      }
+      for (context.method = method, context.arg = arg;;) {
+        var delegate = context.delegate;
+        if (delegate) {
+          var delegateResult = maybeInvokeDelegate(delegate, context);
+          if (delegateResult) {
+            if (delegateResult === ContinueSentinel) continue;
+            return delegateResult;
+          }
+        }
+        if ("next" === context.method) context.sent = context._sent = context.arg;else if ("throw" === context.method) {
+          if ("suspendedStart" === state) throw state = "completed", context.arg;
+          context.dispatchException(context.arg);
+        } else "return" === context.method && context.abrupt("return", context.arg);
+        state = "executing";
+        var record = tryCatch(innerFn, self, context);
+        if ("normal" === record.type) {
+          if (state = context.done ? "completed" : "suspendedYield", record.arg === ContinueSentinel) continue;
+          return {
+            value: record.arg,
+            done: context.done
+          };
+        }
+        "throw" === record.type && (state = "completed", context.method = "throw", context.arg = record.arg);
+      }
     };
   }
-
   function maybeInvokeDelegate(delegate, context) {
-    var method = delegate.iterator[context.method];
-
-    if (undefined === method) {
-      if (context.delegate = null, "throw" === context.method) {
-        if (delegate.iterator.return && (context.method = "return", context.arg = undefined, maybeInvokeDelegate(delegate, context), "throw" === context.method)) return ContinueSentinel;
-        context.method = "throw", context.arg = new TypeError("The iterator does not provide a 'throw' method");
-      }
-
-      return ContinueSentinel;
-    }
-
+    var methodName = context.method,
+      method = delegate.iterator[methodName];
+    if (undefined === method) return context.delegate = null, "throw" === methodName && delegate.iterator.return && (context.method = "return", context.arg = undefined, maybeInvokeDelegate(delegate, context), "throw" === context.method) || "return" !== methodName && (context.method = "throw", context.arg = new TypeError("The iterator does not provide a '" + methodName + "' method")), ContinueSentinel;
     var record = tryCatch(method, delegate.iterator, context.arg);
     if ("throw" === record.type) return context.method = "throw", context.arg = record.arg, context.delegate = null, ContinueSentinel;
     var info = record.arg;
     return info ? info.done ? (context[delegate.resultName] = info.value, context.next = delegate.nextLoc, "return" !== context.method && (context.method = "next", context.arg = undefined), context.delegate = null, ContinueSentinel) : info : (context.method = "throw", context.arg = new TypeError("iterator result is not an object"), context.delegate = null, ContinueSentinel);
   }
-
   function pushTryEntry(locs) {
     var entry = {
       tryLoc: locs[0]
     };
     1 in locs && (entry.catchLoc = locs[1]), 2 in locs && (entry.finallyLoc = locs[2], entry.afterLoc = locs[3]), this.tryEntries.push(entry);
   }
-
   function resetTryEntry(entry) {
     var record = entry.completion || {};
     record.type = "normal", delete record.arg, entry.completion = record;
   }
-
   function Context(tryLocsList) {
     this.tryEntries = [{
       tryLoc: "root"
     }], tryLocsList.forEach(pushTryEntry, this), this.reset(!0);
   }
-
   function values(iterable) {
     if (iterable) {
       var iteratorMethod = iterable[iteratorSymbol];
       if (iteratorMethod) return iteratorMethod.call(iterable);
       if ("function" == typeof iterable.next) return iterable;
-
       if (!isNaN(iterable.length)) {
         var i = -1,
-            next = function next() {
-          for (; ++i < iterable.length;) if (hasOwn.call(iterable, i)) return next.value = iterable[i], next.done = !1, next;
-
-          return next.value = undefined, next.done = !0, next;
-        };
-
+          next = function next() {
+            for (; ++i < iterable.length;) if (hasOwn.call(iterable, i)) return next.value = iterable[i], next.done = !1, next;
+            return next.value = undefined, next.done = !0, next;
+          };
         return next.next = next;
       }
     }
-
     return {
       next: doneResult
     };
   }
-
   function doneResult() {
     return {
       value: undefined,
       done: !0
     };
   }
-
-  return GeneratorFunction.prototype = GeneratorFunctionPrototype, define(Gp, "constructor", GeneratorFunctionPrototype), define(GeneratorFunctionPrototype, "constructor", GeneratorFunction), GeneratorFunction.displayName = define(GeneratorFunctionPrototype, toStringTagSymbol, "GeneratorFunction"), exports.isGeneratorFunction = function (genFun) {
+  return GeneratorFunction.prototype = GeneratorFunctionPrototype, defineProperty(Gp, "constructor", {
+    value: GeneratorFunctionPrototype,
+    configurable: !0
+  }), defineProperty(GeneratorFunctionPrototype, "constructor", {
+    value: GeneratorFunction,
+    configurable: !0
+  }), GeneratorFunction.displayName = define(GeneratorFunctionPrototype, toStringTagSymbol, "GeneratorFunction"), exports.isGeneratorFunction = function (genFun) {
     var ctor = "function" == typeof genFun && genFun.constructor;
     return !!ctor && (ctor === GeneratorFunction || "GeneratorFunction" === (ctor.displayName || ctor.name));
   }, exports.mark = function (genFun) {
@@ -540,17 +499,15 @@ function _regeneratorRuntime() {
     return this;
   }), define(Gp, "toString", function () {
     return "[object Generator]";
-  }), exports.keys = function (object) {
-    var keys = [];
-
+  }), exports.keys = function (val) {
+    var object = Object(val),
+      keys = [];
     for (var key in object) keys.push(key);
-
     return keys.reverse(), function next() {
       for (; keys.length;) {
         var key = keys.pop();
         if (key in object) return next.value = key, next.done = !1, next;
       }
-
       return next.done = !0, next;
     };
   }, exports.values = values, Context.prototype = {
@@ -567,20 +524,16 @@ function _regeneratorRuntime() {
     dispatchException: function (exception) {
       if (this.done) throw exception;
       var context = this;
-
       function handle(loc, caught) {
         return record.type = "throw", record.arg = exception, context.next = loc, caught && (context.method = "next", context.arg = undefined), !!caught;
       }
-
       for (var i = this.tryEntries.length - 1; i >= 0; --i) {
         var entry = this.tryEntries[i],
-            record = entry.completion;
+          record = entry.completion;
         if ("root" === entry.tryLoc) return handle("end");
-
         if (entry.tryLoc <= this.prev) {
           var hasCatch = hasOwn.call(entry, "catchLoc"),
-              hasFinally = hasOwn.call(entry, "finallyLoc");
-
+            hasFinally = hasOwn.call(entry, "finallyLoc");
           if (hasCatch && hasFinally) {
             if (this.prev < entry.catchLoc) return handle(entry.catchLoc, !0);
             if (this.prev < entry.finallyLoc) return handle(entry.finallyLoc);
@@ -596,13 +549,11 @@ function _regeneratorRuntime() {
     abrupt: function (type, arg) {
       for (var i = this.tryEntries.length - 1; i >= 0; --i) {
         var entry = this.tryEntries[i];
-
         if (entry.tryLoc <= this.prev && hasOwn.call(entry, "finallyLoc") && this.prev < entry.finallyLoc) {
           var finallyEntry = entry;
           break;
         }
       }
-
       finallyEntry && ("break" === type || "continue" === type) && finallyEntry.tryLoc <= arg && arg <= finallyEntry.finallyLoc && (finallyEntry = null);
       var record = finallyEntry ? finallyEntry.completion : {};
       return record.type = type, record.arg = arg, finallyEntry ? (this.method = "next", this.next = finallyEntry.finallyLoc, ContinueSentinel) : this.complete(record);
@@ -620,19 +571,15 @@ function _regeneratorRuntime() {
     catch: function (tryLoc) {
       for (var i = this.tryEntries.length - 1; i >= 0; --i) {
         var entry = this.tryEntries[i];
-
         if (entry.tryLoc === tryLoc) {
           var record = entry.completion;
-
           if ("throw" === record.type) {
             var thrown = record.arg;
             resetTryEntry(entry);
           }
-
           return thrown;
         }
       }
-
       throw new Error("illegal catch attempt");
     },
     delegateYield: function (iterable, resultName, nextLoc) {
@@ -644,7 +591,6 @@ function _regeneratorRuntime() {
     }
   }, exports;
 }
-
 function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) {
   try {
     var info = gen[key](arg);
@@ -653,51 +599,42 @@ function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) {
     reject(error);
     return;
   }
-
   if (info.done) {
     resolve(value);
   } else {
     Promise.resolve(value).then(_next, _throw);
   }
 }
-
 function _asyncToGenerator(fn) {
   return function () {
     var self = this,
-        args = arguments;
+      args = arguments;
     return new Promise(function (resolve, reject) {
       var gen = fn.apply(self, args);
-
       function _next(value) {
         asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value);
       }
-
       function _throw(err) {
         asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err);
       }
-
       _next(undefined);
     });
   };
 }
-
 function _extends() {
   _extends = Object.assign ? Object.assign.bind() : function (target) {
     for (var i = 1; i < arguments.length; i++) {
       var source = arguments[i];
-
       for (var key in source) {
         if (Object.prototype.hasOwnProperty.call(source, key)) {
           target[key] = source[key];
         }
       }
     }
-
     return target;
   };
   return _extends.apply(this, arguments);
 }
-
 function _unsupportedIterableToArray(o, minLen) {
   if (!o) return;
   if (typeof o === "string") return _arrayLikeToArray(o, minLen);
@@ -706,19 +643,14 @@ function _unsupportedIterableToArray(o, minLen) {
   if (n === "Map" || n === "Set") return Array.from(o);
   if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen);
 }
-
 function _arrayLikeToArray(arr, len) {
   if (len == null || len > arr.length) len = arr.length;
-
   for (var i = 0, arr2 = new Array(len); i < len; i++) arr2[i] = arr[i];
-
   return arr2;
 }
-
 function _createForOfIteratorHelperLoose(o, allowArrayLike) {
   var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"];
   if (it) return (it = it.call(o)).next.bind(it);
-
   if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") {
     if (it) o = it;
     var i = 0;
@@ -732,7 +664,6 @@ function _createForOfIteratorHelperLoose(o, allowArrayLike) {
       };
     };
   }
-
   throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
 }
 
@@ -753,11 +684,9 @@ var useStyles$2 = /*#__PURE__*/makeStyles(function () {
 /**
  * Рассчитать пропорции изображения
  */
-
 var getImageSize = function getImageSize(data) {
   var width = data.width,
-      height = data.height;
-
+    height = data.height;
   if (width > 335 || height > 335) {
     if (width > height) {
       height = 335 * (height / width);
@@ -767,52 +696,41 @@ var getImageSize = function getImageSize(data) {
       height = 335;
     }
   }
-
   return {
     width: width,
     height: height
   };
 };
-
 var Entry = function Entry(props) {
   var classes = useStyles$2();
   var chat = props.chat;
-
   var _useTranslation = useTranslation(),
-      t = _useTranslation.t;
-
+    t = _useTranslation.t;
   var _React$useState = React__default.useState(null),
-      empjiEl = _React$useState[0],
-      setEmojiEl = _React$useState[1];
-
+    empjiEl = _React$useState[0],
+    setEmojiEl = _React$useState[1];
   var _React$useState2 = React__default.useState(""),
-      text = _React$useState2[0],
-      setText = _React$useState2[1];
-
+    text = _React$useState2[0],
+    setText = _React$useState2[1];
   var _React$useState3 = React__default.useState({
-    chat: chat,
-    time: 0
-  }),
-      lastTyping = _React$useState3[0],
-      setLastTyping = _React$useState3[1];
-
+      chat: chat,
+      time: 0
+    }),
+    lastTyping = _React$useState3[0],
+    setLastTyping = _React$useState3[1];
   var handleEmojiClick = function handleEmojiClick(event) {
     setEmojiEl(event.currentTarget);
   };
-
   var handleEmojiClose = function handleEmojiClose() {
     setEmojiEl(null);
   };
-
   var emojiSelect = function emojiSelect(emoji) {
     setText("" + text + emoji);
     handleEmojiClose();
   };
-
   var onChange = function onChange(_ref) {
     var target = _ref.target;
     setText(target.value);
-
     if (chat && props.onTyping && (lastTyping.chat !== chat || Date.now() - lastTyping.time >= 500)) {
       setLastTyping({
         chat: chat,
@@ -821,40 +739,33 @@ var Entry = function Entry(props) {
       props.onTyping(chat);
     }
   };
-
   var sendMessage = function sendMessage(data) {
     if (chat && props.onSendMessage) props.onSendMessage(chat, data);
   };
-
   var submit = function submit() {
     if (text.trim().length === 0) {
       return;
     }
-
     sendMessage({
       message: text,
       messageType: "text"
     });
     setText("");
   };
-
   var onSubmitClick = function onSubmitClick(event) {
     event.preventDefault();
     submit();
   };
-
   var onKeyPress = function onKeyPress(event) {
     if (event.key === "Enter") {
       event.preventDefault();
       submit();
     }
   };
-
   var onSubmitFile = function onSubmitFile(event) {
     if (!event.currentTarget.files) return;
     var file = event.currentTarget.files[0];
     var messageType;
-
     if (file.type.includes("image")) {
       messageType = "image";
     } else if (file.type.includes("video")) {
@@ -862,12 +773,10 @@ var Entry = function Entry(props) {
     } else {
       messageType = "file";
     }
-
     if (messageType === "image") {
       var image = new Image();
       var url = window.URL || window.webkitURL;
       image.src = url.createObjectURL(file);
-
       image.onload = function () {
         var imageSize = getImageSize({
           width: image.width,
@@ -889,7 +798,6 @@ var Entry = function Entry(props) {
       });
     }
   };
-
   var emojiOpen = Boolean(empjiEl);
   var enojiId = emojiOpen ? "simple-popover" : undefined;
   return /*#__PURE__*/React__default.createElement(Box, {
@@ -897,7 +805,7 @@ var Entry = function Entry(props) {
     flexDirection: "row"
   }, /*#__PURE__*/React__default.createElement(TextField, {
     className: classes.input,
-    placeholder: t("CHAT.INPUT_MESSAGE"),
+    placeholder: t("CHAT.INPUT_MESSAGE") || "",
     autoFocus: true,
     variant: "standard",
     InputProps: {
@@ -961,40 +869,36 @@ var Entry = function Entry(props) {
 
 function isEmpty(value) {
   return value == null || typeof value === "object" && Object.keys(value).length === 0 || typeof value === "string" && value.trim().length === 0;
-} // string contains string
+}
 /**
  * Формитирование времени сообщения
  * @param time
  */
-
 function formatTime(time) {
   if (typeof time === "undefined") return null;
-  if (typeof time === "string") time = new Date(time); // больше чем вчера
-
+  if (typeof time === "string") time = new Date(time);
+  // больше чем вчера
   if (moment().add(-1, "days").startOf("day").isAfter(time)) {
     return moment(time).format("DD.MM.YYYY HH:mm");
-  } // вчера
-
-
+  }
+  // вчера
   if (moment().startOf("day").isAfter(time)) {
     return "\u0412\u0447\u0435\u0440\u0430 \u0432 " + moment(time).format("HH:mm");
   }
-
   return moment(time).format("HH:mm");
 }
 /**
  * Раскрыть содержимое
  * @param content - данные в строке
  */
-
 function getFileMeta(content) {
   // Формат  [date]$[userId]$[size]$[fileName]
   // Например fileName = 1606980397047$1a01e20f-3780-4227-84b5-5c69ca766ee5$15.41KB$123.docx
   var meta = content.split("$");
   var date = meta[0],
-      userId = meta[1],
-      size = meta[2],
-      name = meta[3];
+    userId = meta[1],
+    size = meta[2],
+    name = meta[3];
   return {
     date: date,
     userId: userId,
@@ -1006,9 +910,9 @@ function getImageMeta(content) {
   // Формат [date]$[userId]$[width]$[height]$...
   var meta = content.split("$");
   var date = meta[0],
-      userId = meta[1],
-      width = meta[2],
-      height = meta[3];
+    userId = meta[1],
+    width = meta[2],
+    height = meta[3];
   return {
     date: date,
     userId: userId,
@@ -1044,20 +948,17 @@ var allMessCount = function allMessCount(chats) {
 var chatRoomComparer = function chatRoomComparer(a, b) {
   var hasMessagesA = Array.isArray(a.messages) && a.messages.length > 0;
   var hasMessagesB = Array.isArray(b.messages) && b.messages.length > 0;
-
   if (hasMessagesA && hasMessagesB && b.messages != null && a.messages != null) {
     // !!! if cdate === undefined !!!
     var bb = b.messages[b.messages.length - 1].cdate != null ? new Date(b.messages[b.messages.length - 1].cdate).getTime() : new Date().getTime();
     var aa = a.messages[a.messages.length - 1].cdate != null ? new Date(a.messages[a.messages.length - 1].cdate).getTime() : new Date().getTime() - 1;
-    var res = bb - aa; //console.log('res', res);
-
+    var res = bb - aa;
+    //console.log('res', res);
     return res;
   }
-
   if (hasMessagesA) {
     return -1;
   }
-
   return 1;
 };
 var getParam = function getParam(param) {
@@ -1076,16 +977,13 @@ var useStyles$3 = /*#__PURE__*/makeStyles(function (theme) {
     }
   });
 });
-
 var File = function File(_ref) {
   var message = _ref.message;
   var classes = useStyles$3();
   var meta = getFileMeta(message.content);
-
   var _splitFileName = splitFileName(meta.name),
-      name = _splitFileName.name,
-      ext = _splitFileName.ext;
-
+    name = _splitFileName.name,
+    ext = _splitFileName.ext;
   return /*#__PURE__*/React__default.createElement(Box, {
     display: "flex",
     flexDirection: "row"
@@ -1100,7 +998,6 @@ var File = function File(_ref) {
 
 var useStyles$4 = /*#__PURE__*/makeStyles(function (theme) {
   var _mediaContent;
-
   return {
     mediaContent: (_mediaContent = {
       maxWidth: 284,
@@ -1112,19 +1009,16 @@ var useStyles$4 = /*#__PURE__*/makeStyles(function (theme) {
     }, _mediaContent)
   };
 });
-
 var Video = function Video(_ref) {
   var apiUrl = _ref.apiUrl,
-      message = _ref.message,
-      isConference = _ref.isConference;
+    message = _ref.message,
+    isConference = _ref.isConference;
   var classes = useStyles$4();
   var src = "";
-
   if (isConference) {
     var meta = JSON.parse(message.content);
     src = apiUrl + "/static/conf/" + meta.visitId + "/" + meta.name;
   } else src = apiUrl + "/static/file/" + message.content;
-
   return /*#__PURE__*/React__default.createElement("video", {
     src: src,
     className: classes.mediaContent,
@@ -1135,7 +1029,6 @@ var Video = function Video(_ref) {
 
 var useStyles$5 = /*#__PURE__*/makeStyles(function (theme) {
   var _mediaContent;
-
   return createStyles({
     mediaContent: (_mediaContent = {
       cursor: "pointer",
@@ -1148,16 +1041,13 @@ var useStyles$5 = /*#__PURE__*/makeStyles(function (theme) {
     }, _mediaContent)
   });
 });
-
 var Image$1 = function Image(_ref) {
   var apiUrl = _ref.apiUrl,
-      message = _ref.message;
+    message = _ref.message;
   var classes = useStyles$5();
-
   var _React$useState = React__default.useState(false),
-      viewerVisible = _React$useState[0],
-      setViewerVisible = _React$useState[1];
-
+    viewerVisible = _React$useState[0],
+    setViewerVisible = _React$useState[1];
   var meta = getImageMeta(message.content);
   return /*#__PURE__*/React__default.createElement(React__default.Fragment, null, /*#__PURE__*/React__default.createElement(Viewer, {
     zIndex: 2000,
@@ -1182,12 +1072,10 @@ var Image$1 = function Image(_ref) {
 
 var MessageContent = function MessageContent(_ref) {
   var apiUrl = _ref.apiUrl,
-      message = _ref.message;
-
+    message = _ref.message;
   switch (message.messageType) {
     case "text":
       return /*#__PURE__*/React__default.createElement(React__default.Fragment, null, message.content);
-
     case "video":
     case "video_conference":
       return /*#__PURE__*/React__default.createElement(Video, {
@@ -1195,25 +1083,21 @@ var MessageContent = function MessageContent(_ref) {
         apiUrl: apiUrl,
         isConference: message.messageType === "video_conference"
       });
-
     case "image":
       return /*#__PURE__*/React__default.createElement(Image$1, {
         message: message,
         apiUrl: apiUrl
       });
-
     case "file":
       return /*#__PURE__*/React__default.createElement(File, {
         message: message
       });
   }
-
   return null;
 };
 
 var useStyles$6 = /*#__PURE__*/makeStyles(function (theme) {
   var _message;
-
   return createStyles({
     rootContact: {
       padding: theme.spacing(0.2),
@@ -1316,7 +1200,6 @@ var useStyles$6 = /*#__PURE__*/makeStyles(function (theme) {
 var wrapMessage = function wrapMessage(apiUrl, message, classes, isUserFirst, isUserLast, onContextMenu, child) {
   var messageType = message.messageType;
   var className = isUserFirst && isUserLast ? classes.message + " " + classes.firstMessage + " " + classes.lastMessage : isUserFirst ? classes.message + " " + classes.firstMessage : isUserLast ? classes.message + " " + classes.lastMessage : classes.message;
-
   if (messageType === "file") {
     return /*#__PURE__*/createElement(Link, {
       className: className + " " + classes.file,
@@ -1327,7 +1210,6 @@ var wrapMessage = function wrapMessage(apiUrl, message, classes, isUserFirst, is
       onContextMenu: onContextMenu
     }, child);
   }
-
   var isMedia = messageType === "image" || messageType === "video" || messageType === "video_conference";
   return /*#__PURE__*/createElement(Box, {
     display: "flex",
@@ -1337,22 +1219,18 @@ var wrapMessage = function wrapMessage(apiUrl, message, classes, isUserFirst, is
     onContextMenu: onContextMenu
   }, child);
 };
-
 var Message = function Message(props) {
   var classes = useStyles$6();
-
   var _useTranslation = useTranslation(),
-      t = _useTranslation.t;
-
+    t = _useTranslation.t;
   var apiUrl = props.apiUrl,
-      message = props.message,
-      owner = props.owner,
-      refOnLastMess = props.refOnLastMess,
-      user = props.user,
-      isGroupMessage = props.isGroupMessage,
-      isUserFirst = props.isUserFirst,
-      isUserLast = props.isUserLast;
-
+    message = props.message,
+    owner = props.owner,
+    refOnLastMess = props.refOnLastMess,
+    user = props.user,
+    isGroupMessage = props.isGroupMessage,
+    isUserFirst = props.isUserFirst,
+    isUserLast = props.isUserLast;
   if (message.messageType === "notify") {
     // Уведомление - особый случай
     var content = message.content[0] === "{" ? JSON.parse(message.content) : message.content;
@@ -1363,7 +1241,6 @@ var Message = function Message(props) {
       ref: refOnLastMess
     }, typeof content === "string" ? content : content.message));
   }
-
   if (message.isRevoke) {
     // Удаленное сообщение
     return /*#__PURE__*/createElement(ListItem, {
@@ -1374,7 +1251,6 @@ var Message = function Message(props) {
       align: "center"
     }, message.userId === user.userId ? t("CHAT.MESSAGE.REVOKED.YOU") : message.revokeUserName + " " + t("CHAT.MESSAGE.REVOKED.CONTACT")));
   }
-
   var isMine = user.userId === message.userId;
   return /*#__PURE__*/createElement(ListItem, {
     className: isMine ? classes.rootUser : classes.rootContact
@@ -1397,8 +1273,7 @@ var Message = function Message(props) {
 
 var ContactStatus = function ContactStatus(props) {
   var _useTranslation = useTranslation(),
-      t = _useTranslation.t;
-
+    t = _useTranslation.t;
   if (props.isTyping) return /*#__PURE__*/React__default.createElement(Typing, {
     message: t("CHAT.STATUS.TYPING")
   });
@@ -1422,12 +1297,11 @@ var useStyles$7 = /*#__PURE__*/makeStyles(function () {
     }
   };
 });
-
 var ContactList = function ContactList(props) {
   var classes = useStyles$7();
   var apiUrl = props.apiUrl,
-      contacts = props.contacts,
-      owner = props.owner;
+    contacts = props.contacts,
+    owner = props.owner;
   return /*#__PURE__*/React__default.createElement(List, {
     "aria-label": "contacts"
   }, contacts.map(function (contact) {
@@ -1455,21 +1329,17 @@ var ContactList = function ContactList(props) {
 
 var AddContact = function AddContact(props) {
   var onClose = props.onClose,
-      open = props.open,
-      apiUrl = props.apiUrl,
-      contacts = props.contacts;
-
+    open = props.open,
+    apiUrl = props.apiUrl,
+    contacts = props.contacts;
   var _useTranslation = useTranslation(),
-      t = _useTranslation.t;
-
+    t = _useTranslation.t;
   var handleClose = function handleClose() {
     onClose();
   };
-
   var handleListItemClick = function handleListItemClick(contact) {
     onClose(contact);
   };
-
   return /*#__PURE__*/React__default.createElement(Dialog, {
     onClose: handleClose,
     "aria-labelledby": "add-contact-title",
@@ -1497,10 +1367,8 @@ var useStyles$8 = /*#__PURE__*/makeStyles(function (theme) {
     }
   });
 });
-
 var getGroupStatus = function getGroupStatus(group, t) {
   var _group$members;
-
   var status = [((_group$members = group.members) == null ? void 0 : _group$members.length) + " " + t('CHAT.MEMBERS')];
   var onlineCount = (group.members || []).reduce(function (sum, contact) {
     return contact.online ? sum + 1 : sum;
@@ -1508,63 +1376,51 @@ var getGroupStatus = function getGroupStatus(group, t) {
   if (onlineCount) status.push(onlineCount + " " + t('CHAT.STATUS.ONLINE'));
   return status.join(', ');
 };
-
 var RoomHeader = function RoomHeader(_ref) {
   var apiUrl = _ref.apiUrl,
-      user = _ref.user,
-      chat = _ref.chat,
-      typing = _ref.typing,
-      conference = _ref.conference,
-      conferenceJoined = _ref.conferenceJoined,
-      className = _ref.className,
-      operators = _ref.operators,
-      onVideoCall = _ref.onVideoCall,
-      onVideoEnd = _ref.onVideoEnd,
-      onConferencePause = _ref.onConferencePause,
-      onOperatorAdd = _ref.onOperatorAdd,
-      onLeaveGroup = _ref.onLeaveGroup;
+    user = _ref.user,
+    chat = _ref.chat,
+    typing = _ref.typing,
+    conference = _ref.conference,
+    conferenceJoined = _ref.conferenceJoined,
+    className = _ref.className,
+    operators = _ref.operators,
+    onVideoCall = _ref.onVideoCall,
+    onVideoEnd = _ref.onVideoEnd,
+    onConferencePause = _ref.onConferencePause,
+    onOperatorAdd = _ref.onOperatorAdd,
+    onLeaveGroup = _ref.onLeaveGroup;
   var classes = useStyles$8();
-
   var _useTranslation = useTranslation(),
-      t = _useTranslation.t;
-
+    t = _useTranslation.t;
   var _React$useState = React__default.useState(null),
-      anchorEl = _React$useState[0],
-      setAnchorEl = _React$useState[1];
-
+    anchorEl = _React$useState[0],
+    setAnchorEl = _React$useState[1];
   var _React$useState2 = React__default.useState(false),
-      addOperatorOpen = _React$useState2[0],
-      setAddOperatorOpen = _React$useState2[1];
-
+    addOperatorOpen = _React$useState2[0],
+    setAddOperatorOpen = _React$useState2[1];
   if (!chat) return /*#__PURE__*/React__default.createElement(CardHeader, {
     avatar: /*#__PURE__*/React__default.createElement(Avatar, null),
     title: "",
     subheader: "",
     className: className
   });
-
   var handlePopoverOpen = function handlePopoverOpen(event) {
     setAnchorEl(event.currentTarget);
   };
-
   var handlePopoverClose = function handlePopoverClose() {
     setAnchorEl(null);
   };
-
   var handleAddOperatorOpen = function handleAddOperatorOpen() {
     setAddOperatorOpen(true);
   };
-
   var handleAddOperatorClose = function handleAddOperatorClose(operator) {
     setAddOperatorOpen(false);
     if (onOperatorAdd && operator && chat) onOperatorAdd(chat, operator);
   };
-
   var group = chat;
-
   if (group.groupId) {
     var _group$members2;
-
     // группа
     return /*#__PURE__*/React__default.createElement(CardHeader, {
       avatar: /*#__PURE__*/React__default.createElement(Avatar, {
@@ -1619,7 +1475,6 @@ var RoomHeader = function RoomHeader(_ref) {
       }, /*#__PURE__*/React__default.createElement(DeleteIcon, null)))
     });
   }
-
   var contact = chat;
   var isTyping = !!(typing != null && typing.contactId) && (typing == null ? void 0 : typing.userId) === contact.userId;
   /*
@@ -1632,7 +1487,6 @@ var RoomHeader = function RoomHeader(_ref) {
       contact,
     );
   */
-
   return /*#__PURE__*/React__default.createElement(CardHeader, {
     avatar: /*#__PURE__*/React__default.createElement(Avatar, {
       alt: contact.username,
@@ -1753,35 +1607,29 @@ var initialScrollState = {
   autoScroll: true,
   height: 0
 };
-
 var Room = function Room(props) {
   var apiUrl = props.apiUrl,
-      user = props.user,
-      users = props.users,
-      chat = props.chat,
-      typing = props.typing,
-      conference = props.conference,
-      conferenceJoined = props.conferenceJoined,
-      loading = props.loading,
-      pageSize = props.pageSize;
+    user = props.user,
+    users = props.users,
+    chat = props.chat,
+    typing = props.typing,
+    conference = props.conference,
+    conferenceJoined = props.conferenceJoined,
+    loading = props.loading,
+    pageSize = props.pageSize;
   var classes = useStyles$9();
-
   var _useTranslation = useTranslation(),
-      t = _useTranslation.t;
-
+    t = _useTranslation.t;
   var _React$useState = React__default.useState(initialScrollState),
-      scrollState = _React$useState[0],
-      setScrollState = _React$useState[1];
-
+    scrollState = _React$useState[0],
+    setScrollState = _React$useState[1];
   var messages = chat == null ? void 0 : chat.messages;
   var messageCount = (messages == null ? void 0 : messages.length) || 0;
   var refOnLastMess = React__default.useRef(null);
   var refList = React__default.useRef(null);
-
   var _React$useState2 = React__default.useState(initialMenuState),
-      menuState = _React$useState2[0],
-      setMenuState = _React$useState2[1];
-
+    menuState = _React$useState2[0],
+    setMenuState = _React$useState2[1];
   React__default.useEffect(function () {
     if (props.onEnterRoom && chat) props.onEnterRoom(chat);
   }, [getChatId(chat)]);
@@ -1800,51 +1648,41 @@ var Room = function Room(props) {
     var _ref = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee(event) {
       var currentTarget;
       return _regeneratorRuntime().wrap(function _callee$(_context) {
-        while (1) {
-          switch (_context.prev = _context.next) {
-            case 0:
-              currentTarget = event.currentTarget;
-
-              if (!(!currentTarget || !chat || !!chat.noMoreData)) {
-                _context.next = 3;
-                break;
+        while (1) switch (_context.prev = _context.next) {
+          case 0:
+            currentTarget = event.currentTarget;
+            if (!(!currentTarget || !chat || !!chat.noMoreData)) {
+              _context.next = 3;
+              break;
+            }
+            return _context.abrupt("return");
+          case 3:
+            if (currentTarget.scrollTop === 0) {
+              if (messageCount >= pageSize && !loading && props.onNeedMoreMessages) {
+                setScrollState({
+                  autoScroll: false,
+                  height: currentTarget.scrollHeight
+                });
+                props.onNeedMoreMessages(chat);
               }
-
-              return _context.abrupt("return");
-
-            case 3:
-              if (currentTarget.scrollTop === 0) {
-                if (messageCount >= pageSize && !loading && props.onNeedMoreMessages) {
-                  setScrollState({
-                    autoScroll: false,
-                    height: currentTarget.scrollHeight
-                  });
-                  props.onNeedMoreMessages(chat);
-                }
-              }
-
-            case 4:
-            case "end":
-              return _context.stop();
-          }
+            }
+          case 4:
+          case "end":
+            return _context.stop();
         }
       }, _callee);
     }));
-
     return function (_x) {
       return _ref.apply(this, arguments);
     };
   }(), [chat, loading]);
-
   var handleMenuPopup = function handleMenuPopup(message, event) {
     var canCopy = message.messageType === "text";
     var canDelete = user.userId === message.userId && !!props.onMeesageDelete && new Date().getTime() - new Date(message.cdate).getTime() <= 1000 * 60 * 2;
-
     if (!canCopy && !canDelete) {
       setMenuState(initialMenuState);
       return;
     }
-
     event.preventDefault();
     setMenuState({
       message: message,
@@ -1854,11 +1692,9 @@ var Room = function Room(props) {
       canDelete: canDelete
     });
   };
-
   var handleMenuClose = function handleMenuClose() {
     setMenuState(initialMenuState);
   };
-
   var handleCopy = useCallback(function () {
     var message = menuState.message;
     setMenuState(initialMenuState);
@@ -1869,8 +1705,8 @@ var Room = function Room(props) {
     var message = menuState.message;
     setMenuState(initialMenuState);
     if (props.onMeesageDelete && chat && message) props.onMeesageDelete(chat, message);
-  }, [menuState.message]); //console.log("messages", messages)
-
+  }, [menuState.message]);
+  //console.log("messages", messages)
   return /*#__PURE__*/React__default.createElement(Card, {
     elevation: 1,
     className: classes.root
@@ -1977,31 +1813,23 @@ var useStyles$a = /*#__PURE__*/makeStyles(function (theme) {
     }
   });
 });
-
 var getMessageText = function getMessageText(message, t) {
   if (!message) return null;
-
   switch (message.messageType) {
     case "text":
       return message.content;
-
     case "image":
       return "[" + t("CHAT.MESSAGE.TYPE.IMAGE") + "]";
-
     case "video":
       return "[" + t("CHAT.MESSAGE.TYPE.VIDEO") + "]";
-
     case "file":
       return "[" + t("CHAT.MESSAGE.TYPE.FILE") + "]";
-
     case "notify":
       return "[" + t("CHAT.MESSAGE.TYPE.NOTIFY") + "]";
-
     default:
       return null;
   }
 };
-
 var TypingBadge = /*#__PURE__*/withStyles(function (theme) {
   return createStyles({
     badge: {
@@ -2040,7 +1868,6 @@ var OnlineBadge = /*#__PURE__*/withStyles(function (theme) {
     }
   });
 })(Badge);
-
 var contactAvatar = function contactAvatar(apiUrl, contact, typing) {
   var avatar = /*#__PURE__*/React__default.createElement(Avatar, {
     alt: contact.username,
@@ -2065,16 +1892,13 @@ var contactAvatar = function contactAvatar(apiUrl, contact, typing) {
   }, avatar);
   return avatar;
 };
-
 var RoomListItem = function RoomListItem(props) {
   var classes = useStyles$a();
-
   var _useTranslation = useTranslation(),
-      t = _useTranslation.t;
-
+    t = _useTranslation.t;
   var apiUrl = props.apiUrl,
-      chat = props.chat,
-      typing = props.typing;
+    chat = props.chat,
+    typing = props.typing;
   var roomName = getChatName(chat);
   var avatar = chat.groupId ? /*#__PURE__*/React__default.createElement(Avatar, {
     alt: roomName,
@@ -2152,7 +1976,6 @@ var useStyles$b = /*#__PURE__*/makeStyles(function () {
     }
   };
 });
-
 var filterChats = function filterChats(chats, filter) {
   if (filter === null) return chats;
   var lowerFilter = filter.toLowerCase();
@@ -2160,20 +1983,17 @@ var filterChats = function filterChats(chats, filter) {
     return getChatName(chat).toLowerCase().indexOf(lowerFilter.toLowerCase()) !== -1;
   });
 };
-
 var sortChats = function sortChats(userId, groups, contacts) {
-  var roomArr = [].concat(groups, contacts); //console.log('groups', groups, 'contacts', contacts);
+  var roomArr = [].concat(groups, contacts);
+  //console.log('groups', groups, 'contacts', contacts);
   // Сортировать окно чата (по времени последних сообщений)
-
-  roomArr = roomArr.sort(chatRoomComparer); // Проверяем, есть ли список, который нужно закрепить
-
+  roomArr = roomArr.sort(chatRoomComparer);
+  // Проверяем, есть ли список, который нужно закрепить
   var topChatId = localStorage.getItem(userId + "-topChatId");
-
   if (topChatId) {
     var chat = roomArr.find(function (c) {
       return getChatId(c) === topChatId;
     });
-
     if (chat) {
       // На первое место
       roomArr = roomArr.filter(function (k) {
@@ -2183,27 +2003,21 @@ var sortChats = function sortChats(userId, groups, contacts) {
       roomArr.unshift(chat);
     }
   }
-
   return roomArr;
 };
-
 var RoomList = function RoomList(props) {
   var classes = useStyles$b();
-
   var _useTranslation = useTranslation(),
-      t = _useTranslation.t;
-
+    t = _useTranslation.t;
   var _React$useState = React__default.useState(sortChats(props.user.userId, filterChats(props.groups, null), filterChats(props.contacts, null))),
-      chats = _React$useState[0],
-      setChats = _React$useState[1];
-
+    chats = _React$useState[0],
+    setChats = _React$useState[1];
   var onSearchChange = function onSearchChange(e) {
     //console.log("e.target.value", e.target.value);
     setChats(sortChats(props.user.userId, filterChats(props.groups, e.target.value), filterChats(props.contacts, e.target.value)));
-  }; //const activeItem = (id: number) => id === props.activeRoom?.userId;
+  };
+  //const activeItem = (id: number) => id === props.activeRoom?.userId;
   //console.log("chats", chats);
-
-
   return /*#__PURE__*/React__default.createElement(Card, {
     elevation: 1,
     className: classes.root
@@ -2242,26 +2056,23 @@ var useStyles$c = /*#__PURE__*/makeStyles(function () {
     }
   };
 });
-
 var Conference = function Conference(_ref) {
   var conference = _ref.conference,
-      onClose = _ref.onClose;
+    onClose = _ref.onClose;
   var classes = useStyles$c();
   var ref = React__default.useRef(null);
   useEffect(function () {
     var listener = function listener(_ref2) {
       var _ref$current;
-
       var source = _ref2.source,
-          data = _ref2.data;
-
+        data = _ref2.data;
       if (source === ((_ref$current = ref.current) == null ? void 0 : _ref$current.contentWindow)) {
         var type = data.type;
-        if (["notSupported", "connectionFail", // "loginFail",
+        if (["notSupported", "connectionFail",
+        // "loginFail",
         "callFail", "hangUp", "remoteHangUp"].includes(type)) onClose(conference);
       }
     };
-
     window.addEventListener("message", listener);
     return function () {
       window.removeEventListener("message", listener);
@@ -2343,17 +2154,14 @@ var useStyles$d = /*#__PURE__*/makeStyles(function () {
     }
   };
 });
-
 var ConferenceCall = function ConferenceCall(_ref) {
   var conference = _ref.conference,
-      contact = _ref.contact,
-      apiUrl = _ref.apiUrl,
-      onAccept = _ref.onAccept;
+    contact = _ref.contact,
+    apiUrl = _ref.apiUrl,
+    onAccept = _ref.onAccept;
   var classes = useStyles$d();
-
   var _useTranslation = useTranslation(),
-      t = _useTranslation.t;
-
+    t = _useTranslation.t;
   return /*#__PURE__*/React__default.createElement(Paper, {
     className: classes.root
   }, /*#__PURE__*/React__default.createElement("div", {
@@ -2401,18 +2209,15 @@ var emptyChatState = {
   loading: false,
   error: undefined
 };
-
 var getFreshActiveRoom = function getFreshActiveRoom(state) {
   if (state.activeRoom) return state.groupGather[state.activeRoom.groupId] || state.contactGather[state.activeRoom.userId];
   return null;
 };
-
 var getActiveRoom = function getActiveRoom(state) {
   var activeRoom = state.activeRoom,
-      initialContactId = state.initialContactId,
-      contactGather = state.contactGather;
+    initialContactId = state.initialContactId,
+    contactGather = state.contactGather;
   var newActiveRoom = null;
-
   if (initialContactId) {
     newActiveRoom = contactGather[initialContactId];
   } else if (activeRoom) {
@@ -2422,50 +2227,42 @@ var getActiveRoom = function getActiveRoom(state) {
     var rooms = [].concat(Object.values(state.contactGather), Object.values(state.groupGather)).sort(chatRoomComparer);
     if (rooms.length > 0) newActiveRoom = rooms[0];
   }
-
   return newActiveRoom;
 };
-
 var setUserOnline = function setUserOnline(state, userId, online) {
-  var newState = _extends({}, state); // Обновить статусы приватных чатов
-
-
+  var newState = _extends({}, state);
+  // Обновить статусы приватных чатов
   if (state.contactGather[userId]) newState.contactGather[userId] = _extends({}, newState.contactGather[userId], {
     online: online
-  }); // Обновить статус участника в группах
-
+  });
+  // Обновить статус участника в группах
   for (var _i = 0, _Object$values = Object.values(state.groupGather); _i < _Object$values.length; _i++) {
     var group = _Object$values[_i];
     if (!group.members) continue;
     var member = group.members.find(function (m) {
       return m.userId === userId;
     });
-
     if (member) {
       var index = group.members.indexOf(member);
       group.members[index] = _extends({}, member, {
         online: online
       });
     }
-  } // Обновить статус операторов
-
-
+  }
+  // Обновить статус операторов
   var idx = newState.operators.findIndex(function (it) {
     return it.userId === userId;
   });
   if (idx !== -1) newState.operators[idx] = _extends({}, newState.operators[idx], {
     online: online
-  }); // обновляем активный чат
-
+  });
+  // обновляем активный чат
   newState.activeRoom = getFreshActiveRoom(newState);
   return newState;
 };
-
 var addGroupMessage = function addGroupMessage(state, payload) {
   var newState = _extends({}, state);
-
   var groupId = payload.groupId;
-
   if (newState.groupGather[groupId]) {
     if (newState.groupGather[groupId].messages) {
       newState.groupGather[groupId].messages = [].concat(newState.groupGather[groupId].messages, [payload]);
@@ -2474,92 +2271,73 @@ var addGroupMessage = function addGroupMessage(state, payload) {
         messages: [payload]
       });
     }
-  } // увеличиваем счетчик новых сообщений, если это не активная комната и сообщение не от нас
-
-
+  }
+  // увеличиваем счетчик новых сообщений, если это не активная комната и сообщение не от нас
   var activeRoom = newState.activeRoom;
-
   if (activeRoom && activeRoom.groupId !== groupId && payload.userId !== state.user.userId) {
     return groupUnreadGather(newState, groupId, function (x) {
       return (x || 0) + 1;
     });
-  } // обновляем активный чат
-
-
+  }
+  // обновляем активный чат
   newState.activeRoom = getFreshActiveRoom(newState);
   return newState;
 };
-
 var addPrivateMessage = function addPrivateMessage(state, payload) {
   var _newState$activeRoom;
-
   var newState = _extends({}, state);
-
-  var contactId = payload.contactId === state.user.userId ? payload.userId : payload.contactId; // 1 добавляем сообщение
-
+  var contactId = payload.contactId === state.user.userId ? payload.userId : payload.contactId;
+  // 1 добавляем сообщение
   if (newState.contactGather[contactId].messages) {
     newState.contactGather[contactId].messages = [].concat(newState.contactGather[contactId].messages, [payload]);
   } else {
     newState.contactGather[contactId] = _extends({}, newState.contactGather[contactId], {
       messages: [payload]
     });
-  } // 2 если это сообщение в неактивной комнате и источник не мы (в соседней вкладке), то увеличиваем счетчик непрочитанных
-
-
+  }
+  // 2 если это сообщение в неактивной комнате и источник не мы (в соседней вкладке), то увеличиваем счетчик непрочитанных
   if (((_newState$activeRoom = newState.activeRoom) == null ? void 0 : _newState$activeRoom.userId) !== contactId && payload.userId !== state.user.userId) {
     return contactUnreadGather(newState, contactId, function (x) {
       return (x || 0) + 1;
     });
-  } // обновляем активный чат
-
-
+  }
+  // обновляем активный чат
   newState.activeRoom = getFreshActiveRoom(newState);
   return newState;
 };
-
 var contactUnreadGather = function contactUnreadGather(state, userId, predicate) {
   var newState = _extends({}, state);
-
   if (newState.contactGather[userId]) {
     newState.contactGather[userId] = _extends({}, newState.contactGather[userId], {
       unreadCount: predicate(newState.contactGather[userId].unreadCount)
     });
-  } // обновляем активный чат
-
-
+  }
+  // обновляем активный чат
   newState.activeRoom = getFreshActiveRoom(newState);
   return newState;
 };
-
 var groupUnreadGather = function groupUnreadGather(state, groupId, predicate) {
   var newState = _extends({}, state);
-
   if (newState.groupGather[groupId]) {
     newState.groupGather[groupId] = _extends({}, newState.groupGather[groupId], {
       unreadCount: predicate(newState.groupGather[groupId].unreadCount)
     });
-  } // обновляем активный чат
-
-
+  }
+  // обновляем активный чат
   newState.activeRoom = getFreshActiveRoom(newState);
   return newState;
 };
-
 var revokeMessage = function revokeMessage(state, payload) {
   var userId = state.user.userId;
-
   var newState = _extends({}, state);
-
   var userName = payload.username || newState.userGather[payload.userId].username;
-
   if (payload.groupId) {
-    var messages = newState.groupGather[payload.groupId].messages; // задаем isRevoke
-
+    var messages = newState.groupGather[payload.groupId].messages;
+    // задаем isRevoke
     if (messages) {
       var msg = messages.find(function (message) {
         return message._id === payload._id;
       });
-
       if (msg) {
         var index = messages.indexOf(msg);
         messages[index] = _extends({}, msg, {
@@ -2569,214 +2347,168 @@ var revokeMessage = function revokeMessage(state, payload) {
       }
     }
   } else {
-    var _messages = newState.contactGather[payload.contactId === userId ? payload.userId : payload.contactId].messages; // задаем isRevoke
-
+    var _messages = newState.contactGather[payload.contactId === userId ? payload.userId : payload.contactId].messages;
+    // задаем isRevoke
     if (_messages) {
       var _msg = _messages.find(function (message) {
         return message._id === payload._id;
       });
-
       if (_msg) {
         var _index = _messages.indexOf(_msg);
-
         _messages[_index] = _extends({}, _msg, {
           isRevoke: true,
           revokeUserName: userName
         });
       }
     }
-  } // обновляем активный чат
-
-
+  }
+  // обновляем активный чат
   newState.activeRoom = getFreshActiveRoom(newState);
   return newState;
 };
-
 var delContact = function delContact(state, userId) {
   var newState = _extends({}, state);
-
   var updateActiveRoom = newState.activeRoom === newState.contactGather[userId];
   delete newState.contactGather[userId];
   if (updateActiveRoom) newState.activeRoom = getActiveRoom(newState);
   return newState;
 };
-
 var delGroup = function delGroup(state, groupId) {
   var newState = _extends({}, state);
-
   var updateActiveRoom = newState.activeRoom === newState.groupGather[groupId];
   delete newState.groupGather[groupId];
   if (updateActiveRoom) newState.activeRoom = getActiveRoom(newState);
   return newState;
 };
-
 var delGroupMember = function delGroupMember(state, data) {
   var newState = _extends({}, state);
-
   var group = newState.groupGather[data.groupId];
-
   if (group) {
     var _group$members;
-
     group.members = (_group$members = group.members) == null ? void 0 : _group$members.filter(function (it) {
       return it.userId !== data.userId;
     });
   }
-
   return newState;
 };
-
 var updateGroupInfo = function updateGroupInfo(state, group) {
   var newState = _extends({}, state);
-
   var groupId = group.groupId,
-      name = group.name,
-      notice = group.notice;
+    name = group.name,
+    notice = group.notice;
   var info = newState.groupGather[groupId];
-
   if (info) {
     newState.groupGather[groupId] = _extends({}, info, {
       name: name,
       notice: notice
     });
-  } // обновляем активный чат
-
-
+  }
+  // обновляем активный чат
   newState.activeRoom = getFreshActiveRoom(newState);
   return newState;
 };
-
 var updateUserInfo = function updateUserInfo(state, user) {
   var newState = _extends({}, state);
-
   var userId = user.userId,
-      username = user.username,
-      avatar = user.avatar;
-
+    username = user.username,
+    avatar = user.avatar;
   if (newState.userGather[userId]) {
     newState.userGather[userId] = _extends({}, newState.userGather[userId], {
       username: username,
       avatar: avatar
     });
   }
-
   if (newState.contactGather[userId]) {
     newState.contactGather[userId] = _extends({}, newState.contactGather[userId], {
       username: username,
       avatar: avatar
     });
-  } // обновляем активный чат
-
-
+  }
+  // обновляем активный чат
   newState.activeRoom = getFreshActiveRoom(newState);
   return newState;
 };
-
 var addGroupMember = function addGroupMember(state, payload) {
   var members = payload.members.map(function (member) {
     return _extends({}, member, {
       isManager: 0
     });
   });
-
   var newState = _extends({}, state);
-
   if (newState.groupGather[payload.groupId].members && members) {
     newState.groupGather[payload.groupId].members = [].concat(state.groupGather[payload.groupId].members, members);
   } else {
     newState.groupGather[payload.groupId] = _extends({}, newState.groupGather[payload.groupId], {
       members: members
     });
-  } // обновляем активный чат
-
-
+  }
+  // обновляем активный чат
   newState.activeRoom = getFreshActiveRoom(newState);
   return newState;
 };
-
 var markPrivateMessagesRead = function markPrivateMessagesRead(state, userId) {
   var newState = _extends({}, state);
-
   if (newState.contactGather[userId]) {
     var updatedValue = _extends({}, newState.contactGather[userId]);
-
     if (updatedValue.messages) {
-      for (var i = 0; i < updatedValue.messages.length; i++) {
-        updatedValue.messages[i] = _extends({}, updatedValue.messages[i], {
-          status: 1
-        });
-      }
+      for (var i = 0; i < updatedValue.messages.length; i++) updatedValue.messages[i] = _extends({}, updatedValue.messages[i], {
+        status: 1
+      });
     }
-
     newState.contactGather[userId] = updatedValue;
-  } // обновляем активный чат
-
-
+  }
+  // обновляем активный чат
   newState.activeRoom = getFreshActiveRoom(newState);
   return newState;
 };
-
 var addPrivateMessages = function addPrivateMessages(state, data) {
   var newState = _extends({}, state);
-
   var messages = data.messages,
-      contactId = data.contactId;
-
+    contactId = data.contactId;
   if (newState.contactGather[contactId]) {
     newState.contactGather[contactId] = _extends({}, newState.contactGather[contactId], {
       messages: [].concat(messages || [], newState.contactGather[contactId].messages || []),
       noMoreData: messages != null && messages.length ? (messages == null ? void 0 : messages.length) < data.pageSize : false
     });
-  } // обновляем активный чат
-
-
+  }
+  // обновляем активный чат
   newState.activeRoom = getFreshActiveRoom(newState);
   return newState;
 };
-
 var addGroupMessages = function addGroupMessages(state, data) {
   var newState = _extends({}, state);
-
   var groupId = data.groupId,
-      messages = data.messages,
-      users = data.userArr;
-
+    messages = data.messages,
+    users = data.userArr;
   if (newState.groupGather[groupId]) {
     newState.groupGather[groupId] = _extends({}, newState.groupGather[groupId], {
       messages: [].concat(messages || [], newState.groupGather[groupId].messages || []),
       noMoreData: messages != null && messages.length ? (messages == null ? void 0 : messages.length) < data.pageSize : false
     });
   }
-
   newState.userGather = _extends({}, newState.userGather);
-
   for (var _iterator = _createForOfIteratorHelperLoose(users), _step; !(_step = _iterator()).done;) {
     var user = _step.value;
-
     if (!newState.userGather[user.userId]) {
       newState.userGather[user.userId] = user;
     }
-  } // обновляем активный чат
-
-
+  }
+  // обновляем активный чат
   newState.activeRoom = getFreshActiveRoom(newState);
   return newState;
 };
-
 var setActiveRoom = function setActiveRoom(state, data) {
   if (state.activeRoom && data.ifNotExists) return state;
   return _extends({}, state, {
     activeRoom: data.groupId ? state.groupGather[data.groupId] : data.contactId ? state.contactGather[data.contactId] : null
   });
 };
-
 var setToken = function setToken(state, token) {
   localStorage.setItem(state.tokenKey, token);
   return _extends({}, state, {
     token: token
   });
 };
-
 var clearUser = function clearUser(state) {
   localStorage.removeItem(state.tokenKey);
   return _extends({}, state, {
@@ -2784,7 +2516,6 @@ var clearUser = function clearUser(state) {
     user: emptyUser
   });
 };
-
 var setConference = function setConference(state, conference) {
   return _extends({}, state, {
     conference: {
@@ -2794,10 +2525,8 @@ var setConference = function setConference(state, conference) {
     }
   });
 };
-
 var pauseConference = function pauseConference(state, conference) {
   var _state$conference$dat;
-
   if (((_state$conference$dat = state.conference.data) == null ? void 0 : _state$conference$dat.id) !== (conference == null ? void 0 : conference.id)) return state;
   return _extends({}, state, {
     conference: {
@@ -2807,10 +2536,8 @@ var pauseConference = function pauseConference(state, conference) {
     }
   });
 };
-
 var stopConference = function stopConference(state, conference) {
   var _state$conference$dat2;
-
   if (((_state$conference$dat2 = state.conference.data) == null ? void 0 : _state$conference$dat2.id) !== (conference == null ? void 0 : conference.id)) return state;
   return _extends({}, state, {
     conference: {
@@ -2820,95 +2547,71 @@ var stopConference = function stopConference(state, conference) {
     }
   });
 };
-
 function chatReducer(state, action) {
   var _extends2, _extends3, _extends4;
-
   switch (action.type) {
     case 'SET_GROUP_GATHER':
       return _extends({}, state, {
         groupGather: _extends({}, state.groupGather, (_extends2 = {}, _extends2[action.payload.groupId] = action.payload, _extends2))
       });
-
     case 'SET_CONTACT_GATHER':
       return _extends({}, state, {
         contactGather: _extends({}, state.contactGather, (_extends3 = {}, _extends3[action.payload.userId] = action.payload, _extends3))
       });
-
     case 'DEL_GROUP':
       return delGroup(state, action.payload);
-
     case 'DEL_GROUP_MEMBER':
       return delGroupMember(state, action.payload);
-
     case 'DEL_CONTACT':
       return delContact(state, action.payload.userId);
-
     case 'SET_USER_GATHER':
       return _extends({}, state, {
         userGather: _extends({}, state.userGather, (_extends4 = {}, _extends4[action.payload.userId] = action.payload, _extends4))
       });
-
     case 'UPDATE_ACTIVE_ROOM':
       return _extends({}, state, {
         activeRoom: getActiveRoom(state)
       });
-
     case 'SET_ACTIVE_ROOM':
       return setActiveRoom(state, action.payload);
-
     case 'USER_ONLINE':
       return setUserOnline(state, action.payload, 1);
-
     case 'USER_OFFLINE':
       return setUserOnline(state, action.payload, 0);
-
     case 'ADD_GROUP_MESSAGE':
       return addGroupMessage(state, action.payload);
-
     case 'ADD_PRIVATE_MESSAGE':
       return addPrivateMessage(state, action.payload);
-
     case 'ADD_GROUP_UNREAD_GATHER':
       return groupUnreadGather(state, action.payload, function (x) {
         return (x || 0) + 1;
       });
-
     case 'ADD_CONTACT_UNREAD_GATHER':
       return contactUnreadGather(state, action.payload, function (x) {
         return (x || 0) + 1;
       });
-
     case 'SET_TYPING':
       return _extends({}, state, {
         typing: action.payload
       });
-
     case 'LOSE_GROUP_UNREAD_GATHER':
       return groupUnreadGather(state, action.payload, function () {
         return 0;
       });
-
     case 'LOSE_CONTACT_UNREAD_GATHER':
       return contactUnreadGather(state, action.payload, function () {
         return 0;
       });
-
     case 'REVOKE_MESSAGE':
       return revokeMessage(state, action.payload);
-
     case 'UPDATE_GROUP_INFO':
       return updateGroupInfo(state, action.payload);
-
     case 'UPDATE_USER_INFO':
       return updateUserInfo(state, action.payload);
-
     case 'ADD_GROUP_MEMBER':
       return addGroupMember(state, action.payload);
-
     case 'SET_CONFERENCE':
       return setConference(state, action.payload);
-
     case 'JOIN_CONFERENCE':
       return _extends({}, state, {
         conference: {
@@ -2917,44 +2620,33 @@ function chatReducer(state, action) {
           ringPlayed: false
         }
       });
-
     case 'PAUSE_CONFERENCE':
       return pauseConference(state, action.payload);
-
     case 'STOP_CONFERENCE':
       return stopConference(state, action.payload);
-
     case 'MARK_PRIVATE_MESSAGES_READ':
       return markPrivateMessagesRead(state, action.payload);
-
     case 'ADD_PRIVATE_MESSAGES':
       return addPrivateMessages(state, action.payload);
-
     case 'ADD_GROUP_MESSAGES':
       return addGroupMessages(state, action.payload);
-
     case 'SET_LOADING':
       return _extends({}, state, {
         loading: action.payload,
         error: ''
       });
-
     case 'SET_ERROR':
       return _extends({}, state, {
         error: action.payload
       });
-
     case 'SET_TOKEN':
       return setToken(state, action.payload);
-
     case 'SET_USER':
       return _extends({}, state, {
         user: action.payload
       });
-
     case 'CLEAR_USER':
       return clearUser(state);
-
     case 'CLEAR_CHAT_DATA':
       return _extends({}, state, {
         activeRoom: null,
@@ -2968,20 +2660,16 @@ function chatReducer(state, action) {
         },
         typing: null
       });
-
     case 'SET_OPERATORS':
       return _extends({}, state, {
         operators: action.payload
       });
   }
-
   return state;
 }
-
 var emptyDispatch = function emptyDispatch() {
   return null;
 };
-
 var ChatContext = /*#__PURE__*/React__default.createContext({
   state: emptyChatState,
   dispatch: emptyDispatch
@@ -2989,16 +2677,13 @@ var ChatContext = /*#__PURE__*/React__default.createContext({
 var ChatProvider = function ChatProvider(props) {
   emptyUser.langCode = props.defLang;
   var token = localStorage.getItem(props.tokenKey);
-
   var chatState = _extends({}, emptyChatState, {
     tokenKey: props.tokenKey,
     token: token
   });
-
   var _React$useReducer = React__default.useReducer(chatReducer, chatState),
-      state = _React$useReducer[0],
-      dispatch = _React$useReducer[1];
-
+    state = _React$useReducer[0],
+    dispatch = _React$useReducer[1];
   return /*#__PURE__*/React__default.createElement(ChatContext.Provider, {
     value: {
       state: state,
@@ -3011,13 +2696,11 @@ var initialContext = {};
 var RestContext = /*#__PURE__*/createContext(initialContext);
 var RestProvider = function RestProvider(_ref) {
   var baseURLApi = _ref.baseURLApi,
-      pageSize = _ref.pageSize,
-      children = _ref.children;
-
+    pageSize = _ref.pageSize,
+    children = _ref.children;
   var _useContext = useContext(ChatContext),
-      state = _useContext.state,
-      dispatch = _useContext.dispatch;
-
+    state = _useContext.state,
+    dispatch = _useContext.dispatch;
   var fetch = axios.create({
     timeout: 60000,
     baseURL: baseURLApi,
@@ -3031,72 +2714,61 @@ var RestProvider = function RestProvider(_ref) {
   var getPrivateMessages = useCallback( /*#__PURE__*/function () {
     var _ref2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee(chat) {
       var _chat$messages;
-
       var contactId, current, _yield$fetch$get, data, err;
-
       return _regeneratorRuntime().wrap(function _callee$(_context) {
-        while (1) {
-          switch (_context.prev = _context.next) {
-            case 0:
-              contactId = chat.userId;
-              current = (_chat$messages = chat.messages) == null ? void 0 : _chat$messages.length;
-              _context.prev = 2;
+        while (1) switch (_context.prev = _context.next) {
+          case 0:
+            contactId = chat.userId;
+            current = (_chat$messages = chat.messages) == null ? void 0 : _chat$messages.length;
+            _context.prev = 2;
+            dispatch({
+              type: "SET_LOADING",
+              payload: true
+            });
+            _context.next = 6;
+            return fetch.get("/contact/messages", {
+              params: {
+                contactId: contactId,
+                current: current,
+                pageSize: pageSize
+              }
+            });
+          case 6:
+            _yield$fetch$get = _context.sent;
+            data = _yield$fetch$get.data;
+            if (data) {
               dispatch({
-                type: "SET_LOADING",
-                payload: true
-              });
-              _context.next = 6;
-              return fetch.get("/contact/messages", {
-                params: {
+                type: "ADD_PRIVATE_MESSAGES",
+                payload: {
+                  pageSize: pageSize,
                   contactId: contactId,
-                  current: current,
-                  pageSize: pageSize
+                  messages: data
                 }
               });
-
-            case 6:
-              _yield$fetch$get = _context.sent;
-              data = _yield$fetch$get.data;
-
-              if (data) {
-                dispatch({
-                  type: "ADD_PRIVATE_MESSAGES",
-                  payload: {
-                    pageSize: pageSize,
-                    contactId: contactId,
-                    messages: data
-                  }
-                });
-              }
-
-              _context.next = 15;
-              break;
-
-            case 11:
-              _context.prev = 11;
-              _context.t0 = _context["catch"](2);
-              err = _context.t0;
-              dispatch({
-                type: "SET_ERROR",
-                payload: err.message
-              });
-
-            case 15:
-              _context.prev = 15;
-              dispatch({
-                type: "SET_LOADING",
-                payload: false
-              });
-              return _context.finish(15);
-
-            case 18:
-            case "end":
-              return _context.stop();
-          }
+            }
+            _context.next = 15;
+            break;
+          case 11:
+            _context.prev = 11;
+            _context.t0 = _context["catch"](2);
+            err = _context.t0;
+            dispatch({
+              type: "SET_ERROR",
+              payload: err.message
+            });
+          case 15:
+            _context.prev = 15;
+            dispatch({
+              type: "SET_LOADING",
+              payload: false
+            });
+            return _context.finish(15);
+          case 18:
+          case "end":
+            return _context.stop();
         }
       }, _callee, null, [[2, 11, 15, 18]]);
     }));
-
     return function (_x) {
       return _ref2.apply(this, arguments);
     };
@@ -3104,126 +2776,103 @@ var RestProvider = function RestProvider(_ref) {
   var getGroupMessages = useCallback( /*#__PURE__*/function () {
     var _ref3 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2(chat) {
       var _chat$messages2;
-
       var groupId, current, _yield$fetch$get2, data, err;
-
       return _regeneratorRuntime().wrap(function _callee2$(_context2) {
-        while (1) {
-          switch (_context2.prev = _context2.next) {
-            case 0:
-              groupId = chat.groupId;
-              current = (_chat$messages2 = chat.messages) == null ? void 0 : _chat$messages2.length;
-              _context2.prev = 2;
-              dispatch({
-                type: "SET_LOADING",
-                payload: true
-              });
-              _context2.next = 6;
-              return fetch.get("/group/messages", {
-                params: {
-                  groupId: groupId,
-                  current: current,
-                  pageSize: pageSize
-                }
-              });
-
-            case 6:
-              _yield$fetch$get2 = _context2.sent;
-              data = _yield$fetch$get2.data;
-
-              if (data) {
-                dispatch({
-                  type: "ADD_GROUP_MESSAGES",
-                  payload: _extends({
-                    pageSize: pageSize,
-                    groupId: groupId
-                  }, data)
-                });
+        while (1) switch (_context2.prev = _context2.next) {
+          case 0:
+            groupId = chat.groupId;
+            current = (_chat$messages2 = chat.messages) == null ? void 0 : _chat$messages2.length;
+            _context2.prev = 2;
+            dispatch({
+              type: "SET_LOADING",
+              payload: true
+            });
+            _context2.next = 6;
+            return fetch.get("/group/messages", {
+              params: {
+                groupId: groupId,
+                current: current,
+                pageSize: pageSize
               }
-
-              _context2.next = 15;
-              break;
-
-            case 11:
-              _context2.prev = 11;
-              _context2.t0 = _context2["catch"](2);
-              err = _context2.t0;
+            });
+          case 6:
+            _yield$fetch$get2 = _context2.sent;
+            data = _yield$fetch$get2.data;
+            if (data) {
               dispatch({
-                type: "SET_ERROR",
-                payload: err.message
+                type: "ADD_GROUP_MESSAGES",
+                payload: _extends({
+                  pageSize: pageSize,
+                  groupId: groupId
+                }, data)
               });
-
-            case 15:
-              _context2.prev = 15;
-              dispatch({
-                type: "SET_LOADING",
-                payload: false
-              });
-              return _context2.finish(15);
-
-            case 18:
-            case "end":
-              return _context2.stop();
-          }
+            }
+            _context2.next = 15;
+            break;
+          case 11:
+            _context2.prev = 11;
+            _context2.t0 = _context2["catch"](2);
+            err = _context2.t0;
+            dispatch({
+              type: "SET_ERROR",
+              payload: err.message
+            });
+          case 15:
+            _context2.prev = 15;
+            dispatch({
+              type: "SET_LOADING",
+              payload: false
+            });
+            return _context2.finish(15);
+          case 18:
+          case "end":
+            return _context2.stop();
         }
       }, _callee2, null, [[2, 11, 15, 18]]);
     }));
-
     return function (_x2) {
       return _ref3.apply(this, arguments);
     };
   }(), [dispatch]);
-
   var getUserByMmk = /*#__PURE__*/function () {
     var _ref4 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee3(mmkId, guid) {
       var _yield$fetch$get3, data;
-
       return _regeneratorRuntime().wrap(function _callee3$(_context3) {
-        while (1) {
-          switch (_context3.prev = _context3.next) {
-            case 0:
-              _context3.prev = 0;
-              _context3.next = 3;
-              return fetch.get("/contact/find", {
-                params: {
-                  mmkId: mmkId,
-                  guid: guid
-                }
-              });
-
-            case 3:
-              _yield$fetch$get3 = _context3.sent;
-              data = _yield$fetch$get3.data;
-
-              if (!(data != null)) {
-                _context3.next = 7;
-                break;
+        while (1) switch (_context3.prev = _context3.next) {
+          case 0:
+            _context3.prev = 0;
+            _context3.next = 3;
+            return fetch.get("/contact/find", {
+              params: {
+                mmkId: mmkId,
+                guid: guid
               }
-
-              return _context3.abrupt("return", data);
-
-            case 7:
-              _context3.next = 12;
+            });
+          case 3:
+            _yield$fetch$get3 = _context3.sent;
+            data = _yield$fetch$get3.data;
+            if (!(data != null)) {
+              _context3.next = 7;
               break;
-
-            case 9:
-              _context3.prev = 9;
-              _context3.t0 = _context3["catch"](0);
-              console.log("err getUserByMmk", _context3.t0);
-
-            case 12:
-            case "end":
-              return _context3.stop();
-          }
+            }
+            return _context3.abrupt("return", data);
+          case 7:
+            _context3.next = 12;
+            break;
+          case 9:
+            _context3.prev = 9;
+            _context3.t0 = _context3["catch"](0);
+            console.log("err getUserByMmk", _context3.t0);
+          case 12:
+          case "end":
+            return _context3.stop();
         }
       }, _callee3, null, [[0, 9]]);
     }));
-
     return function getUserByMmk(_x3, _x4) {
       return _ref4.apply(this, arguments);
     };
   }();
-
   return /*#__PURE__*/React__default.createElement(RestContext.Provider, {
     value: {
       apiUrl: baseURLApi,
@@ -3238,9 +2887,8 @@ var RestProvider = function RestProvider(_ref) {
 
 var useSocket = function useSocket(url, path, accessToken) {
   var _useState = useState(null),
-      socket = _useState[0],
-      setSocket = _useState[1];
-
+    socket = _useState[0],
+    setSocket = _useState[1];
   var connectSocket = useCallback(function () {
     // console.log("do connect");
     var socketTemp = io(url, {
@@ -3257,11 +2905,9 @@ var useSocket = function useSocket(url, path, accessToken) {
     socket == null ? void 0 : socket.disconnect();
     setSocket(null);
   }, [socket]);
-
   var _useState2 = useState(false),
-      online = _useState2[0],
-      setOnline = _useState2[1];
-
+    online = _useState2[0],
+    setOnline = _useState2[1];
   useEffect(function () {
     setOnline(socket != null && socket.connected ? true : false);
   }, [socket]);
@@ -3292,48 +2938,43 @@ var initialContext$1 = {
 var SocketContext = /*#__PURE__*/createContext(initialContext$1);
 var SocketProvider = function SocketProvider(_ref) {
   var wsUrl = _ref.wsUrl,
-      wsPath = _ref.wsPath,
-      children = _ref.children;
-
+    wsPath = _ref.wsPath,
+    children = _ref.children;
   var _useContext = useContext(ChatContext),
-      state = _useContext.state,
-      dispatch = _useContext.dispatch;
-
+    state = _useContext.state,
+    dispatch = _useContext.dispatch;
   var _useSocket = useSocket(wsUrl, wsPath, state.token),
-      socket = _useSocket.socket,
-      online = _useSocket.online,
-      disconnectSocket = _useSocket.disconnectSocket,
-      connectSocket = _useSocket.connectSocket;
-
+    socket = _useSocket.socket,
+    online = _useSocket.online,
+    disconnectSocket = _useSocket.disconnectSocket,
+    connectSocket = _useSocket.connectSocket;
   useEffect(function () {
     if (state.token) {
       connectSocket();
     }
-
     return function () {
       disconnectSocket();
     };
   }, [state.token, connectSocket]);
   useEffect(function () {
     if (!state.token) disconnectSocket();
-  }, [state.token, disconnectSocket]); // listen unauthorized event
-
+  }, [state.token, disconnectSocket]);
+  // listen unauthorized event
   useEffect(function () {
     var listener = function listener(msg) {
       console.log("unauthorized msg", msg);
       dispatch({
         type: "CLEAR_USER"
       });
-    }; // attach
-
-
-    socket == null ? void 0 : socket.on("unauthorized", listener); // detatch
-
+    };
+    // attach
+    socket == null ? void 0 : socket.on("unauthorized", listener);
+    // detatch
     return function () {
       socket == null ? void 0 : socket.off("unauthorized", listener);
     };
-  }, [socket == null ? void 0 : socket.id]); // listen chatData event
-
+  }, [socket == null ? void 0 : socket.id]);
+  // listen chatData event
   useEffect(function () {
     var listener = function listener(res) {
       if (res.code) {
@@ -3343,7 +2984,6 @@ var SocketProvider = function SocketProvider(_ref) {
         });
         return;
       }
-
       var payload = res.data;
       var groupArr = payload.groupData;
       var contactArr = payload.contactData;
@@ -3355,7 +2995,6 @@ var SocketProvider = function SocketProvider(_ref) {
         type: "SET_USER",
         payload: payload.user
       });
-
       if (groupArr.length) {
         for (var _iterator = _createForOfIteratorHelperLoose(groupArr), _step; !(_step = _iterator()).done;) {
           var group = _step.value;
@@ -3368,7 +3007,6 @@ var SocketProvider = function SocketProvider(_ref) {
           });
         }
       }
-
       if (contactArr.length) {
         for (var _iterator2 = _createForOfIteratorHelperLoose(contactArr), _step2; !(_step2 = _iterator2()).done;) {
           var contact = _step2.value;
@@ -3381,12 +3019,10 @@ var SocketProvider = function SocketProvider(_ref) {
           });
         }
       }
-
       dispatch({
         type: "SET_OPERATORS",
         payload: payload.operatorData
       });
-
       if (userArr.length) {
         for (var _iterator3 = _createForOfIteratorHelperLoose(userArr), _step3; !(_step3 = _iterator3()).done;) {
           var user_ = _step3.value;
@@ -3396,7 +3032,6 @@ var SocketProvider = function SocketProvider(_ref) {
           });
         }
       }
-
       dispatch({
         type: "UPDATE_ACTIVE_ROOM"
       });
@@ -3405,13 +3040,12 @@ var SocketProvider = function SocketProvider(_ref) {
         payload: payload.conferenceData
       });
     };
-
     socket == null ? void 0 : socket.on("chatData", listener);
     return function () {
       socket == null ? void 0 : socket.off("chatData", listener);
     };
-  }, [socket == null ? void 0 : socket.id]); // listen user online
-
+  }, [socket == null ? void 0 : socket.id]);
+  // listen user online
   useEffect(function () {
     var listener = function listener(res) {
       dispatch({
@@ -3419,13 +3053,12 @@ var SocketProvider = function SocketProvider(_ref) {
         payload: res.data
       });
     };
-
     socket == null ? void 0 : socket.on("userOnline", listener);
     return function () {
       socket == null ? void 0 : socket.off("userOnline", listener);
     };
-  }, [socket == null ? void 0 : socket.id]); // listen user offline
-
+  }, [socket == null ? void 0 : socket.id]);
+  // listen user offline
   useEffect(function () {
     var listener = function listener(res) {
       dispatch({
@@ -3433,13 +3066,12 @@ var SocketProvider = function SocketProvider(_ref) {
         payload: res.data
       });
     };
-
     socket == null ? void 0 : socket.on("userOffline", listener);
     return function () {
       socket == null ? void 0 : socket.off("userOffline", listener);
     };
-  }, [socket == null ? void 0 : socket.id]); // listen private socket join
-
+  }, [socket == null ? void 0 : socket.id]);
+  // listen private socket join
   useEffect(function () {
     var listener = function listener(res) {
       if (res.code) {
@@ -3449,20 +3081,17 @@ var SocketProvider = function SocketProvider(_ref) {
         });
         return;
       }
-
       console.log("Успешно вошел в приватный чат");
     };
-
     socket == null ? void 0 : socket.on("joinPrivateSocket", listener);
     return function () {
       socket == null ? void 0 : socket.off("joinPrivateSocket", listener);
     };
-  }, [socket == null ? void 0 : socket.id]); // listen group socket join
-
+  }, [socket == null ? void 0 : socket.id]);
+  // listen group socket join
   useEffect(function () {
     var listener = function listener(res) {
       var _groupObj$members;
-
       if (res.code) {
         dispatch({
           type: "SET_ERROR",
@@ -3470,20 +3099,19 @@ var SocketProvider = function SocketProvider(_ref) {
         });
         return;
       }
-
       var data = res.data;
       var newUser = data.user;
       newUser.online = 1;
       var group = data.group;
-      var groupObj = state.groupGather[group.groupId]; // Информация о присоединении к группе новых пользователей
-
+      var groupObj = state.groupGather[group.groupId];
+      // Информация о присоединении к группе новых пользователей
       if (groupObj && !((_groupObj$members = groupObj.members) != null && _groupObj$members.find(function (member) {
         return member.userId === newUser.userId;
       }))) {
         var _groupObj$members2;
-
         newUser.isManager = 0;
-        (_groupObj$members2 = groupObj.members) == null ? void 0 : _groupObj$members2.push(newUser); // Vue.prototype.$message.info(res.msg);
+        (_groupObj$members2 = groupObj.members) == null ? void 0 : _groupObj$members2.push(newUser);
+        // Vue.prototype.$message.info(res.msg);
       }
 
       dispatch({
@@ -3491,7 +3119,6 @@ var SocketProvider = function SocketProvider(_ref) {
         payload: newUser
       });
     };
-
     socket == null ? void 0 : socket.on("joinGroupSocket", listener);
     return function () {
       socket == null ? void 0 : socket.off("joinGroupSocket", listener);
@@ -3502,48 +3129,40 @@ var SocketProvider = function SocketProvider(_ref) {
       var _ref2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee(res) {
         var data, activeRoom;
         return _regeneratorRuntime().wrap(function _callee$(_context) {
-          while (1) {
-            switch (_context.prev = _context.next) {
-              case 0:
-                if (!res.code) {
-                  _context.next = 3;
-                  break;
-                }
-
-                dispatch({
-                  type: "SET_ERROR",
-                  payload: res.msg
+          while (1) switch (_context.prev = _context.next) {
+            case 0:
+              if (!res.code) {
+                _context.next = 3;
+                break;
+              }
+              dispatch({
+                type: "SET_ERROR",
+                payload: res.msg
+              });
+              return _context.abrupt("return");
+            case 3:
+              data = res.data;
+              dispatch({
+                type: "ADD_GROUP_MESSAGE",
+                payload: data
+              });
+              activeRoom = state.activeRoom;
+              if (activeRoom && activeRoom.groupId === data.groupId && data.userId !== state.user.userId) {
+                socket == null ? void 0 : socket.emit("markAsRead", {
+                  groupId: data.groupId,
+                  _id: data._id
                 });
-                return _context.abrupt("return");
-
-              case 3:
-                data = res.data;
-                dispatch({
-                  type: "ADD_GROUP_MESSAGE",
-                  payload: data
-                });
-                activeRoom = state.activeRoom;
-
-                if (activeRoom && activeRoom.groupId === data.groupId && data.userId !== state.user.userId) {
-                  socket == null ? void 0 : socket.emit("markAsRead", {
-                    groupId: data.groupId,
-                    _id: data._id
-                  });
-                }
-
-              case 7:
-              case "end":
-                return _context.stop();
-            }
+              }
+            case 7:
+            case "end":
+              return _context.stop();
           }
         }, _callee);
       }));
-
       return function listener(_x) {
         return _ref2.apply(this, arguments);
       };
     }();
-
     socket == null ? void 0 : socket.on("groupMessage", listener);
     return function () {
       socket == null ? void 0 : socket.off("groupMessage", listener);
@@ -3553,52 +3172,43 @@ var SocketProvider = function SocketProvider(_ref) {
     var listener = /*#__PURE__*/function () {
       var _ref3 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2(res) {
         var data, _state$activeRoom;
-
         return _regeneratorRuntime().wrap(function _callee2$(_context2) {
-          while (1) {
-            switch (_context2.prev = _context2.next) {
-              case 0:
-                if (!res.code) {
-                  _context2.next = 3;
-                  break;
-                }
-
+          while (1) switch (_context2.prev = _context2.next) {
+            case 0:
+              if (!res.code) {
+                _context2.next = 3;
+                break;
+              }
+              dispatch({
+                type: "SET_ERROR",
+                payload: res.msg
+              });
+              return _context2.abrupt("return");
+            case 3:
+              data = res.data;
+              if (data.contactId === state.user.userId || data.userId === state.user.userId) {
                 dispatch({
-                  type: "SET_ERROR",
-                  payload: res.msg
+                  type: "ADD_PRIVATE_MESSAGE",
+                  payload: data
                 });
-                return _context2.abrupt("return");
-
-              case 3:
-                data = res.data;
-
-                if (data.contactId === state.user.userId || data.userId === state.user.userId) {
-                  dispatch({
-                    type: "ADD_PRIVATE_MESSAGE",
-                    payload: data
-                  }); // если есть активная комната и это приватная комната (!groupId && userId) с отправителем сообщения (userId)
-
-                  if (state.activeRoom && !state.activeRoom.groupId && ((_state$activeRoom = state.activeRoom) == null ? void 0 : _state$activeRoom.userId) === data.userId) {
-                    socket == null ? void 0 : socket.emit("markAsRead", {
-                      contactId: data.userId,
-                      _id: data._id
-                    });
-                  }
+                // если есть активная комната и это приватная комната (!groupId && userId) с отправителем сообщения (userId)
+                if (state.activeRoom && !state.activeRoom.groupId && ((_state$activeRoom = state.activeRoom) == null ? void 0 : _state$activeRoom.userId) === data.userId) {
+                  socket == null ? void 0 : socket.emit("markAsRead", {
+                    contactId: data.userId,
+                    _id: data._id
+                  });
                 }
-
-              case 5:
-              case "end":
-                return _context2.stop();
-            }
+              }
+            case 5:
+            case "end":
+              return _context2.stop();
           }
         }, _callee2);
       }));
-
       return function listener(_x2) {
         return _ref3.apply(this, arguments);
       };
     }();
-
     socket == null ? void 0 : socket.on("privateMessage", listener);
     return function () {
       socket == null ? void 0 : socket.off("privateMessage", listener);
@@ -3606,7 +3216,6 @@ var SocketProvider = function SocketProvider(_ref) {
   }, [socket == null ? void 0 : socket.id, state.activeRoom]);
   useEffect(function () {
     var timer;
-
     var listener = function listener(res) {
       if (res.code) {
         dispatch({
@@ -3615,7 +3224,6 @@ var SocketProvider = function SocketProvider(_ref) {
         });
         return;
       }
-
       if (timer) clearTimeout(timer);
       dispatch({
         type: "SET_TYPING",
@@ -3628,7 +3236,6 @@ var SocketProvider = function SocketProvider(_ref) {
         });
       }, 1000);
     };
-
     socket == null ? void 0 : socket.on("typing", listener);
     return function () {
       if (timer) clearTimeout(timer);
@@ -3644,9 +3251,7 @@ var SocketProvider = function SocketProvider(_ref) {
         });
         return;
       }
-
       var data = res.data;
-
       if (data.userId === state.user.userId) {
         if (data.groupId) {
           dispatch({
@@ -3666,7 +3271,6 @@ var SocketProvider = function SocketProvider(_ref) {
         });
       }
     };
-
     socket == null ? void 0 : socket.on("markAsRead", listener);
     return function () {
       socket == null ? void 0 : socket.off("markAsRead", listener);
@@ -3681,14 +3285,12 @@ var SocketProvider = function SocketProvider(_ref) {
         });
         return;
       }
-
       var data = res.data;
       dispatch({
         type: "REVOKE_MESSAGE",
         payload: data
       });
     };
-
     socket == null ? void 0 : socket.on("revokeMessage", listener);
     return function () {
       socket == null ? void 0 : socket.off("revokeMessage", listener);
@@ -3703,13 +3305,11 @@ var SocketProvider = function SocketProvider(_ref) {
         });
         return;
       }
-
       dispatch({
         type: "SET_GROUP_GATHER",
         payload: res.data
       });
     };
-
     socket == null ? void 0 : socket.on("addGroup", listener);
     return function () {
       socket == null ? void 0 : socket.off("addGroup", listener);
@@ -3724,7 +3324,6 @@ var SocketProvider = function SocketProvider(_ref) {
         });
         return;
       }
-
       var data = res.data;
       dispatch({
         type: "SET_CONTACT_GATHER",
@@ -3738,7 +3337,6 @@ var SocketProvider = function SocketProvider(_ref) {
         contactId: data.userId
       });
     };
-
     socket == null ? void 0 : socket.on("addContact", listener);
     return function () {
       socket == null ? void 0 : socket.off("addContact", listener);
@@ -3753,9 +3351,7 @@ var SocketProvider = function SocketProvider(_ref) {
         });
         return;
       }
-
       var data = res.data;
-
       if (data.userId === state.user.userId) {
         // если удаляем себя из группы
         dispatch({
@@ -3769,7 +3365,6 @@ var SocketProvider = function SocketProvider(_ref) {
         });
       }
     };
-
     socket == null ? void 0 : socket.on("deleteGroup", listener);
     return function () {
       socket == null ? void 0 : socket.off("deleteGroup", listener);
@@ -3784,14 +3379,12 @@ var SocketProvider = function SocketProvider(_ref) {
         });
         return;
       }
-
       var data = res.data;
       dispatch({
         type: "DEL_CONTACT",
         payload: data
       });
     };
-
     socket == null ? void 0 : socket.on("deleteContact", listener);
     return function () {
       socket == null ? void 0 : socket.off("deleteContact", listener);
@@ -3806,14 +3399,12 @@ var SocketProvider = function SocketProvider(_ref) {
         });
         return;
       }
-
       var data = res.data;
       dispatch({
         type: "UPDATE_GROUP_INFO",
         payload: data
       });
     };
-
     socket == null ? void 0 : socket.on("updateGroupInfo", listener);
     return function () {
       socket == null ? void 0 : socket.off("updateGroupInfo", listener);
@@ -3828,14 +3419,12 @@ var SocketProvider = function SocketProvider(_ref) {
         });
         return;
       }
-
       var data = res.data;
       dispatch({
         type: "UPDATE_USER_INFO",
         payload: data
       });
     };
-
     socket == null ? void 0 : socket.on("updateUserInfo", listener);
     return function () {
       socket == null ? void 0 : socket.off("updateUserInfo", listener);
@@ -3850,14 +3439,12 @@ var SocketProvider = function SocketProvider(_ref) {
         });
         return;
       }
-
       var _res$data = res.data,
-          group = _res$data.group,
-          newUser = _res$data.user;
-
+        group = _res$data.group,
+        newUser = _res$data.user;
       if (!state.groupGather[group.groupId]) {
-        console.log("joined to a new group"); // Если группы еще у нас нет, то получаем информацию о пользователях в группе
-
+        console.log("joined to a new group");
+        // Если группы еще у нас нет, то получаем информацию о пользователях в группе
         socket == null ? void 0 : socket.emit("chatData");
       } else if (newUser.userId !== state.user.userId) {
         // Новые пользователи присоединяются к группе
@@ -3870,7 +3457,6 @@ var SocketProvider = function SocketProvider(_ref) {
         });
       }
     };
-
     socket == null ? void 0 : socket.on("joinGroup", listener);
     return function () {
       socket == null ? void 0 : socket.off("joinGroup", listener);
@@ -3885,13 +3471,11 @@ var SocketProvider = function SocketProvider(_ref) {
         });
         return;
       }
-
       dispatch({
         type: "SET_CONFERENCE",
         payload: res.data
       });
     };
-
     socket == null ? void 0 : socket.on("startConference", listener);
     return function () {
       socket == null ? void 0 : socket.off("startConference", listener);
@@ -3906,13 +3490,11 @@ var SocketProvider = function SocketProvider(_ref) {
         });
         return;
       }
-
       dispatch({
         type: "PAUSE_CONFERENCE",
         payload: res.data
       });
     };
-
     socket == null ? void 0 : socket.on("pauseConference", listener);
     return function () {
       socket == null ? void 0 : socket.off("pauseConference", listener);
@@ -3927,13 +3509,11 @@ var SocketProvider = function SocketProvider(_ref) {
         });
         return;
       }
-
       dispatch({
         type: "STOP_CONFERENCE",
         payload: res.data
       });
     };
-
     socket == null ? void 0 : socket.on("stopConference", listener);
     return function () {
       socket == null ? void 0 : socket.off("stopConference", listener);
@@ -3949,7 +3529,6 @@ var SocketProvider = function SocketProvider(_ref) {
         return;
       }
     };
-
     socket == null ? void 0 : socket.on("addOperator", listener);
     return function () {
       socket == null ? void 0 : socket.off("addOperator", listener);
@@ -3964,13 +3543,11 @@ var SocketProvider = function SocketProvider(_ref) {
         });
         return;
       }
-
       dispatch({
         type: "SET_ACTIVE_ROOM",
         payload: res.data
       });
     };
-
     socket == null ? void 0 : socket.on("setActiveRoom", listener);
     return function () {
       socket == null ? void 0 : socket.off("setActiveRoom", listener);
@@ -3984,6 +3561,7 @@ var SocketProvider = function SocketProvider(_ref) {
   }, children);
 };
 
+// Отключили проигрыш звука
 // const getRingAudio = (): HTMLAudioElement => {
 //   const audio = new Audio(
 //     process.env.PUBLIC_URL + '/audio/ring-in.ogg',
@@ -3991,10 +3569,8 @@ var SocketProvider = function SocketProvider(_ref) {
 //   audio.loop = true;
 //   return audio;
 // };
-
 var useStyles$e = /*#__PURE__*/makeStyles(function (theme) {
   var _root, _innerBox;
-
   return {
     root: (_root = {
       minWidth: 640,
@@ -4022,29 +3598,24 @@ var useStyles$e = /*#__PURE__*/makeStyles(function (theme) {
 });
 var ChatPage = function ChatPage(_ref) {
   var _state$conference$dat, _state$conference$dat2, _state$conference$dat3, _state$activeRoom, _state$activeRoom2;
-
   var activeGroupId = _ref.activeGroupId,
-      activeChatUserId = _ref.activeChatUserId;
+    activeChatUserId = _ref.activeChatUserId;
   var classes = useStyles$e();
   var isMobile = useMediaQuery(function (theme) {
     return theme.breakpoints.down("sm");
   });
-
   var _React$useContext = useContext(ChatContext),
-      state = _React$useContext.state,
-      dispatch = _React$useContext.dispatch;
-
+    state = _React$useContext.state,
+    dispatch = _React$useContext.dispatch;
   var _React$useContext2 = useContext(SocketContext),
-      socket = _React$useContext2.socket;
-
+    socket = _React$useContext2.socket;
   var _React$useContext3 = useContext(RestContext),
-      apiUrl = _React$useContext3.apiUrl,
-      pageSize = _React$useContext3.pageSize,
-      getPrivateMessages = _React$useContext3.getPrivateMessages,
-      getGroupMessages = _React$useContext3.getGroupMessages,
-      getUserByMmk = _React$useContext3.getUserByMmk; // const [ringAudio] = React.useState(getRingAudio());
-
-
+    apiUrl = _React$useContext3.apiUrl,
+    pageSize = _React$useContext3.pageSize,
+    getPrivateMessages = _React$useContext3.getPrivateMessages,
+    getGroupMessages = _React$useContext3.getGroupMessages,
+    getUserByMmk = _React$useContext3.getUserByMmk;
+  // const [ringAudio] = React.useState(getRingAudio());
   var onExitActiveRoom = useCallback(function () {
     dispatch({
       type: "SET_ACTIVE_ROOM",
@@ -4056,33 +3627,26 @@ var ChatPage = function ChatPage(_ref) {
   var onNeedMoreMessages = useCallback( /*#__PURE__*/function () {
     var _ref2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee(chat) {
       return _regeneratorRuntime().wrap(function _callee$(_context) {
-        while (1) {
-          switch (_context.prev = _context.next) {
-            case 0:
-              if (!chat.groupId) {
-                _context.next = 5;
-                break;
-              }
-
-              _context.next = 3;
-              return getGroupMessages(chat);
-
-            case 3:
-              _context.next = 7;
+        while (1) switch (_context.prev = _context.next) {
+          case 0:
+            if (!chat.groupId) {
+              _context.next = 5;
               break;
-
-            case 5:
-              _context.next = 7;
-              return getPrivateMessages(chat);
-
-            case 7:
-            case "end":
-              return _context.stop();
-          }
+            }
+            _context.next = 3;
+            return getGroupMessages(chat);
+          case 3:
+            _context.next = 7;
+            break;
+          case 5:
+            _context.next = 7;
+            return getPrivateMessages(chat);
+          case 7:
+          case "end":
+            return _context.stop();
         }
       }, _callee);
     }));
-
     return function (_x) {
       return _ref2.apply(this, arguments);
     };
@@ -4092,7 +3656,6 @@ var ChatPage = function ChatPage(_ref) {
       groupId: chat.groupId,
       contactId: chat.userId,
       _id: message._id // Идентификатор удаленного сообщения
-
     });
   }, [socket == null ? void 0 : socket.id]);
   var onTyping = useCallback(function (chat) {
@@ -4136,7 +3699,6 @@ var ChatPage = function ChatPage(_ref) {
   }, [socket == null ? void 0 : socket.id, dispatch]);
   var onEnterRoom = useCallback(function (chat) {
     if (!chat.messages || chat.messages.length === 0) return;
-
     if (chat.groupId) {
       socket == null ? void 0 : socket.emit("markAsRead", {
         groupId: chat.groupId,
@@ -4199,48 +3761,38 @@ var ChatPage = function ChatPage(_ref) {
       onChangeChat(Chat);
       onEnterRoom(Chat);
     }
-
     var mmkId = getParam("mmk");
     var guid = getParam("guid");
-
     if ((mmkId != null || guid != null) && !isEmpty(state.contactGather)) {
       //console.log("mmkId", mmkId);
       var changeChatByMmkId = /*#__PURE__*/function () {
         var _ref3 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2() {
           var userId, _Chat;
-
           return _regeneratorRuntime().wrap(function _callee2$(_context2) {
-            while (1) {
-              switch (_context2.prev = _context2.next) {
-                case 0:
-                  _context2.next = 2;
-                  return getUserByMmk(mmkId, guid);
-
-                case 2:
-                  userId = _context2.sent;
-                  console.log("userId", userId);
-
-                  if (userId != null) {
-                    _Chat = Object.values(state.contactGather).find(function (item) {
-                      return item.userId === userId;
-                    });
-                    onChangeChat(_Chat);
-                    onEnterRoom(_Chat);
-                  }
-
-                case 5:
-                case "end":
-                  return _context2.stop();
-              }
+            while (1) switch (_context2.prev = _context2.next) {
+              case 0:
+                _context2.next = 2;
+                return getUserByMmk(mmkId, guid);
+              case 2:
+                userId = _context2.sent;
+                console.log("userId", userId);
+                if (userId != null) {
+                  _Chat = Object.values(state.contactGather).find(function (item) {
+                    return item.userId === userId;
+                  });
+                  onChangeChat(_Chat);
+                  onEnterRoom(_Chat);
+                }
+              case 5:
+              case "end":
+                return _context2.stop();
             }
           }, _callee2);
         }));
-
         return function changeChatByMmkId() {
           return _ref3.apply(this, arguments);
         };
       }();
-
       changeChatByMmkId();
     }
   }, [state.contactGather]);
@@ -4249,13 +3801,13 @@ var ChatPage = function ChatPage(_ref) {
       var onlyChat = Object.values(state.groupGather).find(function (item) {
         return item.groupId === activeGroupId;
       });
-
       if (!isEmpty(onlyChat)) {
         onChangeChat(onlyChat);
         onEnterRoom(onlyChat);
       }
     }
-  }, [state.groupGather]); // Отключили проигрыш звука
+  }, [state.groupGather]);
+  // Отключили проигрыш звука
   // React.useEffect(() => {
   //   if (
   //     state.conference.data?.id &&
@@ -4265,7 +3817,6 @@ var ChatPage = function ChatPage(_ref) {
   //     ringAudio.play();
   //   else ringAudio.pause();
   // }, [state.conference.data?.id, state.conference.ringPlayed]);
-
   var renderRoom = state.activeRoom != null && /*#__PURE__*/createElement(Room, {
     apiUrl: apiUrl,
     user: state.user,
@@ -4289,7 +3840,6 @@ var ChatPage = function ChatPage(_ref) {
     onOperatorAdd: onOperatorAdd,
     onLeaveGroup: onLeaveGroup
   });
-
   var GetRoomList = function GetRoomList() {
     return /*#__PURE__*/createElement(RoomList, {
       apiUrl: apiUrl,
@@ -4301,7 +3851,6 @@ var ChatPage = function ChatPage(_ref) {
       onChangeChat: onChangeChat
     });
   };
-
   var GetConferenceCall = function GetConferenceCall() {
     return state.conference.data && /*#__PURE__*/createElement(ConferenceCall, {
       apiUrl: apiUrl,
@@ -4310,22 +3859,19 @@ var ChatPage = function ChatPage(_ref) {
       onAccept: onConferenceCallAccept
     });
   };
-
   var GetConference = function GetConference() {
     return /*#__PURE__*/createElement(Conference, {
       conference: state.conference.data,
       onClose: onConferencePause
     });
-  }; // const getMessCount = (data: GroupGather) => {
+  };
+  // const getMessCount = (data: GroupGather) => {
   //   const messages = ;
   //   return messages.reduce((a: number, b: number) => a + b, 0);
   // };
-
-
   var depsContats = (_state$conference$dat = state.conference.data) != null && _state$conference$dat.id ? [state.conference.joined, (_state$conference$dat2 = state.conference.data) == null ? void 0 : _state$conference$dat2.id, (_state$conference$dat3 = state.conference.data) == null ? void 0 : _state$conference$dat3.contactId, (_state$activeRoom = state.activeRoom) == null ? void 0 : _state$activeRoom.groupId, (_state$activeRoom2 = state.activeRoom) == null ? void 0 : _state$activeRoom2.userId] : [state.activeRoom, allMessCount(state.groupGather), allMessCount(state.contactGather)];
   var Contacts = useMemo(function () {
     var _state$conference$dat4;
-
     return (_state$conference$dat4 = state.conference.data) != null && _state$conference$dat4.id ? state.conference.joined ? /*#__PURE__*/createElement(GetConference, null) : /*#__PURE__*/createElement(GetConferenceCall, null) : /*#__PURE__*/createElement(GetRoomList, null);
   }, depsContats);
   console.log("chat state", state);

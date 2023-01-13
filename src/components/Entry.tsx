@@ -5,10 +5,10 @@ import {
   InputAdornment,
   TextField,
   Popover,
-  SvgIcon,
+  SvgIcon
 } from "@mui/material";
 
-import { makeStyles } from '@mui/styles';
+import { makeStyles } from "@mui/styles";
 import { Send, InsertEmoticon } from "@mui/icons-material";
 import Emoji from "./Emoji";
 import { useTranslation } from "react-i18next";
@@ -16,15 +16,15 @@ import { ChatRoom, ImageSize, SendMessage } from "../types";
 
 const useStyles = makeStyles(() => ({
   input: {
-    flex: "auto",
+    flex: "auto"
   },
   inputUpload: {
-    display: "none",
+    display: "none"
   },
   attachmentIcon: {
     fill: "none",
-    stroke: "currentColor",
-  },
+    stroke: "currentColor"
+  }
 }));
 
 type EntryProps = {
@@ -49,7 +49,7 @@ const getImageSize = (data: ImageSize) => {
   }
   return {
     width,
-    height,
+    height
   };
 };
 
@@ -63,7 +63,7 @@ const Entry: React.FC<EntryProps> = (props: EntryProps) => {
   const [text, setText] = React.useState("");
   const [lastTyping, setLastTyping] = React.useState({
     chat,
-    time: 0,
+    time: 0
   });
 
   const handleEmojiClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -88,7 +88,7 @@ const Entry: React.FC<EntryProps> = (props: EntryProps) => {
     ) {
       setLastTyping({
         chat,
-        time: Date.now(),
+        time: Date.now()
       });
       props.onTyping(chat);
     }
@@ -137,13 +137,13 @@ const Entry: React.FC<EntryProps> = (props: EntryProps) => {
       image.onload = () => {
         const imageSize: ImageSize = getImageSize({
           width: image.width,
-          height: image.height,
+          height: image.height
         });
         sendMessage({
           message: file,
           width: imageSize.width,
           height: imageSize.height,
-          messageType,
+          messageType
         });
       };
     } else {
@@ -151,7 +151,7 @@ const Entry: React.FC<EntryProps> = (props: EntryProps) => {
         message: file,
         messageType,
         fileName: file.name,
-        size: file.size,
+        size: file.size
       });
     }
   };
@@ -162,7 +162,7 @@ const Entry: React.FC<EntryProps> = (props: EntryProps) => {
     <Box display="flex" flexDirection="row">
       <TextField
         className={classes.input}
-        placeholder={t("CHAT.INPUT_MESSAGE")}
+        placeholder={t("CHAT.INPUT_MESSAGE") || ""}
         autoFocus={true}
         variant="standard"
         InputProps={{
@@ -212,7 +212,7 @@ const Entry: React.FC<EntryProps> = (props: EntryProps) => {
             >
               <Send />
             </IconButton>
-          ),
+          )
         }}
         value={text}
         onChange={onChange}
@@ -225,11 +225,11 @@ const Entry: React.FC<EntryProps> = (props: EntryProps) => {
         onClose={handleEmojiClose}
         anchorOrigin={{
           vertical: "top",
-          horizontal: "center",
+          horizontal: "center"
         }}
         transformOrigin={{
           vertical: "bottom",
-          horizontal: "left",
+          horizontal: "left"
         }}
       >
         <Emoji onSelect={emojiSelect} />
