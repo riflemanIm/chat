@@ -2,7 +2,7 @@ import * as React from "react";
 import { Container, Box, Grid, Snackbar, useMediaQuery } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { Theme } from "@mui/material/styles";
-import { Alert } from "@mui/lab";
+import { Alert } from "@mui/material";
 import { Room, RoomList, Conference } from "../components";
 import { ChatContext } from "../context/ChatContext";
 import { RestContext } from "../context/RestContext";

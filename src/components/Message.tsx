@@ -4,7 +4,7 @@ import { Box, Link, ListItem, Typography } from "@mui/material";
 import { DoneAll, Done } from "@mui/icons-material";
 import { formatTime } from "../utils/common";
 import MessageContent from "./MessageContent";
-import { Alert } from "@mui/lab";
+import { Alert } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import { ChatMessage, Contact, PrivateMessage, User } from "../types";
 

@@ -1,6 +1,6 @@
 {
   "name": "@pmt/chat",
-  "version": "1.10.9",
+  "version": "1.10.10",
   "description": "PMT Chat, last global change mui v5",
   "main": "dist/index.js",
   "module": "dist/index.es.js",
@@ -35,13 +35,9 @@
   },
   "peerDependencies": {
     "@mui/icons-material": "^5.11.0",
-    "@mui/lab": "^5.0.0-alpha.115",
     "@mui/material": "^5.11.4",
-    "@mui/styles": "^5.11.2",
-    "i18next": "^22.4.9",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "react-i18next": "^12.1.4"
+    "react-dom": "^18.2.0"
   },
   "devDependencies": {
     "@babel/preset-react": "^7.18.6",

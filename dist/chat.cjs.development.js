@@ -15,7 +15,6 @@ var iconsMaterial = require('@mui/icons-material');
 var reactI18next = require('react-i18next');
 var moment = _interopDefault(require('moment'));
 var Viewer = _interopDefault(require('react-viewer'));
-var lab = require('@mui/lab');
 var GroupIcon = _interopDefault(require('@mui/icons-material/Group'));
 var VideoCallIcon = _interopDefault(require('@mui/icons-material/VideoCall'));
 var CallEndIcon = _interopDefault(require('@mui/icons-material/CallEnd'));
@@ -1239,7 +1238,7 @@ var Message = function Message(props) {
     var content = message.content[0] === "{" ? JSON.parse(message.content) : message.content;
     return /*#__PURE__*/React.createElement(material.ListItem, {
       className: classes.rootNotify
-    }, /*#__PURE__*/React.createElement(lab.Alert, {
+    }, /*#__PURE__*/React.createElement(material.Alert, {
       severity: typeof content === "string" ? "info" : content.severity,
       ref: refOnLastMess
     }, typeof content === "string" ? content : content.message));
@@ -3903,7 +3902,7 @@ var ChatPage = function ChatPage(_ref) {
     open: !!state.error,
     autoHideDuration: 6000,
     onClose: handleError
-  }, /*#__PURE__*/React.createElement(lab.Alert, {
+  }, /*#__PURE__*/React.createElement(material.Alert, {
     onClose: handleError,
     severity: "error"
   }, state.error)));
