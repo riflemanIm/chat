@@ -812,7 +812,7 @@ var Entry = function Entry(props) {
       startAdornment: /*#__PURE__*/React__default.createElement(InputAdornment, {
         position: "start"
       }, /*#__PURE__*/React__default.createElement("input", {
-        accept: "*",
+        accept: ".pdf,.jpg,.jpeg,.bmp,.gif,.png,application/pdf,image/jpeg,image/bmp,image/gif,image/png",
         className: classes.inputUpload,
         id: "icon-button-file",
         type: "file",

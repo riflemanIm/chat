@@ -170,7 +170,7 @@ const Entry: React.FC<EntryProps> = (props: EntryProps) => {
           startAdornment: (
             <InputAdornment position={"start"}>
               <input
-                accept=".pdf,.jpg,.jpeg,.bmp,.gif,.png,.tiff,application/pdf,image/jpeg,image/bmp,image/gif,image/png,image/tiff"
+                accept=".pdf,.jpg,.jpeg,.bmp,.gif,.png,application/pdf,image/jpeg,image/bmp,image/gif,image/png"
                 className={classes.inputUpload}
                 id="icon-button-file"
                 type="file"
