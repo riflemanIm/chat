@@ -204,14 +204,14 @@ export const ChatPage: React.FC<ChatPa> = ({
 
   const onConferenceCallAccept = React.useCallback(
     (conference: ConferenceData) => {
-      // отправляем startConference чтобы возобновить запись
+      // отправляем resumeConference чтобы возобновить запись
       if (conference?.id != null)
         socket?.emit("resumeConference", {
           id: conference.id
         });
       dispatch({ type: "JOIN_CONFERENCE", payload: conference });
     },
-    [dispatch]
+    [socket?.id, dispatch]
   );
 
   const onOperatorAdd = React.useCallback(
