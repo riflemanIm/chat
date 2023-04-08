@@ -3727,7 +3727,7 @@ var ChatPage = function ChatPage(_ref) {
     });
   }, [socket == null ? void 0 : socket.id]);
   var onConferenceCallAccept = useCallback(function (conference) {
-    // отправляем startConference чтобы возобновить запись
+    // отправляем resumeConference чтобы возобновить запись
     if ((conference == null ? void 0 : conference.id) != null) socket == null ? void 0 : socket.emit("resumeConference", {
       id: conference.id
     });
@@ -3735,7 +3735,7 @@ var ChatPage = function ChatPage(_ref) {
       type: "JOIN_CONFERENCE",
       payload: conference
     });
-  }, [dispatch]);
+  }, [socket == null ? void 0 : socket.id, dispatch]);
   var onOperatorAdd = useCallback(function (group, operator) {
     socket == null ? void 0 : socket.emit("addOperator", {
       groupId: group.groupId,
