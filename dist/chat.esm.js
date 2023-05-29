@@ -1940,37 +1940,37 @@ var RoomListItem = function RoomListItem(props) {
 var useStyles$b = /*#__PURE__*/makeStyles(function () {
   return {
     root: {
-      width: '100%',
-      height: '100%'
+      width: "100%",
+      height: "100%"
     },
     searchField: {
-      width: '100%'
+      width: "100%"
     },
     listStyle: {
-      maxHeight: '100%',
-      overflowY: 'auto',
-      scrollbarColor: '#6b6b6b #fff',
-      '&::-webkit-scrollbar, & *::-webkit-scrollbar': {
-        backgroundColor: '#fff'
+      height: "89.5%",
+      overflowY: "auto",
+      scrollbarColor: "#6b6b6b #fff",
+      "&::-webkit-scrollbar, & *::-webkit-scrollbar": {
+        backgroundColor: "#fff"
       },
-      '&::-webkit-scrollbar-thumb, & *::-webkit-scrollbar-thumb': {
+      "&::-webkit-scrollbar-thumb, & *::-webkit-scrollbar-thumb": {
         borderRadius: 8,
-        backgroundColor: '#d5d9ef',
-        border: '5px solid #fff'
+        backgroundColor: "#d5d9ef",
+        border: "5px solid #fff"
       },
-      '&::-webkit-scrollbar-thumb:focus, & *::-webkit-scrollbar-thumb:focus': {
-        backgroundColor: '#fff'
+      "&::-webkit-scrollbar-thumb:focus, & *::-webkit-scrollbar-thumb:focus": {
+        backgroundColor: "#fff"
       },
-      '&::-webkit-scrollbar-thumb:active, & *::-webkit-scrollbar-thumb:active': {
-        backgroundColor: '#73d7f5',
-        border: '3px solid #fff'
+      "&::-webkit-scrollbar-thumb:active, & *::-webkit-scrollbar-thumb:active": {
+        backgroundColor: "#73d7f5",
+        border: "3px solid #fff"
       },
-      '&::-webkit-scrollbar-thumb:hover, & *::-webkit-scrollbar-thumb:hover': {
-        backgroundColor: '#73d7f5',
-        border: '3px solid #fff'
+      "&::-webkit-scrollbar-thumb:hover, & *::-webkit-scrollbar-thumb:hover": {
+        backgroundColor: "#73d7f5",
+        border: "3px solid #fff"
       },
-      '&::-webkit-scrollbar-corner, & *::-webkit-scrollbar-corner': {
-        backgroundColor: '#fff'
+      "&::-webkit-scrollbar-corner, & *::-webkit-scrollbar-corner": {
+        backgroundColor: "#fff"
       }
     }
   };
@@ -2023,7 +2023,7 @@ var RoomList = function RoomList(props) {
   }, /*#__PURE__*/React__default.createElement(CardHeader, {
     title: /*#__PURE__*/React__default.createElement(TextField, {
       className: classes.searchField,
-      label: t('CHAT.INPUT_SEARCH_CONTACT'),
+      label: t("CHAT.INPUT_SEARCH_CONTACT"),
       variant: "outlined",
       size: "small",
       fullWidth: true,

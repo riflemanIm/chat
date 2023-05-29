@@ -4,7 +4,7 @@ import {
   List,
   ListItem,
   ListItemAvatar,
-  ListItemText
+  ListItemText,
 } from "@mui/material";
 import StarIcon from "@mui/icons-material/Star";
 import ContactStatus from "./ContactStatus";
@@ -14,8 +14,8 @@ import { Contact } from "../types";
 const useStyles = makeStyles(() => ({
   star: {
     fontSize: "0.85rem",
-    verticalAlign: "middle"
-  }
+    verticalAlign: "middle",
+  },
 }));
 
 type ContactListProps = {
@@ -31,7 +31,7 @@ const ContactList: React.FC<ContactListProps> = (props: ContactListProps) => {
 
   return (
     <List aria-label="contacts">
-      {contacts.map(contact => (
+      {contacts.map((contact) => (
         <ListItem
           button
           key={contact.userId}
