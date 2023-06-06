@@ -1,5 +1,12 @@
 import * as React from "react";
-import { Container, Box, Grid, Snackbar, useMediaQuery } from "@mui/material";
+import {
+  Container,
+  Box,
+  Grid,
+  Snackbar,
+  useMediaQuery,
+  IconButton
+} from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { Theme } from "@mui/material/styles";
 import { Alert } from "@mui/material";
@@ -18,6 +25,7 @@ import {
 } from "../types";
 import { getParam, isEmpty, allMessCount } from "../utils/common";
 import ConferenceCall from "../components/ConferenceCall";
+import { ArrowForward } from "@mui/icons-material";
 
 // Отключили проигрыш звука
 // const getRingAudio = (): HTMLAudioElement => {
@@ -344,10 +352,17 @@ export const ChatPage: React.FC<ChatPa> = ({
     );
 
   const GetConference = () => (
-    <Conference
-      conference={state.conference.data}
-      onClose={onConferencePause}
-    />
+    <>
+      <Conference
+        conference={state.conference.data}
+        onClose={onConferencePause}
+      />
+      {state.activeRoom == null && isMobile && (
+        <IconButton aria-label="exit room" onClick={() => null}>
+          <ArrowForward />
+        </IconButton>
+      )}
+    </>
   );
 
   // const getMessCount = (data: GroupGather) => {

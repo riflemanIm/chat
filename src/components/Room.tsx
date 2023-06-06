@@ -9,7 +9,8 @@ import {
   ListItemIcon,
   Menu,
   MenuItem,
-  IconButton
+  IconButton,
+  useMediaQuery
 } from "@mui/material";
 import { Theme } from "@mui/material/styles";
 import { makeStyles, createStyles } from "@mui/styles";
@@ -145,7 +146,9 @@ const Room: React.FC<RoomProps> = (props: RoomProps) => {
   } = props;
   const classes = useStyles();
   const { t } = useTranslation();
-
+  const isMobile = useMediaQuery((theme: Theme) =>
+    theme.breakpoints.down("sm")
+  );
   const [scrollState, setScrollState] = React.useState(initialScrollState);
 
   const messages = chat?.messages;
@@ -238,12 +241,12 @@ const Room: React.FC<RoomProps> = (props: RoomProps) => {
       props.onMeesageDelete(chat, message);
   }, [menuState.message]);
 
-  //console.log("messages", messages)
+  console.log("chat", chat);
 
   return (
     <Card elevation={1} className={classes.root}>
       <Box display="flex" flexDirection="row">
-        {props.onExitRoom && chat && (
+        {chat && isMobile && (
           <IconButton
             aria-label="exit room"
             onClick={() => props.onExitRoom && props.onExitRoom(chat)}
