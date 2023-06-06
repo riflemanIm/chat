@@ -42,6 +42,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     minWidth: 640,
     minHeight: 470,
     height: "100%",
+    width: `calc(100vw - ${theme.spacing(8)})`,
     padding: 0,
     [theme.breakpoints.down("sm")]: {
       height: `calc(100vh - ${theme.spacing(8)})`,
@@ -353,22 +354,24 @@ export const ChatPage: React.FC<ChatPa> = ({
 
   const GetConference = () => (
     <>
+      {state.chatOld != null && isMobile && (
+        <Box display="flex" flexDirection="row">
+          <Button
+            aria-label="back to chat"
+            variant="contained"
+            color="secondary"
+            size="small"
+            endIcon={<ArrowForward />}
+            onClick={() => state.chatOld != null && onChangeChat(state.chatOld)}
+          >
+            {t("CHAT.CONFERENCE.BACK")}
+          </Button>
+        </Box>
+      )}
       <Conference
         conference={state.conference.data}
         onClose={onConferencePause}
       />
-      {state.chatOld != null && isMobile && (
-        <Button
-          aria-label="back to chat"
-          variant="contained"
-          color="secondary"
-          size="small"
-          endIcon={<ArrowForward />}
-          onClick={() => state.chatOld != null && onChangeChat(state.chatOld)}
-        >
-          {t("CHAT.CONFERENCE.BACK")}
-        </Button>
-      )}
     </>
   );
 
@@ -393,7 +396,7 @@ export const ChatPage: React.FC<ChatPa> = ({
 
   const Contacts = React.useMemo(
     () =>
-      state.conference.data?.id ? (
+      state.conference.data?.id != null ? (
         state.conference.joined ? (
           <GetConference />
         ) : (
@@ -405,7 +408,7 @@ export const ChatPage: React.FC<ChatPa> = ({
     depsContats
   );
 
-  console.log("chat state", state);
+  //console.log("chat state", state);
 
   return (
     <Container maxWidth="lg" className={classes.root}>
@@ -417,11 +420,19 @@ export const ChatPage: React.FC<ChatPa> = ({
           </>
         ) : (
           <Grid container spacing={1} className={classes.innerGrid}>
-            <Grid item sm={4} className={classes.innerGrid}>
+            <Grid
+              item
+              sm={state.conference.data?.id != null ? 6 : 4}
+              className={classes.innerGrid}
+            >
               {Contacts}
             </Grid>
 
-            <Grid item sm={8} className={classes.innerGrid}>
+            <Grid
+              item
+              sm={state.conference.data?.id != null ? 6 : 8}
+              className={classes.innerGrid}
+            >
               {renderRoom}
             </Grid>
           </Grid>

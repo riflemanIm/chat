@@ -1,13 +1,13 @@
 import React, { useEffect } from "react";
-import { makeStyles } from '@mui/styles';
+import { makeStyles } from "@mui/styles";
 import { ConferenceData } from "../types";
 
 const useStyles = makeStyles(() => ({
   root: {
     width: "100%",
     height: "100%",
-    borderRadius: 8,
-  },
+    borderRadius: 0
+  }
 }));
 
 type ConferenceProps = {
@@ -17,13 +17,12 @@ type ConferenceProps = {
 
 const Conference: React.FC<ConferenceProps> = ({
   conference,
-  onClose,
+  onClose
 }: ConferenceProps) => {
   const classes = useStyles();
   const ref = React.useRef<HTMLIFrameElement>(null);
 
   useEffect(() => {
-
     const listener = ({ source, data }: MessageEvent) => {
       if (source === ref.current?.contentWindow) {
         const { type } = data;
@@ -34,7 +33,7 @@ const Conference: React.FC<ConferenceProps> = ({
             // "loginFail",
             "callFail",
             "hangUp",
-            "remoteHangUp",
+            "remoteHangUp"
             // "onParticipantLeft"
           ].includes(type)
         )

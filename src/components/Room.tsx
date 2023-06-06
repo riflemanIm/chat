@@ -10,7 +10,8 @@ import {
   Menu,
   MenuItem,
   IconButton,
-  useMediaQuery
+  useMediaQuery,
+  Tooltip
 } from "@mui/material";
 import { Theme } from "@mui/material/styles";
 import { makeStyles, createStyles } from "@mui/styles";
@@ -247,12 +248,14 @@ const Room: React.FC<RoomProps> = (props: RoomProps) => {
     <Card elevation={1} className={classes.root}>
       <Box display="flex" flexDirection="row">
         {chat && isMobile && (
-          <IconButton
-            aria-label="exit room"
-            onClick={() => props.onExitRoom && props.onExitRoom(chat)}
-          >
-            <ArrowBackIcon />
-          </IconButton>
+          <Tooltip title="Вернуться в конференцию">
+            <IconButton
+              aria-label="exit room"
+              onClick={() => props.onExitRoom && props.onExitRoom(chat)}
+            >
+              <ArrowBackIcon />
+            </IconButton>
+          </Tooltip>
         )}
         <RoomHeader
           apiUrl={apiUrl}
