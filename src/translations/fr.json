@@ -24,7 +24,8 @@
     "CONFERENCE": {
       "JOIN": "Join",
       "START": "Start",
-      "FINISH": "Finish"
+      "FINISH": "Finish",
+      "BACK": "Back to chat"
     },
     "ADD_CONTACT": "Add contact",
     "INPUT_MESSAGE": "Please write a message...",

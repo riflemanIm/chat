@@ -241,7 +241,7 @@ const Room: React.FC<RoomProps> = (props: RoomProps) => {
       props.onMeesageDelete(chat, message);
   }, [menuState.message]);
 
-  console.log("chat", chat);
+  //  console.log("chat", chat);
 
   return (
     <Card elevation={1} className={classes.root}>

@@ -5,7 +5,7 @@ import {
   Grid,
   Snackbar,
   useMediaQuery,
-  IconButton
+  Button
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { Theme } from "@mui/material/styles";
@@ -26,6 +26,7 @@ import {
 import { getParam, isEmpty, allMessCount } from "../utils/common";
 import ConferenceCall from "../components/ConferenceCall";
 import { ArrowForward } from "@mui/icons-material";
+import { useTranslation } from "react-i18next";
 
 // Отключили проигрыш звука
 // const getRingAudio = (): HTMLAudioElement => {
@@ -71,7 +72,7 @@ export const ChatPage: React.FC<ChatPa> = ({
   const isMobile = useMediaQuery((theme: Theme) =>
     theme.breakpoints.down("sm")
   );
-
+  const { t } = useTranslation();
   const { state, dispatch } = React.useContext(ChatContext);
   const { socket } = React.useContext(SocketContext);
 
@@ -88,7 +89,7 @@ export const ChatPage: React.FC<ChatPa> = ({
   const onExitActiveRoom = React.useCallback(() => {
     dispatch({
       type: "SET_ACTIVE_ROOM",
-      payload: { ifNotExists: false }
+      payload: {}
     });
   }, [dispatch]);
 
@@ -154,8 +155,7 @@ export const ChatPage: React.FC<ChatPa> = ({
         type: "SET_ACTIVE_ROOM",
         payload: {
           groupId: (chat as Group)?.groupId,
-          contactId: chat?.userId,
-          ifNotExists: false
+          contactId: chat?.userId
         }
       });
     },
@@ -357,10 +357,17 @@ export const ChatPage: React.FC<ChatPa> = ({
         conference={state.conference.data}
         onClose={onConferencePause}
       />
-      {state.activeRoom == null && isMobile && (
-        <IconButton aria-label="exit room" onClick={() => null}>
-          <ArrowForward />
-        </IconButton>
+      {state.chatOld != null && isMobile && (
+        <Button
+          aria-label="back to chat"
+          variant="contained"
+          color="secondary"
+          size="small"
+          endIcon={<ArrowForward />}
+          onClick={() => state.chatOld != null && onChangeChat(state.chatOld)}
+        >
+          {t("CHAT.CONFERENCE.BACK")}
+        </Button>
       )}
     </>
   );
