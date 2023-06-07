@@ -27,6 +27,7 @@ export declare const chatResources: {
                 START: string;
                 PAUSE: string;
                 FINISH: string;
+                BACK: string;
             };
             ADD_CONTACT: string;
             INPUT_MESSAGE: string;
@@ -61,6 +62,7 @@ export declare const chatResources: {
                 JOIN: string;
                 START: string;
                 FINISH: string;
+                BACK: string;
             };
             ADD_CONTACT: string;
             INPUT_MESSAGE: string;
@@ -95,6 +97,7 @@ export declare const chatResources: {
                 JOIN: string;
                 START: string;
                 FINISH: string;
+                BACK: string;
             };
             ADD_CONTACT: string;
             INPUT_MESSAGE: string;

@@ -1,4 +1,4 @@
-export interface ChatPa {  
+export interface ChatPa {
   activeGroupId?: number;
   activeChatUserId?: number;
 }
@@ -144,7 +144,7 @@ export interface PagingParams {
 // Постраничный ответ для групповых сообщений
 export interface PagingResponse {
   // messageArr: GroupMessage[]; - fix on messages
-  messages:GroupMessage[];
+  messages: GroupMessage[];
   userArr: User[];
 }
 
@@ -204,13 +204,11 @@ export interface AddPrivateMessages {
 export interface AddGroupMessages extends PagingResponse {
   pageSize: number;
   groupId: number;
-  
 }
 
 export interface SetActiveRoom {
   groupId?: number;
   contactId?: number;
-  ifNotExists: boolean;
 }
 
 export interface JoinGroup {

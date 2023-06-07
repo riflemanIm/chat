@@ -9,7 +9,9 @@ import {
   ListItemIcon,
   Menu,
   MenuItem,
-  IconButton
+  IconButton,
+  useMediaQuery,
+  Tooltip
 } from "@mui/material";
 import { Theme } from "@mui/material/styles";
 import { makeStyles, createStyles } from "@mui/styles";
@@ -32,6 +34,7 @@ import {
   Group,
   ContactGather
 } from "../types";
+//import CheckAudiVideoPerm from "./CheckAudiVideoPerm";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -145,7 +148,9 @@ const Room: React.FC<RoomProps> = (props: RoomProps) => {
   } = props;
   const classes = useStyles();
   const { t } = useTranslation();
-
+  const isMobile = useMediaQuery((theme: Theme) =>
+    theme.breakpoints.down("sm")
+  );
   const [scrollState, setScrollState] = React.useState(initialScrollState);
 
   const messages = chat?.messages;
@@ -238,19 +243,23 @@ const Room: React.FC<RoomProps> = (props: RoomProps) => {
       props.onMeesageDelete(chat, message);
   }, [menuState.message]);
 
-  //console.log("messages", messages)
+  //  console.log("chat", chat);
 
   return (
     <Card elevation={1} className={classes.root}>
       <Box display="flex" flexDirection="row">
-        {props.onExitRoom && chat && (
-          <IconButton
-            aria-label="exit room"
-            onClick={() => props.onExitRoom && props.onExitRoom(chat)}
-          >
-            <ArrowBackIcon />
-          </IconButton>
+        {chat && isMobile && (
+          <Tooltip title="Вернуться в конференцию">
+            <IconButton
+              aria-label="exit room"
+              onClick={() => props.onExitRoom && props.onExitRoom(chat)}
+            >
+              <ArrowBackIcon />
+            </IconButton>
+          </Tooltip>
         )}
+        {/* {!isMobile && <CheckAudiVideoPerm />} */}
+
         <RoomHeader
           apiUrl={apiUrl}
           user={user}

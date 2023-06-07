@@ -1,10 +1,10 @@
 import React__default, { createElement, Fragment, useCallback, useEffect, createContext, useContext, useState, useMemo } from 'react';
-import { Box, Typography, TextField, InputAdornment, IconButton, SvgIcon, Popover, Avatar, ListItem, Alert, Link, List, ListItemAvatar, ListItemText, Dialog, DialogTitle, CardHeader, Button, Card, CircularProgress, Divider, CardContent, Menu, MenuItem, ListItemIcon, Chip, Badge, Paper, useMediaQuery, Container, Grid, Snackbar } from '@mui/material';
+import { Box, Typography, TextField, InputAdornment, IconButton, SvgIcon, Popover, Avatar, ListItem, Alert, Link, List, ListItemAvatar, ListItemText, Dialog, DialogTitle, CardHeader, Button, useMediaQuery, Card, Tooltip, CircularProgress, Divider, CardContent, Menu, MenuItem, ListItemIcon, Chip, Badge, Paper, Snackbar, Container, Grid } from '@mui/material';
 import { makeStyles, createStyles, withStyles } from '@mui/styles';
 import FileCopyIcon from '@mui/icons-material/FileCopy';
 import DeleteIcon from '@mui/icons-material/Delete';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import { InsertEmoticon, Send, Done, DoneAll } from '@mui/icons-material';
+import { InsertEmoticon, Send, Done, DoneAll, ArrowForward } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 import moment from 'moment';
 import Viewer from 'react-viewer';
@@ -16,6 +16,9 @@ import StarIcon from '@mui/icons-material/Star';
 import List$1 from '@mui/material/List';
 import axios from 'axios';
 import io from 'socket.io-client';
+import SettingsSuggestIcon from '@mui/icons-material/SettingsSuggest';
+import SettingsVoiceIcon from '@mui/icons-material/SettingsVoice';
+import VideoSettingsIcon from '@mui/icons-material/VideoSettings';
 
 var MessageStatus;
 (function (MessageStatus) {
@@ -812,7 +815,7 @@ var Entry = function Entry(props) {
       startAdornment: /*#__PURE__*/React__default.createElement(InputAdornment, {
         position: "start"
       }, /*#__PURE__*/React__default.createElement("input", {
-        accept: ".pdf,.jpg,.jpeg,.bmp,.gif,.png,application/pdf,image/jpeg,image/bmp,image/gif,image/png",
+        accept: ".pdf,.jpg,.jpeg,.bmp,.gif,.png,.tiff,application/pdf,image/jpeg,image/bmp,image/gif,image/png,image/tiff",
         className: classes.inputUpload,
         id: "icon-button-file",
         type: "file",
@@ -1355,25 +1358,25 @@ var AddContact = function AddContact(props) {
 var useStyles$8 = /*#__PURE__*/makeStyles(function (theme) {
   return createStyles({
     popover: {
-      pointerEvents: 'none'
+      pointerEvents: "none"
     },
     paper: {
       padding: theme.spacing(1)
     },
     avatarGroup: {
-      backgroundColor: '#28B7C6',
-      color: '#fff'
+      backgroundColor: "#28B7C6",
+      color: "#fff"
     }
   });
 });
 var getGroupStatus = function getGroupStatus(group, t) {
   var _group$members;
-  var status = [((_group$members = group.members) == null ? void 0 : _group$members.length) + " " + t('CHAT.MEMBERS')];
+  var status = [((_group$members = group.members) == null ? void 0 : _group$members.length) + " " + t("CHAT.MEMBERS")];
   var onlineCount = (group.members || []).reduce(function (sum, contact) {
     return contact.online ? sum + 1 : sum;
   }, 0);
-  if (onlineCount) status.push(onlineCount + " " + t('CHAT.STATUS.ONLINE'));
-  return status.join(', ');
+  if (onlineCount) status.push(onlineCount + " " + t("CHAT.STATUS.ONLINE"));
+  return status.join(", ");
 };
 var RoomHeader = function RoomHeader(_ref) {
   var apiUrl = _ref.apiUrl,
@@ -1425,10 +1428,10 @@ var RoomHeader = function RoomHeader(_ref) {
       avatar: /*#__PURE__*/React__default.createElement(Avatar, {
         alt: group.name,
         className: classes.avatarGroup
-      }, /*#__PURE__*/React__default.createElement(GroupIcon, null), ' '),
+      }, /*#__PURE__*/React__default.createElement(GroupIcon, null), " "),
       title: group.name,
       subheader: /*#__PURE__*/React__default.createElement(React__default.Fragment, null, /*#__PURE__*/React__default.createElement("span", {
-        "aria-owns": anchorEl ? 'mouse-over-popover' : undefined,
+        "aria-owns": anchorEl ? "mouse-over-popover" : undefined,
         "aria-haspopup": "true",
         onMouseEnter: handlePopoverOpen,
         onMouseLeave: handlePopoverClose
@@ -1441,12 +1444,12 @@ var RoomHeader = function RoomHeader(_ref) {
         open: !!anchorEl,
         anchorEl: anchorEl,
         anchorOrigin: {
-          vertical: 'bottom',
-          horizontal: 'left'
+          vertical: "bottom",
+          horizontal: "left"
         },
         transformOrigin: {
-          vertical: 'top',
-          horizontal: 'left'
+          vertical: "top",
+          horizontal: "left"
         },
         onClose: handlePopoverClose,
         disableRestoreFocus: true
@@ -1477,14 +1480,14 @@ var RoomHeader = function RoomHeader(_ref) {
   var contact = chat;
   var isTyping = !!(typing != null && typing.contactId) && (typing == null ? void 0 : typing.userId) === contact.userId;
   /*
-    console.log(
-      'conference',
-      conference,
-      'user',
-      user,
-      'contact',
-      contact,
-    );
+  console.log(
+    'conference',
+    conference,
+    'user',
+    user,
+    'contact',
+    contact,
+  );
   */
   return /*#__PURE__*/React__default.createElement(CardHeader, {
     avatar: /*#__PURE__*/React__default.createElement(Avatar, {
@@ -1508,7 +1511,7 @@ var RoomHeader = function RoomHeader(_ref) {
       onClick: function onClick() {
         return onConferencePause(conference);
       }
-    }, t('CHAT.CONFERENCE.PAUSE')), conference && !isEmpty(conference) && onVideoEnd != null && user.role != null && [3, 4].includes(user.role) && /*#__PURE__*/React__default.createElement(Button, {
+    }, t("CHAT.CONFERENCE.PAUSE")), conference && !isEmpty(conference) && onVideoEnd != null && user.role != null && [3, 4].includes(user.role) && /*#__PURE__*/React__default.createElement(Button, {
       "aria-label": "cancel call",
       variant: "contained",
       color: "primary",
@@ -1522,7 +1525,7 @@ var RoomHeader = function RoomHeader(_ref) {
       style: {
         marginLeft: 8
       }
-    }, t('CHAT.CONFERENCE.FINISH')), isEmpty(conference) && onVideoCall != null && user.role && [3, 4].includes(user.role) && /*#__PURE__*/React__default.createElement(Button, {
+    }, t("CHAT.CONFERENCE.FINISH")), isEmpty(conference) && onVideoCall != null && user.role && [3, 4].includes(user.role) && /*#__PURE__*/React__default.createElement(Button, {
       "aria-label": "video call",
       variant: "contained",
       color: "primary",
@@ -1531,10 +1534,11 @@ var RoomHeader = function RoomHeader(_ref) {
       onClick: function onClick() {
         return onVideoCall(contact);
       }
-    }, t('CHAT.CONFERENCE.START')))
+    }, t("CHAT.CONFERENCE.START")))
   });
 };
 
+//import CheckAudiVideoPerm from "./CheckAudiVideoPerm";
 var useStyles$9 = /*#__PURE__*/makeStyles(function (theme) {
   return createStyles({
     root: {
@@ -1619,6 +1623,9 @@ var Room = function Room(props) {
   var classes = useStyles$9();
   var _useTranslation = useTranslation(),
     t = _useTranslation.t;
+  var isMobile = useMediaQuery(function (theme) {
+    return theme.breakpoints.down("sm");
+  });
   var _React$useState = React__default.useState(initialScrollState),
     scrollState = _React$useState[0],
     setScrollState = _React$useState[1];
@@ -1705,19 +1712,21 @@ var Room = function Room(props) {
     setMenuState(initialMenuState);
     if (props.onMeesageDelete && chat && message) props.onMeesageDelete(chat, message);
   }, [menuState.message]);
-  //console.log("messages", messages)
+  //  console.log("chat", chat);
   return /*#__PURE__*/React__default.createElement(Card, {
     elevation: 1,
     className: classes.root
   }, /*#__PURE__*/React__default.createElement(Box, {
     display: "flex",
     flexDirection: "row"
-  }, props.onExitRoom && chat && /*#__PURE__*/React__default.createElement(IconButton, {
+  }, chat && isMobile && /*#__PURE__*/React__default.createElement(Tooltip, {
+    title: "\u0412\u0435\u0440\u043D\u0443\u0442\u044C\u0441\u044F \u0432 \u043A\u043E\u043D\u0444\u0435\u0440\u0435\u043D\u0446\u0438\u044E"
+  }, /*#__PURE__*/React__default.createElement(IconButton, {
     "aria-label": "exit room",
     onClick: function onClick() {
       return props.onExitRoom && props.onExitRoom(chat);
     }
-  }, /*#__PURE__*/React__default.createElement(ArrowBackIcon, null)), /*#__PURE__*/React__default.createElement(RoomHeader, {
+  }, /*#__PURE__*/React__default.createElement(ArrowBackIcon, null))), /*#__PURE__*/React__default.createElement(RoomHeader, {
     apiUrl: apiUrl,
     user: user,
     chat: chat,
@@ -2051,7 +2060,7 @@ var useStyles$c = /*#__PURE__*/makeStyles(function () {
     root: {
       width: "100%",
       height: "100%",
-      borderRadius: 8
+      borderRadius: 4
     }
   };
 });
@@ -2069,7 +2078,9 @@ var Conference = function Conference(_ref) {
         var type = data.type;
         if (["notSupported", "connectionFail",
         // "loginFail",
-        "callFail", "hangUp", "remoteHangUp"].includes(type)) onClose(conference);
+        "callFail", "hangUp", "remoteHangUp"
+        // "onParticipantLeft"
+        ].includes(type)) onClose(conference);
       }
     };
     window.addEventListener("message", listener);
@@ -2184,16 +2195,17 @@ var ConferenceCall = function ConferenceCall(_ref) {
 
 var emptyUser = {
   userId: 0,
-  username: '',
-  password: '',
-  avatar: '',
-  langCode: ''
+  username: "",
+  password: "",
+  avatar: "",
+  langCode: ""
 };
 var emptyChatState = {
-  tokenKey: '',
+  tokenKey: "",
   user: emptyUser,
-  token: '',
+  token: "",
   activeRoom: null,
+  chatOld: null,
   groupGather: {},
   userGather: {},
   contactGather: {},
@@ -2206,8 +2218,10 @@ var emptyChatState = {
   },
   typing: null,
   loading: false,
-  error: undefined
+  error: undefined,
+  success: undefined // НЕ ошибка
 };
+
 var getFreshActiveRoom = function getFreshActiveRoom(state) {
   if (state.activeRoom) return state.groupGather[state.activeRoom.groupId] || state.contactGather[state.activeRoom.userId];
   return null;
@@ -2497,8 +2511,9 @@ var addGroupMessages = function addGroupMessages(state, data) {
   return newState;
 };
 var setActiveRoom = function setActiveRoom(state, data) {
-  if (state.activeRoom && data.ifNotExists) return state;
+  //if (state.activeRoom && data.ifNotExists) return state;
   return _extends({}, state, {
+    chatOld: state.activeRoom != null ? _extends({}, state.activeRoom) : null,
     activeRoom: data.groupId ? state.groupGather[data.groupId] : data.contactId ? state.contactGather[data.contactId] : null
   });
 };
@@ -2511,7 +2526,7 @@ var setToken = function setToken(state, token) {
 var clearUser = function clearUser(state) {
   localStorage.removeItem(state.tokenKey);
   return _extends({}, state, {
-    token: '',
+    token: "",
     user: emptyUser
   });
 };
@@ -2549,69 +2564,69 @@ var stopConference = function stopConference(state, conference) {
 function chatReducer(state, action) {
   var _extends2, _extends3, _extends4;
   switch (action.type) {
-    case 'SET_GROUP_GATHER':
+    case "SET_GROUP_GATHER":
       return _extends({}, state, {
         groupGather: _extends({}, state.groupGather, (_extends2 = {}, _extends2[action.payload.groupId] = action.payload, _extends2))
       });
-    case 'SET_CONTACT_GATHER':
+    case "SET_CONTACT_GATHER":
       return _extends({}, state, {
         contactGather: _extends({}, state.contactGather, (_extends3 = {}, _extends3[action.payload.userId] = action.payload, _extends3))
       });
-    case 'DEL_GROUP':
+    case "DEL_GROUP":
       return delGroup(state, action.payload);
-    case 'DEL_GROUP_MEMBER':
+    case "DEL_GROUP_MEMBER":
       return delGroupMember(state, action.payload);
-    case 'DEL_CONTACT':
+    case "DEL_CONTACT":
       return delContact(state, action.payload.userId);
-    case 'SET_USER_GATHER':
+    case "SET_USER_GATHER":
       return _extends({}, state, {
         userGather: _extends({}, state.userGather, (_extends4 = {}, _extends4[action.payload.userId] = action.payload, _extends4))
       });
-    case 'UPDATE_ACTIVE_ROOM':
+    case "UPDATE_ACTIVE_ROOM":
       return _extends({}, state, {
         activeRoom: getActiveRoom(state)
       });
-    case 'SET_ACTIVE_ROOM':
+    case "SET_ACTIVE_ROOM":
       return setActiveRoom(state, action.payload);
-    case 'USER_ONLINE':
+    case "USER_ONLINE":
       return setUserOnline(state, action.payload, 1);
-    case 'USER_OFFLINE':
+    case "USER_OFFLINE":
       return setUserOnline(state, action.payload, 0);
-    case 'ADD_GROUP_MESSAGE':
+    case "ADD_GROUP_MESSAGE":
       return addGroupMessage(state, action.payload);
-    case 'ADD_PRIVATE_MESSAGE':
+    case "ADD_PRIVATE_MESSAGE":
       return addPrivateMessage(state, action.payload);
-    case 'ADD_GROUP_UNREAD_GATHER':
+    case "ADD_GROUP_UNREAD_GATHER":
       return groupUnreadGather(state, action.payload, function (x) {
         return (x || 0) + 1;
       });
-    case 'ADD_CONTACT_UNREAD_GATHER':
+    case "ADD_CONTACT_UNREAD_GATHER":
       return contactUnreadGather(state, action.payload, function (x) {
         return (x || 0) + 1;
       });
-    case 'SET_TYPING':
+    case "SET_TYPING":
       return _extends({}, state, {
         typing: action.payload
       });
-    case 'LOSE_GROUP_UNREAD_GATHER':
+    case "LOSE_GROUP_UNREAD_GATHER":
       return groupUnreadGather(state, action.payload, function () {
         return 0;
       });
-    case 'LOSE_CONTACT_UNREAD_GATHER':
+    case "LOSE_CONTACT_UNREAD_GATHER":
       return contactUnreadGather(state, action.payload, function () {
         return 0;
       });
-    case 'REVOKE_MESSAGE':
+    case "REVOKE_MESSAGE":
       return revokeMessage(state, action.payload);
-    case 'UPDATE_GROUP_INFO':
+    case "UPDATE_GROUP_INFO":
       return updateGroupInfo(state, action.payload);
-    case 'UPDATE_USER_INFO':
+    case "UPDATE_USER_INFO":
       return updateUserInfo(state, action.payload);
-    case 'ADD_GROUP_MEMBER':
+    case "ADD_GROUP_MEMBER":
       return addGroupMember(state, action.payload);
-    case 'SET_CONFERENCE':
+    case "SET_CONFERENCE":
       return setConference(state, action.payload);
-    case 'JOIN_CONFERENCE':
+    case "JOIN_CONFERENCE":
       return _extends({}, state, {
         conference: {
           data: _extends({}, action.payload),
@@ -2619,34 +2634,40 @@ function chatReducer(state, action) {
           ringPlayed: false
         }
       });
-    case 'PAUSE_CONFERENCE':
+    case "PAUSE_CONFERENCE":
       return pauseConference(state, action.payload);
-    case 'STOP_CONFERENCE':
+    case "STOP_CONFERENCE":
       return stopConference(state, action.payload);
-    case 'MARK_PRIVATE_MESSAGES_READ':
+    case "MARK_PRIVATE_MESSAGES_READ":
       return markPrivateMessagesRead(state, action.payload);
-    case 'ADD_PRIVATE_MESSAGES':
+    case "ADD_PRIVATE_MESSAGES":
       return addPrivateMessages(state, action.payload);
-    case 'ADD_GROUP_MESSAGES':
+    case "ADD_GROUP_MESSAGES":
       return addGroupMessages(state, action.payload);
-    case 'SET_LOADING':
+    case "SET_LOADING":
       return _extends({}, state, {
         loading: action.payload,
-        error: ''
+        error: ""
       });
-    case 'SET_ERROR':
+    case "SET_ERROR":
       return _extends({}, state, {
-        error: action.payload
+        error: action.payload,
+        success: undefined
       });
-    case 'SET_TOKEN':
+    case "SET_SUCCES":
+      return _extends({}, state, {
+        success: action.payload,
+        error: undefined
+      });
+    case "SET_TOKEN":
       return setToken(state, action.payload);
-    case 'SET_USER':
+    case "SET_USER":
       return _extends({}, state, {
         user: action.payload
       });
-    case 'CLEAR_USER':
+    case "CLEAR_USER":
       return clearUser(state);
-    case 'CLEAR_CHAT_DATA':
+    case "CLEAR_CHAT_DATA":
       return _extends({}, state, {
         activeRoom: null,
         groupGather: {},
@@ -2659,7 +2680,7 @@ function chatReducer(state, action) {
         },
         typing: null
       });
-    case 'SET_OPERATORS':
+    case "SET_OPERATORS":
       return _extends({}, state, {
         operators: action.payload
       });
@@ -3560,6 +3581,79 @@ var SocketProvider = function SocketProvider(_ref) {
   }, children);
 };
 
+var CheckAudiVideoPerm = function CheckAudiVideoPerm(_ref) {
+  var audio = _ref.audio,
+    video = _ref.video;
+  // const { t } = useTranslation();
+  //const [havePermissions, setHavePermissions] = useState(false);
+  var _React$useContext = React__default.useContext(ChatContext),
+    dispatch = _React$useContext.dispatch;
+  var checkPermissions = function checkPermissions() {
+    var permissions = navigator.mediaDevices.getUserMedia({
+      audio: audio,
+      video: video
+    });
+    permissions.then(function (data) {
+      console.log("permissions", data);
+      dispatch({
+        type: "SET_SUCCES",
+        payload: "Все ок"
+      });
+    }).catch(function (err) {
+      dispatch({
+        type: "SET_ERROR",
+        payload: err.name + " : " + err.message
+      });
+      //setHavePermissions(false);
+      console.log("err", err);
+    });
+  };
+  var title = audio && video ? "Проверить доступ к микрофону и камере" : audio ? "Проверить доступ к микрофону " : "Проверить доступ к камере";
+  return /*#__PURE__*/React__default.createElement(Tooltip, {
+    title: title
+  }, /*#__PURE__*/React__default.createElement(IconButton, {
+    "aria-label": "check",
+    onClick: function onClick() {
+      return checkPermissions();
+    },
+    size: "large"
+  }, audio && video ? /*#__PURE__*/React__default.createElement(SettingsSuggestIcon, null) : audio ? /*#__PURE__*/React__default.createElement(SettingsVoiceIcon, null) : /*#__PURE__*/React__default.createElement(VideoSettingsIcon, null)));
+};
+
+var ChatAlert = function ChatAlert() {
+  // const { t } = useTranslation();
+  //const [havePermissions, setHavePermissions] = useState(false);
+  var _React$useContext = React__default.useContext(ChatContext),
+    _React$useContext$sta = _React$useContext.state,
+    error = _React$useContext$sta.error,
+    success = _React$useContext$sta.success,
+    dispatch = _React$useContext.dispatch;
+  var handleClose = function handleClose() {
+    dispatch({
+      type: "SET_ERROR",
+      payload: undefined
+    });
+    dispatch({
+      type: "SET_SUCCES",
+      payload: undefined
+    });
+  };
+  console.log("success", success);
+  console.log(error ? "error" : "success");
+  return /*#__PURE__*/React__default.createElement(Snackbar, {
+    anchorOrigin: {
+      vertical: "top",
+      horizontal: "center"
+    },
+    open: !!error || !!success,
+    autoHideDuration: 6000,
+    onClose: handleClose
+  }, /*#__PURE__*/React__default.createElement(Alert, {
+    onClose: handleClose,
+    severity: error ? "error" : "success"
+  }, error ? error : success));
+};
+
 // Отключили проигрыш звука
 // const getRingAudio = (): HTMLAudioElement => {
 //   const audio = new Audio(
@@ -3575,9 +3669,11 @@ var useStyles$e = /*#__PURE__*/makeStyles(function (theme) {
       minWidth: 640,
       minHeight: 470,
       height: "100%",
+      width: "calc(100vw - " + theme.spacing(8) + ")",
       padding: 0
     }, _root[theme.breakpoints.down("sm")] = {
       height: "calc(100vh - " + theme.spacing(8) + ")",
+      width: "auto",
       minWidth: "auto",
       minHeight: "auto",
       overflow: "hidden"
@@ -3592,17 +3688,26 @@ var useStyles$e = /*#__PURE__*/makeStyles(function (theme) {
     innerGrid: {
       height: "100%",
       width: "100%"
+    },
+    conAbsOnConf: {
+      position: "absolute",
+      top: 42,
+      left: 25,
+      zIndex: 1000,
+      margin: theme.spacing(3)
     }
   };
 });
 var ChatPage = function ChatPage(_ref) {
-  var _state$conference$dat, _state$conference$dat2, _state$conference$dat3, _state$activeRoom, _state$activeRoom2;
+  var _state$conference$dat, _state$conference$dat2, _state$conference$dat3, _state$activeRoom, _state$activeRoom2, _state$conference$dat5, _state$conference$dat6;
   var activeGroupId = _ref.activeGroupId,
     activeChatUserId = _ref.activeChatUserId;
   var classes = useStyles$e();
   var isMobile = useMediaQuery(function (theme) {
     return theme.breakpoints.down("sm");
   });
+  var _useTranslation = useTranslation(),
+    t = _useTranslation.t;
   var _React$useContext = useContext(ChatContext),
     state = _React$useContext.state,
     dispatch = _React$useContext.dispatch;
@@ -3618,9 +3723,7 @@ var ChatPage = function ChatPage(_ref) {
   var onExitActiveRoom = useCallback(function () {
     dispatch({
       type: "SET_ACTIVE_ROOM",
-      payload: {
-        ifNotExists: false
-      }
+      payload: {}
     });
   }, [dispatch]);
   var onNeedMoreMessages = useCallback( /*#__PURE__*/function () {
@@ -3654,7 +3757,7 @@ var ChatPage = function ChatPage(_ref) {
     socket == null ? void 0 : socket.emit("revokeMessage", {
       groupId: chat.groupId,
       contactId: chat.userId,
-      _id: message._id // Идентификатор удаленного сообщения
+      _id: message._id
     });
   }, [socket == null ? void 0 : socket.id]);
   var onTyping = useCallback(function (chat) {
@@ -3691,8 +3794,7 @@ var ChatPage = function ChatPage(_ref) {
       type: "SET_ACTIVE_ROOM",
       payload: {
         groupId: chat == null ? void 0 : chat.groupId,
-        contactId: chat == null ? void 0 : chat.userId,
-        ifNotExists: false
+        contactId: chat == null ? void 0 : chat.userId
       }
     });
   }, [socket == null ? void 0 : socket.id, dispatch]);
@@ -3747,11 +3849,6 @@ var ChatPage = function ChatPage(_ref) {
       groupId: group.groupId
     });
   }, [socket == null ? void 0 : socket.id]);
-  var handleError = useCallback(function () {
-    dispatch({
-      type: "SET_ERROR"
-    });
-  }, [dispatch]);
   useEffect(function () {
     if (activeChatUserId != null && !isEmpty(state.contactGather)) {
       var Chat = Object.values(state.contactGather).find(function (item) {
@@ -3871,7 +3968,31 @@ var ChatPage = function ChatPage(_ref) {
   var depsContats = (_state$conference$dat = state.conference.data) != null && _state$conference$dat.id ? [state.conference.joined, (_state$conference$dat2 = state.conference.data) == null ? void 0 : _state$conference$dat2.id, (_state$conference$dat3 = state.conference.data) == null ? void 0 : _state$conference$dat3.contactId, (_state$activeRoom = state.activeRoom) == null ? void 0 : _state$activeRoom.groupId, (_state$activeRoom2 = state.activeRoom) == null ? void 0 : _state$activeRoom2.userId] : [state.activeRoom, allMessCount(state.groupGather), allMessCount(state.contactGather)];
   var Contacts = useMemo(function () {
     var _state$conference$dat4;
-    return (_state$conference$dat4 = state.conference.data) != null && _state$conference$dat4.id ? state.conference.joined ? /*#__PURE__*/createElement(GetConference, null) : /*#__PURE__*/createElement(GetConferenceCall, null) : /*#__PURE__*/createElement(GetRoomList, null);
+    return ((_state$conference$dat4 = state.conference.data) == null ? void 0 : _state$conference$dat4.id) != null ? /*#__PURE__*/createElement(Fragment, null, state.conference.joined ? /*#__PURE__*/createElement(GetConference, null) : /*#__PURE__*/createElement(GetConferenceCall, null), /*#__PURE__*/createElement(Box, {
+      className: classes.conAbsOnConf
+    }, /*#__PURE__*/createElement(Paper, {
+      style: {
+        borderRadius: 8
+      }
+    }, /*#__PURE__*/createElement(Box, {
+      display: "flex",
+      flexDirection: "row",
+      my: 3
+    }, (isEmpty(state.activeRoom) && isMobile || !isEmpty(state.activeRoom) && !isMobile) && /*#__PURE__*/createElement(Fragment, null, /*#__PURE__*/createElement(CheckAudiVideoPerm, {
+      audio: true,
+      video: false
+    }), /*#__PURE__*/createElement(CheckAudiVideoPerm, {
+      audio: false,
+      video: true
+    })), isEmpty(state.activeRoom) && state.chatOld != null && isMobile && /*#__PURE__*/createElement(Tooltip, {
+      title: t("CHAT.CONFERENCE.BACK")
+    }, /*#__PURE__*/createElement(IconButton, {
+      "aria-label": "check",
+      onClick: function onClick() {
+        return state.chatOld != null && onChangeChat(state.chatOld);
+      },
+      size: "large"
+    }, /*#__PURE__*/createElement(ArrowForward, null))))))) : /*#__PURE__*/createElement(GetRoomList, null);
   }, depsContats);
   console.log("chat state", state);
   return /*#__PURE__*/createElement(Container, {
@@ -3885,24 +4006,13 @@ var ChatPage = function ChatPage(_ref) {
     className: classes.innerGrid
   }, /*#__PURE__*/createElement(Grid, {
     item: true,
-    sm: 4,
+    sm: ((_state$conference$dat5 = state.conference.data) == null ? void 0 : _state$conference$dat5.id) != null ? 6 : 4,
     className: classes.innerGrid
   }, Contacts), /*#__PURE__*/createElement(Grid, {
     item: true,
-    sm: 8,
+    sm: ((_state$conference$dat6 = state.conference.data) == null ? void 0 : _state$conference$dat6.id) != null ? 6 : 8,
     className: classes.innerGrid
-  }, renderRoom))), /*#__PURE__*/createElement(Snackbar, {
-    anchorOrigin: {
-      vertical: "top",
-      horizontal: "center"
-    },
-    open: !!state.error,
-    autoHideDuration: 6000,
-    onClose: handleError
-  }, /*#__PURE__*/createElement(Alert, {
-    onClose: handleError,
-    severity: "error"
-  }, state.error)));
+  }, renderRoom))), /*#__PURE__*/createElement(ChatAlert, null));
 };
 
 var CHAT = {
@@ -3930,7 +4040,8 @@ var CHAT = {
 	CONFERENCE: {
 		JOIN: "Join",
 		START: "Start",
-		FINISH: "Finish"
+		FINISH: "Finish",
+		BACK: "Back to chat"
 	},
 	ADD_CONTACT: "Add contact",
 	INPUT_MESSAGE: "Please write a message...",
@@ -3966,7 +4077,8 @@ var CHAT$1 = {
 	CONFERENCE: {
 		JOIN: "Join",
 		START: "Start",
-		FINISH: "Finish"
+		FINISH: "Finish",
+		BACK: "Back to chat"
 	},
 	ADD_CONTACT: "Add contact",
 	INPUT_MESSAGE: "Please write a message...",
@@ -4003,7 +4115,8 @@ var CHAT$2 = {
 		JOIN: "Присоединиться",
 		START: "Начать",
 		PAUSE: "Остановить",
-		FINISH: "Завершить"
+		FINISH: "Завершить",
+		BACK: "Вернуться в чат"
 	},
 	ADD_CONTACT: "Добавить контакт",
 	INPUT_MESSAGE: "Напишите сообщение...",
