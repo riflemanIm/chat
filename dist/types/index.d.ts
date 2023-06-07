@@ -159,7 +159,6 @@ export interface AddGroupMessages extends PagingResponse {
 export interface SetActiveRoom {
     groupId?: number;
     contactId?: number;
-    ifNotExists: boolean;
 }
 export interface JoinGroup {
     group: Group;
