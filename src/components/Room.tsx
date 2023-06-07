@@ -34,6 +34,7 @@ import {
   Group,
   ContactGather
 } from "../types";
+//import CheckAudiVideoPerm from "./CheckAudiVideoPerm";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -257,6 +258,8 @@ const Room: React.FC<RoomProps> = (props: RoomProps) => {
             </IconButton>
           </Tooltip>
         )}
+        {/* {!isMobile && <CheckAudiVideoPerm />} */}
+
         <RoomHeader
           apiUrl={apiUrl}
           user={user}

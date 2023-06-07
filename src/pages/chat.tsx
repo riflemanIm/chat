@@ -1,15 +1,7 @@
 import * as React from "react";
-import {
-  Container,
-  Box,
-  Grid,
-  Snackbar,
-  useMediaQuery,
-  Button
-} from "@mui/material";
+import { Container, Box, Grid, useMediaQuery, Button } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { Theme } from "@mui/material/styles";
-import { Alert } from "@mui/material";
 import { Room, RoomList, Conference } from "../components";
 import { ChatContext } from "../context/ChatContext";
 import { RestContext } from "../context/RestContext";
@@ -27,6 +19,8 @@ import { getParam, isEmpty, allMessCount } from "../utils/common";
 import ConferenceCall from "../components/ConferenceCall";
 import { ArrowForward } from "@mui/icons-material";
 import { useTranslation } from "react-i18next";
+import CheckAudiVideoPerm from "../components/CheckAudiVideoPerm";
+import ChatAlert from "../components/Alert";
 
 // Отключили проигрыш звука
 // const getRingAudio = (): HTMLAudioElement => {
@@ -62,6 +56,12 @@ const useStyles = makeStyles((theme: Theme) => ({
   innerGrid: {
     height: "100%",
     width: "100%"
+  },
+  conAbsOnConf: {
+    position: "absolute",
+    top: 60,
+    left: 12,
+    zIndex: 1000
   }
 }));
 
@@ -242,10 +242,6 @@ export const ChatPage: React.FC<ChatPa> = ({
     [socket?.id]
   );
 
-  const handleError = React.useCallback(() => {
-    dispatch({ type: "SET_ERROR" });
-  }, [dispatch]);
-
   React.useEffect(() => {
     if (activeChatUserId != null && !isEmpty(state.contactGather)) {
       const Chat = Object.values(state.contactGather).find(
@@ -353,26 +349,10 @@ export const ChatPage: React.FC<ChatPa> = ({
     );
 
   const GetConference = () => (
-    <>
-      {state.chatOld != null && isMobile && (
-        <Box display="flex" flexDirection="row">
-          <Button
-            aria-label="back to chat"
-            variant="contained"
-            color="secondary"
-            size="small"
-            endIcon={<ArrowForward />}
-            onClick={() => state.chatOld != null && onChangeChat(state.chatOld)}
-          >
-            {t("CHAT.CONFERENCE.BACK")}
-          </Button>
-        </Box>
-      )}
-      <Conference
-        conference={state.conference.data}
-        onClose={onConferencePause}
-      />
-    </>
+    <Conference
+      conference={state.conference.data}
+      onClose={onConferencePause}
+    />
   );
 
   // const getMessCount = (data: GroupGather) => {
@@ -397,14 +377,36 @@ export const ChatPage: React.FC<ChatPa> = ({
   const Contacts = React.useMemo(
     () =>
       state.conference.data?.id != null ? (
-        state.conference.joined ? (
-          <GetConference />
-        ) : (
-          <GetConferenceCall />
-        )
+        <>
+          {state.conference.joined ? <GetConference /> : <GetConferenceCall />}
+          <Box
+            display="flex"
+            flexDirection="row"
+            className={classes.conAbsOnConf}
+          >
+            {<CheckAudiVideoPerm audio={true} video={false} />}
+            {<CheckAudiVideoPerm audio={false} video={true} />}
+
+            {state.chatOld != null && isMobile && (
+              <Button
+                aria-label="back to chat"
+                variant="contained"
+                color="secondary"
+                size="small"
+                endIcon={<ArrowForward />}
+                onClick={() =>
+                  state.chatOld != null && onChangeChat(state.chatOld)
+                }
+              >
+                {t("CHAT.CONFERENCE.BACK")}
+              </Button>
+            )}
+          </Box>
+        </>
       ) : (
         <GetRoomList />
       ),
+
     depsContats
   );
 
@@ -438,16 +440,7 @@ export const ChatPage: React.FC<ChatPa> = ({
           </Grid>
         )}
       </Box>
-      <Snackbar
-        anchorOrigin={{ vertical: "top", horizontal: "center" }}
-        open={!!state.error}
-        autoHideDuration={6000}
-        onClose={handleError}
-      >
-        <Alert onClose={handleError} severity="error">
-          {state.error}
-        </Alert>
-      </Snackbar>
+      <ChatAlert />
     </Container>
   );
 };

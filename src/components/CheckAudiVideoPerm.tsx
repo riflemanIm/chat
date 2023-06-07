@@ -1,51 +1,66 @@
 import React from "react";
-import { Button, Paper } from "@mui/material";
-import { useTranslation } from "react-i18next";
-import { makeStyles } from "@mui/styles";
+import { IconButton, Tooltip } from "@mui/material";
+import SettingsSuggestIcon from "@mui/icons-material/SettingsSuggest";
+import SettingsVoiceIcon from "@mui/icons-material/SettingsVoice";
+import VideoSettingsIcon from "@mui/icons-material/VideoSettings";
+import { ChatContext } from "../context/ChatContext";
+type CheckAudiVideoPermProps = {
+  audio: boolean;
+  video: boolean;
+};
 
-const useStyles = makeStyles(() => ({
-  root: {
-    width: "100%",
-    height: "100%",
-    borderRadius: 8,
-    display: "flex",
-    flexDirection: "column",
-    justifyContent: "center",
-    alignItems: "center",
-  },
+const CheckAudiVideoPerm: React.FC<CheckAudiVideoPermProps> = ({
+  audio,
+  video
+}: CheckAudiVideoPermProps) => {
+  // const { t } = useTranslation();
+  //const [havePermissions, setHavePermissions] = useState(false);
+  const { dispatch } = React.useContext(ChatContext);
+  const checkPermissions = () => {
+    const permissions = navigator.mediaDevices.getUserMedia({
+      audio,
+      video
+    });
+    permissions
+      .then(data => {
+        console.log("permissions", data);
+        dispatch({
+          type: "SET_SUCCES",
+          payload: "Все ок"
+        });
+      })
+      .catch(err => {
+        dispatch({
+          type: "SET_ERROR",
+          payload: `${err.name} : ${err.message}`
+        });
+        //setHavePermissions(false);
+        console.log("err", err);
+      });
+  };
 
-  avatar: {
-    width: "80%",
-    height: "80%",
-  },
-  footer: {
-    width: "100%",
-    alignSelf: "flex-end",
-    paddingTop: 64,
-    display: "flex",
-    justifyContent: "center",
-  },
-}));
-
-// type CheckAudiVideoPermProps = {
-//   conference: ConferenceData;
-//   contact: Contact;
-//   apiUrl: string;
-//   onAccept: (conference: ConferenceData) => void;
-// };
-
-const CheckAudiVideoPerm: React.FC = () => {
-  const classes = useStyles();
-  const { t } = useTranslation();
-
+  const title =
+    audio && video
+      ? "Проверить доступ к микрофону и камере"
+      : audio
+      ? "Проверить доступ к микрофону "
+      : "Проверить доступ к камере";
   return (
-    <Paper className={classes.root}>
-      <div className={classes.footer}>
-        <Button variant="contained" color="primary" onClick={() => null}>
-          {t("CHAT.CONFERENCE.CHECK_MICPREM")}
-        </Button>
-      </div>
-    </Paper>
+    <Tooltip title={title}>
+      <IconButton
+        aria-label="check"
+        onClick={() => checkPermissions()}
+        size="large"
+      >
+        {audio && video ? (
+          <SettingsSuggestIcon />
+        ) : audio ? (
+          <SettingsVoiceIcon />
+        ) : (
+          <VideoSettingsIcon />
+        )}
+      </IconButton>
+    </Tooltip>
   );
 };
 

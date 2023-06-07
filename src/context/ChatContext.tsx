@@ -40,6 +40,7 @@ export interface ChatState {
   typing: SetTyping | null;
   loading: boolean;
   error?: string;
+  success?: string;
 }
 
 const emptyUser: User = {
@@ -69,7 +70,8 @@ const emptyChatState: ChatState = {
   },
   typing: null, // кто печатает текст
   loading: false, // загрузка данных
-  error: undefined // ошибка
+  error: undefined, // ошибка
+  success: undefined // НЕ ошибка
 };
 
 type ChatActionType =
@@ -107,6 +109,7 @@ type ChatActionType =
   | "MARK_PRIVATE_MESSAGES_READ"
   | "SET_LOADING"
   | "SET_ERROR"
+  | "SET_SUCCES"
   | "SET_USER"
   | "SET_TOKEN"
   | "CLEAR_USER"
@@ -686,7 +689,14 @@ function chatReducer(state: ChatState, action: Action): ChatState {
     case "SET_ERROR":
       return {
         ...state,
-        error: action.payload as string
+        error: action.payload as string,
+        success: undefined
+      };
+    case "SET_SUCCES":
+      return {
+        ...state,
+        success: action.payload as string,
+        error: undefined
       };
     case "SET_TOKEN":
       return setToken(state, action.payload as string);
