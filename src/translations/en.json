@@ -25,7 +25,14 @@
       "JOIN": "Join",
       "START": "Start",
       "FINISH": "Finish",
-      "BACK": "Back to chat"
+      "BACK": "Back to chat",
+      "NotFoundError": "Requested device not found",
+      "NotAllowedError": "Permission denied. To allow access to the device, go to the browser settings",
+      "ErrorAny": "The device is not configured",
+      "ALLOK": "All OK",
+      "CheckCamMic": "Check access to microphone and camera",
+      "CheckMic": "Check access to microphone",
+      "CheckCam": "Check access to camera"
     },
     "ADD_CONTACT": "Add contact",
     "INPUT_MESSAGE": "Please write a message...",

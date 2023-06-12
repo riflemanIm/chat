@@ -25,7 +25,14 @@
       "JOIN": "Join",
       "START": "Start",
       "FINISH": "Finish",
-      "BACK": "Back to chat"
+      "BACK": "Back to chat",
+      "NotFoundError": "Périphérique demandé introuvable",
+      "NotAllowedError": "Autorisation refusée. Pour autoriser l'accès à l'appareil, accédez aux paramètres du navigateur",
+      "ErrorAny": "L'appareil n'est pas configuré",
+      "ALLOK": "Tout va bien",
+      "CheckCamMic": "Vérifier l'accès au microphone et à la caméra",
+      "CheckMic": "Vérifier l'accès au microphone",
+      "CheckCam": "Vérifier l'accès à la caméra"
     },
     "ADD_CONTACT": "Add contact",
     "INPUT_MESSAGE": "Please write a message...",

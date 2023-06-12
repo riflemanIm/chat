@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback } from 'react';
 import {
   Box,
   Card,
@@ -11,18 +11,18 @@ import {
   MenuItem,
   IconButton,
   useMediaQuery,
-  Tooltip
-} from "@mui/material";
-import { Theme } from "@mui/material/styles";
-import { makeStyles, createStyles } from "@mui/styles";
-import FileCopyIcon from "@mui/icons-material/FileCopy";
-import DeleteIcon from "@mui/icons-material/Delete";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import Entry from "./Entry";
-import Message from "./Message";
-import RoomHeader from "./RoomHeader";
-import { useTranslation } from "react-i18next";
-import { getChatId, isEmpty } from "../utils/common";
+  Tooltip,
+} from '@mui/material';
+import { Theme } from '@mui/material/styles';
+import { makeStyles, createStyles } from '@mui/styles';
+import FileCopyIcon from '@mui/icons-material/FileCopy';
+import DeleteIcon from '@mui/icons-material/Delete';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import Entry from './Entry';
+import Message from './Message';
+import RoomHeader from './RoomHeader';
+import { useTranslation } from 'react-i18next';
+import { getChatId, isEmpty } from '../utils/common';
 import {
   ChatMessage,
   ChatRoom,
@@ -32,69 +32,68 @@ import {
   Contact,
   ConferenceData,
   Group,
-  ContactGather
-} from "../types";
-//import CheckAudiVideoPerm from "./CheckAudiVideoPerm";
+  ContactGather,
+} from '../types';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
-      width: "100%",
+      width: '100%',
       minWidth: 360,
-      height: "100%",
-      display: "flex",
-      flexDirection: "column"
+      height: '100%',
+      display: 'flex',
+      flexDirection: 'column',
     },
     inline: {
-      display: "inline"
+      display: 'inline',
     },
     messageListOuter: {
       flex: 1,
-      overflowY: "auto",
+      overflowY: 'auto',
       margin: 0,
       padding: 0,
-      scrollbarWidth: "thin",
-      scrollbarColor: "#6b6b6b #fff",
-      "&::-webkit-scrollbar, & *::-webkit-scrollbar": {
-        backgroundColor: "#fff"
+      scrollbarWidth: 'thin',
+      scrollbarColor: '#6b6b6b #fff',
+      '&::-webkit-scrollbar, & *::-webkit-scrollbar': {
+        backgroundColor: '#fff',
       },
-      "&::-webkit-scrollbar-thumb, & *::-webkit-scrollbar-thumb": {
+      '&::-webkit-scrollbar-thumb, & *::-webkit-scrollbar-thumb': {
         borderRadius: 8,
-        backgroundColor: "#d5d9ef",
-        border: "5px solid #fff"
+        backgroundColor: '#d5d9ef',
+        border: '5px solid #fff',
       },
-      "&::-webkit-scrollbar-thumb:focus, & *::-webkit-scrollbar-thumb:focus": {
-        backgroundColor: "#fff"
+      '&::-webkit-scrollbar-thumb:focus, & *::-webkit-scrollbar-thumb:focus': {
+        backgroundColor: '#fff',
       },
-      "&::-webkit-scrollbar-thumb:active, & *::-webkit-scrollbar-thumb:active": {
-        backgroundColor: "#73d7f5",
-        border: "3px solid #fff"
+      '&::-webkit-scrollbar-thumb:active, & *::-webkit-scrollbar-thumb:active': {
+        backgroundColor: '#73d7f5',
+        border: '3px solid #fff',
       },
-      "&::-webkit-scrollbar-thumb:hover, & *::-webkit-scrollbar-thumb:hover": {
-        backgroundColor: "#73d7f5",
-        border: "3px solid #fff"
+      '&::-webkit-scrollbar-thumb:hover, & *::-webkit-scrollbar-thumb:hover': {
+        backgroundColor: '#73d7f5',
+        border: '3px solid #fff',
       },
-      "&::-webkit-scrollbar-corner, & *::-webkit-scrollbar-corner": {
-        backgroundColor: "#fff"
-      }
+      '&::-webkit-scrollbar-corner, & *::-webkit-scrollbar-corner': {
+        backgroundColor: '#fff',
+      },
     },
     messageList: {
-      height: "100%",
-      overflow: "auto"
+      height: '100%',
+      overflow: 'auto',
     },
     roomHeader: {
-      flex: 1
+      flex: 1,
     },
     roomProgress: {
-      padding: theme.spacing(2)
+      padding: theme.spacing(2),
     },
     flexAll: {
-      flex: "1 1 auto"
+      flex: '1 1 auto',
     },
     flexEnd: {
-      justifyContent: "flex-end"
-    }
-  })
+      justifyContent: 'flex-end',
+    },
+  }),
 );
 
 const initialMenuState = {
@@ -102,12 +101,12 @@ const initialMenuState = {
   mouseX: null,
   mouseY: null,
   canCopy: false,
-  canDelete: false
+  canDelete: false,
 };
 
 const initialScrollState = {
   autoScroll: true,
-  height: 0
+  height: 0,
 };
 
 type RoomProps = {
@@ -144,14 +143,16 @@ const Room: React.FC<RoomProps> = (props: RoomProps) => {
     conference,
     conferenceJoined,
     loading,
-    pageSize
+    pageSize,
   } = props;
   const classes = useStyles();
   const { t } = useTranslation();
   const isMobile = useMediaQuery((theme: Theme) =>
-    theme.breakpoints.down("sm")
+    theme.breakpoints.down('sm'),
   );
-  const [scrollState, setScrollState] = React.useState(initialScrollState);
+  const [scrollState, setScrollState] = React.useState(
+    initialScrollState,
+  );
 
   const messages = chat?.messages;
   const messageCount = messages?.length || 0;
@@ -190,27 +191,32 @@ const Room: React.FC<RoomProps> = (props: RoomProps) => {
       const { currentTarget } = event;
       if (!currentTarget || !chat || !!chat.noMoreData) return;
       if (currentTarget.scrollTop === 0) {
-        if (messageCount >= pageSize && !loading && props.onNeedMoreMessages) {
+        if (
+          messageCount >= pageSize &&
+          !loading &&
+          props.onNeedMoreMessages
+        ) {
           setScrollState({
             autoScroll: false,
-            height: currentTarget.scrollHeight
+            height: currentTarget.scrollHeight,
           });
           props.onNeedMoreMessages(chat);
         }
       }
     },
-    [chat, loading]
+    [chat, loading],
   );
 
   const handleMenuPopup = (
     message: ChatMessage,
-    event: React.MouseEvent<HTMLElement>
+    event: React.MouseEvent<HTMLElement>,
   ) => {
-    const canCopy = message.messageType === "text";
+    const canCopy = message.messageType === 'text';
     const canDelete =
       user.userId === message.userId &&
       !!props.onMeesageDelete &&
-      new Date().getTime() - new Date(message.cdate).getTime() <= 1000 * 60 * 2;
+      new Date().getTime() - new Date(message.cdate).getTime() <=
+        1000 * 60 * 2;
     if (!canCopy && !canDelete) {
       setMenuState(initialMenuState);
       return;
@@ -221,7 +227,7 @@ const Room: React.FC<RoomProps> = (props: RoomProps) => {
       mouseX: event.clientX - 2,
       mouseY: event.clientY - 4,
       canCopy,
-      canDelete
+      canDelete,
     });
   };
 
@@ -252,7 +258,9 @@ const Room: React.FC<RoomProps> = (props: RoomProps) => {
           <Tooltip title="Вернуться в конференцию">
             <IconButton
               aria-label="exit room"
-              onClick={() => props.onExitRoom && props.onExitRoom(chat)}
+              onClick={() =>
+                props.onExitRoom && props.onExitRoom(chat)
+              }
             >
               <ArrowBackIcon />
             </IconButton>
@@ -296,15 +304,17 @@ const Room: React.FC<RoomProps> = (props: RoomProps) => {
                   isGroupMessage={!!chat?.groupId}
                   isUserFirst={
                     inx === 0 ||
-                    messages[inx - 1].messageType === "notify" ||
+                    messages[inx - 1].messageType === 'notify' ||
                     messages[inx - 1].userId !== messages[inx].userId
                   }
                   isUserLast={
                     inx === messages.length - 1 ||
-                    messages[inx + 1].messageType === "notify" ||
+                    messages[inx + 1].messageType === 'notify' ||
                     messages[inx + 1].userId !== messages[inx].userId
                   }
-                  onContextMenu={event => handleMenuPopup(message, event)}
+                  onContextMenu={event =>
+                    handleMenuPopup(message, event)
+                  }
                   refOnLastMess={
                     inx === messages.length - 1 ? refOnLastMess : null
                   }
@@ -333,14 +343,19 @@ const Room: React.FC<RoomProps> = (props: RoomProps) => {
         }
       >
         <MenuItem onClick={handleCopy} disabled={!menuState.canCopy}>
-          <span className={classes.flexAll}>{t("CHAT.MESSAGE.MENU.COPY")}</span>
+          <span className={classes.flexAll}>
+            {t('CHAT.MESSAGE.MENU.COPY')}
+          </span>
           <ListItemIcon className={classes.flexEnd}>
             <FileCopyIcon fontSize="small" />
           </ListItemIcon>
         </MenuItem>
-        <MenuItem onClick={handleDelete} disabled={!menuState.canDelete}>
+        <MenuItem
+          onClick={handleDelete}
+          disabled={!menuState.canDelete}
+        >
           <span className={classes.flexAll}>
-            {t("CHAT.MESSAGE.MENU.DELETE")}
+            {t('CHAT.MESSAGE.MENU.DELETE')}
           </span>
           <ListItemIcon className={classes.flexEnd}>
             <DeleteIcon fontSize="small" />

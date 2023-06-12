@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 declare type CheckAudiVideoPermProps = {
     audio: boolean;
     video: boolean;

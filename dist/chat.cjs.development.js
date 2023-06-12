@@ -1541,52 +1541,51 @@ var RoomHeader = function RoomHeader(_ref) {
   });
 };
 
-//import CheckAudiVideoPerm from "./CheckAudiVideoPerm";
 var useStyles$9 = /*#__PURE__*/styles.makeStyles(function (theme) {
   return styles.createStyles({
     root: {
-      width: "100%",
+      width: '100%',
       minWidth: 360,
-      height: "100%",
-      display: "flex",
-      flexDirection: "column"
+      height: '100%',
+      display: 'flex',
+      flexDirection: 'column'
     },
     inline: {
-      display: "inline"
+      display: 'inline'
     },
     messageListOuter: {
       flex: 1,
-      overflowY: "auto",
+      overflowY: 'auto',
       margin: 0,
       padding: 0,
-      scrollbarWidth: "thin",
-      scrollbarColor: "#6b6b6b #fff",
-      "&::-webkit-scrollbar, & *::-webkit-scrollbar": {
-        backgroundColor: "#fff"
+      scrollbarWidth: 'thin',
+      scrollbarColor: '#6b6b6b #fff',
+      '&::-webkit-scrollbar, & *::-webkit-scrollbar': {
+        backgroundColor: '#fff'
       },
-      "&::-webkit-scrollbar-thumb, & *::-webkit-scrollbar-thumb": {
+      '&::-webkit-scrollbar-thumb, & *::-webkit-scrollbar-thumb': {
         borderRadius: 8,
-        backgroundColor: "#d5d9ef",
-        border: "5px solid #fff"
+        backgroundColor: '#d5d9ef',
+        border: '5px solid #fff'
       },
-      "&::-webkit-scrollbar-thumb:focus, & *::-webkit-scrollbar-thumb:focus": {
-        backgroundColor: "#fff"
+      '&::-webkit-scrollbar-thumb:focus, & *::-webkit-scrollbar-thumb:focus': {
+        backgroundColor: '#fff'
       },
-      "&::-webkit-scrollbar-thumb:active, & *::-webkit-scrollbar-thumb:active": {
-        backgroundColor: "#73d7f5",
-        border: "3px solid #fff"
+      '&::-webkit-scrollbar-thumb:active, & *::-webkit-scrollbar-thumb:active': {
+        backgroundColor: '#73d7f5',
+        border: '3px solid #fff'
       },
-      "&::-webkit-scrollbar-thumb:hover, & *::-webkit-scrollbar-thumb:hover": {
-        backgroundColor: "#73d7f5",
-        border: "3px solid #fff"
+      '&::-webkit-scrollbar-thumb:hover, & *::-webkit-scrollbar-thumb:hover': {
+        backgroundColor: '#73d7f5',
+        border: '3px solid #fff'
       },
-      "&::-webkit-scrollbar-corner, & *::-webkit-scrollbar-corner": {
-        backgroundColor: "#fff"
+      '&::-webkit-scrollbar-corner, & *::-webkit-scrollbar-corner': {
+        backgroundColor: '#fff'
       }
     },
     messageList: {
-      height: "100%",
-      overflow: "auto"
+      height: '100%',
+      overflow: 'auto'
     },
     roomHeader: {
       flex: 1
@@ -1595,10 +1594,10 @@ var useStyles$9 = /*#__PURE__*/styles.makeStyles(function (theme) {
       padding: theme.spacing(2)
     },
     flexAll: {
-      flex: "1 1 auto"
+      flex: '1 1 auto'
     },
     flexEnd: {
-      justifyContent: "flex-end"
+      justifyContent: 'flex-end'
     }
   });
 });
@@ -1627,7 +1626,7 @@ var Room = function Room(props) {
   var _useTranslation = reactI18next.useTranslation(),
     t = _useTranslation.t;
   var isMobile = material.useMediaQuery(function (theme) {
-    return theme.breakpoints.down("sm");
+    return theme.breakpoints.down('sm');
   });
   var _React$useState = React__default.useState(initialScrollState),
     scrollState = _React$useState[0],
@@ -1686,7 +1685,7 @@ var Room = function Room(props) {
     };
   }(), [chat, loading]);
   var handleMenuPopup = function handleMenuPopup(message, event) {
-    var canCopy = message.messageType === "text";
+    var canCopy = message.messageType === 'text';
     var canDelete = user.userId === message.userId && !!props.onMeesageDelete && new Date().getTime() - new Date(message.cdate).getTime() <= 1000 * 60 * 2;
     if (!canCopy && !canDelete) {
       setMenuState(initialMenuState);
@@ -1760,8 +1759,8 @@ var Room = function Room(props) {
       message: message,
       owner: users[message.userId],
       isGroupMessage: !!(chat != null && chat.groupId),
-      isUserFirst: inx === 0 || messages[inx - 1].messageType === "notify" || messages[inx - 1].userId !== messages[inx].userId,
-      isUserLast: inx === messages.length - 1 || messages[inx + 1].messageType === "notify" || messages[inx + 1].userId !== messages[inx].userId,
+      isUserFirst: inx === 0 || messages[inx - 1].messageType === 'notify' || messages[inx - 1].userId !== messages[inx].userId,
+      isUserLast: inx === messages.length - 1 || messages[inx + 1].messageType === 'notify' || messages[inx + 1].userId !== messages[inx].userId,
       onContextMenu: function onContextMenu(event) {
         return handleMenuPopup(message, event);
       },
@@ -1785,7 +1784,7 @@ var Room = function Room(props) {
     disabled: !menuState.canCopy
   }, /*#__PURE__*/React__default.createElement("span", {
     className: classes.flexAll
-  }, t("CHAT.MESSAGE.MENU.COPY")), /*#__PURE__*/React__default.createElement(material.ListItemIcon, {
+  }, t('CHAT.MESSAGE.MENU.COPY')), /*#__PURE__*/React__default.createElement(material.ListItemIcon, {
     className: classes.flexEnd
   }, /*#__PURE__*/React__default.createElement(FileCopyIcon, {
     fontSize: "small"
@@ -1794,7 +1793,7 @@ var Room = function Room(props) {
     disabled: !menuState.canDelete
   }, /*#__PURE__*/React__default.createElement("span", {
     className: classes.flexAll
-  }, t("CHAT.MESSAGE.MENU.DELETE")), /*#__PURE__*/React__default.createElement(material.ListItemIcon, {
+  }, t('CHAT.MESSAGE.MENU.DELETE')), /*#__PURE__*/React__default.createElement(material.ListItemIcon, {
     className: classes.flexEnd
   }, /*#__PURE__*/React__default.createElement(DeleteIcon, {
     fontSize: "small"
@@ -3587,7 +3586,8 @@ var SocketProvider = function SocketProvider(_ref) {
 var CheckAudiVideoPerm = function CheckAudiVideoPerm(_ref) {
   var audio = _ref.audio,
     video = _ref.video;
-  // const { t } = useTranslation();
+  var _useTranslation = reactI18next.useTranslation(),
+    t = _useTranslation.t;
   //const [havePermissions, setHavePermissions] = useState(false);
   var _React$useContext = React__default.useContext(ChatContext),
     dispatch = _React$useContext.dispatch;
@@ -3597,21 +3597,28 @@ var CheckAudiVideoPerm = function CheckAudiVideoPerm(_ref) {
       video: video
     });
     permissions.then(function (data) {
-      console.log("permissions", data);
+      console.log('permissions', data);
       dispatch({
-        type: "SET_SUCCES",
-        payload: "Все ок"
+        type: 'SET_SUCCES',
+        payload: t('CHAT.CONFERENCE.ALLOK')
       });
     }).catch(function (err) {
+      var payload = t('CHAT.CONFERENCE.ErrorAny');
+      if (err.name === 'NotFoundError') {
+        payload = t('CHAT.CONFERENCE.NotFoundError');
+      }
+      if (err.name === 'NotAllowedError') {
+        payload = t('CHAT.CONFERENCE.NotAllowedError');
+      }
       dispatch({
-        type: "SET_ERROR",
-        payload: err.name + " : " + err.message
+        type: 'SET_ERROR',
+        payload: payload
       });
       //setHavePermissions(false);
-      console.log("err", err);
+      console.log('err', err.name + " : " + err.message);
     });
   };
-  var title = audio && video ? "Проверить доступ к микрофону и камере" : audio ? "Проверить доступ к микрофону " : "Проверить доступ к камере";
+  var title = audio && video ? t('CHAT.CONFERENCE.CheckCamMic') : audio ? t('CHAT.CONFERENCE.CheckMic') : t('CHAT.CONFERENCE.CheckCam');
   return /*#__PURE__*/React__default.createElement(material.Tooltip, {
     title: title
   }, /*#__PURE__*/React__default.createElement(material.IconButton, {
@@ -4044,7 +4051,14 @@ var CHAT = {
 		JOIN: "Join",
 		START: "Start",
 		FINISH: "Finish",
-		BACK: "Back to chat"
+		BACK: "Back to chat",
+		NotFoundError: "Requested device not found",
+		NotAllowedError: "Permission denied. To allow access to the device, go to the browser settings",
+		ErrorAny: "The device is not configured",
+		ALLOK: "All OK",
+		CheckCamMic: "Check access to microphone and camera",
+		CheckMic: "Check access to microphone",
+		CheckCam: "Check access to camera"
 	},
 	ADD_CONTACT: "Add contact",
 	INPUT_MESSAGE: "Please write a message...",
@@ -4081,7 +4095,14 @@ var CHAT$1 = {
 		JOIN: "Join",
 		START: "Start",
 		FINISH: "Finish",
-		BACK: "Back to chat"
+		BACK: "Back to chat",
+		NotFoundError: "Périphérique demandé introuvable",
+		NotAllowedError: "Autorisation refusée. Pour autoriser l'accès à l'appareil, accédez aux paramètres du navigateur",
+		ErrorAny: "L'appareil n'est pas configuré",
+		ALLOK: "Tout va bien",
+		CheckCamMic: "Vérifier l'accès au microphone et à la caméra",
+		CheckMic: "Vérifier l'accès au microphone",
+		CheckCam: "Vérifier l'accès à la caméra"
 	},
 	ADD_CONTACT: "Add contact",
 	INPUT_MESSAGE: "Please write a message...",
@@ -4119,7 +4140,14 @@ var CHAT$2 = {
 		START: "Начать",
 		PAUSE: "Остановить",
 		FINISH: "Завершить",
-		BACK: "Вернуться в чат"
+		BACK: "Вернуться в чат",
+		NotFoundError: "Запрошенное устройство не найдено",
+		NotAllowedError: "В доступе  отказано. Чтобы разрешить доступ к устройству зайдите в настройки браузера",
+		ErrorAny: "Устройство не настроено",
+		ALLOK: "Все OK",
+		CheckCamMic: "Проверить доступ к микрофону и камере",
+		CheckMic: "Проверить доступ к микрофону",
+		CheckCam: "Проверить доступ к камере"
 	},
 	ADD_CONTACT: "Добавить контакт",
 	INPUT_MESSAGE: "Напишите сообщение...",
