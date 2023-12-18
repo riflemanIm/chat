@@ -3772,8 +3772,6 @@ var ChatAlert = function ChatAlert() {
       payload: undefined
     });
   };
-  console.log("success", success);
-  console.log(error ? "error" : "success");
   return /*#__PURE__*/React__default.createElement(material.Snackbar, {
     anchorOrigin: {
       vertical: "top",
