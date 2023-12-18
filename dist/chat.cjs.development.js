@@ -1365,18 +1365,17 @@ function useCounter(max) {
   var _useState = React.useState(max),
     counter = _useState[0],
     setCounter = _useState[1];
-  var counterRef = React.useRef();
+  var counterRef = React.useRef(null);
   var handlerRefresh = function handlerRefresh() {
     setCounter(max);
   };
-
   // Counter
   React.useEffect(function () {
-    counterRef.current = counter > 0 && setInterval(function () {
+    if (counter > 0) counterRef.current = setInterval(function () {
       return setCounter(counter - 1);
     }, 1000);
     return function () {
-      return clearInterval(counterRef.current);
+      if (counterRef.current) clearInterval(counterRef.current);
     };
   }, [counter]);
   return {
@@ -1391,14 +1390,12 @@ var Transition = /*#__PURE__*/React__default.forwardRef(function Transition(prop
     ref: ref
   }, props));
 });
-
-/* eslint-disable react/prop-types */ // TODO: upgrade to latest eslint tooling
 function AlertDialog(_ref) {
   var children = _ref.children,
     open = _ref.open,
     setOpen = _ref.setOpen,
     _ref$severity = _ref.severity,
-    severity = _ref$severity === void 0 ? 'warning' : _ref$severity;
+    severity = _ref$severity === void 0 ? "warning" : _ref$severity;
   var _useTranslation = reactI18next.useTranslation(),
     t = _useTranslation.t;
   var handleClose = function handleClose() {
@@ -1413,12 +1410,12 @@ function AlertDialog(_ref) {
     "aria-describedby": "alert-dialog-description"
   }, /*#__PURE__*/React__default.createElement(material.DialogContent, null, /*#__PURE__*/React__default.createElement(material.Alert, {
     severity: severity
-  }, typeof children === 'string' ? /*#__PURE__*/React__default.createElement(material.Typography, {
+  }, typeof children === "string" ? /*#__PURE__*/React__default.createElement(material.Typography, {
     variant: "body2"
   }, children) : children)), /*#__PURE__*/React__default.createElement(material.DialogActions, null, /*#__PURE__*/React__default.createElement(material.Button, {
     onClick: handleClose,
     variant: "text"
-  }, t('COMPONENT.BUT_CLOSE'))));
+  }, t("COMPONENT.BUT_CLOSE"))));
 }
 
 var ConferenceTime = function ConferenceTime(_ref) {
@@ -1458,6 +1455,7 @@ var ConferenceTime = function ConferenceTime(_ref) {
     if (minutes === 3 && seconds === 0) {
       setModaleInfo(true);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [counter]);
   return /*#__PURE__*/React__default.createElement(material.Box, {
     textAlign: "center"
