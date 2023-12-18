@@ -16,22 +16,23 @@ import {
   Group,
   SetTyping,
   User,
-  ConferenceData,
+  ConferenceData
 } from "../types";
 import { makeStyles, createStyles } from "@mui/styles";
 import { isEmpty } from "../utils/common";
+import ConferenceTime from "./ConferenceTime";
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     popover: {
-      pointerEvents: "none",
+      pointerEvents: "none"
     },
     paper: {
-      padding: theme.spacing(1),
+      padding: theme.spacing(1)
     },
     avatarGroup: {
       backgroundColor: "#28B7C6",
-      color: "#fff",
-    },
+      color: "#fff"
+    }
   })
 );
 
@@ -74,7 +75,7 @@ const RoomHeader: React.FC<RoomHeaderProps> = ({
   onVideoEnd,
   onConferencePause,
   onOperatorAdd,
-  onLeaveGroup,
+  onLeaveGroup
 }: RoomHeaderProps) => {
   const classes = useStyles();
   const { t } = useTranslation();
@@ -111,6 +112,8 @@ const RoomHeader: React.FC<RoomHeaderProps> = ({
       onOperatorAdd(chat as Group, operator);
   };
 
+  console.log("conference", conference);
+
   const group = chat as Group;
   if (group.groupId) {
     // группа
@@ -118,7 +121,7 @@ const RoomHeader: React.FC<RoomHeaderProps> = ({
       <CardHeader
         avatar={
           <Avatar alt={group.name} className={classes.avatarGroup}>
-            <GroupIcon />{" "}
+            <GroupIcon />
           </Avatar>
         }
         title={group.name}
@@ -136,17 +139,17 @@ const RoomHeader: React.FC<RoomHeaderProps> = ({
               id="mouse-over-popover"
               className={classes.popover}
               classes={{
-                paper: classes.paper,
+                paper: classes.paper
               }}
               open={!!anchorEl}
               anchorEl={anchorEl}
               anchorOrigin={{
                 vertical: "bottom",
-                horizontal: "left",
+                horizontal: "left"
               }}
               transformOrigin={{
                 vertical: "top",
-                horizontal: "left",
+                horizontal: "left"
               }}
               onClose={handlePopoverClose}
               disableRestoreFocus
@@ -180,7 +183,7 @@ const RoomHeader: React.FC<RoomHeaderProps> = ({
             )}
             {user.role === 4 &&
               group.members?.find(
-                (it) => it.userId !== user.userId && it.role === 4
+                it => it.userId !== user.userId && it.role === 4
               ) &&
               onLeaveGroup && (
                 <IconButton
@@ -207,6 +210,7 @@ const RoomHeader: React.FC<RoomHeaderProps> = ({
     contact,
   );
 */
+
   return (
     <CardHeader
       avatar={
@@ -265,6 +269,14 @@ const RoomHeader: React.FC<RoomHeaderProps> = ({
               >
                 {t("CHAT.CONFERENCE.START")}
               </Button>
+            )}
+
+          {conference?.currentDate != null &&
+            conference?.finishDate != null && (
+              <ConferenceTime
+                currentDate={conference.currentDate}
+                finishDate={conference.finishDate}
+              />
             )}
         </React.Fragment>
       }

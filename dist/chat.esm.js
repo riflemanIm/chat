@@ -1,5 +1,5 @@
-import React__default, { createElement, Fragment, useCallback, useEffect, createContext, useContext, useState, useMemo } from 'react';
-import { Box, Typography, TextField, InputAdornment, IconButton, SvgIcon, Popover, Avatar, ListItem, Alert, Link, List, ListItemAvatar, ListItemText, Dialog, DialogTitle, CardHeader, Button, useMediaQuery, Card, Tooltip, CircularProgress, Divider, CardContent, Menu, MenuItem, ListItemIcon, Chip, Badge, Paper, Snackbar, Container, Grid } from '@mui/material';
+import React__default, { createElement, Fragment, useState, useRef, useEffect, useCallback, createContext, useContext, useMemo } from 'react';
+import { Box, Typography, TextField, InputAdornment, IconButton, SvgIcon, Popover, Avatar, ListItem, Alert, Link, List, ListItemAvatar, ListItemText, Dialog, DialogTitle, DialogContent, DialogActions, Button, Slide, CardHeader, useMediaQuery, Card, Tooltip, CircularProgress, Divider, CardContent, Menu, MenuItem, ListItemIcon, Chip, Badge, Paper, Snackbar, Container, Grid } from '@mui/material';
 import { makeStyles, createStyles, withStyles } from '@mui/styles';
 import FileCopyIcon from '@mui/icons-material/FileCopy';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -1355,6 +1355,128 @@ var AddContact = function AddContact(props) {
   }));
 };
 
+function useCounter(max) {
+  if (max === void 0) {
+    max = 30000;
+  }
+  var _useState = useState(max),
+    counter = _useState[0],
+    setCounter = _useState[1];
+  var counterRef = useRef();
+  var handlerRefresh = function handlerRefresh() {
+    setCounter(max);
+  };
+
+  // Counter
+  useEffect(function () {
+    counterRef.current = counter > 0 && setInterval(function () {
+      return setCounter(counter - 1);
+    }, 1000);
+    return function () {
+      return clearInterval(counterRef.current);
+    };
+  }, [counter]);
+  return {
+    counter: counter,
+    handlerRefresh: handlerRefresh
+  };
+}
+
+var Transition = /*#__PURE__*/React__default.forwardRef(function Transition(props, ref) {
+  return /*#__PURE__*/React__default.createElement(Slide, _extends({
+    direction: "up",
+    ref: ref
+  }, props));
+});
+
+/* eslint-disable react/prop-types */ // TODO: upgrade to latest eslint tooling
+function AlertDialog(_ref) {
+  var children = _ref.children,
+    open = _ref.open,
+    setOpen = _ref.setOpen,
+    _ref$severity = _ref.severity,
+    severity = _ref$severity === void 0 ? 'warning' : _ref$severity;
+  var _useTranslation = useTranslation(),
+    t = _useTranslation.t;
+  var handleClose = function handleClose() {
+    setOpen(false);
+  };
+  return /*#__PURE__*/React__default.createElement(Dialog, {
+    open: open,
+    TransitionComponent: Transition,
+    keepMounted: true,
+    onClose: handleClose,
+    "aria-labelledby": "alert-dialog-title",
+    "aria-describedby": "alert-dialog-description"
+  }, /*#__PURE__*/React__default.createElement(DialogContent, null, /*#__PURE__*/React__default.createElement(Alert, {
+    severity: severity
+  }, typeof children === 'string' ? /*#__PURE__*/React__default.createElement(Typography, {
+    variant: "body2"
+  }, children) : children)), /*#__PURE__*/React__default.createElement(DialogActions, null, /*#__PURE__*/React__default.createElement(Button, {
+    onClick: handleClose,
+    variant: "text"
+  }, t('COMPONENT.BUT_CLOSE'))));
+}
+
+var ConferenceTime = function ConferenceTime(_ref) {
+  var currentDate = _ref.currentDate,
+    finishDate = _ref.finishDate;
+  //const { t } = useTranslation();
+  var _useState = useState(false),
+    modaleInfo = _useState[0],
+    setModaleInfo = _useState[1];
+  var currTime = new Date(currentDate).getTime();
+  var finTime = new Date(finishDate).getTime();
+  //const diffTimeMin = Math.round((finTime - currTime) / (1000 * 60));
+  var diffTimeSec = Math.round((finTime - currTime) / 1000);
+  var _useCounter = useCounter(diffTimeSec),
+    counter = _useCounter.counter;
+  var hhMmSs = function hhMmSs(totalSeconds) {
+    var hours = Math.floor(totalSeconds / 3600);
+    var strHours = hours < 10 ? "0" + hours : hours;
+    totalSeconds %= 3600;
+    var minutes = Math.floor(totalSeconds / 60);
+    var strMinutes = minutes < 10 ? "0" + minutes : minutes;
+    var seconds = totalSeconds % 60;
+    var strSeconds = seconds < 10 ? "0" + seconds : seconds;
+    var strTime = strHours + ":" + strMinutes + ":" + strSeconds;
+    return {
+      hours: hours,
+      minutes: minutes,
+      seconds: seconds,
+      strTime: strTime
+    };
+  };
+  var _hhMmSs = hhMmSs(counter),
+    minutes = _hhMmSs.minutes,
+    seconds = _hhMmSs.seconds,
+    strTime = _hhMmSs.strTime;
+  useEffect(function () {
+    if (minutes === 3 && seconds === 0) {
+      setModaleInfo(true);
+    }
+  }, [counter]);
+  return /*#__PURE__*/React__default.createElement(Box, {
+    textAlign: "center"
+  }, /*#__PURE__*/React__default.createElement(Typography, {
+    variant: "body2",
+    component: "span"
+  }, "\u043E\u0441\u0442\u0430\u043B\u043E\u0441\u044C:", " "), /*#__PURE__*/React__default.createElement(Typography, {
+    variant: "button",
+    component: "span"
+  }, strTime), /*#__PURE__*/React__default.createElement(AlertDialog, {
+    open: modaleInfo,
+    setOpen: setModaleInfo,
+    severity: "info"
+  }, /*#__PURE__*/React__default.createElement(Typography, {
+    variant: "body1",
+    textAlign: "center"
+  }, "\u0414\u043E \u043E\u043A\u043E\u043D\u0447\u0430\u043D\u0438\u044F \u043A\u043E\u043D\u0444\u0435\u0440\u0435\u043D\u0446\u0438\u0438 \u043E\u0441\u0442\u0430\u043B\u043E\u0441\u044C:"), /*#__PURE__*/React__default.createElement(Typography, {
+    variant: "h6",
+    textAlign: "center"
+  }, strTime)));
+};
+
 var useStyles$8 = /*#__PURE__*/makeStyles(function (theme) {
   return createStyles({
     popover: {
@@ -1420,6 +1542,7 @@ var RoomHeader = function RoomHeader(_ref) {
     setAddOperatorOpen(false);
     if (onOperatorAdd && operator && chat) onOperatorAdd(chat, operator);
   };
+  console.log("conference", conference);
   var group = chat;
   if (group.groupId) {
     var _group$members2;
@@ -1428,7 +1551,7 @@ var RoomHeader = function RoomHeader(_ref) {
       avatar: /*#__PURE__*/React__default.createElement(Avatar, {
         alt: group.name,
         className: classes.avatarGroup
-      }, /*#__PURE__*/React__default.createElement(GroupIcon, null), " "),
+      }, /*#__PURE__*/React__default.createElement(GroupIcon, null)),
       title: group.name,
       subheader: /*#__PURE__*/React__default.createElement(React__default.Fragment, null, /*#__PURE__*/React__default.createElement("span", {
         "aria-owns": anchorEl ? "mouse-over-popover" : undefined,
@@ -1534,55 +1657,58 @@ var RoomHeader = function RoomHeader(_ref) {
       onClick: function onClick() {
         return onVideoCall(contact);
       }
-    }, t("CHAT.CONFERENCE.START")))
+    }, t("CHAT.CONFERENCE.START")), (conference == null ? void 0 : conference.currentDate) != null && (conference == null ? void 0 : conference.finishDate) != null && /*#__PURE__*/React__default.createElement(ConferenceTime, {
+      currentDate: conference.currentDate,
+      finishDate: conference.finishDate
+    }))
   });
 };
 
 var useStyles$9 = /*#__PURE__*/makeStyles(function (theme) {
   return createStyles({
     root: {
-      width: '100%',
+      width: "100%",
       minWidth: 360,
-      height: '100%',
-      display: 'flex',
-      flexDirection: 'column'
+      height: "100%",
+      display: "flex",
+      flexDirection: "column"
     },
     inline: {
-      display: 'inline'
+      display: "inline"
     },
     messageListOuter: {
       flex: 1,
-      overflowY: 'auto',
+      overflowY: "auto",
       margin: 0,
       padding: 0,
-      scrollbarWidth: 'thin',
-      scrollbarColor: '#6b6b6b #fff',
-      '&::-webkit-scrollbar, & *::-webkit-scrollbar': {
-        backgroundColor: '#fff'
+      scrollbarWidth: "thin",
+      scrollbarColor: "#6b6b6b #fff",
+      "&::-webkit-scrollbar, & *::-webkit-scrollbar": {
+        backgroundColor: "#fff"
       },
-      '&::-webkit-scrollbar-thumb, & *::-webkit-scrollbar-thumb': {
+      "&::-webkit-scrollbar-thumb, & *::-webkit-scrollbar-thumb": {
         borderRadius: 8,
-        backgroundColor: '#d5d9ef',
-        border: '5px solid #fff'
+        backgroundColor: "#d5d9ef",
+        border: "5px solid #fff"
       },
-      '&::-webkit-scrollbar-thumb:focus, & *::-webkit-scrollbar-thumb:focus': {
-        backgroundColor: '#fff'
+      "&::-webkit-scrollbar-thumb:focus, & *::-webkit-scrollbar-thumb:focus": {
+        backgroundColor: "#fff"
       },
-      '&::-webkit-scrollbar-thumb:active, & *::-webkit-scrollbar-thumb:active': {
-        backgroundColor: '#73d7f5',
-        border: '3px solid #fff'
+      "&::-webkit-scrollbar-thumb:active, & *::-webkit-scrollbar-thumb:active": {
+        backgroundColor: "#73d7f5",
+        border: "3px solid #fff"
       },
-      '&::-webkit-scrollbar-thumb:hover, & *::-webkit-scrollbar-thumb:hover': {
-        backgroundColor: '#73d7f5',
-        border: '3px solid #fff'
+      "&::-webkit-scrollbar-thumb:hover, & *::-webkit-scrollbar-thumb:hover": {
+        backgroundColor: "#73d7f5",
+        border: "3px solid #fff"
       },
-      '&::-webkit-scrollbar-corner, & *::-webkit-scrollbar-corner': {
-        backgroundColor: '#fff'
+      "&::-webkit-scrollbar-corner, & *::-webkit-scrollbar-corner": {
+        backgroundColor: "#fff"
       }
     },
     messageList: {
-      height: '100%',
-      overflow: 'auto'
+      height: "100%",
+      overflow: "auto"
     },
     roomHeader: {
       flex: 1
@@ -1591,10 +1717,10 @@ var useStyles$9 = /*#__PURE__*/makeStyles(function (theme) {
       padding: theme.spacing(2)
     },
     flexAll: {
-      flex: '1 1 auto'
+      flex: "1 1 auto"
     },
     flexEnd: {
-      justifyContent: 'flex-end'
+      justifyContent: "flex-end"
     }
   });
 });
@@ -1623,7 +1749,7 @@ var Room = function Room(props) {
   var _useTranslation = useTranslation(),
     t = _useTranslation.t;
   var isMobile = useMediaQuery(function (theme) {
-    return theme.breakpoints.down('sm');
+    return theme.breakpoints.down("sm");
   });
   var _React$useState = React__default.useState(initialScrollState),
     scrollState = _React$useState[0],
@@ -1682,7 +1808,7 @@ var Room = function Room(props) {
     };
   }(), [chat, loading]);
   var handleMenuPopup = function handleMenuPopup(message, event) {
-    var canCopy = message.messageType === 'text';
+    var canCopy = message.messageType === "text";
     var canDelete = user.userId === message.userId && !!props.onMeesageDelete && new Date().getTime() - new Date(message.cdate).getTime() <= 1000 * 60 * 2;
     if (!canCopy && !canDelete) {
       setMenuState(initialMenuState);
@@ -1756,8 +1882,8 @@ var Room = function Room(props) {
       message: message,
       owner: users[message.userId],
       isGroupMessage: !!(chat != null && chat.groupId),
-      isUserFirst: inx === 0 || messages[inx - 1].messageType === 'notify' || messages[inx - 1].userId !== messages[inx].userId,
-      isUserLast: inx === messages.length - 1 || messages[inx + 1].messageType === 'notify' || messages[inx + 1].userId !== messages[inx].userId,
+      isUserFirst: inx === 0 || messages[inx - 1].messageType === "notify" || messages[inx - 1].userId !== messages[inx].userId,
+      isUserLast: inx === messages.length - 1 || messages[inx + 1].messageType === "notify" || messages[inx + 1].userId !== messages[inx].userId,
       onContextMenu: function onContextMenu(event) {
         return handleMenuPopup(message, event);
       },
@@ -1781,7 +1907,7 @@ var Room = function Room(props) {
     disabled: !menuState.canCopy
   }, /*#__PURE__*/React__default.createElement("span", {
     className: classes.flexAll
-  }, t('CHAT.MESSAGE.MENU.COPY')), /*#__PURE__*/React__default.createElement(ListItemIcon, {
+  }, t("CHAT.MESSAGE.MENU.COPY")), /*#__PURE__*/React__default.createElement(ListItemIcon, {
     className: classes.flexEnd
   }, /*#__PURE__*/React__default.createElement(FileCopyIcon, {
     fontSize: "small"
@@ -1790,7 +1916,7 @@ var Room = function Room(props) {
     disabled: !menuState.canDelete
   }, /*#__PURE__*/React__default.createElement("span", {
     className: classes.flexAll
-  }, t('CHAT.MESSAGE.MENU.DELETE')), /*#__PURE__*/React__default.createElement(ListItemIcon, {
+  }, t("CHAT.MESSAGE.MENU.DELETE")), /*#__PURE__*/React__default.createElement(ListItemIcon, {
     className: classes.flexEnd
   }, /*#__PURE__*/React__default.createElement(DeleteIcon, {
     fontSize: "small"
@@ -3676,7 +3802,7 @@ var useStyles$e = /*#__PURE__*/makeStyles(function (theme) {
       minWidth: 640,
       minHeight: 470,
       height: "100%",
-      width: "calc(100vw - " + theme.spacing(8) + ")",
+      //width: `calc(100vw - ${theme.spacing(8)})`,
       padding: 0
     }, _root[theme.breakpoints.down("sm")] = {
       height: "calc(100vh - " + theme.spacing(8) + ")",
@@ -3764,7 +3890,7 @@ var ChatPage = function ChatPage(_ref) {
     socket == null ? void 0 : socket.emit("revokeMessage", {
       groupId: chat.groupId,
       contactId: chat.userId,
-      _id: message._id
+      _id: message._id // Идентификатор удаленного сообщения
     });
   }, [socket == null ? void 0 : socket.id]);
   var onTyping = useCallback(function (chat) {

@@ -1,5 +1,5 @@
-import React from 'react';
-import { ChatMessage, ChatRoom, SendMessage, SetTyping, User, Contact, ConferenceData, Group, ContactGather } from '../types';
+import React from "react";
+import { ChatMessage, ChatRoom, SendMessage, SetTyping, User, Contact, ConferenceData, Group, ContactGather } from "../types";
 declare type RoomProps = {
     apiUrl: string;
     user: User;

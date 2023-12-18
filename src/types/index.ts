@@ -178,6 +178,8 @@ export interface ConferenceData {
   serverAddress?: string;
   user?: string;
   password?: string;
+  currentDate?: Date;
+  finishDate?: Date;
 }
 
 // Данные чата
