@@ -14,8 +14,6 @@ const ChatAlert: React.FC = () => {
     dispatch({ type: "SET_ERROR", payload: undefined });
     dispatch({ type: "SET_SUCCES", payload: undefined });
   };
-  console.log("success", success);
-  console.log(error ? "error" : "success");
 
   return (
     <Snackbar
