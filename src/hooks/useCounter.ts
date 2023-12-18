@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 
 export default function useCounter(max = 30000) {
   const [counter, setCounter] = useState(max);
-  const counterRef = useRef();
+  const counterRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const handlerRefresh = () => {
     setCounter(max);
@@ -10,9 +10,12 @@ export default function useCounter(max = 30000) {
 
   // Counter
   useEffect(() => {
-    counterRef.current =
-      counter > 0 && setInterval(() => setCounter(counter - 1), 1000);
-    return () => clearInterval(counterRef.current);
+    if (counter > 0)
+      counterRef.current = setInterval(() => setCounter(counter - 1), 1000);
+
+    return () => {
+      if (counterRef.current) clearInterval(counterRef.current);
+    };
   }, [counter]);
 
   return { counter, handlerRefresh };

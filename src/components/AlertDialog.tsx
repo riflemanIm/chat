@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import {
   Alert,
   Dialog,
@@ -7,20 +7,34 @@ import {
   Button,
   DialogActions,
   Typography,
-} from '@mui/material';
-import { useTranslation } from 'react-i18next';
+  AlertColor
+} from "@mui/material";
+import { useTranslation } from "react-i18next";
 
-const Transition = React.forwardRef(function Transition(props, ref) {
+import { TransitionProps } from "@mui/material/transitions";
+
+const Transition = React.forwardRef(function Transition(
+  props: TransitionProps & {
+    children: React.ReactElement<any, any>;
+  },
+  ref: React.Ref<unknown>
+) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-/* eslint-disable react/prop-types */ // TODO: upgrade to latest eslint tooling
+type AlertDialogProps = {
+  children: JSX.Element | JSX.Element[] | string;
+  open: boolean;
+  setOpen: (value: boolean) => void;
+  severity: AlertColor;
+};
+
 export default function AlertDialog({
   children,
   open,
   setOpen,
-  severity = 'warning',
-}) {
+  severity = "warning"
+}: AlertDialogProps) {
   const { t } = useTranslation();
 
   const handleClose = () => {
@@ -37,7 +51,7 @@ export default function AlertDialog({
     >
       <DialogContent>
         <Alert severity={severity}>
-          {typeof children === 'string' ? (
+          {typeof children === "string" ? (
             <Typography variant="body2">{children}</Typography>
           ) : (
             children
@@ -46,7 +60,7 @@ export default function AlertDialog({
       </DialogContent>
       <DialogActions>
         <Button onClick={handleClose} variant="text">
-          {t('COMPONENT.BUT_CLOSE')}
+          {t("COMPONENT.BUT_CLOSE")}
         </Button>
       </DialogActions>
     </Dialog>

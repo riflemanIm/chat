@@ -40,6 +40,7 @@ const ConferenceTime: React.FC<ConferenceTimeProps> = ({
     if (minutes === 3 && seconds === 0) {
       setModaleInfo(true);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [counter]);
 
   return (
