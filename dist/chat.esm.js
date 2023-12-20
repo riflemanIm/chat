@@ -1415,6 +1415,22 @@ function AlertDialog(_ref) {
   }, t("COMPONENT.BUT_CLOSE"))));
 }
 
+var hhMmSs = function hhMmSs(totalSeconds) {
+  var hours = Math.floor(totalSeconds / 3600);
+  var strHours = hours < 10 ? "0" + hours : hours;
+  totalSeconds %= 3600;
+  var minutes = Math.floor(totalSeconds / 60);
+  var strMinutes = minutes < 10 ? "0" + minutes : minutes;
+  var seconds = totalSeconds % 60;
+  var strSeconds = seconds < 10 ? "0" + seconds : seconds;
+  var strTime = strHours + ":" + strMinutes + ":" + strSeconds;
+  return {
+    hours: hours,
+    minutes: minutes,
+    seconds: seconds,
+    strTime: strTime
+  };
+};
 var ConferenceTime = function ConferenceTime(_ref) {
   var currentDate = _ref.currentDate,
     finishDate = _ref.finishDate;
@@ -1428,32 +1444,17 @@ var ConferenceTime = function ConferenceTime(_ref) {
   var diffTimeSec = Math.round((finTime - currTime) / 1000);
   var _useCounter = useCounter(diffTimeSec),
     counter = _useCounter.counter;
-  var hhMmSs = function hhMmSs(totalSeconds) {
-    var hours = Math.floor(totalSeconds / 3600);
-    var strHours = hours < 10 ? "0" + hours : hours;
-    totalSeconds %= 3600;
-    var minutes = Math.floor(totalSeconds / 60);
-    var strMinutes = minutes < 10 ? "0" + minutes : minutes;
-    var seconds = totalSeconds % 60;
-    var strSeconds = seconds < 10 ? "0" + seconds : seconds;
-    var strTime = strHours + ":" + strMinutes + ":" + strSeconds;
-    return {
-      hours: hours,
-      minutes: minutes,
-      seconds: seconds,
-      strTime: strTime
-    };
-  };
-  var _hhMmSs = hhMmSs(counter),
-    minutes = _hhMmSs.minutes,
-    seconds = _hhMmSs.seconds,
-    strTime = _hhMmSs.strTime;
   useEffect(function () {
     if (minutes === 3 && seconds === 0) {
       setModaleInfo(true);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [counter]);
+  if (diffTimeSec < 1) return null;
+  var _hhMmSs = hhMmSs(counter),
+    minutes = _hhMmSs.minutes,
+    seconds = _hhMmSs.seconds,
+    strTime = _hhMmSs.strTime;
   return /*#__PURE__*/React__default.createElement(Box, {
     textAlign: "center"
   }, /*#__PURE__*/React__default.createElement(Typography, {
