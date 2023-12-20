@@ -9,6 +9,19 @@ type ConferenceTimeProps = {
   finishDate: Date;
 };
 
+const hhMmSs = (totalSeconds: number) => {
+  const hours = Math.floor(totalSeconds / 3600);
+  const strHours = hours < 10 ? `0${hours}` : hours;
+  totalSeconds %= 3600;
+  const minutes = Math.floor(totalSeconds / 60);
+  const strMinutes = minutes < 10 ? `0${minutes}` : minutes;
+  const seconds = totalSeconds % 60;
+  const strSeconds = seconds < 10 ? `0${seconds}` : seconds;
+
+  const strTime = `${strHours}:${strMinutes}:${strSeconds}`;
+  return { hours, minutes, seconds, strTime };
+};
+
 const ConferenceTime: React.FC<ConferenceTimeProps> = ({
   currentDate,
   finishDate
@@ -20,28 +33,18 @@ const ConferenceTime: React.FC<ConferenceTimeProps> = ({
 
   //const diffTimeMin = Math.round((finTime - currTime) / (1000 * 60));
   const diffTimeSec = Math.round((finTime - currTime) / 1000);
+
   const { counter } = useCounter(diffTimeSec);
-
-  const hhMmSs = (totalSeconds: number) => {
-    const hours = Math.floor(totalSeconds / 3600);
-    const strHours = hours < 10 ? `0${hours}` : hours;
-    totalSeconds %= 3600;
-    const minutes = Math.floor(totalSeconds / 60);
-    const strMinutes = minutes < 10 ? `0${minutes}` : minutes;
-    const seconds = totalSeconds % 60;
-    const strSeconds = seconds < 10 ? `0${seconds}` : seconds;
-
-    const strTime = `${strHours}:${strMinutes}:${strSeconds}`;
-    return { hours, minutes, seconds, strTime };
-  };
-  const { minutes, seconds, strTime } = hhMmSs(counter);
-
   useEffect(() => {
     if (minutes === 3 && seconds === 0) {
       setModaleInfo(true);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [counter]);
+
+  if (diffTimeSec < 1) return null;
+
+  const { minutes, seconds, strTime } = hhMmSs(counter);
 
   return (
     <Box textAlign="center">
