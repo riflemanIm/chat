@@ -1435,15 +1435,14 @@ var hhMmSs = function hhMmSs(totalSeconds) {
   };
 };
 var ConferenceTime = function ConferenceTime(_ref) {
-  var currentDate = _ref.currentDate,
-    finishDate = _ref.finishDate;
+  var finishDate = _ref.finishDate;
   //const { t } = useTranslation();
   var _useState = React.useState(false),
     modaleInfo = _useState[0],
     setModaleInfo = _useState[1];
   var currTime = Date.now();
-  console.log("currentDate server", currentDate);
-  console.log("currTime client", currTime);
+  // console.log("currentDate server", currentDate);
+  // console.log("currTime client", currTime);
   var finTime = new Date(finishDate).getTime();
   //const diffTimeMin = Math.round((finTime - currTime) / (1000 * 60));
   var diffTimeSec = Math.round((finTime - currTime) / 1000);
