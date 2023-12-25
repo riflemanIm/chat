@@ -29,8 +29,8 @@ const ConferenceTime: React.FC<ConferenceTimeProps> = ({
   //const { t } = useTranslation();
   const [modaleInfo, setModaleInfo] = useState(false);
   const currTime = Date.now();
-  console.log("currentDate server", currentDate);
-  console.log("currTime client", currTime);
+  // console.log("currentDate server", currentDate);
+  // console.log("currTime client", currTime);
   const finTime = new Date(finishDate).getTime();
 
   //const diffTimeMin = Math.round((finTime - currTime) / (1000 * 60));
