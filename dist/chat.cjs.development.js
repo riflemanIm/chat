@@ -1441,7 +1441,9 @@ var ConferenceTime = function ConferenceTime(_ref) {
   var _useState = React.useState(false),
     modaleInfo = _useState[0],
     setModaleInfo = _useState[1];
-  var currTime = new Date(currentDate).getTime();
+  var currTime = Date.now();
+  console.log("currentDate server", currentDate);
+  console.log("currTime client", currTime);
   var finTime = new Date(finishDate).getTime();
   //const diffTimeMin = Math.round((finTime - currTime) / (1000 * 60));
   var diffTimeSec = Math.round((finTime - currTime) / 1000);
