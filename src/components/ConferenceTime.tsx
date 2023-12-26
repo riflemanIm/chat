@@ -1,12 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Box, Typography } from "@mui/material";
 import useCounter from "../hooks/useCounter";
 import AlertDialog from "./AlertDialog";
 //import { useTranslation } from "react-i18next";
-
-type ConferenceTimeProps = {
-  finishDate: Date;
-};
 
 const hhMmSs = (totalSeconds: number) => {
   const hours = Math.floor(totalSeconds / 3600);
@@ -20,7 +16,35 @@ const hhMmSs = (totalSeconds: number) => {
   const strTime = `${strHours}:${strMinutes}:${strSeconds}`;
   return { hours, minutes, seconds, strTime };
 };
+type AlertModaleProps = {
+  modaleInfo: boolean;
+  setModaleInfo: (vars: boolean) => void;
+  strTime: string;
+};
+const AlertModale: React.FC<AlertModaleProps> = ({
+  modaleInfo,
+  setModaleInfo,
+  strTime
+}) => {
+  return useMemo(
+    () => (
+      <AlertDialog open={modaleInfo} setOpen={setModaleInfo} severity="info">
+        <Typography variant="body1" textAlign="center">
+          До окончания конференции осталось:
+        </Typography>
+        <Typography variant="h6" textAlign="center">
+          {strTime}
+        </Typography>
+      </AlertDialog>
+    ),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [modaleInfo]
+  );
+};
 
+type ConferenceTimeProps = {
+  finishDate: Date;
+};
 const ConferenceTime: React.FC<ConferenceTimeProps> = ({
   finishDate
 }: ConferenceTimeProps) => {
@@ -54,14 +78,11 @@ const ConferenceTime: React.FC<ConferenceTimeProps> = ({
       <Typography variant="button" component="span">
         {strTime}
       </Typography>
-      <AlertDialog open={modaleInfo} setOpen={setModaleInfo} severity="info">
-        <Typography variant="body1" textAlign="center">
-          До окончания конференции осталось:
-        </Typography>
-        <Typography variant="h6" textAlign="center">
-          {strTime}
-        </Typography>
-      </AlertDialog>
+      <AlertModale
+        modaleInfo={modaleInfo}
+        setModaleInfo={setModaleInfo}
+        strTime={strTime}
+      />
     </Box>
   );
 };

@@ -1,4 +1,4 @@
-import React__default, { createElement, Fragment, useState, useRef, useEffect, useCallback, createContext, useContext, useMemo } from 'react';
+import React__default, { createElement, Fragment, useState, useRef, useEffect, useMemo, useCallback, createContext, useContext } from 'react';
 import { Box, Typography, TextField, InputAdornment, IconButton, SvgIcon, Popover, Avatar, ListItem, Alert, Link, List, ListItemAvatar, ListItemText, Dialog, DialogTitle, DialogContent, DialogActions, Button, Slide, CardHeader, useMediaQuery, Card, Tooltip, CircularProgress, Divider, CardContent, Menu, MenuItem, ListItemIcon, Chip, Badge, Paper, Snackbar, Container, Grid } from '@mui/material';
 import { makeStyles, createStyles, withStyles } from '@mui/styles';
 import FileCopyIcon from '@mui/icons-material/FileCopy';
@@ -1417,6 +1417,7 @@ function AlertDialog(_ref) {
   }, t("COMPONENT.BUT_CLOSE"))));
 }
 
+//import { useTranslation } from "react-i18next";
 var hhMmSs = function hhMmSs(totalSeconds) {
   var hours = Math.floor(totalSeconds / 3600);
   var strHours = hours < 10 ? "0" + hours : hours;
@@ -1433,8 +1434,28 @@ var hhMmSs = function hhMmSs(totalSeconds) {
     strTime: strTime
   };
 };
-var ConferenceTime = function ConferenceTime(_ref) {
-  var finishDate = _ref.finishDate;
+var AlertModale = function AlertModale(_ref) {
+  var modaleInfo = _ref.modaleInfo,
+    setModaleInfo = _ref.setModaleInfo,
+    strTime = _ref.strTime;
+  return useMemo(function () {
+    return /*#__PURE__*/React__default.createElement(AlertDialog, {
+      open: modaleInfo,
+      setOpen: setModaleInfo,
+      severity: "info"
+    }, /*#__PURE__*/React__default.createElement(Typography, {
+      variant: "body1",
+      textAlign: "center"
+    }, "\u0414\u043E \u043E\u043A\u043E\u043D\u0447\u0430\u043D\u0438\u044F \u043A\u043E\u043D\u0444\u0435\u0440\u0435\u043D\u0446\u0438\u0438 \u043E\u0441\u0442\u0430\u043B\u043E\u0441\u044C:"), /*#__PURE__*/React__default.createElement(Typography, {
+      variant: "h6",
+      textAlign: "center"
+    }, strTime));
+  },
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  [modaleInfo]);
+};
+var ConferenceTime = function ConferenceTime(_ref2) {
+  var finishDate = _ref2.finishDate;
   //const { t } = useTranslation();
   var _useState = useState(false),
     modaleInfo = _useState[0],
@@ -1466,17 +1487,11 @@ var ConferenceTime = function ConferenceTime(_ref) {
   }, "\u043E\u0441\u0442\u0430\u043B\u043E\u0441\u044C:", " "), /*#__PURE__*/React__default.createElement(Typography, {
     variant: "button",
     component: "span"
-  }, strTime), /*#__PURE__*/React__default.createElement(AlertDialog, {
-    open: modaleInfo,
-    setOpen: setModaleInfo,
-    severity: "info"
-  }, /*#__PURE__*/React__default.createElement(Typography, {
-    variant: "body1",
-    textAlign: "center"
-  }, "\u0414\u043E \u043E\u043A\u043E\u043D\u0447\u0430\u043D\u0438\u044F \u043A\u043E\u043D\u0444\u0435\u0440\u0435\u043D\u0446\u0438\u0438 \u043E\u0441\u0442\u0430\u043B\u043E\u0441\u044C:"), /*#__PURE__*/React__default.createElement(Typography, {
-    variant: "h6",
-    textAlign: "center"
-  }, strTime)));
+  }, strTime), /*#__PURE__*/React__default.createElement(AlertModale, {
+    modaleInfo: modaleInfo,
+    setModaleInfo: setModaleInfo,
+    strTime: strTime
+  }));
 };
 
 var useStyles$8 = /*#__PURE__*/makeStyles(function (theme) {
