@@ -271,13 +271,9 @@ const RoomHeader: React.FC<RoomHeaderProps> = ({
               </Button>
             )}
 
-          {conference?.currentDate != null &&
-            conference?.finishDate != null && (
-              <ConferenceTime
-                currentDate={conference.currentDate}
-                finishDate={conference.finishDate}
-              />
-            )}
+          {conference?.finishDate != null && (
+            <ConferenceTime finishDate={conference.finishDate} />
+          )}
         </React.Fragment>
       }
     />

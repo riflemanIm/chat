@@ -11,7 +11,10 @@ export default function useCounter(max = 30000) {
   // Counter
   useEffect(() => {
     if (counter > 0)
-      counterRef.current = setInterval(() => setCounter(counter - 1), 1000);
+      counterRef.current = setInterval(
+        () => setCounter(prev => prev - 1),
+        1000
+      );
 
     return () => {
       if (counterRef.current) clearInterval(counterRef.current);

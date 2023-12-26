@@ -5,7 +5,6 @@ import AlertDialog from "./AlertDialog";
 //import { useTranslation } from "react-i18next";
 
 type ConferenceTimeProps = {
-  currentDate: Date;
   finishDate: Date;
 };
 
@@ -23,7 +22,6 @@ const hhMmSs = (totalSeconds: number) => {
 };
 
 const ConferenceTime: React.FC<ConferenceTimeProps> = ({
-  currentDate,
   finishDate
 }: ConferenceTimeProps) => {
   //const { t } = useTranslation();
@@ -46,7 +44,7 @@ const ConferenceTime: React.FC<ConferenceTimeProps> = ({
 
   if (diffTimeSec < 1) return null;
 
-  const { minutes, seconds, strTime } = hhMmSs(counter);
+  const { minutes, seconds, strTime } = hhMmSs(diffTimeSec);
 
   return (
     <Box textAlign="center">
