@@ -1369,7 +1369,9 @@ function useCounter(max) {
   // Counter
   useEffect(function () {
     if (counter > 0) counterRef.current = setInterval(function () {
-      return setCounter(counter - 1);
+      return setCounter(function (prev) {
+        return prev - 1;
+      });
     }, 1000);
     return function () {
       if (counterRef.current) clearInterval(counterRef.current);
@@ -1452,7 +1454,7 @@ var ConferenceTime = function ConferenceTime(_ref) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [counter]);
   if (diffTimeSec < 1) return null;
-  var _hhMmSs = hhMmSs(counter),
+  var _hhMmSs = hhMmSs(diffTimeSec),
     minutes = _hhMmSs.minutes,
     seconds = _hhMmSs.seconds,
     strTime = _hhMmSs.strTime;
@@ -1657,8 +1659,7 @@ var RoomHeader = function RoomHeader(_ref) {
       onClick: function onClick() {
         return onVideoCall(contact);
       }
-    }, t("CHAT.CONFERENCE.START")), (conference == null ? void 0 : conference.currentDate) != null && (conference == null ? void 0 : conference.finishDate) != null && /*#__PURE__*/React__default.createElement(ConferenceTime, {
-      currentDate: conference.currentDate,
+    }, t("CHAT.CONFERENCE.START")), (conference == null ? void 0 : conference.finishDate) != null && /*#__PURE__*/React__default.createElement(ConferenceTime, {
       finishDate: conference.finishDate
     }))
   });
