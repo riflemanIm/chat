@@ -112,8 +112,6 @@ const RoomHeader: React.FC<RoomHeaderProps> = ({
       onOperatorAdd(chat as Group, operator);
   };
 
-  console.log("conference", conference);
-
   const group = chat as Group;
   if (group.groupId) {
     // группа
@@ -200,16 +198,7 @@ const RoomHeader: React.FC<RoomHeaderProps> = ({
   }
   const contact = chat as Contact;
   const isTyping = !!typing?.contactId && typing?.userId === contact.userId;
-  /*
-  console.log(
-    'conference',
-    conference,
-    'user',
-    user,
-    'contact',
-    contact,
-  );
-*/
+  console.log("user", user, "contact", contact);
 
   return (
     <CardHeader
@@ -221,7 +210,8 @@ const RoomHeader: React.FC<RoomHeaderProps> = ({
       className={className}
       action={
         <React.Fragment>
-          {conferenceJoined &&
+          {user.role !== 1 &&
+            conferenceJoined &&
             conference &&
             !isEmpty(conference) &&
             onConferencePause != null && (

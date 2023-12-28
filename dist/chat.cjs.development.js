@@ -1562,7 +1562,6 @@ var RoomHeader = function RoomHeader(_ref) {
     setAddOperatorOpen(false);
     if (onOperatorAdd && operator && chat) onOperatorAdd(chat, operator);
   };
-  console.log("conference", conference);
   var group = chat;
   if (group.groupId) {
     var _group$members2;
@@ -1622,16 +1621,7 @@ var RoomHeader = function RoomHeader(_ref) {
   }
   var contact = chat;
   var isTyping = !!(typing != null && typing.contactId) && (typing == null ? void 0 : typing.userId) === contact.userId;
-  /*
-  console.log(
-    'conference',
-    conference,
-    'user',
-    user,
-    'contact',
-    contact,
-  );
-  */
+  console.log("user", user, "contact", contact);
   return /*#__PURE__*/React__default.createElement(material.CardHeader, {
     avatar: /*#__PURE__*/React__default.createElement(material.Avatar, {
       alt: contact.username,
@@ -1643,7 +1633,7 @@ var RoomHeader = function RoomHeader(_ref) {
       isTyping: isTyping
     }),
     className: className,
-    action: /*#__PURE__*/React__default.createElement(React__default.Fragment, null, conferenceJoined && conference && !isEmpty(conference) && onConferencePause != null && /*#__PURE__*/React__default.createElement(material.Button, {
+    action: /*#__PURE__*/React__default.createElement(React__default.Fragment, null, user.role !== 1 && conferenceJoined && conference && !isEmpty(conference) && onConferencePause != null && /*#__PURE__*/React__default.createElement(material.Button, {
       "aria-label": "cancel call",
       variant: "contained",
       color: "secondary",
