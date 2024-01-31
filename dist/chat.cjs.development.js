@@ -13,7 +13,7 @@ var DeleteIcon = _interopDefault(require('@mui/icons-material/Delete'));
 var ArrowBackIcon = _interopDefault(require('@mui/icons-material/ArrowBack'));
 var iconsMaterial = require('@mui/icons-material');
 var reactI18next = require('react-i18next');
-var moment = _interopDefault(require('moment'));
+var dayjs = _interopDefault(require('dayjs'));
 var Viewer = _interopDefault(require('react-viewer'));
 var GroupIcon = _interopDefault(require('@mui/icons-material/Group'));
 var VideoCallIcon = _interopDefault(require('@mui/icons-material/VideoCall'));
@@ -883,14 +883,14 @@ function formatTime(time) {
   if (typeof time === "undefined") return null;
   if (typeof time === "string") time = new Date(time);
   // больше чем вчера
-  if (moment().add(-1, "days").startOf("day").isAfter(time)) {
-    return moment(time).format("DD.MM.YYYY HH:mm");
+  if (dayjs().add(-1, "days").startOf("day").isAfter(time)) {
+    return dayjs(time).format("DD.MM.YYYY HH:mm");
   }
   // вчера
-  if (moment().startOf("day").isAfter(time)) {
-    return "\u0412\u0447\u0435\u0440\u0430 \u0432 " + moment(time).format("HH:mm");
+  if (dayjs().startOf("day").isAfter(time)) {
+    return "\u0412\u0447\u0435\u0440\u0430 \u0432 " + dayjs(time).format("HH:mm");
   }
-  return moment(time).format("HH:mm");
+  return dayjs(time).format("HH:mm");
 }
 /**
  * Раскрыть содержимое

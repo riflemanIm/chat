@@ -6,7 +6,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { InsertEmoticon, Send, Done, DoneAll, ArrowForward } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import Viewer from 'react-viewer';
 import GroupIcon from '@mui/icons-material/Group';
 import VideoCallIcon from '@mui/icons-material/VideoCall';
@@ -880,14 +880,14 @@ function formatTime(time) {
   if (typeof time === "undefined") return null;
   if (typeof time === "string") time = new Date(time);
   // больше чем вчера
-  if (moment().add(-1, "days").startOf("day").isAfter(time)) {
-    return moment(time).format("DD.MM.YYYY HH:mm");
+  if (dayjs().add(-1, "days").startOf("day").isAfter(time)) {
+    return dayjs(time).format("DD.MM.YYYY HH:mm");
   }
   // вчера
-  if (moment().startOf("day").isAfter(time)) {
-    return "\u0412\u0447\u0435\u0440\u0430 \u0432 " + moment(time).format("HH:mm");
+  if (dayjs().startOf("day").isAfter(time)) {
+    return "\u0412\u0447\u0435\u0440\u0430 \u0432 " + dayjs(time).format("HH:mm");
   }
-  return moment(time).format("HH:mm");
+  return dayjs(time).format("HH:mm");
 }
 /**
  * Раскрыть содержимое

@@ -1,4 +1,4 @@
-import moment from "moment";
+import dayjs from "dayjs";
 import { ChatRoom, Contact, ContactGather, Group, GroupGather } from "../types";
 
 export function isEmpty(value: unknown): boolean {
@@ -33,23 +33,23 @@ export function formatTime(time: Date | string | undefined) {
   if (typeof time === "string") time = new Date(time);
   // больше чем вчера
   if (
-    moment()
+    dayjs()
       .add(-1, "days")
       .startOf("day")
       .isAfter(time)
   ) {
-    return moment(time).format("DD.MM.YYYY HH:mm");
+    return dayjs(time).format("DD.MM.YYYY HH:mm");
   }
   // вчера
   if (
-    moment()
+    dayjs()
       .startOf("day")
       .isAfter(time)
   ) {
-    return `Вчера в ${moment(time).format("HH:mm")}`;
+    return `Вчера в ${dayjs(time).format("HH:mm")}`;
   }
 
-  return moment(time).format("HH:mm");
+  return dayjs(time).format("HH:mm");
 }
 
 /**
