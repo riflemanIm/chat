@@ -363,6 +363,7 @@ export const ChatPage: React.FC<ChatPa> = ({
     <Conference
       conference={state.conference.data}
       onClose={onConferencePause}
+      langCode={state.user.langCode}
     />
   );
 

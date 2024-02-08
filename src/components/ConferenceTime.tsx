@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { Box, Typography } from "@mui/material";
 import useCounter from "../hooks/useCounter";
 import AlertDialog from "./AlertDialog";
+import { useTranslation } from "react-i18next";
 //import { useTranslation } from "react-i18next";
 
 const hhMmSs = (totalSeconds: number) => {
@@ -26,11 +27,12 @@ const AlertModale: React.FC<AlertModaleProps> = ({
   setModaleInfo,
   strTime
 }) => {
+  const { t } = useTranslation();
   return useMemo(
     () => (
       <AlertDialog open={modaleInfo} setOpen={setModaleInfo} severity="info">
         <Typography variant="body1" textAlign="center">
-          До окончания конференции осталось:
+          {t("CHAT.CONFERENCE.UntillTheEnd")}:
         </Typography>
         <Typography variant="h6" textAlign="center">
           {strTime}
@@ -48,7 +50,7 @@ type ConferenceTimeProps = {
 const ConferenceTime: React.FC<ConferenceTimeProps> = ({
   finishDate
 }: ConferenceTimeProps) => {
-  //const { t } = useTranslation();
+  const { t } = useTranslation();
   const [modaleInfo, setModaleInfo] = useState(false);
   const currTime = Date.now();
   // console.log("currentDate server", currentDate);
@@ -60,7 +62,7 @@ const ConferenceTime: React.FC<ConferenceTimeProps> = ({
 
   const { counter } = useCounter(diffTimeSec);
   useEffect(() => {
-    if (minutes === 3 && seconds === 0) {
+    if (minutes != null && minutes === 3 && seconds != null && seconds === 0) {
       setModaleInfo(true);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -73,7 +75,7 @@ const ConferenceTime: React.FC<ConferenceTimeProps> = ({
   return (
     <Box textAlign="center">
       <Typography variant="body2" component="span">
-        осталось:{" "}
+        {t("CHAT.CONFERENCE.LEFT_TIME")}:{" "}
       </Typography>
       <Typography variant="button" component="span">
         {strTime}

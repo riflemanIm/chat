@@ -1,41 +1,43 @@
 {
   "CHAT": {
     "STATUS": {
-      "ONLINE": "online",
-      "OFFLINE": "offline",
-      "TYPING": "typing"
+      "ONLINE": "en ligne",
+      "OFFLINE": "hors ligne",
+      "TYPING": "imprime"
     },
     "MESSAGE": {
       "TYPE": {
         "IMAGE": "Image",
-        "VIDEO": "Video",
+        "VIDEO": "Vidéo",
         "FILE": "File",
         "NOTIFY": "Notification"
       },
       "MENU": {
-        "COPY": "Copy",
-        "DELETE": "Delete"
+        "COPY": "Copier",
+        "DELETE": "Supprimer"
       },
       "REVOKED": {
-        "YOU": "You deleted the message",
-        "CONTACT": "deleted the message"
+        "YOU": "Vous avez supprimé le message",
+        "CONTACT": "message supprimé"
       }
     },
     "CONFERENCE": {
-      "JOIN": "Join",
-      "START": "Start",
-      "FINISH": "Finish",
-      "BACK": "Back to chat",
+      "JOIN": "Rejoindre",
+      "START": "Démarrer",
+      "FINISH": "Terminer",
+      "BACK": "Retour au chat",
       "NotFoundError": "Périphérique demandé introuvable",
       "NotAllowedError": "Autorisation refusée. Pour autoriser l'accès à l'appareil, accédez aux paramètres du navigateur",
       "ErrorAny": "L'appareil n'est pas configuré",
       "ALLOK": "Tout va bien",
       "CheckCamMic": "Vérifier l'accès au microphone et à la caméra",
       "CheckMic": "Vérifier l'accès au microphone",
-      "CheckCam": "Vérifier l'accès à la caméra"
+      "CheckCam": "Vérifier l'accès à la caméra",
+      "UntillTheEnd": " Il est encore temps jusqu'à la fin de la conférence",
+      "LEFT_TIME": "temps restant:"
     },
-    "ADD_CONTACT": "Add contact",
-    "INPUT_MESSAGE": "Please write a message...",
+    "ADD_CONTACT": "Ajouter un contact",
+    "INPUT_MESSAGE": "Veuillez écrire un message...",
     "INPUT_SEARCH_CONTACT": "Surname Name",
     "MEMBERS": "members"
   }

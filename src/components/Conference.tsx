@@ -1,7 +1,10 @@
 import React, { useEffect } from "react";
 import { makeStyles } from "@mui/styles";
 import { ConferenceData } from "../types";
-
+function updateUrlParameter(url: string, param: string, value: string) {
+  const regex = new RegExp("(" + param + "=)[^&]+");
+  return url.replace(regex, "$1" + value);
+}
 const useStyles = makeStyles(() => ({
   root: {
     width: "100%",
@@ -13,19 +16,26 @@ const useStyles = makeStyles(() => ({
 type ConferenceProps = {
   conference: ConferenceData | null;
   onClose: (conference: ConferenceData | null) => void;
+  langCode?: string | null;
 };
 
 const Conference: React.FC<ConferenceProps> = ({
   conference,
-  onClose
+  onClose,
+  langCode = "en"
 }: ConferenceProps) => {
   const classes = useStyles();
   const ref = React.useRef<HTMLIFrameElement>(null);
+  const confUrl =
+    conference?.url && langCode
+      ? updateUrlParameter(conference?.url, "lang", langCode)
+      : "";
 
   useEffect(() => {
     const listener = ({ source, data }: MessageEvent) => {
       if (source === ref.current?.contentWindow) {
         const { type } = data;
+
         if (
           [
             "notSupported",
@@ -44,13 +54,14 @@ const Conference: React.FC<ConferenceProps> = ({
     return () => {
       window.removeEventListener("message", listener);
     };
-  }, [conference?.id]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [conference?.id, langCode]);
 
   return (
     <iframe
       title="conference"
       className={classes.root}
-      src={conference?.url}
+      src={confUrl}
       allowFullScreen
       allow="microphone; camera; autoplay; display-capture"
       ref={ref}

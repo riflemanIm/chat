@@ -32,7 +32,9 @@
       "ALLOK": "All OK",
       "CheckCamMic": "Check access to microphone and camera",
       "CheckMic": "Check access to microphone",
-      "CheckCam": "Check access to camera"
+      "CheckCam": "Check access to camera",
+      "UntillTheEnd": "There is still time until the end of the conference",
+      "LEFT_TIME": "Time left"
     },
     "ADD_CONTACT": "Add contact",
     "INPUT_MESSAGE": "Please write a message...",
