@@ -1441,6 +1441,8 @@ var AlertModale = function AlertModale(_ref) {
   var modaleInfo = _ref.modaleInfo,
     setModaleInfo = _ref.setModaleInfo,
     strTime = _ref.strTime;
+  var _useTranslation = reactI18next.useTranslation(),
+    t = _useTranslation.t;
   return React.useMemo(function () {
     return /*#__PURE__*/React__default.createElement(AlertDialog, {
       open: modaleInfo,
@@ -1449,7 +1451,7 @@ var AlertModale = function AlertModale(_ref) {
     }, /*#__PURE__*/React__default.createElement(material.Typography, {
       variant: "body1",
       textAlign: "center"
-    }, "\u0414\u043E \u043E\u043A\u043E\u043D\u0447\u0430\u043D\u0438\u044F \u043A\u043E\u043D\u0444\u0435\u0440\u0435\u043D\u0446\u0438\u0438 \u043E\u0441\u0442\u0430\u043B\u043E\u0441\u044C:"), /*#__PURE__*/React__default.createElement(material.Typography, {
+    }, t("CHAT.CONFERENCE.UntillTheEnd"), ":"), /*#__PURE__*/React__default.createElement(material.Typography, {
       variant: "h6",
       textAlign: "center"
     }, strTime));
@@ -1459,7 +1461,8 @@ var AlertModale = function AlertModale(_ref) {
 };
 var ConferenceTime = function ConferenceTime(_ref2) {
   var finishDate = _ref2.finishDate;
-  //const { t } = useTranslation();
+  var _useTranslation2 = reactI18next.useTranslation(),
+    t = _useTranslation2.t;
   var _useState = React.useState(false),
     modaleInfo = _useState[0],
     setModaleInfo = _useState[1];
@@ -1472,7 +1475,7 @@ var ConferenceTime = function ConferenceTime(_ref2) {
   var _useCounter = useCounter(diffTimeSec),
     counter = _useCounter.counter;
   React.useEffect(function () {
-    if (minutes === 3 && seconds === 0) {
+    if (minutes != null && minutes === 3 && seconds != null && seconds === 0) {
       setModaleInfo(true);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -1487,7 +1490,7 @@ var ConferenceTime = function ConferenceTime(_ref2) {
   }, /*#__PURE__*/React__default.createElement(material.Typography, {
     variant: "body2",
     component: "span"
-  }, "\u043E\u0441\u0442\u0430\u043B\u043E\u0441\u044C:", " "), /*#__PURE__*/React__default.createElement(material.Typography, {
+  }, t("CHAT.CONFERENCE.LEFT_TIME"), ":", " "), /*#__PURE__*/React__default.createElement(material.Typography, {
     variant: "button",
     component: "span"
   }, strTime), /*#__PURE__*/React__default.createElement(AlertModale, {
@@ -2189,6 +2192,10 @@ var RoomList = function RoomList(props) {
   })));
 };
 
+function updateUrlParameter(url, param, value) {
+  var regex = new RegExp("(" + param + "=)[^&]+");
+  return url.replace(regex, "$1" + value);
+}
 var useStyles$c = /*#__PURE__*/styles.makeStyles(function () {
   return {
     root: {
@@ -2200,9 +2207,12 @@ var useStyles$c = /*#__PURE__*/styles.makeStyles(function () {
 });
 var Conference = function Conference(_ref) {
   var conference = _ref.conference,
-    onClose = _ref.onClose;
+    onClose = _ref.onClose,
+    _ref$langCode = _ref.langCode,
+    langCode = _ref$langCode === void 0 ? "en" : _ref$langCode;
   var classes = useStyles$c();
   var ref = React__default.useRef(null);
+  var confUrl = conference != null && conference.url && langCode ? updateUrlParameter(conference == null ? void 0 : conference.url, "lang", langCode) : "";
   React.useEffect(function () {
     var listener = function listener(_ref2) {
       var _ref$current;
@@ -2221,11 +2231,12 @@ var Conference = function Conference(_ref) {
     return function () {
       window.removeEventListener("message", listener);
     };
-  }, [conference == null ? void 0 : conference.id]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [conference == null ? void 0 : conference.id, langCode]);
   return /*#__PURE__*/React__default.createElement("iframe", {
     title: "conference",
     className: classes.root,
-    src: conference == null ? void 0 : conference.url,
+    src: confUrl,
     allowFullScreen: true,
     allow: "microphone; camera; autoplay; display-capture",
     ref: ref
@@ -4098,7 +4109,8 @@ var ChatPage = function ChatPage(_ref) {
   var GetConference = function GetConference() {
     return /*#__PURE__*/React.createElement(Conference, {
       conference: state.conference.data,
-      onClose: onConferencePause
+      onClose: onConferencePause,
+      langCode: state.user.langCode
     });
   };
   // const getMessCount = (data: GroupGather) => {
@@ -4188,7 +4200,9 @@ var CHAT = {
 		ALLOK: "All OK",
 		CheckCamMic: "Check access to microphone and camera",
 		CheckMic: "Check access to microphone",
-		CheckCam: "Check access to camera"
+		CheckCam: "Check access to camera",
+		UntillTheEnd: "There is still time until the end of the conference",
+		LEFT_TIME: "Time left"
 	},
 	ADD_CONTACT: "Add contact",
 	INPUT_MESSAGE: "Please write a message...",
@@ -4201,41 +4215,43 @@ var en = {
 
 var CHAT$1 = {
 	STATUS: {
-		ONLINE: "online",
-		OFFLINE: "offline",
-		TYPING: "typing"
+		ONLINE: "en ligne",
+		OFFLINE: "hors ligne",
+		TYPING: "imprime"
 	},
 	MESSAGE: {
 		TYPE: {
 			IMAGE: "Image",
-			VIDEO: "Video",
+			VIDEO: "Vidéo",
 			FILE: "File",
 			NOTIFY: "Notification"
 		},
 		MENU: {
-			COPY: "Copy",
-			DELETE: "Delete"
+			COPY: "Copier",
+			DELETE: "Supprimer"
 		},
 		REVOKED: {
-			YOU: "You deleted the message",
-			CONTACT: "deleted the message"
+			YOU: "Vous avez supprimé le message",
+			CONTACT: "message supprimé"
 		}
 	},
 	CONFERENCE: {
-		JOIN: "Join",
-		START: "Start",
-		FINISH: "Finish",
-		BACK: "Back to chat",
+		JOIN: "Rejoindre",
+		START: "Démarrer",
+		FINISH: "Terminer",
+		BACK: "Retour au chat",
 		NotFoundError: "Périphérique demandé introuvable",
 		NotAllowedError: "Autorisation refusée. Pour autoriser l'accès à l'appareil, accédez aux paramètres du navigateur",
 		ErrorAny: "L'appareil n'est pas configuré",
 		ALLOK: "Tout va bien",
 		CheckCamMic: "Vérifier l'accès au microphone et à la caméra",
 		CheckMic: "Vérifier l'accès au microphone",
-		CheckCam: "Vérifier l'accès à la caméra"
+		CheckCam: "Vérifier l'accès à la caméra",
+		UntillTheEnd: " Il est encore temps jusqu'à la fin de la conférence",
+		LEFT_TIME: "temps restant:"
 	},
-	ADD_CONTACT: "Add contact",
-	INPUT_MESSAGE: "Please write a message...",
+	ADD_CONTACT: "Ajouter un contact",
+	INPUT_MESSAGE: "Veuillez écrire un message...",
 	INPUT_SEARCH_CONTACT: "Surname Name",
 	MEMBERS: "members"
 };
@@ -4277,7 +4293,9 @@ var CHAT$2 = {
 		ALLOK: "Все OK",
 		CheckCamMic: "Проверить доступ к микрофону и камере",
 		CheckMic: "Проверить доступ к микрофону",
-		CheckCam: "Проверить доступ к камере"
+		CheckCam: "Проверить доступ к камере",
+		UntillTheEnd: "До окончания конференции осталось",
+		LEFT_TIME: "Осталось"
 	},
 	ADD_CONTACT: "Добавить контакт",
 	INPUT_MESSAGE: "Напишите сообщение...",
