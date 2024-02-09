@@ -5,6 +5,9 @@ function updateUrlParameter(url: string, param: string, value: string) {
   const regex = new RegExp("(" + param + "=)[^&]+");
   return url.replace(regex, "$1" + value);
 }
+const transLang = (lang: string) =>
+  lang === "ru" ? "rus" : lang === "fr" ? "fra" : lang === "en" ? "eng" : "";
+
 const useStyles = makeStyles(() => ({
   root: {
     width: "100%",
@@ -28,7 +31,7 @@ const Conference: React.FC<ConferenceProps> = ({
   const ref = React.useRef<HTMLIFrameElement>(null);
   const confUrl =
     conference?.url && langCode
-      ? updateUrlParameter(conference?.url, "lang", langCode)
+      ? updateUrlParameter(conference?.url, "lang", transLang(langCode))
       : "";
 
   useEffect(() => {
