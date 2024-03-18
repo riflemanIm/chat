@@ -4,7 +4,7 @@ import { makeStyles, createStyles } from "@mui/styles";
 export default makeStyles((theme: Theme) =>
   createStyles({
     rootContact: {
-      padding: theme.spacing(0.2),
+      padding: 1,
       paddingLeft: theme.spacing(2),
       "& span": {
         float: "right",
@@ -29,7 +29,7 @@ export default makeStyles((theme: Theme) =>
       }
     },
     rootUser: {
-      padding: theme.spacing(0.2),
+      padding: 1,
       paddingRight: theme.spacing(2),
       justifyContent: "flex-end",
       "& span": {
@@ -72,9 +72,10 @@ export default makeStyles((theme: Theme) =>
       [theme.breakpoints.down("sm")]: {
         maxWidth: "85%"
       },
-
-      borderRadius: theme.spacing(1.2),
-      padding: theme.spacing(1.8)
+      borderRadius: theme.spacing(0.6),
+      padding: theme.spacing(0.9),
+      paddingLeft: theme.spacing(1.8),
+      paddingRight: theme.spacing(1.8)
     },
     firstMessage: {},
     lastMessage: {},
