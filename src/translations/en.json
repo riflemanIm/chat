@@ -24,6 +24,7 @@
     "CONFERENCE": {
       "JOIN": "Join",
       "START": "Start",
+      "PAUSE": "Pause",
       "FINISH": "Finish",
       "BACK": "Back to chat",
       "NotFoundError": "Requested device not found",

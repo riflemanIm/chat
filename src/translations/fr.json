@@ -24,6 +24,7 @@
     "CONFERENCE": {
       "JOIN": "Rejoindre",
       "START": "Démarrer",
+      "PAUSE": "Pause",
       "FINISH": "Terminer",
       "BACK": "Retour au chat",
       "NotFoundError": "Périphérique demandé introuvable",
