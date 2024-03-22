@@ -19,13 +19,13 @@ export default makeStyles((theme: Theme) =>
       },
       "& $firstMessage": {
         borderTopLeftRadius: theme.spacing(3),
-        marginTop: theme.spacing(3)
+        marginTop: 10
       },
       "& $lastMessage": {
         borderTopRightRadius: theme.spacing(3),
         borderBottomLeftRadius: 0,
         borderBottomRightRadius: theme.spacing(3),
-        marginBottom: theme.spacing(3)
+        marginBottom: 10
       }
     },
     rootUser: {
@@ -45,12 +45,12 @@ export default makeStyles((theme: Theme) =>
       },
       "& $firstMessage": {
         borderTopRightRadius: theme.spacing(3),
-        marginTop: theme.spacing(3)
+        marginTop: 10
       },
       "& $lastMessage": {
         borderTopLeftRadius: theme.spacing(3),
         borderBottomRightRadius: 0,
-        marginBottom: theme.spacing(3)
+        marginBottom: 10
       }
     },
     rootNotify: {
