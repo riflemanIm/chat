@@ -55,6 +55,11 @@ export default makeStyles((theme: Theme) =>
     },
     rootNotify: {
       justifyContent: "center",
+      "& span": {
+        float: "right",
+        color: theme.palette.text.secondary,
+        fontSize: "0.8rem"
+      },
       "& > *": {
         //padding: `0px ${theme.spacing(1)}`,
         borderRadius: theme.spacing(3),

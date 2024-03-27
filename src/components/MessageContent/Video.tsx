@@ -33,7 +33,13 @@ const Video: React.FC<VideoProps> = ({
     src = `${apiUrl}/static/conf/${meta.visitId}/${meta.name}`;
   } else src = `${apiUrl}/static/file/${message.content}`;
   return (
-    <video src={src} className={classes.mediaContent} controls muted>
+    <video
+      src={src}
+      className={classes.mediaContent}
+      controls
+      muted
+      preload="none"
+    >
       Ваш браузер не поддерживает тег video.
     </video>
   );

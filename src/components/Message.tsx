@@ -123,7 +123,15 @@ const Message: React.FC<MessageProps> = (props: MessageProps) => {
   const isMine = user.userId === message.userId;
 
   return (
-    <ListItem className={isMine ? classes.rootUser : classes.rootContact}>
+    <ListItem
+      className={
+        message.messageType === "video_conference"
+          ? classes.rootNotify
+          : isMine
+          ? classes.rootUser
+          : classes.rootContact
+      }
+    >
       {wrapMessage(
         apiUrl,
         message,
