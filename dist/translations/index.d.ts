@@ -35,6 +35,8 @@ export declare const chatResources: {
                 CheckCamMic: string;
                 CheckMic: string;
                 CheckCam: string;
+                UntillTheEnd: string;
+                LEFT_TIME: string;
             };
             ADD_CONTACT: string;
             INPUT_MESSAGE: string;
@@ -68,6 +70,7 @@ export declare const chatResources: {
             CONFERENCE: {
                 JOIN: string;
                 START: string;
+                PAUSE: string;
                 FINISH: string;
                 BACK: string;
                 NotFoundError: string;
@@ -77,6 +80,8 @@ export declare const chatResources: {
                 CheckCamMic: string;
                 CheckMic: string;
                 CheckCam: string;
+                UntillTheEnd: string;
+                LEFT_TIME: string;
             };
             ADD_CONTACT: string;
             INPUT_MESSAGE: string;
@@ -110,6 +115,7 @@ export declare const chatResources: {
             CONFERENCE: {
                 JOIN: string;
                 START: string;
+                PAUSE: string;
                 FINISH: string;
                 BACK: string;
                 NotFoundError: string;
@@ -119,6 +125,8 @@ export declare const chatResources: {
                 CheckCamMic: string;
                 CheckMic: string;
                 CheckCam: string;
+                UntillTheEnd: string;
+                LEFT_TIME: string;
             };
             ADD_CONTACT: string;
             INPUT_MESSAGE: string;

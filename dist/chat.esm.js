@@ -8,6 +8,7 @@ import { InsertEmoticon, Send, Done, DoneAll, ArrowForward } from '@mui/icons-ma
 import { useTranslation } from 'react-i18next';
 import dayjs from 'dayjs';
 import Viewer from 'react-viewer';
+import { AspectRatio } from 'react-aspect-ratio';
 import GroupIcon from '@mui/icons-material/Group';
 import VideoCallIcon from '@mui/icons-material/VideoCall';
 import CallEndIcon from '@mui/icons-material/CallEnd';
@@ -908,20 +909,6 @@ function getFileMeta(content) {
     name: name
   };
 }
-function getImageMeta(content) {
-  // Формат [date]$[userId]$[width]$[height]$...
-  var meta = content.split("$");
-  var date = meta[0],
-    userId = meta[1],
-    width = meta[2],
-    height = meta[3];
-  return {
-    date: date,
-    userId: userId,
-    width: width,
-    height: height
-  };
-}
 function splitFileName(name) {
   var idx = name.lastIndexOf(".");
   if (idx === -1) return {
@@ -1030,27 +1017,30 @@ var Video = function Video(_ref) {
 };
 
 var useStyles$5 = /*#__PURE__*/makeStyles(function (theme) {
-  var _mediaContent;
+  var _mediaContent, _aspect;
   return createStyles({
     mediaContent: (_mediaContent = {
       cursor: "pointer",
       borderRadius: theme.spacing(1.2),
-      maxWidth: 284,
-      maxHeight: 190
+      maxWidth: 284
     }, _mediaContent[theme.breakpoints.down("sm")] = {
-      maxWidth: 250,
-      maxHeight: 170
-    }, _mediaContent)
+      maxWidth: 250
+    }, _mediaContent),
+    aspect: (_aspect = {
+      maxWidth: 284
+    }, _aspect[theme.breakpoints.down("sm")] = {
+      maxWidth: 250
+    }, _aspect)
   });
 });
 var Image$1 = function Image(_ref) {
   var apiUrl = _ref.apiUrl,
     message = _ref.message;
   var classes = useStyles$5();
+  //const meta = getImageMeta(message.content);
   var _React$useState = React__default.useState(false),
     viewerVisible = _React$useState[0],
     setViewerVisible = _React$useState[1];
-  var meta = getImageMeta(message.content);
   return /*#__PURE__*/React__default.createElement(React__default.Fragment, null, /*#__PURE__*/React__default.createElement(Viewer, {
     zIndex: 2000,
     visible: viewerVisible,
@@ -1061,15 +1051,17 @@ var Image$1 = function Image(_ref) {
     images: [{
       src: apiUrl + "/static/image/" + message.content
     }]
-  }), /*#__PURE__*/React__default.createElement("img", {
+  }), /*#__PURE__*/React__default.createElement(AspectRatio, {
+    ratio: "3/4",
+    className: classes.aspect
+  }, /*#__PURE__*/React__default.createElement("img", {
     src: apiUrl + "/static/image/" + message.content,
-    width: meta.width,
-    height: meta.height,
-    className: classes.mediaContent,
     onClick: function onClick() {
       setViewerVisible(true);
-    }
-  }));
+    },
+    className: classes.mediaContent,
+    alt: message.cdate
+  })));
 };
 
 var MessageContent = function MessageContent(_ref) {
@@ -1102,7 +1094,7 @@ var useStyles$6 = /*#__PURE__*/makeStyles(function (theme) {
   var _message;
   return createStyles({
     rootContact: {
-      padding: theme.spacing(0.2),
+      padding: 1,
       paddingLeft: theme.spacing(2),
       "& span": {
         float: "right",
@@ -1117,17 +1109,17 @@ var useStyles$6 = /*#__PURE__*/makeStyles(function (theme) {
       },
       "& $firstMessage": {
         borderTopLeftRadius: theme.spacing(3),
-        marginTop: theme.spacing(3)
+        marginTop: 10
       },
       "& $lastMessage": {
         borderTopRightRadius: theme.spacing(3),
         borderBottomLeftRadius: 0,
         borderBottomRightRadius: theme.spacing(3),
-        marginBottom: theme.spacing(3)
+        marginBottom: 10
       }
     },
     rootUser: {
-      padding: theme.spacing(0.2),
+      padding: 1,
       paddingRight: theme.spacing(2),
       justifyContent: "flex-end",
       "& span": {
@@ -1143,12 +1135,12 @@ var useStyles$6 = /*#__PURE__*/makeStyles(function (theme) {
       },
       "& $firstMessage": {
         borderTopRightRadius: theme.spacing(3),
-        marginTop: theme.spacing(3)
+        marginTop: 10
       },
       "& $lastMessage": {
         borderTopLeftRadius: theme.spacing(3),
         borderBottomRightRadius: 0,
-        marginBottom: theme.spacing(3)
+        marginBottom: 10
       }
     },
     rootNotify: {
@@ -1167,7 +1159,7 @@ var useStyles$6 = /*#__PURE__*/makeStyles(function (theme) {
       maxWidth: "95%"
     }, _message[theme.breakpoints.down("sm")] = {
       maxWidth: "85%"
-    }, _message.borderRadius = theme.spacing(1.2), _message.padding = theme.spacing(1.8), _message),
+    }, _message.borderRadius = theme.spacing(0.6), _message.padding = theme.spacing(0.9), _message.paddingLeft = theme.spacing(1.8), _message.paddingRight = theme.spacing(1.8), _message),
     firstMessage: {},
     lastMessage: {},
     file: {
@@ -2193,6 +2185,9 @@ function updateUrlParameter(url, param, value) {
   var regex = new RegExp("(" + param + "=)[^&]+");
   return url.replace(regex, "$1" + value);
 }
+var transLang = function transLang(lang) {
+  return lang === "ru" ? "rus" : lang === "fr" ? "fra" : lang === "en" ? "eng" : "";
+};
 var useStyles$c = /*#__PURE__*/makeStyles(function () {
   return {
     root: {
@@ -2209,7 +2204,7 @@ var Conference = function Conference(_ref) {
     langCode = _ref$langCode === void 0 ? "en" : _ref$langCode;
   var classes = useStyles$c();
   var ref = React__default.useRef(null);
-  var confUrl = conference != null && conference.url && langCode ? updateUrlParameter(conference == null ? void 0 : conference.url, "lang", langCode) : "";
+  var confUrl = conference != null && conference.url && langCode ? updateUrlParameter(conference == null ? void 0 : conference.url, "lang", transLang(langCode)) : "";
   useEffect(function () {
     var listener = function listener(_ref2) {
       var _ref$current;
@@ -4189,6 +4184,7 @@ var CHAT = {
 	CONFERENCE: {
 		JOIN: "Join",
 		START: "Start",
+		PAUSE: "Pause",
 		FINISH: "Finish",
 		BACK: "Back to chat",
 		NotFoundError: "Requested device not found",
@@ -4235,6 +4231,7 @@ var CHAT$1 = {
 	CONFERENCE: {
 		JOIN: "Rejoindre",
 		START: "Démarrer",
+		PAUSE: "Pause",
 		FINISH: "Terminer",
 		BACK: "Retour au chat",
 		NotFoundError: "Périphérique demandé introuvable",
