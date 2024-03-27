@@ -1015,7 +1015,8 @@ var Video = function Video(_ref) {
     src: src,
     className: classes.mediaContent,
     controls: true,
-    muted: true
+    muted: true,
+    preload: "none"
   }, "\u0412\u0430\u0448 \u0431\u0440\u0430\u0443\u0437\u0435\u0440 \u043D\u0435 \u043F\u043E\u0434\u0434\u0435\u0440\u0436\u0438\u0432\u0430\u0435\u0442 \u0442\u0435\u0433 video.");
 };
 
@@ -1152,6 +1153,11 @@ var useStyles$6 = /*#__PURE__*/styles.makeStyles(function (theme) {
     },
     rootNotify: {
       justifyContent: "center",
+      "& span": {
+        float: "right",
+        color: theme.palette.text.secondary,
+        fontSize: "0.8rem"
+      },
       "& > *": {
         //padding: `0px ${theme.spacing(1)}`,
         borderRadius: theme.spacing(3),
@@ -1254,7 +1260,7 @@ var Message = function Message(props) {
   }
   var isMine = user.userId === message.userId;
   return /*#__PURE__*/React.createElement(material.ListItem, {
-    className: isMine ? classes.rootUser : classes.rootContact
+    className: message.messageType === "video_conference" ? classes.rootNotify : isMine ? classes.rootUser : classes.rootContact
   }, wrapMessage(apiUrl, message, classes, isUserFirst, isUserLast, props.onContextMenu, /*#__PURE__*/React.createElement(React.Fragment, null, !isMine && isGroupMessage && owner && isUserFirst && /*#__PURE__*/React.createElement("div", {
     className: classes.header
   }, owner.username), /*#__PURE__*/React.createElement("div", {
