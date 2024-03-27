@@ -7,22 +7,24 @@ import { makeStyles, createStyles } from "@mui/styles";
 import { AspectRatio } from "react-aspect-ratio";
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
-    mediaContent: {
+    img: {
       cursor: "pointer",
       borderRadius: theme.spacing(1.2),
       maxWidth: 284,
-      //maxHeight: 190,
+      maxHeight: 190,
       [theme.breakpoints.down("sm")]: {
         maxWidth: 250,
-        // maxHeight: 170,
-      },
+        maxHeight: 170
+      }
     },
     aspect: {
       maxWidth: 284,
+      maxHeight: 190,
       [theme.breakpoints.down("sm")]: {
         maxWidth: 250,
-      },
-    },
+        maxHeight: 170
+      }
+    }
   })
 );
 type ImageProrps = {
@@ -47,8 +49,8 @@ const Image: React.FC<ImageProrps> = ({ apiUrl, message }: ImageProrps) => {
         }}
         images={[
           {
-            src: `${apiUrl}/static/image/${message.content}`,
-          },
+            src: `${apiUrl}/static/image/${message.content}`
+          }
         ]}
       />
       <AspectRatio ratio="3/4" className={classes.aspect}>
@@ -57,7 +59,7 @@ const Image: React.FC<ImageProrps> = ({ apiUrl, message }: ImageProrps) => {
           onClick={() => {
             setViewerVisible(true);
           }}
-          className={classes.mediaContent}
+          className={classes.img}
           alt={message.cdate}
         />
       </AspectRatio>
