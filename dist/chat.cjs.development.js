@@ -1020,19 +1020,23 @@ var Video = function Video(_ref) {
 };
 
 var useStyles$5 = /*#__PURE__*/styles.makeStyles(function (theme) {
-  var _mediaContent, _aspect;
+  var _img, _aspect;
   return styles.createStyles({
-    mediaContent: (_mediaContent = {
+    img: (_img = {
       cursor: "pointer",
       borderRadius: theme.spacing(1.2),
-      maxWidth: 284
-    }, _mediaContent[theme.breakpoints.down("sm")] = {
-      maxWidth: 250
-    }, _mediaContent),
+      maxWidth: 284,
+      maxHeight: 190
+    }, _img[theme.breakpoints.down("sm")] = {
+      maxWidth: 250,
+      maxHeight: 170
+    }, _img),
     aspect: (_aspect = {
-      maxWidth: 284
+      maxWidth: 284,
+      maxHeight: 190
     }, _aspect[theme.breakpoints.down("sm")] = {
-      maxWidth: 250
+      maxWidth: 250,
+      maxHeight: 170
     }, _aspect)
   });
 });
@@ -1062,7 +1066,7 @@ var Image$1 = function Image(_ref) {
     onClick: function onClick() {
       setViewerVisible(true);
     },
-    className: classes.mediaContent,
+    className: classes.img,
     alt: message.cdate
   })));
 };
