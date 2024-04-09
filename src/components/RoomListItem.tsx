@@ -6,13 +6,13 @@ import {
   Chip,
   ListItem,
   ListItemAvatar,
-  ListItemText,
+  ListItemText
 } from "@mui/material";
 import { Theme } from "@mui/material/styles";
 import { makeStyles, createStyles, withStyles } from "@mui/styles";
 
 import GroupIcon from "@mui/icons-material/Group";
-import { formatTime, getChatName } from "../utils/common";
+import { combineURLs, formatTime, getChatName } from "../utils/common";
 import { useTranslation } from "react-i18next";
 import { ChatMessage, ChatRoom, Contact, Group, SetTyping } from "../types";
 
@@ -30,21 +30,21 @@ const useStyles = makeStyles((theme: Theme) =>
       flex: "1 1 auto",
       whiteSpace: "nowrap",
       overflow: "hidden",
-      textOverflow: "ellipsis",
+      textOverflow: "ellipsis"
     },
     time: {
       paddingLeft: theme.spacing(1),
       justifyContent: "flex-end",
-      whiteSpace: "nowrap",
+      whiteSpace: "nowrap"
     },
     unread: {
       justifyContent: "flex-end",
-      maxHeight: 20,
+      maxHeight: 20
     },
     avatarGroup: {
       backgroundColor: "#28B7C6",
-      color: "#fff",
-    },
+      color: "#fff"
+    }
   })
 );
 
@@ -84,19 +84,19 @@ const TypingBadge = withStyles((theme: Theme) =>
         borderRadius: "50%",
         animation: "$ripple 1.2s infinite ease-in-out",
         border: "1px solid currentColor",
-        content: '""',
-      },
+        content: '""'
+      }
     },
     "@keyframes ripple": {
       "0%": {
         transform: "scale(.8)",
-        opacity: 1,
+        opacity: 1
       },
       "100%": {
         transform: "scale(2.4)",
-        opacity: 0,
-      },
-    },
+        opacity: 0
+      }
+    }
   })
 )(Badge);
 
@@ -104,8 +104,8 @@ const OnlineBadge = withStyles((theme: Theme) =>
   createStyles({
     badge: {
       backgroundColor: theme.palette.primary.main,
-      boxShadow: `0 0 0 2px ${theme.palette.background.paper}`,
-    },
+      boxShadow: `0 0 0 2px ${theme.palette.background.paper}`
+    }
   })
 )(Badge);
 
@@ -115,7 +115,10 @@ const contactAvatar = (
   typing: SetTyping | null
 ): JSX.Element => {
   const avatar = (
-    <Avatar alt={contact.username} src={`${apiUrl}${contact.avatar}`} />
+    <Avatar
+      alt={contact.username}
+      src={contact.avatar ? combineURLs(apiUrl, contact.avatar) : ""}
+    />
   );
 
   const isTyping = !!typing?.contactId && typing?.userId === contact.userId;
@@ -125,7 +128,7 @@ const contactAvatar = (
         overlap="circular"
         anchorOrigin={{
           vertical: "bottom",
-          horizontal: "right",
+          horizontal: "right"
         }}
         variant="dot"
       >
@@ -139,7 +142,7 @@ const contactAvatar = (
         overlap="circular"
         anchorOrigin={{
           vertical: "bottom",
-          horizontal: "right",
+          horizontal: "right"
         }}
         variant="dot"
       >

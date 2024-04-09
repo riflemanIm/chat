@@ -19,7 +19,7 @@ import {
   ConferenceData
 } from "../types";
 import { makeStyles, createStyles } from "@mui/styles";
-import { isEmpty } from "../utils/common";
+import { combineURLs, isEmpty } from "../utils/common";
 import ConferenceTime from "./ConferenceTime";
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -203,7 +203,10 @@ const RoomHeader: React.FC<RoomHeaderProps> = ({
   return (
     <CardHeader
       avatar={
-        <Avatar alt={contact.username} src={`${apiUrl}${contact.avatar}`} />
+        <Avatar
+          alt={contact.username}
+          src={contact.avatar ? combineURLs(apiUrl, contact.avatar) : ""}
+        />
       }
       title={contact.username}
       subheader={<ContactStatus contact={contact} isTyping={isTyping} />}

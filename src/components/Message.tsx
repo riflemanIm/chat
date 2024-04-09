@@ -2,7 +2,7 @@ import * as React from "react";
 import { Box, Link, ListItem, Typography } from "@mui/material";
 
 import { DoneAll, Done } from "@mui/icons-material";
-import { formatTime } from "../utils/common";
+import { combineURLs, formatTime } from "../utils/common";
 import MessageContent from "./MessageContent";
 import { Alert } from "@mui/material";
 import { useTranslation } from "react-i18next";
@@ -48,7 +48,7 @@ const wrapMessage = (
       <Link
         className={`${className} ${classes.file}`}
         underline="none"
-        href={`${apiUrl}/static/file/${message.content}`}
+        href={combineURLs(apiUrl, `/static/file/${message.content}`)}
         target="_blank"
         download
         onContextMenu={onContextMenu}

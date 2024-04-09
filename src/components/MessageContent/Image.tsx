@@ -5,6 +5,7 @@ import { Theme } from "@mui/material/styles";
 import { ChatMessage } from "../../types";
 import { makeStyles, createStyles } from "@mui/styles";
 import { AspectRatio } from "react-aspect-ratio";
+import { combineURLs } from "../../utils/common";
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     img: {
@@ -49,13 +50,13 @@ const Image: React.FC<ImageProrps> = ({ apiUrl, message }: ImageProrps) => {
         }}
         images={[
           {
-            src: `${apiUrl}/static/image/${message.content}`
+            src: combineURLs(apiUrl, `/static/image/${message.content}`)
           }
         ]}
       />
       <AspectRatio ratio="3/4" className={classes.aspect}>
         <img
-          src={`${apiUrl}/static/image/${message.content}`}
+          src={combineURLs(apiUrl, `/static/image/${message.content}`)}
           onClick={() => {
             setViewerVisible(true);
           }}

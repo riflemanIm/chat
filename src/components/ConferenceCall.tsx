@@ -1,8 +1,9 @@
 import React from "react";
-import { Avatar, Button,  Paper } from "@mui/material";
+import { Avatar, Button, Paper } from "@mui/material";
 import { ConferenceData, Contact } from "../types";
 import { useTranslation } from "react-i18next";
-import { makeStyles } from '@mui/styles';
+import { makeStyles } from "@mui/styles";
+import { combineURLs } from "../utils/common";
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -12,7 +13,7 @@ const useStyles = makeStyles(() => ({
     display: "flex",
     flexDirection: "column",
     justifyContent: "center",
-    alignItems: "center",
+    alignItems: "center"
   },
   pulse: {
     height: 100,
@@ -29,7 +30,7 @@ const useStyles = makeStyles(() => ({
       width: "calc(100% + 40px)",
       height: "calc(100% + 40px)",
       borderRadius: "50%",
-      animation: "$pulse 1s linear infinite",
+      animation: "$pulse 1s linear infinite"
     },
     "&::after": {
       content: "''",
@@ -39,34 +40,34 @@ const useStyles = makeStyles(() => ({
       height: "calc(100% + 40px)",
       borderRadius: "50%",
       animation: "$pulse 1s linear infinite",
-      animationDelay: "0.3s",
-    },
+      animationDelay: "0.3s"
+    }
   },
   avatar: {
     width: "80%",
-    height: "80%",
+    height: "80%"
   },
   footer: {
     width: "100%",
     alignSelf: "flex-end",
     paddingTop: 64,
     display: "flex",
-    justifyContent: "center",
+    justifyContent: "center"
   },
   "@keyframes pulse": {
     "0%": {
       transform: "scale(0.5)",
-      opacity: 0,
+      opacity: 0
     },
     "50%": {
       transform: "scale(1)",
-      opacity: 1,
+      opacity: 1
     },
     "100%": {
       transform: "scale(1.3)",
-      opacity: 0,
-    },
-  },
+      opacity: 0
+    }
+  }
 }));
 
 type ConferenceCallProps = {
@@ -80,7 +81,7 @@ const ConferenceCall: React.FC<ConferenceCallProps> = ({
   conference,
   contact,
   apiUrl,
-  onAccept,
+  onAccept
 }: ConferenceCallProps) => {
   const classes = useStyles();
   const { t } = useTranslation();
@@ -92,7 +93,7 @@ const ConferenceCall: React.FC<ConferenceCallProps> = ({
           <Avatar
             className={classes.avatar}
             alt={contact.username}
-            src={`${apiUrl}${contact.avatar}`}
+            src={contact.avatar ? combineURLs(apiUrl, contact.avatar) : ""}
           />
         ) : (
           <Avatar className={classes.avatar} />

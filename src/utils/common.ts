@@ -162,3 +162,12 @@ export const getParam = (param: string) => {
   const urlParams = new URLSearchParams(QueryString);
   return urlParams.get(param);
 };
+
+export const combineURLs = (baseURL: string, relativeURL: string, queryParams?: Record<string, string>): string => {
+  const url = relativeURL
+    ? baseURL.replace(/\/?\/$/, '') + '/' + relativeURL.replace(/^\/+/, '')
+    : baseURL;
+  if (!queryParams) return url;
+
+  return url + (url.includes('?') ? '&' : '?') + new URLSearchParams(queryParams).toString();
+}

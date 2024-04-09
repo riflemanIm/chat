@@ -10,6 +10,7 @@ import StarIcon from "@mui/icons-material/Star";
 import ContactStatus from "./ContactStatus";
 import { makeStyles } from "@mui/styles";
 import { Contact } from "../types";
+import { combineURLs } from "../utils/common";
 
 const useStyles = makeStyles(() => ({
   star: {
@@ -38,7 +39,7 @@ const ContactList: React.FC<ContactListProps> = (props: ContactListProps) => {
           onClick={() => props.onClick && props.onClick(contact)}
         >
           <ListItemAvatar>
-            <Avatar alt={contact.username} src={`${apiUrl}${contact.avatar}`} />
+            <Avatar alt={contact.username} src={contact.avatar ? combineURLs(apiUrl, contact.avatar) : ""} />
           </ListItemAvatar>
           <ListItemText
             primary={

@@ -2,6 +2,7 @@ import React from "react";
 import { makeStyles } from "@mui/styles";
 import { Theme } from "@mui/material/styles";
 import { ChatMessage } from "../../types";
+import { combineURLs } from "../../utils/common";
 
 const useStyles = makeStyles((theme: Theme) => ({
   mediaContent: {
@@ -30,8 +31,8 @@ const Video: React.FC<VideoProps> = ({
   let src = "";
   if (isConference) {
     const meta = JSON.parse(message.content);
-    src = `${apiUrl}/static/conf/${meta.visitId}/${meta.name}`;
-  } else src = `${apiUrl}/static/file/${message.content}`;
+    src = combineURLs(apiUrl, `/static/conf/${meta.visitId}/${meta.name}`);
+  } else src = combineURLs(apiUrl, `/static/file/${message.content}`);
   return (
     <video
       src={src}
