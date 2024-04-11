@@ -1766,6 +1766,7 @@ var Room = function Room(props) {
     setMenuState = _React$useState2[1];
   React__default.useEffect(function () {
     if (props.onEnterRoom && chat) props.onEnterRoom(chat);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [getChatId(chat)]);
   React__default.useLayoutEffect(function () {
     if (scrollState.autoScroll && refOnLastMess.current) {
@@ -1782,12 +1783,14 @@ var Room = function Room(props) {
         inline: "end"
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [getChatId(chat), messageCount]);
   React__default.useLayoutEffect(function () {
     if (!loading && refList.current && scrollState.height > 0) {
       refList.current.scrollTop = refList.current.scrollHeight - scrollState.height;
       setScrollState(initialScrollState);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [getChatId(chat), loading, scrollState.height]);
   var onScroll = React__default.useCallback( /*#__PURE__*/function () {
     var _ref = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee(event) {
@@ -1820,7 +1823,9 @@ var Room = function Room(props) {
     return function (_x) {
       return _ref.apply(this, arguments);
     };
-  }(), [chat, loading]);
+  }(),
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  [chat, loading]);
   var handleMenuPopup = function handleMenuPopup(message, event) {
     var canCopy = message.messageType === "text";
     var canDelete = user.userId === message.userId && !!props.onMeesageDelete && new Date().getTime() - new Date(message.cdate).getTime() <= 1000 * 60 * 2;
@@ -1845,11 +1850,13 @@ var Room = function Room(props) {
     setMenuState(initialMenuState);
     if (!message) return;
     navigator.clipboard.writeText(message.content);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [menuState.message]);
   var handleDelete = useCallback(function () {
     var message = menuState.message;
     setMenuState(initialMenuState);
     if (props.onMeesageDelete && chat && message) props.onMeesageDelete(chat, message);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [menuState.message]);
   //  console.log("chat", chat);
   var _React$useState3 = React__default.useState({
@@ -1927,7 +1934,8 @@ var Room = function Room(props) {
     }
   }, /*#__PURE__*/React__default.createElement("img", {
     src: viewerData.src,
-    className: classes.img
+    className: classes.img,
+    alt: ""
   }))) : null), /*#__PURE__*/React__default.createElement(Divider, null), /*#__PURE__*/React__default.createElement(CardContent, null, /*#__PURE__*/React__default.createElement(Entry, {
     chat: chat,
     onTyping: props.onTyping,
