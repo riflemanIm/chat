@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback } from 'react';
 import {
   Box,
   Card,
@@ -12,18 +12,18 @@ import {
   IconButton,
   useMediaQuery,
   Tooltip,
-  Backdrop
-} from "@mui/material";
-import { Theme } from "@mui/material/styles";
-import { makeStyles, createStyles } from "@mui/styles";
-import FileCopyIcon from "@mui/icons-material/FileCopy";
-import DeleteIcon from "@mui/icons-material/Delete";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import Entry from "./Entry";
-import Message from "./Message";
-import RoomHeader from "./RoomHeader";
-import { useTranslation } from "react-i18next";
-import { getChatId, isEmpty } from "../utils/common";
+  Backdrop,
+} from '@mui/material';
+import { Theme } from '@mui/material/styles';
+import { makeStyles, createStyles } from '@mui/styles';
+import FileCopyIcon from '@mui/icons-material/FileCopy';
+import DeleteIcon from '@mui/icons-material/Delete';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import Entry from './Entry';
+import Message from './Message';
+import RoomHeader from './RoomHeader';
+import { useTranslation } from 'react-i18next';
+import { getChatId, isEmpty } from '../utils/common';
 import {
   ChatMessage,
   ChatRoom,
@@ -33,67 +33,67 @@ import {
   Contact,
   ConferenceData,
   Group,
-  ContactGather
-} from "../types";
+  ContactGather,
+} from '../types';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
-      width: "100%",
+      width: '100%',
       minWidth: 360,
-      height: "100%",
-      display: "flex",
-      flexDirection: "column"
+      height: '100%',
+      display: 'flex',
+      flexDirection: 'column',
     },
     inline: {
-      display: "inline"
+      display: 'inline',
     },
     messageListOuter: {
       flex: 1,
-      overflowY: "auto",
+      overflowY: 'auto',
       margin: 0,
-      padding: 0
+      padding: 0,
     },
     messageList: {
-      height: "100%",
-      overflowY: "auto",
-      scrollbarWidth: "thin",
-      scrollbarColor: `${theme.palette.primary.light} #fff`
+      height: '100%',
+      overflowY: 'auto',
+      scrollbarWidth: 'thin',
+      scrollbarColor: `${theme.palette.primary.light} #fff`,
     },
     roomHeader: {
-      flex: 1
+      flex: 1,
     },
     roomProgress: {
-      padding: theme.spacing(2)
+      padding: theme.spacing(2),
     },
     flexAll: {
-      flex: "1 1 auto"
+      flex: '1 1 auto',
     },
     flexEnd: {
-      justifyContent: "flex-end"
+      justifyContent: 'flex-end',
     },
     img: {
-      cursor: "pointer",
+      cursor: 'pointer',
       borderRadius: theme.spacing(1.2),
 
-      maxWidth: "calc(100% - 240px)",
-      maxHeight: "auto",
-      [theme.breakpoints.down("sm")]: {
-        maxWidth: "calc(100% - 40px)",
-        maxHeight: "auto"
-      }
+      maxWidth: 'calc(100% - 240px)',
+      maxHeight: 'auto',
+      [theme.breakpoints.down('sm')]: {
+        maxWidth: 'calc(100% - 40px)',
+        maxHeight: 'auto',
+      },
     },
     aspect: {
-      margin: "auto",
-      textAlign: "center",
-      maxWidth: "calc(100% - 240px)",
-      maxHeight: "auto",
-      [theme.breakpoints.down("sm")]: {
-        maxWidth: "calc(100% - 40px)",
-        maxHeight: "auto"
-      }
-    }
-  })
+      margin: 'auto',
+      textAlign: 'center',
+      maxWidth: 'calc(100% - 240px)',
+      maxHeight: 'auto',
+      [theme.breakpoints.down('sm')]: {
+        maxWidth: 'calc(100% - 40px)',
+        maxHeight: 'auto',
+      },
+    },
+  }),
 );
 
 const initialMenuState = {
@@ -101,12 +101,7 @@ const initialMenuState = {
   mouseX: null,
   mouseY: null,
   canCopy: false,
-  canDelete: false
-};
-
-const initialScrollState = {
-  autoScroll: true,
-  height: 0
+  canDelete: false,
 };
 
 type RoomProps = {
@@ -132,6 +127,10 @@ type RoomProps = {
   onOperatorAdd?: (chat: Group, operator: Contact) => void;
   onLeaveGroup?: (chat: Group) => void;
 };
+const initialScrollState = {
+  autoScroll: true,
+  height: 0,
+};
 
 const Room: React.FC<RoomProps> = (props: RoomProps) => {
   const {
@@ -143,20 +142,24 @@ const Room: React.FC<RoomProps> = (props: RoomProps) => {
     conference,
     conferenceJoined,
     loading,
-    pageSize
+    pageSize,
   } = props;
   const classes = useStyles();
   const { t } = useTranslation();
   const isMobile = useMediaQuery((theme: Theme) =>
-    theme.breakpoints.down("sm")
+    theme.breakpoints.down('sm'),
   );
-  const [scrollState, setScrollState] = React.useState(initialScrollState);
+
+  const [scrollState, setScrollState] = React.useState(
+    initialScrollState,
+  );
 
   const messages = chat?.messages;
   const messageCount = messages?.length || 0;
 
+  const refOnMess = React.useRef<HTMLDivElement>(null);
   const refOnLastMess = React.useRef<HTMLDivElement>(null);
-  const refList = React.useRef<HTMLUListElement>(null);
+  //const refList = React.useRef<HTMLUListElement>(null);
 
   const [menuState, setMenuState] = React.useState<{
     message: ChatMessage | null;
@@ -168,66 +171,84 @@ const Room: React.FC<RoomProps> = (props: RoomProps) => {
 
   React.useEffect(() => {
     if (props.onEnterRoom && chat) props.onEnterRoom(chat);
+    //setScrollState(initialScrollState);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [getChatId(chat)]);
 
-  React.useLayoutEffect(() => {
-    if (scrollState.autoScroll && refOnLastMess.current) {
-      setTimeout(
-        () =>
-          refOnLastMess.current &&
-          refOnLastMess.current.scrollIntoView({
-            behavior: "smooth",
-            block: "end",
-            inline: "end"
-          }),
-        500
-      );
-      refOnLastMess.current.scrollIntoView({
-        behavior: "smooth",
-        block: "end",
-        inline: "end"
-      });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [getChatId(chat), messageCount]);
+  // React.useLayoutEffect(() => {
+  //   if (scrollState.autoScroll && refOnLastMess.current) {
+  //     setTimeout(
+  //       () =>
+  //         refOnLastMess.current &&
+  //         refOnLastMess.current.scrollIntoView(),
+  //       500,
+  //     );
+  //   }
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [getChatId(chat)]);
 
   React.useLayoutEffect(() => {
-    if (!loading && refList.current && scrollState.height > 0) {
-      refList.current.scrollTop =
-        refList.current.scrollHeight - scrollState.height;
-      setScrollState(initialScrollState);
+    if (scrollState.autoScroll && refOnMess.current) {
+      setTimeout(
+        () => refOnMess.current && refOnMess.current.scrollIntoView(),
+        500,
+      );
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [getChatId(chat), loading, scrollState.height]);
+  }, [messageCount]);
+
+  // React.useLayoutEffect(() => {
+  //   if (!loading && refList.current && scrollState.height > 0) {
+  //     refList.current.scrollTop =
+  //       refList.current.scrollHeight - scrollState.height;
+  //     setScrollState(initialScrollState);
+  //   }
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [getChatId(chat), loading, scrollState.height]);
 
   const onScroll = React.useCallback(
     async (event: React.UIEvent<HTMLUListElement>) => {
       const { currentTarget } = event;
       if (!currentTarget || !chat || !!chat.noMoreData) return;
+      // console.log(
+      //   'currentTarget.scrollTop',
+      //   currentTarget.scrollTop && currentTarget.scrollTop,
+      // );
+
       if (currentTarget.scrollTop === 0) {
-        if (messageCount >= pageSize && !loading && props.onNeedMoreMessages) {
+        if (
+          messageCount >= pageSize &&
+          !loading &&
+          props.onNeedMoreMessages
+        ) {
           setScrollState({
             autoScroll: false,
-            height: currentTarget.scrollHeight
+            height: currentTarget.scrollHeight,
           });
           props.onNeedMoreMessages(chat);
+
+          setTimeout(() => {
+            if (refOnMess.current) {
+              refOnMess.current.scrollIntoView();
+            }
+          }, 500);
         }
       }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [chat, loading]
+    [chat, loading],
   );
 
   const handleMenuPopup = (
     message: ChatMessage,
-    event: React.MouseEvent<HTMLElement>
+    event: React.MouseEvent<HTMLElement>,
   ) => {
-    const canCopy = message.messageType === "text";
+    const canCopy = message.messageType === 'text';
     const canDelete =
       user.userId === message.userId &&
       !!props.onMeesageDelete &&
-      new Date().getTime() - new Date(message.cdate).getTime() <= 1000 * 60 * 2;
+      new Date().getTime() - new Date(message.cdate).getTime() <=
+        1000 * 60 * 2;
     if (!canCopy && !canDelete) {
       setMenuState(initialMenuState);
       return;
@@ -238,7 +259,7 @@ const Room: React.FC<RoomProps> = (props: RoomProps) => {
       mouseX: event.clientX - 2,
       mouseY: event.clientY - 4,
       canCopy,
-      canDelete
+      canDelete,
     });
   };
 
@@ -268,9 +289,17 @@ const Room: React.FC<RoomProps> = (props: RoomProps) => {
     src: string;
   }>({
     visible: false,
-    src: ""
+    src: '',
   });
 
+  const defineRefOnMess = (inx: number) => {
+    const count = messageCount / 25 - 1;
+    console.log('messageCount', messageCount, 'count', count);
+    if (count === 0 && inx === messageCount - 1) return refOnMess;
+    if (count > 0 && inx === messageCount - 25 * count)
+      return refOnMess;
+    return null;
+  };
   return (
     <Card elevation={1} className={classes.root}>
       <Box display="flex" flexDirection="row">
@@ -278,7 +307,9 @@ const Room: React.FC<RoomProps> = (props: RoomProps) => {
           <Tooltip title="Вернуться в конференцию">
             <IconButton
               aria-label="exit room"
-              onClick={() => props.onExitRoom && props.onExitRoom(chat)}
+              onClick={() =>
+                props.onExitRoom && props.onExitRoom(chat)
+              }
             >
               <ArrowBackIcon />
             </IconButton>
@@ -323,15 +354,20 @@ const Room: React.FC<RoomProps> = (props: RoomProps) => {
                     isGroupMessage={!!chat?.groupId}
                     isUserFirst={
                       inx === 0 ||
-                      messages[inx - 1].messageType === "notify" ||
-                      messages[inx - 1].userId !== messages[inx].userId
+                      messages[inx - 1].messageType === 'notify' ||
+                      messages[inx - 1].userId !==
+                        messages[inx].userId
                     }
                     isUserLast={
                       inx === messages.length - 1 ||
-                      messages[inx + 1].messageType === "notify" ||
-                      messages[inx + 1].userId !== messages[inx].userId
+                      messages[inx + 1].messageType === 'notify' ||
+                      messages[inx + 1].userId !==
+                        messages[inx].userId
                     }
-                    onContextMenu={event => handleMenuPopup(message, event)}
+                    onContextMenu={event =>
+                      handleMenuPopup(message, event)
+                    }
+                    refOnMess={defineRefOnMess(inx)}
                     setViewerData={setViewerData}
                   />
                 ))}
@@ -340,15 +376,19 @@ const Room: React.FC<RoomProps> = (props: RoomProps) => {
             {viewerData.visible && (
               <Backdrop
                 sx={{
-                  color: "#fff",
-                  zIndex: (theme: Theme) => theme.zIndex.drawer + 1
+                  color: '#fff',
+                  zIndex: (theme: Theme) => theme.zIndex.drawer + 1,
                 }}
                 open={viewerData.visible}
                 onClick={() => {
-                  setViewerData({ visible: false, src: "" });
+                  setViewerData({ visible: false, src: '' });
                 }}
               >
-                <img src={viewerData.src} className={classes.img} alt="" />
+                <img
+                  src={viewerData.src}
+                  className={classes.img}
+                  alt=""
+                />
               </Backdrop>
             )}
           </>
@@ -374,14 +414,19 @@ const Room: React.FC<RoomProps> = (props: RoomProps) => {
         }
       >
         <MenuItem onClick={handleCopy} disabled={!menuState.canCopy}>
-          <span className={classes.flexAll}>{t("CHAT.MESSAGE.MENU.COPY")}</span>
+          <span className={classes.flexAll}>
+            {t('CHAT.MESSAGE.MENU.COPY')}
+          </span>
           <ListItemIcon className={classes.flexEnd}>
             <FileCopyIcon fontSize="small" />
           </ListItemIcon>
         </MenuItem>
-        <MenuItem onClick={handleDelete} disabled={!menuState.canDelete}>
+        <MenuItem
+          onClick={handleDelete}
+          disabled={!menuState.canDelete}
+        >
           <span className={classes.flexAll}>
-            {t("CHAT.MESSAGE.MENU.DELETE")}
+            {t('CHAT.MESSAGE.MENU.DELETE')}
           </span>
           <ListItemIcon className={classes.flexEnd}>
             <DeleteIcon fontSize="small" />

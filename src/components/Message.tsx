@@ -1,15 +1,15 @@
-import * as React from "react";
-import { Box, Link, ListItem, Typography } from "@mui/material";
+import * as React from 'react';
+import { Box, Link, ListItem, Typography } from '@mui/material';
 
-import { DoneAll, Done } from "@mui/icons-material";
-import { combineURLs, formatTime } from "../utils/common";
-import MessageContent from "./MessageContent";
-import { Alert } from "@mui/material";
-import { useTranslation } from "react-i18next";
-import { ChatMessage, Contact, PrivateMessage, User } from "../types";
+import { DoneAll, Done } from '@mui/icons-material';
+import { combineURLs, formatTime } from '../utils/common';
+import MessageContent from './MessageContent';
+import { Alert } from '@mui/material';
+import { useTranslation } from 'react-i18next';
+import { ChatMessage, Contact, PrivateMessage, User } from '../types';
 
 /* styles */
-import useStyles from "./styles";
+import useStyles from './styles';
 
 type MessageProps = {
   apiUrl: string;
@@ -21,6 +21,7 @@ type MessageProps = {
   isUserLast: boolean; // завершает группу сообщений от одного пользователя
   onContextMenu: (event: React.MouseEvent<HTMLElement>) => void;
   setViewerData: (value: { visible: boolean; src: string }) => void;
+  refOnMess: React.RefObject<HTMLDivElement> | null;
 };
 
 const wrapMessage = (
@@ -29,8 +30,10 @@ const wrapMessage = (
   classes: ReturnType<typeof useStyles>,
   isUserFirst: boolean,
   isUserLast: boolean,
-  onContextMenu: ((event: React.MouseEvent<HTMLElement>) => void) | undefined,
-  child: JSX.Element
+  onContextMenu:
+    | ((event: React.MouseEvent<HTMLElement>) => void)
+    | undefined,
+  child: JSX.Element,
 ) => {
   const { messageType } = message;
 
@@ -43,7 +46,7 @@ const wrapMessage = (
       ? `${classes.message} ${classes.lastMessage}`
       : classes.message;
 
-  if (messageType === "file") {
+  if (messageType === 'file') {
     return (
       <Link
         className={`${className} ${classes.file}`}
@@ -58,13 +61,13 @@ const wrapMessage = (
     );
   }
   const isMedia =
-    messageType === "image" ||
-    messageType === "video" ||
-    messageType === "video_conference";
+    messageType === 'image' ||
+    messageType === 'video' ||
+    messageType === 'video_conference';
   return (
     <Box
       display="flex"
-      flexDirection={isMedia ? "column" : "row"}
+      flexDirection={isMedia ? 'column' : 'row'}
       flexWrap="wrap"
       className={className}
       onContextMenu={onContextMenu}
@@ -87,21 +90,26 @@ const Message: React.FC<MessageProps> = (props: MessageProps) => {
     isGroupMessage,
     isUserFirst,
     isUserLast,
-    setViewerData
+    setViewerData,
+    refOnMess,
   } = props;
+  //console.log('message', message);
 
-  if (message.messageType === "notify") {
+  if (message.messageType === 'notify') {
     // Уведомление - особый случай
     const content =
-      message.content[0] === "{"
+      message.content[0] === '{'
         ? JSON.parse(message.content)
         : message.content;
     return (
       <ListItem className={classes.rootNotify}>
         <Alert
-          severity={typeof content === "string" ? "info" : content.severity}
+          ref={refOnMess}
+          severity={
+            typeof content === 'string' ? 'info' : content.severity
+          }
         >
-          {typeof content === "string" ? content : content.message}
+          {typeof content === 'string' ? content : content.message}
         </Alert>
       </ListItem>
     );
@@ -111,10 +119,12 @@ const Message: React.FC<MessageProps> = (props: MessageProps) => {
     // Удаленное сообщение
     return (
       <ListItem className={classes.rootNotify}>
-        <Typography variant="body2" align="center">
+        <Typography variant="body2" align="center" ref={refOnMess}>
           {message.userId === user.userId
-            ? t("CHAT.MESSAGE.REVOKED.YOU")
-            : `${message.revokeUserName} ${t("CHAT.MESSAGE.REVOKED.CONTACT")}`}
+            ? t('CHAT.MESSAGE.REVOKED.YOU')
+            : `${message.revokeUserName} ${t(
+                'CHAT.MESSAGE.REVOKED.CONTACT',
+              )}`}
         </Typography>
       </ListItem>
     );
@@ -125,7 +135,7 @@ const Message: React.FC<MessageProps> = (props: MessageProps) => {
   return (
     <ListItem
       className={
-        message.messageType === "video_conference"
+        message.messageType === 'video_conference'
           ? classes.rootNotify
           : isMine
           ? classes.rootUser
@@ -143,7 +153,7 @@ const Message: React.FC<MessageProps> = (props: MessageProps) => {
           {!isMine && isGroupMessage && owner && isUserFirst && (
             <div className={classes.header}>{owner.username}</div>
           )}
-          <div className={classes.body}>
+          <div className={classes.body} ref={refOnMess}>
             <MessageContent
               message={message}
               apiUrl={apiUrl}
@@ -162,7 +172,7 @@ const Message: React.FC<MessageProps> = (props: MessageProps) => {
               {formatTime(message.cdate)}
             </span>
           </div>
-        </React.Fragment>
+        </React.Fragment>,
       )}
     </ListItem>
   );

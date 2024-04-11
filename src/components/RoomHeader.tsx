@@ -1,39 +1,45 @@
-import React from "react";
-import { Avatar, CardHeader, Button, Popover, IconButton } from "@mui/material";
-import { Theme } from "@mui/material/styles";
-import GroupIcon from "@mui/icons-material/Group";
-import { useTranslation } from "react-i18next";
-import VideoCallIcon from "@mui/icons-material/VideoCall";
-import CallEndIcon from "@mui/icons-material/CallEnd";
-import PersonAddIcon from "@mui/icons-material/PersonAdd";
-import DeleteIcon from "@mui/icons-material/Delete";
-import ContactStatus from "./ContactStatus";
-import ContactList from "./ContactList";
-import AddContact from "./AddContact";
+import React from 'react';
+import {
+  Avatar,
+  CardHeader,
+  Button,
+  Popover,
+  IconButton,
+} from '@mui/material';
+import { Theme } from '@mui/material/styles';
+import GroupIcon from '@mui/icons-material/Group';
+import { useTranslation } from 'react-i18next';
+import VideoCallIcon from '@mui/icons-material/VideoCall';
+import CallEndIcon from '@mui/icons-material/CallEnd';
+import PersonAddIcon from '@mui/icons-material/PersonAdd';
+import DeleteIcon from '@mui/icons-material/Delete';
+import ContactStatus from './ContactStatus';
+import ContactList from './ContactList';
+import AddContact from './AddContact';
 import {
   ChatRoom,
   Contact,
   Group,
   SetTyping,
   User,
-  ConferenceData
-} from "../types";
-import { makeStyles, createStyles } from "@mui/styles";
-import { combineURLs, isEmpty } from "../utils/common";
-import ConferenceTime from "./ConferenceTime";
+  ConferenceData,
+} from '../types';
+import { makeStyles, createStyles } from '@mui/styles';
+import { combineURLs, isEmpty } from '../utils/common';
+import ConferenceTime from './ConferenceTime';
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     popover: {
-      pointerEvents: "none"
+      pointerEvents: 'none',
     },
     paper: {
-      padding: theme.spacing(1)
+      padding: theme.spacing(1),
     },
     avatarGroup: {
-      backgroundColor: "#28B7C6",
-      color: "#fff"
-    }
-  })
+      backgroundColor: '#28B7C6',
+      color: '#fff',
+    },
+  }),
 );
 
 type RoomHeaderProps = {
@@ -53,13 +59,14 @@ type RoomHeaderProps = {
 };
 
 const getGroupStatus = (group: Group, t: (key: string) => string) => {
-  const status = [`${group.members?.length} ${t("CHAT.MEMBERS")}`];
+  const status = [`${group.members?.length} ${t('CHAT.MEMBERS')}`];
   const onlineCount = (group.members || []).reduce(
     (sum: number, contact) => (contact.online ? sum + 1 : sum),
-    0
+    0,
   );
-  if (onlineCount) status.push(`${onlineCount} ${t("CHAT.STATUS.ONLINE")}`);
-  return status.join(", ");
+  if (onlineCount)
+    status.push(`${onlineCount} ${t('CHAT.STATUS.ONLINE')}`);
+  return status.join(', ');
 };
 
 const RoomHeader: React.FC<RoomHeaderProps> = ({
@@ -75,11 +82,13 @@ const RoomHeader: React.FC<RoomHeaderProps> = ({
   onVideoEnd,
   onConferencePause,
   onOperatorAdd,
-  onLeaveGroup
+  onLeaveGroup,
 }: RoomHeaderProps) => {
   const classes = useStyles();
   const { t } = useTranslation();
-  const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
+  const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(
+    null,
+  );
   const [addOperatorOpen, setAddOperatorOpen] = React.useState(false);
 
   if (!chat)
@@ -93,7 +102,7 @@ const RoomHeader: React.FC<RoomHeaderProps> = ({
     );
 
   const handlePopoverOpen = (
-    event: React.MouseEvent<HTMLElement, MouseEvent>
+    event: React.MouseEvent<HTMLElement, MouseEvent>,
   ) => {
     setAnchorEl(event.currentTarget);
   };
@@ -126,7 +135,7 @@ const RoomHeader: React.FC<RoomHeaderProps> = ({
         subheader={
           <React.Fragment>
             <span
-              aria-owns={anchorEl ? "mouse-over-popover" : undefined}
+              aria-owns={anchorEl ? 'mouse-over-popover' : undefined}
               aria-haspopup="true"
               onMouseEnter={handlePopoverOpen}
               onMouseLeave={handlePopoverClose}
@@ -137,17 +146,17 @@ const RoomHeader: React.FC<RoomHeaderProps> = ({
               id="mouse-over-popover"
               className={classes.popover}
               classes={{
-                paper: classes.paper
+                paper: classes.paper,
               }}
               open={!!anchorEl}
               anchorEl={anchorEl}
               anchorOrigin={{
-                vertical: "bottom",
-                horizontal: "left"
+                vertical: 'bottom',
+                horizontal: 'left',
               }}
               transformOrigin={{
-                vertical: "top",
-                horizontal: "left"
+                vertical: 'top',
+                horizontal: 'left',
               }}
               onClose={handlePopoverClose}
               disableRestoreFocus
@@ -181,7 +190,7 @@ const RoomHeader: React.FC<RoomHeaderProps> = ({
             )}
             {user.role === 4 &&
               group.members?.find(
-                it => it.userId !== user.userId && it.role === 4
+                it => it.userId !== user.userId && it.role === 4,
               ) &&
               onLeaveGroup && (
                 <IconButton
@@ -197,19 +206,23 @@ const RoomHeader: React.FC<RoomHeaderProps> = ({
     );
   }
   const contact = chat as Contact;
-  const isTyping = !!typing?.contactId && typing?.userId === contact.userId;
-  console.log("user", user, "contact", contact);
+  const isTyping =
+    !!typing?.contactId && typing?.userId === contact.userId;
 
   return (
     <CardHeader
       avatar={
         <Avatar
           alt={contact.username}
-          src={contact.avatar ? combineURLs(apiUrl, contact.avatar) : ""}
+          src={
+            contact.avatar ? combineURLs(apiUrl, contact.avatar) : ''
+          }
         />
       }
       title={contact.username}
-      subheader={<ContactStatus contact={contact} isTyping={isTyping} />}
+      subheader={
+        <ContactStatus contact={contact} isTyping={isTyping} />
+      }
       className={className}
       action={
         <React.Fragment>
@@ -226,7 +239,7 @@ const RoomHeader: React.FC<RoomHeaderProps> = ({
                 startIcon={<CallEndIcon color="error" />}
                 onClick={() => onConferencePause(conference)}
               >
-                {t("CHAT.CONFERENCE.PAUSE")}
+                {t('CHAT.CONFERENCE.PAUSE')}
               </Button>
             )}
 
@@ -244,7 +257,7 @@ const RoomHeader: React.FC<RoomHeaderProps> = ({
                 onClick={() => onVideoEnd(conference)}
                 style={{ marginLeft: 8 }}
               >
-                {t("CHAT.CONFERENCE.FINISH")}
+                {t('CHAT.CONFERENCE.FINISH')}
               </Button>
             )}
 
@@ -260,7 +273,7 @@ const RoomHeader: React.FC<RoomHeaderProps> = ({
                 startIcon={<VideoCallIcon />}
                 onClick={() => onVideoCall(contact)}
               >
-                {t("CHAT.CONFERENCE.START")}
+                {t('CHAT.CONFERENCE.START')}
               </Button>
             )}
 
