@@ -1,5 +1,5 @@
 import React from "react";
-import Viewer from "react-viewer";
+
 import { Theme } from "@mui/material/styles";
 //import { getImageMeta } from "../../utils/common";
 import { ChatMessage } from "../../types";
@@ -31,40 +31,32 @@ const useStyles = makeStyles((theme: Theme) =>
 type ImageProrps = {
   apiUrl: string;
   message: ChatMessage;
+  setViewerData: (value: { visible: boolean; src: string }) => void;
 };
 
-const Image: React.FC<ImageProrps> = ({ apiUrl, message }: ImageProrps) => {
+const Image: React.FC<ImageProrps> = ({
+  apiUrl,
+  message,
+  setViewerData
+}: ImageProrps) => {
   const classes = useStyles();
   //const meta = getImageMeta(message.content);
 
-  const [viewerVisible, setViewerVisible] = React.useState(false);
-
   return (
-    <React.Fragment>
-      <Viewer
-        zIndex={2000}
-        visible={viewerVisible}
-        changeable={false}
-        onClose={() => {
-          setViewerVisible(false);
-        }}
-        images={[
-          {
+    <AspectRatio ratio="3/4" className={classes.aspect}>
+      <img
+        src={combineURLs(apiUrl, `/static/image/${message.content}`)}
+        onClick={() => {
+          setViewerData({
+            visible: true,
+
             src: combineURLs(apiUrl, `/static/image/${message.content}`)
-          }
-        ]}
+          });
+        }}
+        className={classes.img}
+        alt={message.cdate}
       />
-      <AspectRatio ratio="3/4" className={classes.aspect}>
-        <img
-          src={combineURLs(apiUrl, `/static/image/${message.content}`)}
-          onClick={() => {
-            setViewerVisible(true);
-          }}
-          className={classes.img}
-          alt={message.cdate}
-        />
-      </AspectRatio>
-    </React.Fragment>
+    </AspectRatio>
   );
 };
 

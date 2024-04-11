@@ -8,8 +8,11 @@ declare type MessageProps = {
     isGroupMessage: boolean;
     isUserFirst: boolean;
     isUserLast: boolean;
-    refOnLastMess: React.RefObject<HTMLDivElement> | null;
     onContextMenu: (event: React.MouseEvent<HTMLElement>) => void;
+    setViewerData: (value: {
+        visible: boolean;
+        src: string;
+    }) => void;
 };
 declare const Message: React.FC<MessageProps>;
 export default Message;

@@ -11,7 +11,8 @@ import {
   MenuItem,
   IconButton,
   useMediaQuery,
-  Tooltip
+  Tooltip,
+  Backdrop
 } from "@mui/material";
 import { Theme } from "@mui/material/styles";
 import { makeStyles, createStyles } from "@mui/styles";
@@ -51,35 +52,13 @@ const useStyles = makeStyles((theme: Theme) =>
       flex: 1,
       overflowY: "auto",
       margin: 0,
-      padding: 0,
-      scrollbarWidth: "thin",
-      scrollbarColor: "#6b6b6b #fff",
-      "&::-webkit-scrollbar, & *::-webkit-scrollbar": {
-        backgroundColor: "#fff"
-      },
-      "&::-webkit-scrollbar-thumb, & *::-webkit-scrollbar-thumb": {
-        borderRadius: 8,
-        backgroundColor: "#d5d9ef",
-        border: "5px solid #fff"
-      },
-      "&::-webkit-scrollbar-thumb:focus, & *::-webkit-scrollbar-thumb:focus": {
-        backgroundColor: "#fff"
-      },
-      "&::-webkit-scrollbar-thumb:active, & *::-webkit-scrollbar-thumb:active": {
-        backgroundColor: "#73d7f5",
-        border: "3px solid #fff"
-      },
-      "&::-webkit-scrollbar-thumb:hover, & *::-webkit-scrollbar-thumb:hover": {
-        backgroundColor: "#73d7f5",
-        border: "3px solid #fff"
-      },
-      "&::-webkit-scrollbar-corner, & *::-webkit-scrollbar-corner": {
-        backgroundColor: "#fff"
-      }
+      padding: 0
     },
     messageList: {
       height: "100%",
-      overflow: "auto"
+      overflowY: "auto",
+      scrollbarWidth: "thin",
+      scrollbarColor: `${theme.palette.primary.light} #fff`
     },
     roomHeader: {
       flex: 1
@@ -92,6 +71,27 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     flexEnd: {
       justifyContent: "flex-end"
+    },
+    img: {
+      cursor: "pointer",
+      borderRadius: theme.spacing(1.2),
+
+      maxWidth: "calc(100% - 240px)",
+      maxHeight: "auto",
+      [theme.breakpoints.down("sm")]: {
+        maxWidth: "calc(100% - 40px)",
+        maxHeight: "auto"
+      }
+    },
+    aspect: {
+      margin: "auto",
+      textAlign: "center",
+      maxWidth: "calc(100% - 240px)",
+      maxHeight: "auto",
+      [theme.breakpoints.down("sm")]: {
+        maxWidth: "calc(100% - 40px)",
+        maxHeight: "auto"
+      }
     }
   })
 );
@@ -168,12 +168,28 @@ const Room: React.FC<RoomProps> = (props: RoomProps) => {
 
   React.useEffect(() => {
     if (props.onEnterRoom && chat) props.onEnterRoom(chat);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [getChatId(chat)]);
 
   React.useLayoutEffect(() => {
     if (scrollState.autoScroll && refOnLastMess.current) {
-      refOnLastMess.current.scrollIntoView();
+      setTimeout(
+        () =>
+          refOnLastMess.current &&
+          refOnLastMess.current.scrollIntoView({
+            behavior: "smooth",
+            block: "end",
+            inline: "end"
+          }),
+        500
+      );
+      refOnLastMess.current.scrollIntoView({
+        behavior: "smooth",
+        block: "end",
+        inline: "end"
+      });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [getChatId(chat), messageCount]);
 
   React.useLayoutEffect(() => {
@@ -182,6 +198,7 @@ const Room: React.FC<RoomProps> = (props: RoomProps) => {
         refList.current.scrollHeight - scrollState.height;
       setScrollState(initialScrollState);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [getChatId(chat), loading, scrollState.height]);
 
   const onScroll = React.useCallback(
@@ -198,6 +215,7 @@ const Room: React.FC<RoomProps> = (props: RoomProps) => {
         }
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [chat, loading]
   );
 
@@ -233,6 +251,7 @@ const Room: React.FC<RoomProps> = (props: RoomProps) => {
     setMenuState(initialMenuState);
     if (!message) return;
     navigator.clipboard.writeText(message.content);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [menuState.message]);
 
   const handleDelete = useCallback(() => {
@@ -240,9 +259,17 @@ const Room: React.FC<RoomProps> = (props: RoomProps) => {
     setMenuState(initialMenuState);
     if (props.onMeesageDelete && chat && message)
       props.onMeesageDelete(chat, message);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [menuState.message]);
 
   //  console.log("chat", chat);
+  const [viewerData, setViewerData] = React.useState<{
+    visible: boolean;
+    src: string;
+  }>({
+    visible: false,
+    src: ""
+  });
 
   return (
     <Card elevation={1} className={classes.root}>
@@ -283,33 +310,48 @@ const Room: React.FC<RoomProps> = (props: RoomProps) => {
       <Divider />
       <CardContent className={classes.messageListOuter}>
         {!isEmpty(messages) ? (
-          <List className={classes.messageList} onScroll={onScroll}>
-            {messages != null &&
-              (messages as ChatMessage[]).map((message, inx) => (
-                <Message
-                  key={inx}
-                  apiUrl={apiUrl}
-                  user={user}
-                  message={message}
-                  owner={users[message.userId]}
-                  isGroupMessage={!!chat?.groupId}
-                  isUserFirst={
-                    inx === 0 ||
-                    messages[inx - 1].messageType === "notify" ||
-                    messages[inx - 1].userId !== messages[inx].userId
-                  }
-                  isUserLast={
-                    inx === messages.length - 1 ||
-                    messages[inx + 1].messageType === "notify" ||
-                    messages[inx + 1].userId !== messages[inx].userId
-                  }
-                  onContextMenu={event => handleMenuPopup(message, event)}
-                  refOnLastMess={
-                    inx === messages.length - 1 ? refOnLastMess : null
-                  }
-                />
-              ))}
-          </List>
+          <>
+            <List className={classes.messageList} onScroll={onScroll}>
+              {messages != null &&
+                (messages as ChatMessage[]).map((message, inx) => (
+                  <Message
+                    key={inx}
+                    apiUrl={apiUrl}
+                    user={user}
+                    message={message}
+                    owner={users[message.userId]}
+                    isGroupMessage={!!chat?.groupId}
+                    isUserFirst={
+                      inx === 0 ||
+                      messages[inx - 1].messageType === "notify" ||
+                      messages[inx - 1].userId !== messages[inx].userId
+                    }
+                    isUserLast={
+                      inx === messages.length - 1 ||
+                      messages[inx + 1].messageType === "notify" ||
+                      messages[inx + 1].userId !== messages[inx].userId
+                    }
+                    onContextMenu={event => handleMenuPopup(message, event)}
+                    setViewerData={setViewerData}
+                  />
+                ))}
+              <div ref={refOnLastMess} />
+            </List>
+            {viewerData.visible && (
+              <Backdrop
+                sx={{
+                  color: "#fff",
+                  zIndex: (theme: Theme) => theme.zIndex.drawer + 1
+                }}
+                open={viewerData.visible}
+                onClick={() => {
+                  setViewerData({ visible: false, src: "" });
+                }}
+              >
+                <img src={viewerData.src} className={classes.img} alt="" />
+              </Backdrop>
+            )}
+          </>
         ) : null}
       </CardContent>
       <Divider />

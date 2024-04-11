@@ -31,7 +31,6 @@
   },
   "dependencies": {
     "react-aspect-ratio": "^1.1.6",
-    "react-viewer": "^3.2.2",
     "socket.io-client": "^4.4.1"
   },
   "peerDependencies": {

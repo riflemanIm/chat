@@ -1,52 +1,33 @@
 import React from "react";
 import List from "@mui/material/List";
+import { Theme } from "@mui/material/styles";
+
 import { Card, CardHeader, Divider, TextField } from "@mui/material";
 import RoomListItem from "./RoomListItem";
 import {
   chatRoomComparer,
   getChatId,
   getChatName,
-  isEmpty,
+  isEmpty
 } from "../utils/common";
 import { useTranslation } from "react-i18next";
 import { ChatRoom, Contact, Group, SetTyping, User } from "../types";
 import { makeStyles } from "@mui/styles";
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles((theme: Theme) => ({
   root: {
     width: "100%",
-    height: "100%",
+    height: "100%"
   },
   searchField: {
-    width: "100%",
+    width: "100%"
   },
   listStyle: {
     height: "89.5%",
     overflowY: "auto",
-    scrollbarColor: "#6b6b6b #fff",
-    "&::-webkit-scrollbar, & *::-webkit-scrollbar": {
-      backgroundColor: "#fff",
-    },
-    "&::-webkit-scrollbar-thumb, & *::-webkit-scrollbar-thumb": {
-      borderRadius: 8,
-      backgroundColor: "#d5d9ef",
-      border: "5px solid #fff",
-    },
-    "&::-webkit-scrollbar-thumb:focus, & *::-webkit-scrollbar-thumb:focus": {
-      backgroundColor: "#fff",
-    },
-    "&::-webkit-scrollbar-thumb:active, & *::-webkit-scrollbar-thumb:active": {
-      backgroundColor: "#73d7f5",
-      border: "3px solid #fff",
-    },
-    "&::-webkit-scrollbar-thumb:hover, & *::-webkit-scrollbar-thumb:hover": {
-      backgroundColor: "#73d7f5",
-      border: "3px solid #fff",
-    },
-    "&::-webkit-scrollbar-corner, & *::-webkit-scrollbar-corner": {
-      backgroundColor: "#fff",
-    },
-  },
+    scrollbarWidth: "thin",
+    scrollbarColor: `${theme.palette.primary.light} #fff`
+  }
 }));
 
 type RoomListProps = {
@@ -63,8 +44,10 @@ const filterChats = (chats: ChatRoom[], filter: string | null): ChatRoom[] => {
   if (filter === null) return chats;
   const lowerFilter = filter.toLowerCase();
   return chats.filter(
-    (chat) =>
-      getChatName(chat).toLowerCase().indexOf(lowerFilter.toLowerCase()) !== -1
+    chat =>
+      getChatName(chat)
+        .toLowerCase()
+        .indexOf(lowerFilter.toLowerCase()) !== -1
   );
 };
 
@@ -82,10 +65,10 @@ const sortChats = (
   // Проверяем, есть ли список, который нужно закрепить
   const topChatId = localStorage.getItem(`${userId}-topChatId`) as string;
   if (topChatId) {
-    const chat = roomArr.find((c) => getChatId(c) === topChatId);
+    const chat = roomArr.find(c => getChatId(c) === topChatId);
     if (chat) {
       // На первое место
-      roomArr = roomArr.filter((k) => getChatId(k) !== topChatId);
+      roomArr = roomArr.filter(k => getChatId(k) !== topChatId);
       chat.isTop = true;
       roomArr.unshift(chat);
     }
@@ -139,7 +122,7 @@ const RoomList: React.FC<RoomListProps> = (props: RoomListProps) => {
       <List aria-label="rooms" className={classes.listStyle}>
         {!isEmpty(chats) &&
           chats.map(
-            (chat) =>
+            chat =>
               !isEmpty(chat) && (
                 <RoomListItem
                   key={getChatId(chat)}

@@ -36,3 +36,4 @@ export declare const getChatName: (chat: ChatRoom) => string;
 export declare const allMessCount: (chats: GroupGather | ContactGather) => any;
 export declare const chatRoomComparer: (a: ChatRoom, b: ChatRoom) => number;
 export declare const getParam: (param: string) => string | null;
+export declare const combineURLs: (baseURL: string, relativeURL: string, queryParams?: Record<string, string> | undefined) => string;

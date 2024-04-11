@@ -1,5 +1,5 @@
 import React__default, { createElement, Fragment, useState, useRef, useEffect, useMemo, useCallback, createContext, useContext } from 'react';
-import { Box, Typography, TextField, InputAdornment, IconButton, SvgIcon, Popover, Avatar, ListItem, Alert, Link, List, ListItemAvatar, ListItemText, Dialog, DialogTitle, DialogContent, DialogActions, Button, Slide, CardHeader, useMediaQuery, Card, Tooltip, CircularProgress, Divider, CardContent, Menu, MenuItem, ListItemIcon, Chip, Badge, Paper, Snackbar, Container, Grid } from '@mui/material';
+import { Box, Typography, TextField, InputAdornment, IconButton, SvgIcon, Popover, Avatar, ListItem, Alert, Link, List, ListItemAvatar, ListItemText, Dialog, DialogTitle, DialogContent, DialogActions, Button, Slide, CardHeader, useMediaQuery, Card, Tooltip, CircularProgress, Divider, CardContent, Backdrop, Menu, MenuItem, ListItemIcon, Chip, Badge, Paper, Snackbar, Container, Grid } from '@mui/material';
 import { makeStyles, createStyles, withStyles } from '@mui/styles';
 import FileCopyIcon from '@mui/icons-material/FileCopy';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -7,7 +7,6 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { InsertEmoticon, Send, Done, DoneAll, ArrowForward } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 import dayjs from 'dayjs';
-import Viewer from 'react-viewer';
 import { AspectRatio } from 'react-aspect-ratio';
 import GroupIcon from '@mui/icons-material/Group';
 import VideoCallIcon from '@mui/icons-material/VideoCall';
@@ -955,6 +954,11 @@ var getParam = function getParam(param) {
   var urlParams = new URLSearchParams(QueryString);
   return urlParams.get(param);
 };
+var combineURLs = function combineURLs(baseURL, relativeURL, queryParams) {
+  var url = relativeURL ? baseURL.replace(/\/?\/$/, '') + '/' + relativeURL.replace(/^\/+/, '') : baseURL;
+  if (!queryParams) return url;
+  return url + (url.includes('?') ? '&' : '?') + new URLSearchParams(queryParams).toString();
+};
 
 var useStyles$3 = /*#__PURE__*/makeStyles(function (theme) {
   return createStyles({
@@ -1006,8 +1010,8 @@ var Video = function Video(_ref) {
   var src = "";
   if (isConference) {
     var meta = JSON.parse(message.content);
-    src = apiUrl + "/static/conf/" + meta.visitId + "/" + meta.name;
-  } else src = apiUrl + "/static/file/" + message.content;
+    src = combineURLs(apiUrl, "/static/conf/" + meta.visitId + "/" + meta.name);
+  } else src = combineURLs(apiUrl, "/static/file/" + message.content);
   return /*#__PURE__*/React__default.createElement("video", {
     src: src,
     className: classes.mediaContent,
@@ -1040,38 +1044,30 @@ var useStyles$5 = /*#__PURE__*/makeStyles(function (theme) {
 });
 var Image$1 = function Image(_ref) {
   var apiUrl = _ref.apiUrl,
-    message = _ref.message;
+    message = _ref.message,
+    setViewerData = _ref.setViewerData;
   var classes = useStyles$5();
   //const meta = getImageMeta(message.content);
-  var _React$useState = React__default.useState(false),
-    viewerVisible = _React$useState[0],
-    setViewerVisible = _React$useState[1];
-  return /*#__PURE__*/React__default.createElement(React__default.Fragment, null, /*#__PURE__*/React__default.createElement(Viewer, {
-    zIndex: 2000,
-    visible: viewerVisible,
-    changeable: false,
-    onClose: function onClose() {
-      setViewerVisible(false);
-    },
-    images: [{
-      src: apiUrl + "/static/image/" + message.content
-    }]
-  }), /*#__PURE__*/React__default.createElement(AspectRatio, {
+  return /*#__PURE__*/React__default.createElement(AspectRatio, {
     ratio: "3/4",
     className: classes.aspect
   }, /*#__PURE__*/React__default.createElement("img", {
-    src: apiUrl + "/static/image/" + message.content,
+    src: combineURLs(apiUrl, "/static/image/" + message.content),
     onClick: function onClick() {
-      setViewerVisible(true);
+      setViewerData({
+        visible: true,
+        src: combineURLs(apiUrl, "/static/image/" + message.content)
+      });
     },
     className: classes.img,
     alt: message.cdate
-  })));
+  }));
 };
 
 var MessageContent = function MessageContent(_ref) {
   var apiUrl = _ref.apiUrl,
-    message = _ref.message;
+    message = _ref.message,
+    setViewerData = _ref.setViewerData;
   switch (message.messageType) {
     case "text":
       return /*#__PURE__*/React__default.createElement(React__default.Fragment, null, message.content);
@@ -1085,7 +1081,8 @@ var MessageContent = function MessageContent(_ref) {
     case "image":
       return /*#__PURE__*/React__default.createElement(Image$1, {
         message: message,
-        apiUrl: apiUrl
+        apiUrl: apiUrl,
+        setViewerData: setViewerData
       });
     case "file":
       return /*#__PURE__*/React__default.createElement(File, {
@@ -1208,7 +1205,7 @@ var wrapMessage = function wrapMessage(apiUrl, message, classes, isUserFirst, is
     return /*#__PURE__*/createElement(Link, {
       className: className + " " + classes.file,
       underline: "none",
-      href: apiUrl + "/static/file/" + message.content,
+      href: combineURLs(apiUrl, "/static/file/" + message.content),
       target: "_blank",
       download: true,
       onContextMenu: onContextMenu
@@ -1230,19 +1227,18 @@ var Message = function Message(props) {
   var apiUrl = props.apiUrl,
     message = props.message,
     owner = props.owner,
-    refOnLastMess = props.refOnLastMess,
     user = props.user,
     isGroupMessage = props.isGroupMessage,
     isUserFirst = props.isUserFirst,
-    isUserLast = props.isUserLast;
+    isUserLast = props.isUserLast,
+    setViewerData = props.setViewerData;
   if (message.messageType === "notify") {
     // Уведомление - особый случай
     var content = message.content[0] === "{" ? JSON.parse(message.content) : message.content;
     return /*#__PURE__*/createElement(ListItem, {
       className: classes.rootNotify
     }, /*#__PURE__*/createElement(Alert, {
-      severity: typeof content === "string" ? "info" : content.severity,
-      ref: refOnLastMess
+      severity: typeof content === "string" ? "info" : content.severity
     }, typeof content === "string" ? content : content.message));
   }
   if (message.isRevoke) {
@@ -1251,7 +1247,6 @@ var Message = function Message(props) {
       className: classes.rootNotify
     }, /*#__PURE__*/createElement(Typography, {
       variant: "body2",
-      ref: refOnLastMess,
       align: "center"
     }, message.userId === user.userId ? t("CHAT.MESSAGE.REVOKED.YOU") : message.revokeUserName + " " + t("CHAT.MESSAGE.REVOKED.CONTACT")));
   }
@@ -1264,10 +1259,10 @@ var Message = function Message(props) {
     className: classes.body
   }, /*#__PURE__*/createElement(MessageContent, {
     message: message,
-    apiUrl: apiUrl
+    apiUrl: apiUrl,
+    setViewerData: setViewerData
   })), /*#__PURE__*/createElement("div", {
-    className: classes.status,
-    ref: refOnLastMess
+    className: classes.status
   }, /*#__PURE__*/createElement("span", null, isMine ? message.status === 0 ? /*#__PURE__*/createElement(Done, {
     className: classes.statusImage
   }) : /*#__PURE__*/createElement(DoneAll, {
@@ -1317,7 +1312,7 @@ var ContactList = function ContactList(props) {
       }
     }, /*#__PURE__*/React__default.createElement(ListItemAvatar, null, /*#__PURE__*/React__default.createElement(Avatar, {
       alt: contact.username,
-      src: "" + apiUrl + contact.avatar
+      src: contact.avatar ? combineURLs(apiUrl, contact.avatar) : ""
     })), /*#__PURE__*/React__default.createElement(ListItemText, {
       primary: /*#__PURE__*/React__default.createElement("span", null, contact.username, " ", owner === contact.userId && /*#__PURE__*/React__default.createElement(StarIcon, {
         className: classes.star,
@@ -1627,7 +1622,7 @@ var RoomHeader = function RoomHeader(_ref) {
   return /*#__PURE__*/React__default.createElement(CardHeader, {
     avatar: /*#__PURE__*/React__default.createElement(Avatar, {
       alt: contact.username,
-      src: "" + apiUrl + contact.avatar
+      src: contact.avatar ? combineURLs(apiUrl, contact.avatar) : ""
     }),
     title: contact.username,
     subheader: /*#__PURE__*/React__default.createElement(ContactStatus, {
@@ -1676,6 +1671,7 @@ var RoomHeader = function RoomHeader(_ref) {
 };
 
 var useStyles$9 = /*#__PURE__*/makeStyles(function (theme) {
+  var _img, _aspect;
   return createStyles({
     root: {
       width: "100%",
@@ -1691,35 +1687,13 @@ var useStyles$9 = /*#__PURE__*/makeStyles(function (theme) {
       flex: 1,
       overflowY: "auto",
       margin: 0,
-      padding: 0,
-      scrollbarWidth: "thin",
-      scrollbarColor: "#6b6b6b #fff",
-      "&::-webkit-scrollbar, & *::-webkit-scrollbar": {
-        backgroundColor: "#fff"
-      },
-      "&::-webkit-scrollbar-thumb, & *::-webkit-scrollbar-thumb": {
-        borderRadius: 8,
-        backgroundColor: "#d5d9ef",
-        border: "5px solid #fff"
-      },
-      "&::-webkit-scrollbar-thumb:focus, & *::-webkit-scrollbar-thumb:focus": {
-        backgroundColor: "#fff"
-      },
-      "&::-webkit-scrollbar-thumb:active, & *::-webkit-scrollbar-thumb:active": {
-        backgroundColor: "#73d7f5",
-        border: "3px solid #fff"
-      },
-      "&::-webkit-scrollbar-thumb:hover, & *::-webkit-scrollbar-thumb:hover": {
-        backgroundColor: "#73d7f5",
-        border: "3px solid #fff"
-      },
-      "&::-webkit-scrollbar-corner, & *::-webkit-scrollbar-corner": {
-        backgroundColor: "#fff"
-      }
+      padding: 0
     },
     messageList: {
       height: "100%",
-      overflow: "auto"
+      overflowY: "auto",
+      scrollbarWidth: "thin",
+      scrollbarColor: theme.palette.primary.light + " #fff"
     },
     roomHeader: {
       flex: 1
@@ -1732,7 +1706,25 @@ var useStyles$9 = /*#__PURE__*/makeStyles(function (theme) {
     },
     flexEnd: {
       justifyContent: "flex-end"
-    }
+    },
+    img: (_img = {
+      cursor: "pointer",
+      borderRadius: theme.spacing(1.2),
+      maxWidth: "calc(100% - 240px)",
+      maxHeight: "auto"
+    }, _img[theme.breakpoints.down("sm")] = {
+      maxWidth: "calc(100% - 40px)",
+      maxHeight: "auto"
+    }, _img),
+    aspect: (_aspect = {
+      margin: "auto",
+      textAlign: "center",
+      maxWidth: "calc(100% - 240px)",
+      maxHeight: "auto"
+    }, _aspect[theme.breakpoints.down("sm")] = {
+      maxWidth: "calc(100% - 40px)",
+      maxHeight: "auto"
+    }, _aspect)
   });
 });
 var initialMenuState = {
@@ -1777,7 +1769,18 @@ var Room = function Room(props) {
   }, [getChatId(chat)]);
   React__default.useLayoutEffect(function () {
     if (scrollState.autoScroll && refOnLastMess.current) {
-      refOnLastMess.current.scrollIntoView();
+      setTimeout(function () {
+        return refOnLastMess.current && refOnLastMess.current.scrollIntoView({
+          behavior: "smooth",
+          block: "end",
+          inline: "end"
+        });
+      }, 500);
+      refOnLastMess.current.scrollIntoView({
+        behavior: "smooth",
+        block: "end",
+        inline: "end"
+      });
     }
   }, [getChatId(chat), messageCount]);
   React__default.useLayoutEffect(function () {
@@ -1849,6 +1852,12 @@ var Room = function Room(props) {
     if (props.onMeesageDelete && chat && message) props.onMeesageDelete(chat, message);
   }, [menuState.message]);
   //  console.log("chat", chat);
+  var _React$useState3 = React__default.useState({
+      visible: false,
+      src: ""
+    }),
+    viewerData = _React$useState3[0],
+    setViewerData = _React$useState3[1];
   return /*#__PURE__*/React__default.createElement(Card, {
     elevation: 1,
     className: classes.root
@@ -1882,7 +1891,7 @@ var Room = function Room(props) {
     size: 20
   }))), /*#__PURE__*/React__default.createElement(Divider, null), /*#__PURE__*/React__default.createElement(CardContent, {
     className: classes.messageListOuter
-  }, !isEmpty(messages) ? /*#__PURE__*/React__default.createElement(List, {
+  }, !isEmpty(messages) ? /*#__PURE__*/React__default.createElement(React__default.Fragment, null, /*#__PURE__*/React__default.createElement(List, {
     className: classes.messageList,
     onScroll: onScroll
   }, messages != null && messages.map(function (message, inx) {
@@ -1898,9 +1907,28 @@ var Room = function Room(props) {
       onContextMenu: function onContextMenu(event) {
         return handleMenuPopup(message, event);
       },
-      refOnLastMess: inx === messages.length - 1 ? refOnLastMess : null
+      setViewerData: setViewerData
     });
-  })) : null), /*#__PURE__*/React__default.createElement(Divider, null), /*#__PURE__*/React__default.createElement(CardContent, null, /*#__PURE__*/React__default.createElement(Entry, {
+  }), /*#__PURE__*/React__default.createElement("div", {
+    ref: refOnLastMess
+  })), viewerData.visible && /*#__PURE__*/React__default.createElement(Backdrop, {
+    sx: {
+      color: "#fff",
+      zIndex: function zIndex(theme) {
+        return theme.zIndex.drawer + 1;
+      }
+    },
+    open: viewerData.visible,
+    onClick: function onClick() {
+      setViewerData({
+        visible: false,
+        src: ""
+      });
+    }
+  }, /*#__PURE__*/React__default.createElement("img", {
+    src: viewerData.src,
+    className: classes.img
+  }))) : null), /*#__PURE__*/React__default.createElement(Divider, null), /*#__PURE__*/React__default.createElement(CardContent, null, /*#__PURE__*/React__default.createElement(Entry, {
     chat: chat,
     onTyping: props.onTyping,
     onSendMessage: props.onSendMessage
@@ -2015,7 +2043,7 @@ var OnlineBadge = /*#__PURE__*/withStyles(function (theme) {
 var contactAvatar = function contactAvatar(apiUrl, contact, typing) {
   var avatar = /*#__PURE__*/React__default.createElement(Avatar, {
     alt: contact.username,
-    src: "" + apiUrl + contact.avatar
+    src: contact.avatar ? combineURLs(apiUrl, contact.avatar) : ""
   });
   var isTyping = !!(typing != null && typing.contactId) && (typing == null ? void 0 : typing.userId) === contact.userId;
   if (isTyping) return /*#__PURE__*/React__default.createElement(TypingBadge, {
@@ -2082,7 +2110,7 @@ var RoomListItem = function RoomListItem(props) {
   }));
 };
 
-var useStyles$b = /*#__PURE__*/makeStyles(function () {
+var useStyles$b = /*#__PURE__*/makeStyles(function (theme) {
   return {
     root: {
       width: "100%",
@@ -2094,29 +2122,8 @@ var useStyles$b = /*#__PURE__*/makeStyles(function () {
     listStyle: {
       height: "89.5%",
       overflowY: "auto",
-      scrollbarColor: "#6b6b6b #fff",
-      "&::-webkit-scrollbar, & *::-webkit-scrollbar": {
-        backgroundColor: "#fff"
-      },
-      "&::-webkit-scrollbar-thumb, & *::-webkit-scrollbar-thumb": {
-        borderRadius: 8,
-        backgroundColor: "#d5d9ef",
-        border: "5px solid #fff"
-      },
-      "&::-webkit-scrollbar-thumb:focus, & *::-webkit-scrollbar-thumb:focus": {
-        backgroundColor: "#fff"
-      },
-      "&::-webkit-scrollbar-thumb:active, & *::-webkit-scrollbar-thumb:active": {
-        backgroundColor: "#73d7f5",
-        border: "3px solid #fff"
-      },
-      "&::-webkit-scrollbar-thumb:hover, & *::-webkit-scrollbar-thumb:hover": {
-        backgroundColor: "#73d7f5",
-        border: "3px solid #fff"
-      },
-      "&::-webkit-scrollbar-corner, & *::-webkit-scrollbar-corner": {
-        backgroundColor: "#fff"
-      }
+      scrollbarWidth: "thin",
+      scrollbarColor: theme.palette.primary.light + " #fff"
     }
   };
 });
@@ -2326,7 +2333,7 @@ var ConferenceCall = function ConferenceCall(_ref) {
   }, contact ? /*#__PURE__*/React__default.createElement(Avatar, {
     className: classes.avatar,
     alt: contact.username,
-    src: "" + apiUrl + contact.avatar
+    src: contact.avatar ? combineURLs(apiUrl, contact.avatar) : ""
   }) : /*#__PURE__*/React__default.createElement(Avatar, {
     className: classes.avatar
   })), /*#__PURE__*/React__default.createElement("div", {

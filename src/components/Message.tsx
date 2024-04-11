@@ -19,8 +19,8 @@ type MessageProps = {
   isGroupMessage: boolean; // сообщение в группу
   isUserFirst: boolean; // начинает группу сообщений от одного пользователя
   isUserLast: boolean; // завершает группу сообщений от одного пользователя
-  refOnLastMess: React.RefObject<HTMLDivElement> | null;
   onContextMenu: (event: React.MouseEvent<HTMLElement>) => void;
+  setViewerData: (value: { visible: boolean; src: string }) => void;
 };
 
 const wrapMessage = (
@@ -82,11 +82,12 @@ const Message: React.FC<MessageProps> = (props: MessageProps) => {
     apiUrl,
     message,
     owner,
-    refOnLastMess,
+
     user,
     isGroupMessage,
     isUserFirst,
-    isUserLast
+    isUserLast,
+    setViewerData
   } = props;
 
   if (message.messageType === "notify") {
@@ -99,7 +100,6 @@ const Message: React.FC<MessageProps> = (props: MessageProps) => {
       <ListItem className={classes.rootNotify}>
         <Alert
           severity={typeof content === "string" ? "info" : content.severity}
-          ref={refOnLastMess}
         >
           {typeof content === "string" ? content : content.message}
         </Alert>
@@ -111,7 +111,7 @@ const Message: React.FC<MessageProps> = (props: MessageProps) => {
     // Удаленное сообщение
     return (
       <ListItem className={classes.rootNotify}>
-        <Typography variant="body2" ref={refOnLastMess} align="center">
+        <Typography variant="body2" align="center">
           {message.userId === user.userId
             ? t("CHAT.MESSAGE.REVOKED.YOU")
             : `${message.revokeUserName} ${t("CHAT.MESSAGE.REVOKED.CONTACT")}`}
@@ -144,9 +144,13 @@ const Message: React.FC<MessageProps> = (props: MessageProps) => {
             <div className={classes.header}>{owner.username}</div>
           )}
           <div className={classes.body}>
-            <MessageContent message={message} apiUrl={apiUrl} />
+            <MessageContent
+              message={message}
+              apiUrl={apiUrl}
+              setViewerData={setViewerData}
+            />
           </div>
-          <div className={classes.status} ref={refOnLastMess}>
+          <div className={classes.status}>
             <span>
               {isMine ? (
                 (message as PrivateMessage).status === 0 ? (

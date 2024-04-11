@@ -7,10 +7,12 @@ import { ChatMessage } from "../../types";
 type MessageProps = {
   apiUrl: string;
   message: ChatMessage;
+  setViewerData: (value: { visible: boolean; src: string }) => void;
 };
 const MessageContent: React.FC<MessageProps> = ({
   apiUrl,
   message,
+  setViewerData
 }: MessageProps) => {
   switch (message.messageType) {
     case "text":
@@ -25,7 +27,13 @@ const MessageContent: React.FC<MessageProps> = ({
         />
       );
     case "image":
-      return <Image message={message} apiUrl={apiUrl} />;
+      return (
+        <Image
+          message={message}
+          apiUrl={apiUrl}
+          setViewerData={setViewerData}
+        />
+      );
     case "file":
       return <File message={message} />;
   }
