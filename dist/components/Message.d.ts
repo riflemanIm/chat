@@ -1,5 +1,5 @@
-import * as React from "react";
-import { ChatMessage, Contact, User } from "../types";
+import * as React from 'react';
+import { ChatMessage, Contact, User } from '../types';
 declare type MessageProps = {
     apiUrl: string;
     user: User;
@@ -13,6 +13,7 @@ declare type MessageProps = {
         visible: boolean;
         src: string;
     }) => void;
+    refOnMess: React.RefObject<HTMLDivElement> | null;
 };
 declare const Message: React.FC<MessageProps>;
 export default Message;

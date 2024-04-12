@@ -1,6 +1,6 @@
-import React from "react";
-import { AxiosInstance } from "axios";
-import { Contact, Group } from "../types";
+import React from 'react';
+import { AxiosInstance } from 'axios';
+import { Contact, Group } from '../types';
 export interface IRestContext {
     apiUrl: string;
     pageSize: number;

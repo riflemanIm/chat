@@ -1201,7 +1201,7 @@ var useStyles$6 = /*#__PURE__*/makeStyles(function (theme) {
 var wrapMessage = function wrapMessage(apiUrl, message, classes, isUserFirst, isUserLast, onContextMenu, child) {
   var messageType = message.messageType;
   var className = isUserFirst && isUserLast ? classes.message + " " + classes.firstMessage + " " + classes.lastMessage : isUserFirst ? classes.message + " " + classes.firstMessage : isUserLast ? classes.message + " " + classes.lastMessage : classes.message;
-  if (messageType === "file") {
+  if (messageType === 'file') {
     return /*#__PURE__*/createElement(Link, {
       className: className + " " + classes.file,
       underline: "none",
@@ -1211,10 +1211,10 @@ var wrapMessage = function wrapMessage(apiUrl, message, classes, isUserFirst, is
       onContextMenu: onContextMenu
     }, child);
   }
-  var isMedia = messageType === "image" || messageType === "video" || messageType === "video_conference";
+  var isMedia = messageType === 'image' || messageType === 'video' || messageType === 'video_conference';
   return /*#__PURE__*/createElement(Box, {
     display: "flex",
-    flexDirection: isMedia ? "column" : "row",
+    flexDirection: isMedia ? 'column' : 'row',
     flexWrap: "wrap",
     className: className,
     onContextMenu: onContextMenu
@@ -1231,15 +1231,18 @@ var Message = function Message(props) {
     isGroupMessage = props.isGroupMessage,
     isUserFirst = props.isUserFirst,
     isUserLast = props.isUserLast,
-    setViewerData = props.setViewerData;
-  if (message.messageType === "notify") {
+    setViewerData = props.setViewerData,
+    refOnMess = props.refOnMess;
+  //console.log('message', message);
+  if (message.messageType === 'notify') {
     // Уведомление - особый случай
-    var content = message.content[0] === "{" ? JSON.parse(message.content) : message.content;
+    var content = message.content[0] === '{' ? JSON.parse(message.content) : message.content;
     return /*#__PURE__*/createElement(ListItem, {
       className: classes.rootNotify
     }, /*#__PURE__*/createElement(Alert, {
-      severity: typeof content === "string" ? "info" : content.severity
-    }, typeof content === "string" ? content : content.message));
+      ref: refOnMess,
+      severity: typeof content === 'string' ? 'info' : content.severity
+    }, typeof content === 'string' ? content : content.message));
   }
   if (message.isRevoke) {
     // Удаленное сообщение
@@ -1247,16 +1250,18 @@ var Message = function Message(props) {
       className: classes.rootNotify
     }, /*#__PURE__*/createElement(Typography, {
       variant: "body2",
-      align: "center"
-    }, message.userId === user.userId ? t("CHAT.MESSAGE.REVOKED.YOU") : message.revokeUserName + " " + t("CHAT.MESSAGE.REVOKED.CONTACT")));
+      align: "center",
+      ref: refOnMess
+    }, message.userId === user.userId ? t('CHAT.MESSAGE.REVOKED.YOU') : message.revokeUserName + " " + t('CHAT.MESSAGE.REVOKED.CONTACT')));
   }
   var isMine = user.userId === message.userId;
   return /*#__PURE__*/createElement(ListItem, {
-    className: message.messageType === "video_conference" ? classes.rootNotify : isMine ? classes.rootUser : classes.rootContact
+    className: message.messageType === 'video_conference' ? classes.rootNotify : isMine ? classes.rootUser : classes.rootContact
   }, wrapMessage(apiUrl, message, classes, isUserFirst, isUserLast, props.onContextMenu, /*#__PURE__*/createElement(Fragment, null, !isMine && isGroupMessage && owner && isUserFirst && /*#__PURE__*/createElement("div", {
     className: classes.header
   }, owner.username), /*#__PURE__*/createElement("div", {
-    className: classes.body
+    className: classes.body,
+    ref: refOnMess
   }, /*#__PURE__*/createElement(MessageContent, {
     message: message,
     apiUrl: apiUrl,
@@ -1497,25 +1502,25 @@ var ConferenceTime = function ConferenceTime(_ref2) {
 var useStyles$8 = /*#__PURE__*/makeStyles(function (theme) {
   return createStyles({
     popover: {
-      pointerEvents: "none"
+      pointerEvents: 'none'
     },
     paper: {
       padding: theme.spacing(1)
     },
     avatarGroup: {
-      backgroundColor: "#28B7C6",
-      color: "#fff"
+      backgroundColor: '#28B7C6',
+      color: '#fff'
     }
   });
 });
 var getGroupStatus = function getGroupStatus(group, t) {
   var _group$members;
-  var status = [((_group$members = group.members) == null ? void 0 : _group$members.length) + " " + t("CHAT.MEMBERS")];
+  var status = [((_group$members = group.members) == null ? void 0 : _group$members.length) + " " + t('CHAT.MEMBERS')];
   var onlineCount = (group.members || []).reduce(function (sum, contact) {
     return contact.online ? sum + 1 : sum;
   }, 0);
-  if (onlineCount) status.push(onlineCount + " " + t("CHAT.STATUS.ONLINE"));
-  return status.join(", ");
+  if (onlineCount) status.push(onlineCount + " " + t('CHAT.STATUS.ONLINE'));
+  return status.join(', ');
 };
 var RoomHeader = function RoomHeader(_ref) {
   var apiUrl = _ref.apiUrl,
@@ -1570,7 +1575,7 @@ var RoomHeader = function RoomHeader(_ref) {
       }, /*#__PURE__*/React__default.createElement(GroupIcon, null)),
       title: group.name,
       subheader: /*#__PURE__*/React__default.createElement(React__default.Fragment, null, /*#__PURE__*/React__default.createElement("span", {
-        "aria-owns": anchorEl ? "mouse-over-popover" : undefined,
+        "aria-owns": anchorEl ? 'mouse-over-popover' : undefined,
         "aria-haspopup": "true",
         onMouseEnter: handlePopoverOpen,
         onMouseLeave: handlePopoverClose
@@ -1583,12 +1588,12 @@ var RoomHeader = function RoomHeader(_ref) {
         open: !!anchorEl,
         anchorEl: anchorEl,
         anchorOrigin: {
-          vertical: "bottom",
-          horizontal: "left"
+          vertical: 'bottom',
+          horizontal: 'left'
         },
         transformOrigin: {
-          vertical: "top",
-          horizontal: "left"
+          vertical: 'top',
+          horizontal: 'left'
         },
         onClose: handlePopoverClose,
         disableRestoreFocus: true
@@ -1618,11 +1623,10 @@ var RoomHeader = function RoomHeader(_ref) {
   }
   var contact = chat;
   var isTyping = !!(typing != null && typing.contactId) && (typing == null ? void 0 : typing.userId) === contact.userId;
-  console.log("user", user, "contact", contact);
   return /*#__PURE__*/React__default.createElement(CardHeader, {
     avatar: /*#__PURE__*/React__default.createElement(Avatar, {
       alt: contact.username,
-      src: contact.avatar ? combineURLs(apiUrl, contact.avatar) : ""
+      src: contact.avatar ? combineURLs(apiUrl, contact.avatar) : ''
     }),
     title: contact.username,
     subheader: /*#__PURE__*/React__default.createElement(ContactStatus, {
@@ -1641,7 +1645,7 @@ var RoomHeader = function RoomHeader(_ref) {
       onClick: function onClick() {
         return onConferencePause(conference);
       }
-    }, t("CHAT.CONFERENCE.PAUSE")), conference && !isEmpty(conference) && onVideoEnd != null && user.role != null && [3, 4].includes(user.role) && /*#__PURE__*/React__default.createElement(Button, {
+    }, t('CHAT.CONFERENCE.PAUSE')), conference && !isEmpty(conference) && onVideoEnd != null && user.role != null && [3, 4].includes(user.role) && /*#__PURE__*/React__default.createElement(Button, {
       "aria-label": "cancel call",
       variant: "contained",
       color: "primary",
@@ -1655,7 +1659,7 @@ var RoomHeader = function RoomHeader(_ref) {
       style: {
         marginLeft: 8
       }
-    }, t("CHAT.CONFERENCE.FINISH")), isEmpty(conference) && onVideoCall != null && user.role && [3, 4].includes(user.role) && /*#__PURE__*/React__default.createElement(Button, {
+    }, t('CHAT.CONFERENCE.FINISH')), isEmpty(conference) && onVideoCall != null && user.role && [3, 4].includes(user.role) && /*#__PURE__*/React__default.createElement(Button, {
       "aria-label": "video call",
       variant: "contained",
       color: "primary",
@@ -1664,7 +1668,7 @@ var RoomHeader = function RoomHeader(_ref) {
       onClick: function onClick() {
         return onVideoCall(contact);
       }
-    }, t("CHAT.CONFERENCE.START")), (conference == null ? void 0 : conference.finishDate) != null && /*#__PURE__*/React__default.createElement(ConferenceTime, {
+    }, t('CHAT.CONFERENCE.START')), (conference == null ? void 0 : conference.finishDate) != null && /*#__PURE__*/React__default.createElement(ConferenceTime, {
       finishDate: conference.finishDate
     }))
   });
@@ -1674,25 +1678,25 @@ var useStyles$9 = /*#__PURE__*/makeStyles(function (theme) {
   var _img, _aspect;
   return createStyles({
     root: {
-      width: "100%",
+      width: '100%',
       minWidth: 360,
-      height: "100%",
-      display: "flex",
-      flexDirection: "column"
+      height: '100%',
+      display: 'flex',
+      flexDirection: 'column'
     },
     inline: {
-      display: "inline"
+      display: 'inline'
     },
     messageListOuter: {
       flex: 1,
-      overflowY: "auto",
+      overflowY: 'auto',
       margin: 0,
       padding: 0
     },
     messageList: {
-      height: "100%",
-      overflowY: "auto",
-      scrollbarWidth: "thin",
+      height: '100%',
+      overflowY: 'auto',
+      scrollbarWidth: 'thin',
       scrollbarColor: theme.palette.primary.light + " #fff"
     },
     roomHeader: {
@@ -1702,28 +1706,28 @@ var useStyles$9 = /*#__PURE__*/makeStyles(function (theme) {
       padding: theme.spacing(2)
     },
     flexAll: {
-      flex: "1 1 auto"
+      flex: '1 1 auto'
     },
     flexEnd: {
-      justifyContent: "flex-end"
+      justifyContent: 'flex-end'
     },
     img: (_img = {
-      cursor: "pointer",
+      cursor: 'pointer',
       borderRadius: theme.spacing(1.2),
-      maxWidth: "calc(100% - 240px)",
-      maxHeight: "auto"
-    }, _img[theme.breakpoints.down("sm")] = {
-      maxWidth: "calc(100% - 40px)",
-      maxHeight: "auto"
+      maxWidth: 'calc(100% - 240px)',
+      maxHeight: 'auto'
+    }, _img[theme.breakpoints.down('sm')] = {
+      maxWidth: 'calc(100% - 40px)',
+      maxHeight: 'auto'
     }, _img),
     aspect: (_aspect = {
-      margin: "auto",
-      textAlign: "center",
-      maxWidth: "calc(100% - 240px)",
-      maxHeight: "auto"
-    }, _aspect[theme.breakpoints.down("sm")] = {
-      maxWidth: "calc(100% - 40px)",
-      maxHeight: "auto"
+      margin: 'auto',
+      textAlign: 'center',
+      maxWidth: 'calc(100% - 240px)',
+      maxHeight: 'auto'
+    }, _aspect[theme.breakpoints.down('sm')] = {
+      maxWidth: 'calc(100% - 40px)',
+      maxHeight: 'auto'
     }, _aspect)
   });
 });
@@ -1752,46 +1756,52 @@ var Room = function Room(props) {
   var _useTranslation = useTranslation(),
     t = _useTranslation.t;
   var isMobile = useMediaQuery(function (theme) {
-    return theme.breakpoints.down("sm");
+    return theme.breakpoints.down('sm');
   });
   var _React$useState = React__default.useState(initialScrollState),
     scrollState = _React$useState[0],
     setScrollState = _React$useState[1];
   var messages = chat == null ? void 0 : chat.messages;
   var messageCount = (messages == null ? void 0 : messages.length) || 0;
+  var refOnMess = React__default.useRef(null);
   var refOnLastMess = React__default.useRef(null);
-  var refList = React__default.useRef(null);
+  //  const refList = React.useRef<HTMLUListElement>(null);
   var _React$useState2 = React__default.useState(initialMenuState),
     menuState = _React$useState2[0],
     setMenuState = _React$useState2[1];
   React__default.useEffect(function () {
+    console.log('change chat initialScrollState');
     if (props.onEnterRoom && chat) props.onEnterRoom(chat);
+    setScrollState(initialScrollState);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [getChatId(chat)]);
+  // React.useLayoutEffect(() => {
+  //   if (scrollState.autoScroll && refOnLastMess.current) {
+  //     setTimeout(
+  //       () =>
+  //         refOnLastMess.current &&
+  //         refOnLastMess.current.scrollIntoView(),
+  //       500,
+  //     );
+  //   }
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [getChatId(chat)]);
   React__default.useLayoutEffect(function () {
-    if (scrollState.autoScroll && refOnLastMess.current) {
+    if (scrollState.autoScroll && refOnMess.current) {
       setTimeout(function () {
-        return refOnLastMess.current && refOnLastMess.current.scrollIntoView({
-          behavior: "smooth",
-          block: "end",
-          inline: "end"
-        });
+        return refOnMess.current && refOnMess.current.scrollIntoView();
       }, 500);
-      refOnLastMess.current.scrollIntoView({
-        behavior: "smooth",
-        block: "end",
-        inline: "end"
-      });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [getChatId(chat), messageCount]);
-  React__default.useLayoutEffect(function () {
-    if (!loading && refList.current && scrollState.height > 0) {
-      refList.current.scrollTop = refList.current.scrollHeight - scrollState.height;
-      setScrollState(initialScrollState);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [getChatId(chat), loading, scrollState.height]);
+  }, [messageCount, getChatId(chat)]);
+  // React.useLayoutEffect(() => {
+  //   if (!loading && refList.current && scrollState.height > 0) {
+  //     refList.current.scrollTop =
+  //       refList.current.scrollHeight - scrollState.height;
+  //     setScrollState(initialScrollState);
+  //   }
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [getChatId(chat), loading, scrollState.height]);
   var onScroll = React__default.useCallback( /*#__PURE__*/function () {
     var _ref = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee(event) {
       var currentTarget;
@@ -1812,6 +1822,11 @@ var Room = function Room(props) {
                   height: currentTarget.scrollHeight
                 });
                 props.onNeedMoreMessages(chat);
+                setTimeout(function () {
+                  if (refOnMess.current) {
+                    refOnMess.current.scrollIntoView();
+                  }
+                }, 100);
               }
             }
           case 4:
@@ -1827,7 +1842,7 @@ var Room = function Room(props) {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   [chat, loading]);
   var handleMenuPopup = function handleMenuPopup(message, event) {
-    var canCopy = message.messageType === "text";
+    var canCopy = message.messageType === 'text';
     var canDelete = user.userId === message.userId && !!props.onMeesageDelete && new Date().getTime() - new Date(message.cdate).getTime() <= 1000 * 60 * 2;
     if (!canCopy && !canDelete) {
       setMenuState(initialMenuState);
@@ -1861,10 +1876,22 @@ var Room = function Room(props) {
   //  console.log("chat", chat);
   var _React$useState3 = React__default.useState({
       visible: false,
-      src: ""
+      src: ''
     }),
     viewerData = _React$useState3[0],
     setViewerData = _React$useState3[1];
+  var defineRefOnMess = function defineRefOnMess(inx) {
+    var perSize = 25;
+    var count = messageCount >= perSize ? messageCount / perSize - 1 : 0;
+    if (scrollState.autoScroll && inx === messageCount - 1) {
+      return refOnMess;
+    } else if (count === 0 && inx === messageCount - 1) {
+      return refOnMess;
+    } else if (count > 0 && inx === messageCount - perSize * count) {
+      return refOnMess;
+    }
+    return null;
+  };
   return /*#__PURE__*/React__default.createElement(Card, {
     elevation: 1,
     className: classes.root
@@ -1909,18 +1936,19 @@ var Room = function Room(props) {
       message: message,
       owner: users[message.userId],
       isGroupMessage: !!(chat != null && chat.groupId),
-      isUserFirst: inx === 0 || messages[inx - 1].messageType === "notify" || messages[inx - 1].userId !== messages[inx].userId,
-      isUserLast: inx === messages.length - 1 || messages[inx + 1].messageType === "notify" || messages[inx + 1].userId !== messages[inx].userId,
+      isUserFirst: inx === 0 || messages[inx - 1].messageType === 'notify' || messages[inx - 1].userId !== messages[inx].userId,
+      isUserLast: inx === messages.length - 1 || messages[inx + 1].messageType === 'notify' || messages[inx + 1].userId !== messages[inx].userId,
       onContextMenu: function onContextMenu(event) {
         return handleMenuPopup(message, event);
       },
+      refOnMess: defineRefOnMess(inx),
       setViewerData: setViewerData
     });
   }), /*#__PURE__*/React__default.createElement("div", {
     ref: refOnLastMess
   })), viewerData.visible && /*#__PURE__*/React__default.createElement(Backdrop, {
     sx: {
-      color: "#fff",
+      color: '#fff',
       zIndex: function zIndex(theme) {
         return theme.zIndex.drawer + 1;
       }
@@ -1929,7 +1957,7 @@ var Room = function Room(props) {
     onClick: function onClick() {
       setViewerData({
         visible: false,
-        src: ""
+        src: ''
       });
     }
   }, /*#__PURE__*/React__default.createElement("img", {
@@ -1954,7 +1982,7 @@ var Room = function Room(props) {
     disabled: !menuState.canCopy
   }, /*#__PURE__*/React__default.createElement("span", {
     className: classes.flexAll
-  }, t("CHAT.MESSAGE.MENU.COPY")), /*#__PURE__*/React__default.createElement(ListItemIcon, {
+  }, t('CHAT.MESSAGE.MENU.COPY')), /*#__PURE__*/React__default.createElement(ListItemIcon, {
     className: classes.flexEnd
   }, /*#__PURE__*/React__default.createElement(FileCopyIcon, {
     fontSize: "small"
@@ -1963,7 +1991,7 @@ var Room = function Room(props) {
     disabled: !menuState.canDelete
   }, /*#__PURE__*/React__default.createElement("span", {
     className: classes.flexAll
-  }, t("CHAT.MESSAGE.MENU.DELETE")), /*#__PURE__*/React__default.createElement(ListItemIcon, {
+  }, t('CHAT.MESSAGE.MENU.DELETE')), /*#__PURE__*/React__default.createElement(ListItemIcon, {
     className: classes.flexEnd
   }, /*#__PURE__*/React__default.createElement(DeleteIcon, {
     fontSize: "small"
@@ -2883,12 +2911,13 @@ var RestProvider = function RestProvider(_ref) {
   var _useContext = useContext(ChatContext),
     state = _useContext.state,
     dispatch = _useContext.dispatch;
+  console.log('pageSize', pageSize);
   var fetch = axios.create({
     timeout: 60000,
     baseURL: baseURLApi,
     headers: {
-      "Cache-Control": "no-cache",
-      Pragma: "no-cache",
+      'Cache-Control': 'no-cache',
+      Pragma: 'no-cache',
       Authorization: "Bearer " + state.token
     },
     withCredentials: false
@@ -2904,11 +2933,11 @@ var RestProvider = function RestProvider(_ref) {
             current = (_chat$messages = chat.messages) == null ? void 0 : _chat$messages.length;
             _context.prev = 2;
             dispatch({
-              type: "SET_LOADING",
+              type: 'SET_LOADING',
               payload: true
             });
             _context.next = 6;
-            return fetch.get("/contact/messages", {
+            return fetch.get('/contact/messages', {
               params: {
                 contactId: contactId,
                 current: current,
@@ -2920,7 +2949,7 @@ var RestProvider = function RestProvider(_ref) {
             data = _yield$fetch$get.data;
             if (data) {
               dispatch({
-                type: "ADD_PRIVATE_MESSAGES",
+                type: 'ADD_PRIVATE_MESSAGES',
                 payload: {
                   pageSize: pageSize,
                   contactId: contactId,
@@ -2935,13 +2964,13 @@ var RestProvider = function RestProvider(_ref) {
             _context.t0 = _context["catch"](2);
             err = _context.t0;
             dispatch({
-              type: "SET_ERROR",
+              type: 'SET_ERROR',
               payload: err.message
             });
           case 15:
             _context.prev = 15;
             dispatch({
-              type: "SET_LOADING",
+              type: 'SET_LOADING',
               payload: false
             });
             return _context.finish(15);
@@ -2966,11 +2995,11 @@ var RestProvider = function RestProvider(_ref) {
             current = (_chat$messages2 = chat.messages) == null ? void 0 : _chat$messages2.length;
             _context2.prev = 2;
             dispatch({
-              type: "SET_LOADING",
+              type: 'SET_LOADING',
               payload: true
             });
             _context2.next = 6;
-            return fetch.get("/group/messages", {
+            return fetch.get('/group/messages', {
               params: {
                 groupId: groupId,
                 current: current,
@@ -2982,7 +3011,7 @@ var RestProvider = function RestProvider(_ref) {
             data = _yield$fetch$get2.data;
             if (data) {
               dispatch({
-                type: "ADD_GROUP_MESSAGES",
+                type: 'ADD_GROUP_MESSAGES',
                 payload: _extends({
                   pageSize: pageSize,
                   groupId: groupId
@@ -2996,13 +3025,13 @@ var RestProvider = function RestProvider(_ref) {
             _context2.t0 = _context2["catch"](2);
             err = _context2.t0;
             dispatch({
-              type: "SET_ERROR",
+              type: 'SET_ERROR',
               payload: err.message
             });
           case 15:
             _context2.prev = 15;
             dispatch({
-              type: "SET_LOADING",
+              type: 'SET_LOADING',
               payload: false
             });
             return _context2.finish(15);
@@ -3024,7 +3053,7 @@ var RestProvider = function RestProvider(_ref) {
           case 0:
             _context3.prev = 0;
             _context3.next = 3;
-            return fetch.get("/contact/find", {
+            return fetch.get('/contact/find', {
               params: {
                 mmkId: mmkId,
                 guid: guid
@@ -3044,7 +3073,7 @@ var RestProvider = function RestProvider(_ref) {
           case 9:
             _context3.prev = 9;
             _context3.t0 = _context3["catch"](0);
-            console.log("err getUserByMmk", _context3.t0);
+            console.log('err getUserByMmk', _context3.t0);
           case 12:
           case "end":
             return _context3.stop();
