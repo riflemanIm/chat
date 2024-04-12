@@ -159,7 +159,7 @@ const Room: React.FC<RoomProps> = (props: RoomProps) => {
 
   const refOnMess = React.useRef<HTMLDivElement>(null);
   const refOnLastMess = React.useRef<HTMLDivElement>(null);
-  //const refList = React.useRef<HTMLUListElement>(null);
+  //  const refList = React.useRef<HTMLUListElement>(null);
 
   const [menuState, setMenuState] = React.useState<{
     message: ChatMessage | null;
@@ -170,8 +170,10 @@ const Room: React.FC<RoomProps> = (props: RoomProps) => {
   }>(initialMenuState);
 
   React.useEffect(() => {
+    console.log('change chat initialScrollState');
     if (props.onEnterRoom && chat) props.onEnterRoom(chat);
-    //setScrollState(initialScrollState);
+    setScrollState(initialScrollState);
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [getChatId(chat)]);
 
@@ -195,7 +197,7 @@ const Room: React.FC<RoomProps> = (props: RoomProps) => {
       );
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [messageCount]);
+  }, [messageCount, getChatId(chat)]);
 
   // React.useLayoutEffect(() => {
   //   if (!loading && refList.current && scrollState.height > 0) {
@@ -210,10 +212,6 @@ const Room: React.FC<RoomProps> = (props: RoomProps) => {
     async (event: React.UIEvent<HTMLUListElement>) => {
       const { currentTarget } = event;
       if (!currentTarget || !chat || !!chat.noMoreData) return;
-      // console.log(
-      //   'currentTarget.scrollTop',
-      //   currentTarget.scrollTop && currentTarget.scrollTop,
-      // );
 
       if (currentTarget.scrollTop === 0) {
         if (
@@ -231,7 +229,7 @@ const Room: React.FC<RoomProps> = (props: RoomProps) => {
             if (refOnMess.current) {
               refOnMess.current.scrollIntoView();
             }
-          }, 500);
+          }, 100);
         }
       }
     },
@@ -293,11 +291,18 @@ const Room: React.FC<RoomProps> = (props: RoomProps) => {
   });
 
   const defineRefOnMess = (inx: number) => {
-    const count = messageCount / 25 - 1;
-    console.log('messageCount', messageCount, 'count', count);
-    if (count === 0 && inx === messageCount - 1) return refOnMess;
-    if (count > 0 && inx === messageCount - 25 * count)
+    const perSize = 25;
+    const count =
+      messageCount >= perSize ? messageCount / perSize - 1 : 0;
+
+    if (scrollState.autoScroll && inx === messageCount - 1) {
       return refOnMess;
+    } else if (count === 0 && inx === messageCount - 1) {
+      return refOnMess;
+    } else if (count > 0 && inx === messageCount - perSize * count) {
+      return refOnMess;
+    }
+
     return null;
   };
   return (
