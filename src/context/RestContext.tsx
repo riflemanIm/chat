@@ -21,9 +21,8 @@ export interface IRestContext {
 }
 const initialContext = {} as IRestContext;
 
-export const RestContext: React.Context<IRestContext> = createContext(
-  initialContext,
-);
+export const RestContext: React.Context<IRestContext> =
+  createContext(initialContext);
 
 type RestProviderProps = {
   baseURLApi: string;
@@ -37,7 +36,7 @@ export const RestProvider: React.FC<RestProviderProps> = ({
   children,
 }: RestProviderProps) => {
   const { state, dispatch } = useContext(ChatContext);
-  console.log('pageSize', pageSize);
+
   const fetch: AxiosInstance = axios.create({
     timeout: 60000, // Таймаут минута
     baseURL: baseURLApi,

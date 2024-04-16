@@ -190,7 +190,7 @@ const RoomHeader: React.FC<RoomHeaderProps> = ({
             )}
             {user.role === 4 &&
               group.members?.find(
-                it => it.userId !== user.userId && it.role === 4,
+                (it) => it.userId !== user.userId && it.role === 4,
               ) &&
               onLeaveGroup && (
                 <IconButton

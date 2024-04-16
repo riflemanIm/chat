@@ -21,7 +21,7 @@ type MessageProps = {
   isUserLast: boolean; // завершает группу сообщений от одного пользователя
   onContextMenu: (event: React.MouseEvent<HTMLElement>) => void;
   setViewerData: (value: { visible: boolean; src: string }) => void;
-  refOnMess: React.RefObject<HTMLDivElement> | null;
+  //refOnMess: React.RefObject<HTMLDivElement> | null;
 };
 
 const wrapMessage = (
@@ -91,7 +91,7 @@ const Message: React.FC<MessageProps> = (props: MessageProps) => {
     isUserFirst,
     isUserLast,
     setViewerData,
-    refOnMess,
+    //refOnMess,
   } = props;
   //console.log('message', message);
 
@@ -104,7 +104,7 @@ const Message: React.FC<MessageProps> = (props: MessageProps) => {
     return (
       <ListItem className={classes.rootNotify}>
         <Alert
-          ref={refOnMess}
+          //ref={refOnMess}
           severity={
             typeof content === 'string' ? 'info' : content.severity
           }
@@ -119,7 +119,11 @@ const Message: React.FC<MessageProps> = (props: MessageProps) => {
     // Удаленное сообщение
     return (
       <ListItem className={classes.rootNotify}>
-        <Typography variant="body2" align="center" ref={refOnMess}>
+        <Typography
+          variant="body2"
+          align="center"
+          //ref={refOnMess}
+        >
           {message.userId === user.userId
             ? t('CHAT.MESSAGE.REVOKED.YOU')
             : `${message.revokeUserName} ${t(
@@ -153,7 +157,10 @@ const Message: React.FC<MessageProps> = (props: MessageProps) => {
           {!isMine && isGroupMessage && owner && isUserFirst && (
             <div className={classes.header}>{owner.username}</div>
           )}
-          <div className={classes.body} ref={refOnMess}>
+          <div
+            className={classes.body}
+            //ref={refOnMess}
+          >
             <MessageContent
               message={message}
               apiUrl={apiUrl}

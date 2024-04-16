@@ -1,5 +1,5 @@
-import React from "react";
-import { ChatMessage } from "../../types";
+import React from 'react';
+import { ChatMessage } from '../../types';
 declare type ImageProrps = {
     apiUrl: string;
     message: ChatMessage;

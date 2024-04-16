@@ -13,7 +13,6 @@ declare type MessageProps = {
         visible: boolean;
         src: string;
     }) => void;
-    refOnMess: React.RefObject<HTMLDivElement> | null;
 };
 declare const Message: React.FC<MessageProps>;
 export default Message;

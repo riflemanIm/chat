@@ -1,4 +1,4 @@
-import * as React from "react";
+import * as React from 'react';
 import {
   Container,
   Box,
@@ -6,14 +6,14 @@ import {
   useMediaQuery,
   Paper,
   IconButton,
-  Tooltip
-} from "@mui/material";
-import { makeStyles } from "@mui/styles";
-import { Theme } from "@mui/material/styles";
-import { Room, RoomList, Conference } from "../components";
-import { ChatContext } from "../context/ChatContext";
-import { RestContext } from "../context/RestContext";
-import { SocketContext } from "../context/SocketContext";
+  Tooltip,
+} from '@mui/material';
+import { makeStyles } from '@mui/styles';
+import { Theme } from '@mui/material/styles';
+import { Room, RoomList, Conference } from '../components';
+import { ChatContext } from '../context/ChatContext';
+import { RestContext } from '../context/RestContext';
+import { SocketContext } from '../context/SocketContext';
 import {
   ChatPa,
   Group,
@@ -21,14 +21,14 @@ import {
   ChatMessage,
   ChatRoom,
   SendMessage,
-  ConferenceData
-} from "../types";
-import { getParam, isEmpty, allMessCount } from "../utils/common";
-import ConferenceCall from "../components/ConferenceCall";
-import { ArrowForward } from "@mui/icons-material";
-import { useTranslation } from "react-i18next";
-import CheckAudiVideoPerm from "../components/CheckAudiVideoPerm";
-import ChatAlert from "../components/Alert";
+  ConferenceData,
+} from '../types';
+import { getParam, isEmpty, allMessCount } from '../utils/common';
+import ConferenceCall from '../components/ConferenceCall';
+import { ArrowForward } from '@mui/icons-material';
+import { useTranslation } from 'react-i18next';
+import CheckAudiVideoPerm from '../components/CheckAudiVideoPerm';
+import ChatAlert from '../components/Alert';
 
 // Отключили проигрыш звука
 // const getRingAudio = (): HTMLAudioElement => {
@@ -43,46 +43,46 @@ const useStyles = makeStyles((theme: Theme) => ({
   root: {
     minWidth: 640,
     minHeight: 470,
-    height: "100%",
+    height: '100%',
     //width: `calc(100vw - ${theme.spacing(8)})`,
     padding: 0,
-    [theme.breakpoints.down("sm")]: {
+    [theme.breakpoints.down('sm')]: {
       height: `calc(100vh - ${theme.spacing(8)})`,
-      width: "auto",
-      minWidth: "auto",
-      minHeight: "auto",
-      overflow: "hidden"
-    }
+      width: 'auto',
+      minWidth: 'auto',
+      minHeight: 'auto',
+      overflow: 'hidden',
+    },
   },
   innerBox: {
-    height: "100%",
-    width: "100%",
+    height: '100%',
+    width: '100%',
     margin: 0,
-    [theme.breakpoints.down("sm")]: {
-      margin: 0
-    }
+    [theme.breakpoints.down('sm')]: {
+      margin: 0,
+    },
   },
   innerGrid: {
-    height: "100%",
-    width: "100%"
+    height: '100%',
+    width: '100%',
   },
   conAbsOnConf: {
-    position: "absolute",
+    position: 'absolute',
     top: 42,
     left: 25,
     zIndex: 1000,
 
-    margin: theme.spacing(3)
-  }
+    margin: theme.spacing(3),
+  },
 }));
 
 export const ChatPage: React.FC<ChatPa> = ({
   activeGroupId,
-  activeChatUserId
+  activeChatUserId,
 }: ChatPa) => {
   const classes = useStyles();
   const isMobile = useMediaQuery((theme: Theme) =>
-    theme.breakpoints.down("sm")
+    theme.breakpoints.down('sm'),
   );
   const { t } = useTranslation();
   const { state, dispatch } = React.useContext(ChatContext);
@@ -93,185 +93,189 @@ export const ChatPage: React.FC<ChatPa> = ({
     pageSize,
     getPrivateMessages,
     getGroupMessages,
-    getUserByMmk
+    getUserByMmk,
   } = React.useContext(RestContext);
 
   // const [ringAudio] = React.useState(getRingAudio());
 
   const onExitActiveRoom = React.useCallback(() => {
     dispatch({
-      type: "SET_ACTIVE_ROOM",
-      payload: {}
+      type: 'SET_ACTIVE_ROOM',
+      payload: {},
     });
   }, [dispatch]);
 
   const onNeedMoreMessages = React.useCallback(
     async (chat: ChatRoom) => {
-      if ((chat as Group).groupId) await getGroupMessages(chat as Group);
+      if ((chat as Group).groupId)
+        await getGroupMessages(chat as Group);
       else await getPrivateMessages(chat as Contact);
     },
-    [getPrivateMessages, getGroupMessages]
+    [getPrivateMessages, getGroupMessages],
   );
 
   const onMessageDelete = React.useCallback(
     (chat: ChatRoom, message: ChatMessage) => {
-      socket?.emit("revokeMessage", {
+      socket?.emit('revokeMessage', {
         groupId: (chat as Group).groupId, // Идентификатор группы
         contactId: chat.userId, // Идентификатор контакта
-        _id: message._id // Идентификатор удаленного сообщения
+        _id: message._id, // Идентификатор удаленного сообщения
       });
     },
-    [socket?.id]
+    [socket?.id],
   );
 
   const onTyping = React.useCallback(
     (chat: ChatRoom) => {
-      socket?.emit("typing", {
+      socket?.emit('typing', {
         groupId: (chat as Group)?.groupId,
-        contactId: chat?.userId
+        contactId: chat?.userId,
       });
     },
-    [socket?.id]
+    [socket?.id],
   );
 
   const onSendMessage = React.useCallback(
     (chat: ChatRoom, data: SendMessage) => {
       if ((chat as Group).groupId) {
-        socket?.emit("groupMessage", {
+        socket?.emit('groupMessage', {
           groupId: (chat as Group)?.groupId,
           content: data.message,
           width: data.width,
           height: data.height,
           fileName: data.fileName,
           messageType: data.messageType,
-          size: data.size
+          size: data.size,
         });
       } else {
-        socket?.emit("privateMessage", {
+        socket?.emit('privateMessage', {
           contactId: chat?.userId,
           content: data.message,
           width: data.width,
           height: data.height,
           fileName: data.fileName,
           messageType: data.messageType,
-          size: data.size
+          size: data.size,
         });
       }
     },
-    [socket?.id]
+    [socket?.id],
   );
 
   const onChangeChat = React.useCallback(
     (chat: ChatRoom) => {
       dispatch({
-        type: "SET_ACTIVE_ROOM",
+        type: 'SET_ACTIVE_ROOM',
         payload: {
           groupId: (chat as Group)?.groupId,
-          contactId: chat?.userId
-        }
+          contactId: chat?.userId,
+        },
       });
     },
-    [socket?.id, dispatch]
+    [socket?.id, dispatch],
   );
 
   const onEnterRoom = React.useCallback(
     (chat: ChatRoom) => {
       if (!chat.messages || chat.messages.length === 0) return;
       if ((chat as Group).groupId) {
-        socket?.emit("markAsRead", {
+        socket?.emit('markAsRead', {
           groupId: (chat as Group).groupId,
-          _id: chat.messages[chat.messages.length - 1]._id
+          _id: chat.messages[chat.messages.length - 1]._id,
         });
       } else {
-        socket?.emit("markAsRead", {
+        socket?.emit('markAsRead', {
           contactId: chat.userId,
-          _id: chat.messages[chat.messages.length - 1]._id
+          _id: chat.messages[chat.messages.length - 1]._id,
         });
       }
     },
-    [socket?.id]
+    [socket?.id],
   );
 
   const onVideoCall = React.useCallback(
     (chat: ChatRoom) => {
-      socket?.emit("startConference", {
+      socket?.emit('startConference', {
         groupId: (chat as Group).groupId,
-        contactId: chat.userId
+        contactId: chat.userId,
       });
     },
-    [socket?.id]
+    [socket?.id],
   );
 
   const onVideoEnd = React.useCallback(
     (conference: ConferenceData | null) => {
       if (conference?.id != null)
-        socket?.emit("stopConference", {
-          id: conference?.id
+        socket?.emit('stopConference', {
+          id: conference?.id,
         });
     },
-    [socket?.id]
+    [socket?.id],
   );
 
   const onConferencePause = React.useCallback(
     (conference: ConferenceData | null) => {
       if (conference?.id != null)
-        socket?.emit("pauseConference", {
-          id: conference.id
+        socket?.emit('pauseConference', {
+          id: conference.id,
         });
     },
-    [socket?.id]
+    [socket?.id],
   );
 
   const onConferenceCallAccept = React.useCallback(
     (conference: ConferenceData) => {
       // отправляем resumeConference чтобы возобновить запись
       if (conference?.id != null)
-        socket?.emit("resumeConference", {
-          id: conference.id
+        socket?.emit('resumeConference', {
+          id: conference.id,
         });
-      dispatch({ type: "JOIN_CONFERENCE", payload: conference });
+      dispatch({ type: 'JOIN_CONFERENCE', payload: conference });
     },
-    [socket?.id, dispatch]
+    [socket?.id, dispatch],
   );
 
   const onOperatorAdd = React.useCallback(
     (group: Group, operator: Contact) => {
-      socket?.emit("addOperator", {
+      socket?.emit('addOperator', {
         groupId: group.groupId,
-        operatorId: operator.userId
+        operatorId: operator.userId,
       });
     },
-    [socket?.id]
+    [socket?.id],
   );
 
   const onLeaveGroup = React.useCallback(
     (group: Group) => {
-      socket?.emit("deleteGroup", {
-        groupId: group.groupId
+      socket?.emit('deleteGroup', {
+        groupId: group.groupId,
       });
     },
-    [socket?.id]
+    [socket?.id],
   );
 
   React.useEffect(() => {
     if (activeChatUserId != null && !isEmpty(state.contactGather)) {
       const Chat = Object.values(state.contactGather).find(
-        item => item.userId === activeChatUserId
+        (item) => item.userId === activeChatUserId,
       );
       onChangeChat(Chat);
       onEnterRoom(Chat);
     }
 
-    const mmkId = getParam("mmk");
-    const guid = getParam("guid");
-    if ((mmkId != null || guid != null) && !isEmpty(state.contactGather)) {
+    const mmkId = getParam('mmk');
+    const guid = getParam('guid');
+    if (
+      (mmkId != null || guid != null) &&
+      !isEmpty(state.contactGather)
+    ) {
       //console.log("mmkId", mmkId);
       const changeChatByMmkId = async () => {
         const userId = await getUserByMmk(mmkId, guid);
-        console.log("userId", userId);
+        console.log('userId', userId);
         if (userId != null) {
           const Chat = Object.values(state.contactGather).find(
-            item => item.userId === userId
+            (item) => item.userId === userId,
           );
           onChangeChat(Chat);
           onEnterRoom(Chat);
@@ -284,7 +288,7 @@ export const ChatPage: React.FC<ChatPa> = ({
   React.useEffect(() => {
     if (activeGroupId != null && !isEmpty(state.groupGather)) {
       const onlyChat = Object.values(state.groupGather).find(
-        item => item.groupId === activeGroupId
+        (item) => item.groupId === activeGroupId,
       );
 
       if (!isEmpty(onlyChat)) {
@@ -378,19 +382,23 @@ export const ChatPage: React.FC<ChatPa> = ({
         state.conference.data?.id,
         state.conference.data?.contactId,
         state.activeRoom?.groupId,
-        state.activeRoom?.userId
+        state.activeRoom?.userId,
       ]
     : [
         state.activeRoom,
         allMessCount(state.groupGather),
-        allMessCount(state.contactGather)
+        allMessCount(state.contactGather),
       ];
 
   const Contacts = React.useMemo(
     () =>
       state.conference.data?.id != null ? (
         <>
-          {state.conference.joined ? <GetConference /> : <GetConferenceCall />}
+          {state.conference.joined ? (
+            <GetConference />
+          ) : (
+            <GetConferenceCall />
+          )}
           <Box className={classes.conAbsOnConf}>
             <Paper style={{ borderRadius: 8 }}>
               <Box display="flex" flexDirection="row" my={3}>
@@ -405,11 +413,12 @@ export const ChatPage: React.FC<ChatPa> = ({
                 {isEmpty(state.activeRoom) &&
                   state.chatOld != null &&
                   isMobile && (
-                    <Tooltip title={t("CHAT.CONFERENCE.BACK")}>
+                    <Tooltip title={t('CHAT.CONFERENCE.BACK')}>
                       <IconButton
                         aria-label="check"
                         onClick={() =>
-                          state.chatOld != null && onChangeChat(state.chatOld)
+                          state.chatOld != null &&
+                          onChangeChat(state.chatOld)
                         }
                         size="large"
                       >
@@ -425,10 +434,10 @@ export const ChatPage: React.FC<ChatPa> = ({
         <GetRoomList />
       ),
 
-    depsContats
+    depsContats,
   );
 
-  console.log("chat state", state);
+  console.log('chat state', state);
 
   return (
     <Container maxWidth="lg" className={classes.root}>
