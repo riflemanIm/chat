@@ -1385,22 +1385,24 @@ const RoomMessageList = props => {
     visible: false,
     src: ''
   });
-  React__default.useLayoutEffect(() => {
-    if (!loading && refList.current) {
-      setScrollDo(true);
-    }
+  React__default.useEffect(() => {
+    setScrollDo(true);
+    scrollDown();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [getChatId(chat)]);
-  React__default.useLayoutEffect(() => {
-    if (!loading && refList.current) {
-      setTimeout(scrollDown, 100);
-    }
+  React__default.useEffect(() => {
+    scrollDown();
+    setScrollDo(true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [messageCount]);
   const scrollDown = () => {
     if (refList.current && scrollDo) {
       refList.current.scrollTop = refList.current.scrollHeight - 540;
     }
+  };
+  //console.log('--messageCount', messageCount);
+  const handlerScrollDown = () => {
+    scrollDown();
   };
   return /*#__PURE__*/React__default.createElement(CardContent, {
     className: classes.messageListOuter
@@ -1423,8 +1425,8 @@ const RoomMessageList = props => {
     useCapture: true,
     useWindow: false,
     getScrollParent: () => {
-      if (!loading && refList.current) {
-        const gap = 1000;
+      if (refList.current) {
+        const gap = 1540;
         const isShowButton = refList.current.scrollTop < refList.current.scrollHeight - gap;
         setScrollDownButton(isShowButton);
         //
@@ -1450,10 +1452,7 @@ const RoomMessageList = props => {
     color: "info",
     "aria-label": "add",
     size: "medium",
-    onClick: () => {
-      setScrollDo(true);
-      setTimeout(scrollDown, 100);
-    }
+    onClick: handlerScrollDown
   }, /*#__PURE__*/React__default.createElement(KeyboardArrowDown, null))), viewerData.visible && /*#__PURE__*/React__default.createElement(Backdrop, {
     sx: {
       color: '#fff',
@@ -2591,7 +2590,7 @@ const RestProvider = _ref => {
     },
     withCredentials: false
   });
-  const getPrivateMessages = useCallback(async chat => {
+  const getPrivateMessages = useCallback(async (chat, callback) => {
     var _chat$messages;
     const contactId = chat.userId;
     const current = (_chat$messages = chat.messages) == null ? void 0 : _chat$messages.length;
@@ -2618,6 +2617,9 @@ const RestProvider = _ref => {
             messages: data
           }
         });
+        if (callback) {
+          callback();
+        }
       }
     } catch (error) {
       const err = error;
