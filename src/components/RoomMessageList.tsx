@@ -108,8 +108,9 @@ const RoomMessageList: React.FC<RoomMessageListProps> = (
   } = props;
   const classes = useStyles();
 
-  const [scrollDownButton, setScrollDownButton] =
-    React.useState(false);
+  const [scrollDownButton, setScrollDownButton] = React.useState(
+    false,
+  );
   const [scrollDo, setScrollDo] = React.useState(true);
 
   const messages = chat?.messages;
@@ -151,17 +152,15 @@ const RoomMessageList: React.FC<RoomMessageListProps> = (
     src: '',
   });
 
-  React.useLayoutEffect(() => {
-    if (!loading && refList.current) {
-      setScrollDo(true);
-    }
+  React.useEffect(() => {
+    setScrollDo(true);
+    scrollDown();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [getChatId(chat)]);
 
-  React.useLayoutEffect(() => {
-    if (!loading && refList.current) {
-      setTimeout(scrollDown, 100);
-    }
+  React.useEffect(() => {
+    scrollDown();
+    setScrollDo(true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [messageCount]);
 
@@ -169,6 +168,10 @@ const RoomMessageList: React.FC<RoomMessageListProps> = (
     if (refList.current && scrollDo) {
       refList.current.scrollTop = refList.current.scrollHeight - 540;
     }
+  };
+  //console.log('--messageCount', messageCount);
+  const handlerScrollDown = () => {
+    scrollDown();
   };
 
   return (
@@ -193,8 +196,8 @@ const RoomMessageList: React.FC<RoomMessageListProps> = (
           useCapture
           useWindow={false}
           getScrollParent={() => {
-            if (!loading && refList.current) {
-              const gap = 1000;
+            if (refList.current) {
+              const gap = 1540;
               const isShowButton =
                 refList.current.scrollTop <
                 refList.current.scrollHeight - gap;
@@ -224,7 +227,7 @@ const RoomMessageList: React.FC<RoomMessageListProps> = (
                   messages[inx + 1].messageType === 'notify' ||
                   messages[inx + 1].userId !== messages[inx].userId
                 }
-                onContextMenu={(event) =>
+                onContextMenu={event =>
                   handleMenuPopup(message, event)
                 }
                 //refOnMess={defineRefOnMess(inx)}
@@ -239,10 +242,7 @@ const RoomMessageList: React.FC<RoomMessageListProps> = (
             color="info"
             aria-label="add"
             size="medium"
-            onClick={() => {
-              setScrollDo(true);
-              setTimeout(scrollDown, 100);
-            }}
+            onClick={handlerScrollDown}
           >
             <KeyboardArrowDown />
           </Fab>

@@ -21,8 +21,9 @@ export interface IRestContext {
 }
 const initialContext = {} as IRestContext;
 
-export const RestContext: React.Context<IRestContext> =
-  createContext(initialContext);
+export const RestContext: React.Context<IRestContext> = createContext(
+  initialContext,
+);
 
 type RestProviderProps = {
   baseURLApi: string;
@@ -49,7 +50,7 @@ export const RestProvider: React.FC<RestProviderProps> = ({
   });
 
   const getPrivateMessages = useCallback(
-    async (chat: Contact) => {
+    async (chat: Contact, callback?: () => void) => {
       const contactId = chat.userId;
       const current = chat.messages?.length;
       try {
@@ -71,6 +72,9 @@ export const RestProvider: React.FC<RestProviderProps> = ({
               messages: data as PrivateMessage[],
             },
           });
+          if (callback) {
+            callback();
+          }
         }
       } catch (error) {
         const err = error as AxiosError;
