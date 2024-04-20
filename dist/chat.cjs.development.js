@@ -1009,8 +1009,9 @@ const useStyles$6 = /*#__PURE__*/styles.makeStyles(theme => ({
   mediaContent: {
     maxWidth: 284,
     maxHeight: 190,
+    backgroundColor: theme.palette.secondary.main,
     borderRadius: theme.spacing(1.2),
-    [theme.breakpoints.down("sm")]: {
+    [theme.breakpoints.down('sm')]: {
       maxWidth: 250,
       maxHeight: 210
     }
@@ -1023,7 +1024,7 @@ const Video = _ref => {
     isConference
   } = _ref;
   const classes = useStyles$6();
-  let src = "";
+  let src = '';
   if (isConference) {
     const meta = JSON.parse(message.content);
     src = combineURLs(apiUrl, "/static/conf/" + meta.visitId + "/" + meta.name);
@@ -1088,22 +1089,22 @@ const MessageContent = _ref => {
     setViewerData
   } = _ref;
   switch (message.messageType) {
-    case "text":
+    case 'text':
       return /*#__PURE__*/React__default.createElement(React__default.Fragment, null, message.content);
-    case "video":
-    case "video_conference":
+    case 'video':
+    case 'video_conference':
       return /*#__PURE__*/React__default.createElement(Video, {
         message: message,
         apiUrl: apiUrl,
-        isConference: message.messageType === "video_conference"
+        isConference: message.messageType === 'video_conference'
       });
-    case "image":
+    case 'image':
       return /*#__PURE__*/React__default.createElement(Image$1, {
         message: message,
         apiUrl: apiUrl,
         setViewerData: setViewerData
       });
-    case "file":
+    case 'file':
       return /*#__PURE__*/React__default.createElement(File, {
         message: message
       });
