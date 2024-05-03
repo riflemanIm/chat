@@ -9,11 +9,7 @@ const getLang = () => {
   const str = localStorage.getItem('user');
   if (str) {
     const user = JSON.parse(str);
-    if (!user) {
-      return 'ru';
-    }
-    const { lang } = JSON.parse(user);
-    return lang;
+    return user?.lang;
   }
   return 'ru';
 };
