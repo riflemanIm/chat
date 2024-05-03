@@ -7,7 +7,7 @@ import { RestProvider } from './context/RestContext';
 import { SocketProvider } from './context/SocketContext';
 import { ChatPage } from './pages/chat';
 
-const ChatIndex: React.FC<ChatProps> = ({
+export const ChatIndex: React.FC<ChatProps> = ({
   activeGroupId,
   activeChatUserId,
   lang,
@@ -30,5 +30,3 @@ const ChatIndex: React.FC<ChatProps> = ({
     </AppLanguageProvider>
   );
 };
-
-export default ChatIndex;
