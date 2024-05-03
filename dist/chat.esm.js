@@ -1,11 +1,11 @@
-import React__default, { createElement, useState, useRef, useEffect, useMemo, Fragment, useCallback, createContext, useContext } from 'react';
+import React__default, { createElement, useState, useRef, useEffect, useMemo, Fragment, useCallback, useReducer, createContext, useContext } from 'react';
 import { Box, Typography, TextField, InputAdornment, IconButton, SvgIcon, Popover, List, ListItem, ListItemAvatar, Avatar, ListItemText, Dialog, DialogTitle, DialogContent, Alert, DialogActions, Button, Slide, CardHeader, Link, CardContent, Fab, Backdrop, CircularProgress, useMediaQuery, Card, Tooltip, Divider, Menu, MenuItem, ListItemIcon, Chip, Badge, Paper, Snackbar, Container, Grid } from '@mui/material';
 import { makeStyles, createStyles, withStyles } from '@mui/styles';
 import FileCopyIcon from '@mui/icons-material/FileCopy';
 import DeleteIcon from '@mui/icons-material/Delete';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { InsertEmoticon, Send, Done, DoneAll, ArrowForward } from '@mui/icons-material';
-import { useTranslation } from 'react-i18next';
+import { useTranslation, initReactI18next, I18nextProvider } from 'react-i18next';
 import GroupIcon from '@mui/icons-material/Group';
 import VideoCallIcon from '@mui/icons-material/VideoCall';
 import CallEndIcon from '@mui/icons-material/CallEnd';
@@ -16,6 +16,8 @@ import KeyboardArrowDown from '@mui/icons-material/KeyboardArrowDown';
 import { AspectRatio } from 'react-aspect-ratio';
 import InfiniteScroll from 'react-infinite-scroller';
 import List$1 from '@mui/material/List';
+import i18n from 'i18next';
+import LanguageDetector from 'i18next-browser-languagedetector';
 import axios from 'axios';
 import io from 'socket.io-client';
 import SettingsSuggestIcon from '@mui/icons-material/SettingsSuggest';
@@ -1975,6 +1977,233 @@ const ConferenceCall = _ref => {
   }, t("CHAT.CONFERENCE.JOIN"))));
 };
 
+var CHAT = {
+	STATUS: {
+		ONLINE: "online",
+		OFFLINE: "offline",
+		TYPING: "typing"
+	},
+	MESSAGE: {
+		TYPE: {
+			IMAGE: "Image",
+			VIDEO: "Video",
+			FILE: "File",
+			NOTIFY: "Notification"
+		},
+		MENU: {
+			COPY: "Copy",
+			DELETE: "Delete"
+		},
+		REVOKED: {
+			YOU: "You deleted the message",
+			CONTACT: "deleted the message"
+		}
+	},
+	CONFERENCE: {
+		JOIN: "Join",
+		START: "Start",
+		PAUSE: "Pause",
+		FINISH: "Finish",
+		BACK: "Back to chat",
+		NotFoundError: "Requested device not found",
+		NotAllowedError: "Permission denied. To allow access to the device, go to the browser settings",
+		ErrorAny: "The device is not configured",
+		ALLOK: "All OK",
+		CheckCamMic: "Check access to microphone and camera",
+		CheckMic: "Check access to microphone",
+		CheckCam: "Check access to camera",
+		UntillTheEnd: "There is still time until the end of the conference",
+		LEFT_TIME: "Time left"
+	},
+	ADD_CONTACT: "Add contact",
+	INPUT_MESSAGE: "Please write a message...",
+	INPUT_SEARCH_CONTACT: "Surname Name",
+	MEMBERS: "members"
+};
+var en = {
+	CHAT: CHAT
+};
+
+var CHAT$1 = {
+	STATUS: {
+		ONLINE: "en ligne",
+		OFFLINE: "hors ligne",
+		TYPING: "imprime"
+	},
+	MESSAGE: {
+		TYPE: {
+			IMAGE: "Image",
+			VIDEO: "Vidéo",
+			FILE: "File",
+			NOTIFY: "Notification"
+		},
+		MENU: {
+			COPY: "Copier",
+			DELETE: "Supprimer"
+		},
+		REVOKED: {
+			YOU: "Vous avez supprimé le message",
+			CONTACT: "message supprimé"
+		}
+	},
+	CONFERENCE: {
+		JOIN: "Rejoindre",
+		START: "Démarrer",
+		PAUSE: "Pause",
+		FINISH: "Terminer",
+		BACK: "Retour au chat",
+		NotFoundError: "Périphérique demandé introuvable",
+		NotAllowedError: "Autorisation refusée. Pour autoriser l'accès à l'appareil, accédez aux paramètres du navigateur",
+		ErrorAny: "L'appareil n'est pas configuré",
+		ALLOK: "Tout va bien",
+		CheckCamMic: "Vérifier l'accès au microphone et à la caméra",
+		CheckMic: "Vérifier l'accès au microphone",
+		CheckCam: "Vérifier l'accès à la caméra",
+		UntillTheEnd: " Il est encore temps jusqu'à la fin de la conférence",
+		LEFT_TIME: "temps restant:"
+	},
+	ADD_CONTACT: "Ajouter un contact",
+	INPUT_MESSAGE: "Veuillez écrire un message...",
+	INPUT_SEARCH_CONTACT: "Surname Name",
+	MEMBERS: "members"
+};
+var fr = {
+	CHAT: CHAT$1
+};
+
+var CHAT$2 = {
+	STATUS: {
+		ONLINE: "в сети",
+		OFFLINE: "не в сети",
+		TYPING: "печатает"
+	},
+	MESSAGE: {
+		TYPE: {
+			IMAGE: "Изображение",
+			VIDEO: "Видео",
+			FILE: "Файл",
+			NOTIFY: "Уведомление"
+		},
+		MENU: {
+			COPY: "Копировать",
+			DELETE: "Удалить"
+		},
+		REVOKED: {
+			YOU: "Вы удалили сообщение",
+			CONTACT: "удалил(а) сообщение"
+		}
+	},
+	CONFERENCE: {
+		JOIN: "Присоединиться",
+		START: "Начать",
+		PAUSE: "Остановить",
+		FINISH: "Завершить",
+		BACK: "Вернуться в чат",
+		NotFoundError: "Запрошенное устройство не найдено",
+		NotAllowedError: "В доступе  отказано. Чтобы разрешить доступ к устройству зайдите в настройки браузера",
+		ErrorAny: "Устройство не настроено",
+		ALLOK: "Все OK",
+		CheckCamMic: "Проверить доступ к микрофону и камере",
+		CheckMic: "Проверить доступ к микрофону",
+		CheckCam: "Проверить доступ к камере",
+		UntillTheEnd: "До окончания конференции осталось",
+		LEFT_TIME: "Осталось"
+	},
+	ADD_CONTACT: "Добавить контакт",
+	INPUT_MESSAGE: "Напишите сообщение...",
+	INPUT_SEARCH_CONTACT: "Фамилия Имя Отчество",
+	MEMBERS: "участников"
+};
+var ru = {
+	CHAT: CHAT$2
+};
+
+//import config from '../config';
+//console.log('chatResources', chatResources);
+const getLang = () => {
+  return 'ru';
+  // const user = localStorage.getItem('user');
+  // if (!user) return 'ru';
+  // const { lang } = JSON.parse(user);
+  // return lang;
+};
+const lang = /*#__PURE__*/getLang();
+i18n.use(LanguageDetector).use(initReactI18next).init({
+  resources: {
+    ru: {
+      translations: ru
+    },
+    en: {
+      translations: en
+    },
+    fr: {
+      translations: fr
+    }
+  },
+  lng: lang,
+  load: 'languageOnly',
+  fallbackLng: lang,
+  debug: true,
+  // have a common namespace used around the full app
+  ns: ['translations'],
+  defaultNS: 'translations',
+  //    keySeparator: false, // we use content as keys
+  // interpolation: {
+  //   escapeValue: false, // not needed for react!!
+  //   formatSeparator: lang === "ru" ? " " : ",",
+  // },
+  lowerCaseLng: true
+});
+
+const languageWithoutCountry = () => {
+  return i18n.language.substring(0, 2);
+};
+const LANGUAGES = {
+  RU: 'ru',
+  FR: 'fr',
+  EN: 'en'
+};
+const LANGUAGES_ACTIONS = {
+  SET_RUSSIAN: 'SET_RUSSIAN',
+  SET_ENGLISH: 'SET_ENGLISH',
+  SET_FRENCH: 'SET_FRENCH'
+};
+const reducer = (state, action) => {
+  switch (action.type) {
+    case LANGUAGES_ACTIONS.SET_ENGLISH:
+      i18n.changeLanguage('en');
+      return {
+        language: LANGUAGES.EN
+      };
+    case LANGUAGES_ACTIONS.SET_FRENCH:
+      i18n.changeLanguage('fr');
+      return {
+        language: LANGUAGES.FR
+      };
+    case LANGUAGES_ACTIONS.SET_RUSSIAN:
+      i18n.changeLanguage('ru');
+      return {
+        language: LANGUAGES.RU
+      };
+    default:
+      return state;
+  }
+};
+const LanguageContext = /*#__PURE__*/createContext({});
+const AppLanguageProvider = props => {
+  const [languageState, dispatchLanguage] = useReducer(reducer, {
+    language: languageWithoutCountry()
+  });
+  return /*#__PURE__*/React__default.createElement(LanguageContext.Provider, {
+    value: {
+      languageState,
+      dispatchLanguage
+    }
+  }, /*#__PURE__*/React__default.createElement(I18nextProvider, {
+    i18n: i18n
+  }, props.children));
+};
+
 const emptyUser = {
   userId: 0,
   username: "",
@@ -3721,8 +3950,8 @@ const ChatPage = _ref => {
       size: "large"
     }, /*#__PURE__*/createElement(ArrowForward, null))))))) : /*#__PURE__*/createElement(GetRoomList, null);
   }, depsContats);
-  console.log('chat state', state);
-  return /*#__PURE__*/createElement(Container, {
+  //console.log('chat state', state);
+  return /*#__PURE__*/createElement(AppLanguageProvider, null, /*#__PURE__*/createElement(Container, {
     maxWidth: "lg",
     className: classes.root
   }, /*#__PURE__*/createElement(Box, {
@@ -3739,155 +3968,8 @@ const ChatPage = _ref => {
     item: true,
     sm: ((_state$conference$dat6 = state.conference.data) == null ? void 0 : _state$conference$dat6.id) != null ? 6 : 8,
     className: classes.innerGrid
-  }, renderRoom))), /*#__PURE__*/createElement(ChatAlert, null));
+  }, renderRoom))), /*#__PURE__*/createElement(ChatAlert, null)));
 };
 
-var CHAT = {
-	STATUS: {
-		ONLINE: "online",
-		OFFLINE: "offline",
-		TYPING: "typing"
-	},
-	MESSAGE: {
-		TYPE: {
-			IMAGE: "Image",
-			VIDEO: "Video",
-			FILE: "File",
-			NOTIFY: "Notification"
-		},
-		MENU: {
-			COPY: "Copy",
-			DELETE: "Delete"
-		},
-		REVOKED: {
-			YOU: "You deleted the message",
-			CONTACT: "deleted the message"
-		}
-	},
-	CONFERENCE: {
-		JOIN: "Join",
-		START: "Start",
-		PAUSE: "Pause",
-		FINISH: "Finish",
-		BACK: "Back to chat",
-		NotFoundError: "Requested device not found",
-		NotAllowedError: "Permission denied. To allow access to the device, go to the browser settings",
-		ErrorAny: "The device is not configured",
-		ALLOK: "All OK",
-		CheckCamMic: "Check access to microphone and camera",
-		CheckMic: "Check access to microphone",
-		CheckCam: "Check access to camera",
-		UntillTheEnd: "There is still time until the end of the conference",
-		LEFT_TIME: "Time left"
-	},
-	ADD_CONTACT: "Add contact",
-	INPUT_MESSAGE: "Please write a message...",
-	INPUT_SEARCH_CONTACT: "Surname Name",
-	MEMBERS: "members"
-};
-var en = {
-	CHAT: CHAT
-};
-
-var CHAT$1 = {
-	STATUS: {
-		ONLINE: "en ligne",
-		OFFLINE: "hors ligne",
-		TYPING: "imprime"
-	},
-	MESSAGE: {
-		TYPE: {
-			IMAGE: "Image",
-			VIDEO: "Vidéo",
-			FILE: "File",
-			NOTIFY: "Notification"
-		},
-		MENU: {
-			COPY: "Copier",
-			DELETE: "Supprimer"
-		},
-		REVOKED: {
-			YOU: "Vous avez supprimé le message",
-			CONTACT: "message supprimé"
-		}
-	},
-	CONFERENCE: {
-		JOIN: "Rejoindre",
-		START: "Démarrer",
-		PAUSE: "Pause",
-		FINISH: "Terminer",
-		BACK: "Retour au chat",
-		NotFoundError: "Périphérique demandé introuvable",
-		NotAllowedError: "Autorisation refusée. Pour autoriser l'accès à l'appareil, accédez aux paramètres du navigateur",
-		ErrorAny: "L'appareil n'est pas configuré",
-		ALLOK: "Tout va bien",
-		CheckCamMic: "Vérifier l'accès au microphone et à la caméra",
-		CheckMic: "Vérifier l'accès au microphone",
-		CheckCam: "Vérifier l'accès à la caméra",
-		UntillTheEnd: " Il est encore temps jusqu'à la fin de la conférence",
-		LEFT_TIME: "temps restant:"
-	},
-	ADD_CONTACT: "Ajouter un contact",
-	INPUT_MESSAGE: "Veuillez écrire un message...",
-	INPUT_SEARCH_CONTACT: "Surname Name",
-	MEMBERS: "members"
-};
-var fr = {
-	CHAT: CHAT$1
-};
-
-var CHAT$2 = {
-	STATUS: {
-		ONLINE: "в сети",
-		OFFLINE: "не в сети",
-		TYPING: "печатает"
-	},
-	MESSAGE: {
-		TYPE: {
-			IMAGE: "Изображение",
-			VIDEO: "Видео",
-			FILE: "Файл",
-			NOTIFY: "Уведомление"
-		},
-		MENU: {
-			COPY: "Копировать",
-			DELETE: "Удалить"
-		},
-		REVOKED: {
-			YOU: "Вы удалили сообщение",
-			CONTACT: "удалил(а) сообщение"
-		}
-	},
-	CONFERENCE: {
-		JOIN: "Присоединиться",
-		START: "Начать",
-		PAUSE: "Остановить",
-		FINISH: "Завершить",
-		BACK: "Вернуться в чат",
-		NotFoundError: "Запрошенное устройство не найдено",
-		NotAllowedError: "В доступе  отказано. Чтобы разрешить доступ к устройству зайдите в настройки браузера",
-		ErrorAny: "Устройство не настроено",
-		ALLOK: "Все OK",
-		CheckCamMic: "Проверить доступ к микрофону и камере",
-		CheckMic: "Проверить доступ к микрофону",
-		CheckCam: "Проверить доступ к камере",
-		UntillTheEnd: "До окончания конференции осталось",
-		LEFT_TIME: "Осталось"
-	},
-	ADD_CONTACT: "Добавить контакт",
-	INPUT_MESSAGE: "Напишите сообщение...",
-	INPUT_SEARCH_CONTACT: "Фамилия Имя Отчество",
-	MEMBERS: "участников"
-};
-var ru = {
-	CHAT: CHAT$2
-};
-
-const chatResources = {
-  ru,
-  en,
-  fr
-};
-
-export { AddContact, ChatContext, ChatPage, ChatProvider, Conference, ConferenceCall, ContextMenuType, Emoji, Message, MessageStatus, RestContext, RestProvider, Role, Room, RoomList, SocketContext, SocketProvider, Typing, chatResources };
+export { AddContact, ChatContext, ChatPage, ChatProvider, Conference, ConferenceCall, ContextMenuType, Emoji, Message, MessageStatus, RestContext, RestProvider, Role, Room, RoomList, SocketContext, SocketProvider, Typing };
 //# sourceMappingURL=chat.esm.js.map

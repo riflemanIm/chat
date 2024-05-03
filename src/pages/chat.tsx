@@ -1,4 +1,6 @@
 import * as React from 'react';
+import { AppLanguageProvider } from '../context/LanguageContext';
+
 import {
   Container,
   Box,
@@ -257,7 +259,7 @@ export const ChatPage: React.FC<ChatPa> = ({
   React.useEffect(() => {
     if (activeChatUserId != null && !isEmpty(state.contactGather)) {
       const Chat = Object.values(state.contactGather).find(
-        (item) => item.userId === activeChatUserId,
+        item => item.userId === activeChatUserId,
       );
       onChangeChat(Chat);
       onEnterRoom(Chat);
@@ -275,7 +277,7 @@ export const ChatPage: React.FC<ChatPa> = ({
         console.log('userId', userId);
         if (userId != null) {
           const Chat = Object.values(state.contactGather).find(
-            (item) => item.userId === userId,
+            item => item.userId === userId,
           );
           onChangeChat(Chat);
           onEnterRoom(Chat);
@@ -288,7 +290,7 @@ export const ChatPage: React.FC<ChatPa> = ({
   React.useEffect(() => {
     if (activeGroupId != null && !isEmpty(state.groupGather)) {
       const onlyChat = Object.values(state.groupGather).find(
-        (item) => item.groupId === activeGroupId,
+        item => item.groupId === activeGroupId,
       );
 
       if (!isEmpty(onlyChat)) {
@@ -437,37 +439,39 @@ export const ChatPage: React.FC<ChatPa> = ({
     depsContats,
   );
 
-  console.log('chat state', state);
+  //console.log('chat state', state);
 
   return (
-    <Container maxWidth="lg" className={classes.root}>
-      <Box className={classes.innerBox}>
-        {isMobile ? (
-          <>
-            {Contacts}
-            {renderRoom}
-          </>
-        ) : (
-          <Grid container spacing={1} className={classes.innerGrid}>
-            <Grid
-              item
-              sm={state.conference.data?.id != null ? 6 : 4}
-              className={classes.innerGrid}
-            >
+    <AppLanguageProvider>
+      <Container maxWidth="lg" className={classes.root}>
+        <Box className={classes.innerBox}>
+          {isMobile ? (
+            <>
               {Contacts}
-            </Grid>
-
-            <Grid
-              item
-              sm={state.conference.data?.id != null ? 6 : 8}
-              className={classes.innerGrid}
-            >
               {renderRoom}
+            </>
+          ) : (
+            <Grid container spacing={1} className={classes.innerGrid}>
+              <Grid
+                item
+                sm={state.conference.data?.id != null ? 6 : 4}
+                className={classes.innerGrid}
+              >
+                {Contacts}
+              </Grid>
+
+              <Grid
+                item
+                sm={state.conference.data?.id != null ? 6 : 8}
+                className={classes.innerGrid}
+              >
+                {renderRoom}
+              </Grid>
             </Grid>
-          </Grid>
-        )}
-      </Box>
-      <ChatAlert />
-    </Container>
+          )}
+        </Box>
+        <ChatAlert />
+      </Container>
+    </AppLanguageProvider>
   );
 };
