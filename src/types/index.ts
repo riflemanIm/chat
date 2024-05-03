@@ -1,20 +1,28 @@
-export interface ChatPa {
+export interface ChatProps {
+  activeGroupId?: number;
+  activeChatUserId?: number;
+  lang: 'ru' | 'en' | 'fr';
+  chatBaseURLApi: string;
+  chatWsUrl: string;
+  chatWsPath: string;
+}
+export interface ChatPageProps {
   activeGroupId?: number;
   activeChatUserId?: number;
 }
 
 // Тип сообщения
 export type MessageType =
-  | "text"
-  | "image"
-  | "file"
-  | "video"
-  | "notify"
-  | "video_conference";
+  | 'text'
+  | 'image'
+  | 'file'
+  | 'video'
+  | 'notify'
+  | 'video_conference';
 
 export enum MessageStatus {
   sent = 0,
-  read = 1
+  read = 1,
 }
 
 export enum Role {
@@ -22,7 +30,7 @@ export enum Role {
   Client = 1,
   Agent = 2,
   Specialist = 3,
-  Operator = 4
+  Operator = 4,
 }
 
 export interface User {
@@ -228,10 +236,10 @@ export type ChatMessage = GroupMessage | PrivateMessage;
 
 // Операции контекстного меню
 export enum ContextMenuType {
-  COPY = "COPY", // Скопировать
-  REVOKE = "REVOKE", // Удалить сообщение
-  TOP_REVERT = "TOP_REVERT", // Открепить
-  TOP = "TOP", // Закрепить
-  READ = "READ", // Прочесть всё
-  DELETE = "DELETE" // Удалить
+  COPY = 'COPY', // Скопировать
+  REVOKE = 'REVOKE', // Удалить сообщение
+  TOP_REVERT = 'TOP_REVERT', // Открепить
+  TOP = 'TOP', // Закрепить
+  READ = 'READ', // Прочесть всё
+  DELETE = 'DELETE', // Удалить
 }

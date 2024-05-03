@@ -1,6 +1,4 @@
 import * as React from 'react';
-import { AppLanguageProvider } from '../context/LanguageContext';
-
 import {
   Container,
   Box,
@@ -17,7 +15,7 @@ import { ChatContext } from '../context/ChatContext';
 import { RestContext } from '../context/RestContext';
 import { SocketContext } from '../context/SocketContext';
 import {
-  ChatPa,
+  ChatPageProps,
   Group,
   Contact,
   ChatMessage,
@@ -43,25 +41,14 @@ import ChatAlert from '../components/Alert';
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
-    minWidth: 640,
-    minHeight: 470,
     height: '100%',
-    //width: `calc(100vw - ${theme.spacing(8)})`,
+    width: '100%',
+    overflow: 'hidden',
+
     padding: 0,
     [theme.breakpoints.down('sm')]: {
       height: `calc(100vh - ${theme.spacing(8)})`,
       width: 'auto',
-      minWidth: 'auto',
-      minHeight: 'auto',
-      overflow: 'hidden',
-    },
-  },
-  innerBox: {
-    height: '100%',
-    width: '100%',
-    margin: 0,
-    [theme.breakpoints.down('sm')]: {
-      margin: 0,
     },
   },
   innerGrid: {
@@ -78,10 +65,10 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
-export const ChatPage: React.FC<ChatPa> = ({
+export const ChatPage: React.FC<ChatPageProps> = ({
   activeGroupId,
   activeChatUserId,
-}: ChatPa) => {
+}: ChatPageProps) => {
   const classes = useStyles();
   const isMobile = useMediaQuery((theme: Theme) =>
     theme.breakpoints.down('sm'),
@@ -442,36 +429,33 @@ export const ChatPage: React.FC<ChatPa> = ({
   //console.log('chat state', state);
 
   return (
-    <AppLanguageProvider>
-      <Container maxWidth="lg" className={classes.root}>
-        <Box className={classes.innerBox}>
-          {isMobile ? (
-            <>
-              {Contacts}
-              {renderRoom}
-            </>
-          ) : (
-            <Grid container spacing={1} className={classes.innerGrid}>
-              <Grid
-                item
-                sm={state.conference.data?.id != null ? 6 : 4}
-                className={classes.innerGrid}
-              >
-                {Contacts}
-              </Grid>
+    <Container maxWidth="lg" className={classes.root}>
+      {isMobile ? (
+        <>
+          {Contacts}
+          {renderRoom}
+        </>
+      ) : (
+        <Grid container spacing={1} className={classes.innerGrid}>
+          <Grid
+            item
+            sm={state.conference.data?.id != null ? 6 : 4}
+            className={classes.innerGrid}
+          >
+            {Contacts}
+          </Grid>
 
-              <Grid
-                item
-                sm={state.conference.data?.id != null ? 6 : 8}
-                className={classes.innerGrid}
-              >
-                {renderRoom}
-              </Grid>
-            </Grid>
-          )}
-        </Box>
-        <ChatAlert />
-      </Container>
-    </AppLanguageProvider>
+          <Grid
+            item
+            sm={state.conference.data?.id != null ? 6 : 8}
+            className={classes.innerGrid}
+          >
+            {renderRoom}
+          </Grid>
+        </Grid>
+      )}
+
+      <ChatAlert />
+    </Container>
   );
 };
