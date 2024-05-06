@@ -14,10 +14,11 @@ export const ChatIndex: React.FC<ChatProps> = ({
   chatBaseURLApi,
   chatWsUrl,
   chatWsPath,
+  tokenKey = 'authToken',
 }: ChatProps) => {
   return (
     <AppLanguageProvider>
-      <ChatProvider defLang={lang} tokenKey="authToken">
+      <ChatProvider defLang={lang} tokenKey={tokenKey}>
         <RestProvider baseURLApi={chatBaseURLApi} pageSize={25}>
           <SocketProvider wsUrl={chatWsUrl} wsPath={chatWsPath}>
             <ChatPage
