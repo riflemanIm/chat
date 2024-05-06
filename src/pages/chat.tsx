@@ -41,14 +41,13 @@ import ChatAlert from '../components/Alert';
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
+    width: `calc(100vw - ${theme.spacing(8)})`,
     height: '100%',
-    width: '100%',
     overflow: 'hidden',
-
     padding: 0,
     [theme.breakpoints.down('sm')]: {
       height: `calc(100vh - ${theme.spacing(8)})`,
-      width: 'auto',
+      width: '100%',
     },
   },
   innerGrid: {
@@ -68,6 +67,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 export const ChatPage: React.FC<ChatPageProps> = ({
   activeGroupId,
   activeChatUserId,
+  inModale = true,
 }: ChatPageProps) => {
   const classes = useStyles();
   const isMobile = useMediaQuery((theme: Theme) =>
@@ -160,6 +160,7 @@ export const ChatPage: React.FC<ChatPageProps> = ({
           contactId: chat?.userId,
         },
       });
+      onEnterRoom(chat);
     },
     [socket?.id, dispatch],
   );
@@ -249,7 +250,6 @@ export const ChatPage: React.FC<ChatPageProps> = ({
         item => item.userId === activeChatUserId,
       );
       onChangeChat(Chat);
-      onEnterRoom(Chat);
     }
 
     const mmkId = getParam('mmk');
@@ -261,13 +261,11 @@ export const ChatPage: React.FC<ChatPageProps> = ({
       //console.log("mmkId", mmkId);
       const changeChatByMmkId = async () => {
         const userId = await getUserByMmk(mmkId, guid);
-        console.log('userId', userId);
         if (userId != null) {
           const Chat = Object.values(state.contactGather).find(
             item => item.userId === userId,
           );
           onChangeChat(Chat);
-          onEnterRoom(Chat);
         }
       };
       changeChatByMmkId();
@@ -282,7 +280,6 @@ export const ChatPage: React.FC<ChatPageProps> = ({
 
       if (!isEmpty(onlyChat)) {
         onChangeChat(onlyChat);
-        onEnterRoom(onlyChat);
       }
     }
   }, [state.groupGather]);
@@ -298,6 +295,7 @@ export const ChatPage: React.FC<ChatPageProps> = ({
   //   else ringAudio.pause();
   // }, [state.conference.data?.id, state.conference.ringPlayed]);
 
+  console.log('state--', state);
   const renderRoom = state.activeRoom != null && (
     <Room
       apiUrl={apiUrl}
@@ -429,7 +427,15 @@ export const ChatPage: React.FC<ChatPageProps> = ({
   //console.log('chat state', state);
 
   return (
-    <Container maxWidth="lg" className={classes.root}>
+    <Container
+      maxWidth="lg"
+      className={classes.root}
+      sx={theme => ({
+        width: inModale
+          ? `calc(100vw - ${theme.spacing(8)})`
+          : '100%',
+      })}
+    >
       {isMobile ? (
         <>
           {Contacts}
