@@ -151,6 +151,13 @@ const RoomMessageList: React.FC<RoomMessageListProps> = (
     visible: false,
     src: '',
   });
+  React.useEffect(() => {
+    setTimeout(() => {
+      setScrollDo(true);
+      scrollDown();
+    }, 500);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   React.useEffect(() => {
     setScrollDo(true);
@@ -166,7 +173,7 @@ const RoomMessageList: React.FC<RoomMessageListProps> = (
 
   const scrollDown = () => {
     if (refList.current && scrollDo) {
-      refList.current.scrollTop = refList.current.scrollHeight - 540;
+      refList.current.scrollTop = refList.current.scrollHeight;
     }
   };
   //console.log('--messageCount', messageCount);

@@ -41,14 +41,9 @@ import ChatAlert from '../components/Alert';
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
-    width: `calc(100vw - ${theme.spacing(8)})`,
     height: '100%',
     overflow: 'hidden',
     padding: 0,
-    [theme.breakpoints.down('sm')]: {
-      height: `calc(100vh - ${theme.spacing(8)})`,
-      width: '100%',
-    },
   },
   innerGrid: {
     height: '100%',
@@ -424,7 +419,7 @@ export const ChatPage: React.FC<ChatPageProps> = ({
     depsContats,
   );
 
-  //console.log('chat state', state);
+  //console.log('inModale -- ', inModale);
 
   return (
     <Container

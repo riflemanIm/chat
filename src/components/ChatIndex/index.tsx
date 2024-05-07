@@ -15,6 +15,7 @@ export const ChatIndex: React.FC<ChatProps> = ({
   chatWsUrl,
   chatWsPath,
   tokenKey = 'authToken',
+  inModale = false,
 }: ChatProps) => {
   return (
     <AppLanguageProvider>
@@ -24,6 +25,7 @@ export const ChatIndex: React.FC<ChatProps> = ({
             <ChatPage
               activeGroupId={activeGroupId}
               activeChatUserId={activeChatUserId}
+              inModale={inModale}
             />
           </SocketProvider>
         </RestProvider>
