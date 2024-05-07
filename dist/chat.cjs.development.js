@@ -1392,6 +1392,13 @@ const RoomMessageList = props => {
     src: ''
   });
   React__default.useEffect(() => {
+    setTimeout(() => {
+      setScrollDo(true);
+      scrollDown();
+    }, 500);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  React__default.useEffect(() => {
     setScrollDo(true);
     scrollDown();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -1403,7 +1410,7 @@ const RoomMessageList = props => {
   }, [messageCount]);
   const scrollDown = () => {
     if (refList.current && scrollDo) {
-      refList.current.scrollTop = refList.current.scrollHeight - 540;
+      refList.current.scrollTop = refList.current.scrollHeight;
     }
   };
   //console.log('--messageCount', messageCount);
@@ -2789,16 +2796,16 @@ const SocketProvider = _ref => {
   // listen unauthorized event
   React.useEffect(() => {
     const listener = msg => {
-      console.log("unauthorized msg", msg);
+      console.log('unauthorized msg', msg);
       dispatch({
-        type: "CLEAR_USER"
+        type: 'CLEAR_USER'
       });
     };
     // attach
-    socket == null || socket.on("unauthorized", listener);
+    socket == null || socket.on('unauthorized', listener);
     // detatch
     return () => {
-      socket == null || socket.off("unauthorized", listener);
+      socket == null || socket.off('unauthorized', listener);
     };
   }, [socket == null ? void 0 : socket.id]);
   // listen chatData event
@@ -2806,7 +2813,7 @@ const SocketProvider = _ref => {
     const listener = res => {
       if (res.code) {
         dispatch({
-          type: "SET_ERROR",
+          type: 'SET_ERROR',
           payload: res.msg
         });
         return;
@@ -2816,83 +2823,83 @@ const SocketProvider = _ref => {
       const contactArr = payload.contactData;
       const userArr = payload.userData;
       dispatch({
-        type: "CLEAR_CHAT_DATA"
+        type: 'CLEAR_CHAT_DATA'
       });
       dispatch({
-        type: "SET_USER",
+        type: 'SET_USER',
         payload: payload.user
       });
       if (groupArr.length) {
         for (const group of groupArr) {
-          socket == null || socket.emit("joinGroupSocket", {
+          socket == null || socket.emit('joinGroupSocket', {
             groupId: group.groupId
           });
           dispatch({
-            type: "SET_GROUP_GATHER",
+            type: 'SET_GROUP_GATHER',
             payload: group
           });
         }
       }
       if (contactArr.length) {
         for (const contact of contactArr) {
-          socket == null || socket.emit("joinPrivateSocket", {
+          socket == null || socket.emit('joinPrivateSocket', {
             contactId: contact.userId
           });
           dispatch({
-            type: "SET_CONTACT_GATHER",
+            type: 'SET_CONTACT_GATHER',
             payload: contact
           });
         }
       }
       dispatch({
-        type: "SET_OPERATORS",
+        type: 'SET_OPERATORS',
         payload: payload.operatorData
       });
       if (userArr.length) {
         for (const user_ of userArr) {
           dispatch({
-            type: "SET_USER_GATHER",
+            type: 'SET_USER_GATHER',
             payload: user_
           });
         }
       }
       dispatch({
-        type: "UPDATE_ACTIVE_ROOM"
+        type: 'UPDATE_ACTIVE_ROOM'
       });
       dispatch({
-        type: "SET_CONFERENCE",
+        type: 'SET_CONFERENCE',
         payload: payload.conferenceData
       });
     };
-    socket == null || socket.on("chatData", listener);
+    socket == null || socket.on('chatData', listener);
     return () => {
-      socket == null || socket.off("chatData", listener);
+      socket == null || socket.off('chatData', listener);
     };
   }, [socket == null ? void 0 : socket.id]);
   // listen user online
   React.useEffect(() => {
     const listener = res => {
       dispatch({
-        type: "USER_ONLINE",
+        type: 'USER_ONLINE',
         payload: res.data
       });
     };
-    socket == null || socket.on("userOnline", listener);
+    socket == null || socket.on('userOnline', listener);
     return () => {
-      socket == null || socket.off("userOnline", listener);
+      socket == null || socket.off('userOnline', listener);
     };
   }, [socket == null ? void 0 : socket.id]);
   // listen user offline
   React.useEffect(() => {
     const listener = res => {
       dispatch({
-        type: "USER_OFFLINE",
+        type: 'USER_OFFLINE',
         payload: res.data
       });
     };
-    socket == null || socket.on("userOffline", listener);
+    socket == null || socket.on('userOffline', listener);
     return () => {
-      socket == null || socket.off("userOffline", listener);
+      socket == null || socket.off('userOffline', listener);
     };
   }, [socket == null ? void 0 : socket.id]);
   // listen private socket join
@@ -2900,16 +2907,16 @@ const SocketProvider = _ref => {
     const listener = res => {
       if (res.code) {
         dispatch({
-          type: "SET_ERROR",
+          type: 'SET_ERROR',
           payload: res.msg
         });
         return;
       }
-      console.log("Успешно вошел в приватный чат");
+      console.log('Успешно вошел в приватный чат');
     };
-    socket == null || socket.on("joinPrivateSocket", listener);
+    socket == null || socket.on('joinPrivateSocket', listener);
     return () => {
-      socket == null || socket.off("joinPrivateSocket", listener);
+      socket == null || socket.off('joinPrivateSocket', listener);
     };
   }, [socket == null ? void 0 : socket.id]);
   // listen group socket join
@@ -2918,7 +2925,7 @@ const SocketProvider = _ref => {
       var _groupObj$members;
       if (res.code) {
         dispatch({
-          type: "SET_ERROR",
+          type: 'SET_ERROR',
           payload: res.msg
         });
         return;
@@ -2938,49 +2945,49 @@ const SocketProvider = _ref => {
         // Vue.prototype.$message.info(res.msg);
       }
       dispatch({
-        type: "SET_USER_GATHER",
+        type: 'SET_USER_GATHER',
         payload: newUser
       });
     };
-    socket == null || socket.on("joinGroupSocket", listener);
+    socket == null || socket.on('joinGroupSocket', listener);
     return () => {
-      socket == null || socket.off("joinGroupSocket", listener);
+      socket == null || socket.off('joinGroupSocket', listener);
     };
   }, [socket == null ? void 0 : socket.id, state.groupGather]);
   React.useEffect(() => {
     const listener = async res => {
       if (res.code) {
         dispatch({
-          type: "SET_ERROR",
+          type: 'SET_ERROR',
           payload: res.msg
         });
         return;
       }
       const data = res.data;
       dispatch({
-        type: "ADD_GROUP_MESSAGE",
+        type: 'ADD_GROUP_MESSAGE',
         payload: data
       });
       const {
         activeRoom
       } = state;
       if (activeRoom && activeRoom.groupId === data.groupId && data.userId !== state.user.userId) {
-        socket == null || socket.emit("markAsRead", {
+        socket == null || socket.emit('markAsRead', {
           groupId: data.groupId,
           _id: data._id
         });
       }
     };
-    socket == null || socket.on("groupMessage", listener);
+    socket == null || socket.on('groupMessage', listener);
     return () => {
-      socket == null || socket.off("groupMessage", listener);
+      socket == null || socket.off('groupMessage', listener);
     };
   }, [socket == null ? void 0 : socket.id, state.activeRoom]);
   React.useEffect(() => {
     const listener = async res => {
       if (res.code) {
         dispatch({
-          type: "SET_ERROR",
+          type: 'SET_ERROR',
           payload: res.msg
         });
         return;
@@ -2989,21 +2996,21 @@ const SocketProvider = _ref => {
       if (data.contactId === state.user.userId || data.userId === state.user.userId) {
         var _state$activeRoom;
         dispatch({
-          type: "ADD_PRIVATE_MESSAGE",
+          type: 'ADD_PRIVATE_MESSAGE',
           payload: data
         });
         // если есть активная комната и это приватная комната (!groupId && userId) с отправителем сообщения (userId)
         if (state.activeRoom && !state.activeRoom.groupId && ((_state$activeRoom = state.activeRoom) == null ? void 0 : _state$activeRoom.userId) === data.userId) {
-          socket == null || socket.emit("markAsRead", {
+          socket == null || socket.emit('markAsRead', {
             contactId: data.userId,
             _id: data._id
           });
         }
       }
     };
-    socket == null || socket.on("privateMessage", listener);
+    socket == null || socket.on('privateMessage', listener);
     return () => {
-      socket == null || socket.off("privateMessage", listener);
+      socket == null || socket.off('privateMessage', listener);
     };
   }, [socket == null ? void 0 : socket.id, state.activeRoom]);
   React.useEffect(() => {
@@ -3011,34 +3018,34 @@ const SocketProvider = _ref => {
     const listener = res => {
       if (res.code) {
         dispatch({
-          type: "SET_ERROR",
+          type: 'SET_ERROR',
           payload: res.msg
         });
         return;
       }
       if (timer) clearTimeout(timer);
       dispatch({
-        type: "SET_TYPING",
+        type: 'SET_TYPING',
         payload: res.data
       });
       timer = setTimeout(() => {
         dispatch({
-          type: "SET_TYPING",
+          type: 'SET_TYPING',
           payload: null
         });
       }, 1000);
     };
-    socket == null || socket.on("typing", listener);
+    socket == null || socket.on('typing', listener);
     return () => {
       if (timer) clearTimeout(timer);
-      socket == null || socket.off("typing", listener);
+      socket == null || socket.off('typing', listener);
     };
   }, [socket == null ? void 0 : socket.id]);
   React.useEffect(() => {
     const listener = res => {
       if (res.code) {
         dispatch({
-          type: "SET_ERROR",
+          type: 'SET_ERROR',
           payload: res.msg
         });
         return;
@@ -3047,98 +3054,98 @@ const SocketProvider = _ref => {
       if (data.userId === state.user.userId) {
         if (data.groupId) {
           dispatch({
-            type: "LOSE_GROUP_UNREAD_GATHER",
+            type: 'LOSE_GROUP_UNREAD_GATHER',
             payload: data.groupId
           });
         } else {
           dispatch({
-            type: "LOSE_CONTACT_UNREAD_GATHER",
+            type: 'LOSE_CONTACT_UNREAD_GATHER',
             payload: data.contactId
           });
         }
       } else {
         if (data.contactId) dispatch({
-          type: "MARK_PRIVATE_MESSAGES_READ",
+          type: 'MARK_PRIVATE_MESSAGES_READ',
           payload: data.userId
         });
       }
     };
-    socket == null || socket.on("markAsRead", listener);
+    socket == null || socket.on('markAsRead', listener);
     return () => {
-      socket == null || socket.off("markAsRead", listener);
+      socket == null || socket.off('markAsRead', listener);
     };
   }, [socket == null ? void 0 : socket.id, state.user.userId]);
   React.useEffect(() => {
     const listener = res => {
       if (res.code) {
         dispatch({
-          type: "SET_ERROR",
+          type: 'SET_ERROR',
           payload: res.msg
         });
         return;
       }
       const data = res.data;
       dispatch({
-        type: "REVOKE_MESSAGE",
+        type: 'REVOKE_MESSAGE',
         payload: data
       });
     };
-    socket == null || socket.on("revokeMessage", listener);
+    socket == null || socket.on('revokeMessage', listener);
     return () => {
-      socket == null || socket.off("revokeMessage", listener);
+      socket == null || socket.off('revokeMessage', listener);
     };
   }, [socket == null ? void 0 : socket.id]);
   React.useEffect(() => {
     const listener = res => {
       if (res.code) {
         dispatch({
-          type: "SET_ERROR",
+          type: 'SET_ERROR',
           payload: res.msg
         });
         return;
       }
       dispatch({
-        type: "SET_GROUP_GATHER",
+        type: 'SET_GROUP_GATHER',
         payload: res.data
       });
     };
-    socket == null || socket.on("addGroup", listener);
+    socket == null || socket.on('addGroup', listener);
     return () => {
-      socket == null || socket.off("addGroup", listener);
+      socket == null || socket.off('addGroup', listener);
     };
   }, [socket == null ? void 0 : socket.id]);
   React.useEffect(() => {
     const listener = res => {
       if (res.code) {
         dispatch({
-          type: "SET_ERROR",
+          type: 'SET_ERROR',
           payload: res.msg
         });
         return;
       }
       const data = res.data;
       dispatch({
-        type: "SET_CONTACT_GATHER",
+        type: 'SET_CONTACT_GATHER',
         payload: data
       });
       dispatch({
-        type: "SET_USER_GATHER",
+        type: 'SET_USER_GATHER',
         payload: data
       });
-      socket == null || socket.emit("joinPrivateSocket", {
+      socket == null || socket.emit('joinPrivateSocket', {
         contactId: data.userId
       });
     };
-    socket == null || socket.on("addContact", listener);
+    socket == null || socket.on('addContact', listener);
     return () => {
-      socket == null || socket.off("addContact", listener);
+      socket == null || socket.off('addContact', listener);
     };
   }, [socket == null ? void 0 : socket.id]);
   React.useEffect(() => {
     const listener = res => {
       if (res.code) {
         dispatch({
-          type: "SET_ERROR",
+          type: 'SET_ERROR',
           payload: res.msg
         });
         return;
@@ -3147,86 +3154,86 @@ const SocketProvider = _ref => {
       if (data.userId === state.user.userId) {
         // если удаляем себя из группы
         dispatch({
-          type: "DEL_GROUP",
+          type: 'DEL_GROUP',
           payload: data.groupId
         });
       } else {
         dispatch({
-          type: "DEL_GROUP_MEMBER",
+          type: 'DEL_GROUP_MEMBER',
           payload: data
         });
       }
     };
-    socket == null || socket.on("deleteGroup", listener);
+    socket == null || socket.on('deleteGroup', listener);
     return () => {
-      socket == null || socket.off("deleteGroup", listener);
+      socket == null || socket.off('deleteGroup', listener);
     };
   }, [socket == null ? void 0 : socket.id, state.user]);
   React.useEffect(() => {
     const listener = res => {
       if (res.code) {
         dispatch({
-          type: "SET_ERROR",
+          type: 'SET_ERROR',
           payload: res.msg
         });
         return;
       }
       const data = res.data;
       dispatch({
-        type: "DEL_CONTACT",
+        type: 'DEL_CONTACT',
         payload: data
       });
     };
-    socket == null || socket.on("deleteContact", listener);
+    socket == null || socket.on('deleteContact', listener);
     return () => {
-      socket == null || socket.off("deleteContact", listener);
+      socket == null || socket.off('deleteContact', listener);
     };
   }, [socket == null ? void 0 : socket.id]);
   React.useEffect(() => {
     const listener = res => {
       if (res.code) {
         dispatch({
-          type: "SET_ERROR",
+          type: 'SET_ERROR',
           payload: res.msg
         });
         return;
       }
       const data = res.data;
       dispatch({
-        type: "UPDATE_GROUP_INFO",
+        type: 'UPDATE_GROUP_INFO',
         payload: data
       });
     };
-    socket == null || socket.on("updateGroupInfo", listener);
+    socket == null || socket.on('updateGroupInfo', listener);
     return () => {
-      socket == null || socket.off("updateGroupInfo", listener);
+      socket == null || socket.off('updateGroupInfo', listener);
     };
   }, [socket == null ? void 0 : socket.id]);
   React.useEffect(() => {
     const listener = res => {
       if (res.code) {
         dispatch({
-          type: "SET_ERROR",
+          type: 'SET_ERROR',
           payload: res.msg
         });
         return;
       }
       const data = res.data;
       dispatch({
-        type: "UPDATE_USER_INFO",
+        type: 'UPDATE_USER_INFO',
         payload: data
       });
     };
-    socket == null || socket.on("updateUserInfo", listener);
+    socket == null || socket.on('updateUserInfo', listener);
     return () => {
-      socket == null || socket.off("updateUserInfo", listener);
+      socket == null || socket.off('updateUserInfo', listener);
     };
   }, [socket == null ? void 0 : socket.id]);
   React.useEffect(() => {
     const listener = res => {
       if (res.code) {
         dispatch({
-          type: "SET_ERROR",
+          type: 'SET_ERROR',
           payload: res.msg
         });
         return;
@@ -3236,13 +3243,13 @@ const SocketProvider = _ref => {
         user: newUser
       } = res.data;
       if (!state.groupGather[group.groupId]) {
-        console.log("joined to a new group");
+        console.log('joined to a new group');
         // Если группы еще у нас нет, то получаем информацию о пользователях в группе
-        socket == null || socket.emit("chatData");
+        socket == null || socket.emit('chatData');
       } else if (newUser.userId !== state.user.userId) {
         // Новые пользователи присоединяются к группе
         dispatch({
-          type: "ADD_GROUP_MEMBER",
+          type: 'ADD_GROUP_MEMBER',
           payload: {
             groupId: group.groupId,
             members: [newUser]
@@ -3250,100 +3257,100 @@ const SocketProvider = _ref => {
         });
       }
     };
-    socket == null || socket.on("joinGroup", listener);
+    socket == null || socket.on('joinGroup', listener);
     return () => {
-      socket == null || socket.off("joinGroup", listener);
+      socket == null || socket.off('joinGroup', listener);
     };
   }, [socket == null ? void 0 : socket.id, state.user, state.groupGather]);
   React.useEffect(() => {
     const listener = res => {
       if (res.code) {
         dispatch({
-          type: "SET_ERROR",
+          type: 'SET_ERROR',
           payload: res.msg
         });
         return;
       }
       dispatch({
-        type: "SET_CONFERENCE",
+        type: 'SET_CONFERENCE',
         payload: res.data
       });
     };
-    socket == null || socket.on("startConference", listener);
+    socket == null || socket.on('startConference', listener);
     return () => {
-      socket == null || socket.off("startConference", listener);
+      socket == null || socket.off('startConference', listener);
     };
   }, [socket == null ? void 0 : socket.id]);
   React.useEffect(() => {
     const listener = res => {
       if (res.code) {
         dispatch({
-          type: "SET_ERROR",
+          type: 'SET_ERROR',
           payload: res.msg
         });
         return;
       }
       dispatch({
-        type: "PAUSE_CONFERENCE",
+        type: 'PAUSE_CONFERENCE',
         payload: res.data
       });
     };
-    socket == null || socket.on("pauseConference", listener);
+    socket == null || socket.on('pauseConference', listener);
     return () => {
-      socket == null || socket.off("pauseConference", listener);
+      socket == null || socket.off('pauseConference', listener);
     };
   }, [socket == null ? void 0 : socket.id]);
   React.useEffect(() => {
     const listener = res => {
       if (res.code) {
         dispatch({
-          type: "SET_ERROR",
+          type: 'SET_ERROR',
           payload: res.msg
         });
         return;
       }
       dispatch({
-        type: "STOP_CONFERENCE",
+        type: 'STOP_CONFERENCE',
         payload: res.data
       });
     };
-    socket == null || socket.on("stopConference", listener);
+    socket == null || socket.on('stopConference', listener);
     return () => {
-      socket == null || socket.off("stopConference", listener);
+      socket == null || socket.off('stopConference', listener);
     };
   }, [socket == null ? void 0 : socket.id]);
   React.useEffect(() => {
     const listener = res => {
       if (res.code) {
         dispatch({
-          type: "SET_ERROR",
+          type: 'SET_ERROR',
           payload: res.msg
         });
         return;
       }
     };
-    socket == null || socket.on("addOperator", listener);
+    socket == null || socket.on('addOperator', listener);
     return () => {
-      socket == null || socket.off("addOperator", listener);
+      socket == null || socket.off('addOperator', listener);
     };
   }, [socket == null ? void 0 : socket.id]);
   React.useEffect(() => {
     const listener = res => {
       if (res.code) {
         dispatch({
-          type: "SET_ERROR",
+          type: 'SET_ERROR',
           payload: res.msg
         });
         return;
       }
       dispatch({
-        type: "SET_ACTIVE_ROOM",
+        type: 'SET_ACTIVE_ROOM',
         payload: res.data
       });
     };
-    socket == null || socket.on("setActiveRoom", listener);
+    socket == null || socket.on('setActiveRoom', listener);
     return () => {
-      socket == null || socket.off("setActiveRoom", listener);
+      socket == null || socket.off('setActiveRoom', listener);
     };
   }, [socket == null ? void 0 : socket.id]);
   return /*#__PURE__*/React__default.createElement(SocketContext.Provider, {
@@ -3448,13 +3455,8 @@ const ChatAlert = () => {
 const useStyles$f = /*#__PURE__*/styles.makeStyles(theme => ({
   root: {
     height: '100%',
-    width: '100%',
     overflow: 'hidden',
-    padding: 0,
-    [theme.breakpoints.down('sm')]: {
-      height: "calc(100vh - " + theme.spacing(8) + ")",
-      width: 'auto'
-    }
+    padding: 0
   },
   innerGrid: {
     height: '100%',
@@ -3472,7 +3474,8 @@ const ChatPage = _ref => {
   var _state$conference$dat, _state$conference$dat2, _state$conference$dat3, _state$activeRoom, _state$activeRoom2, _state$conference$dat5, _state$conference$dat6;
   let {
     activeGroupId,
-    activeChatUserId
+    activeChatUserId,
+    inModale = true
   } = _ref;
   const classes = useStyles$f();
   const isMobile = material.useMediaQuery(theme => theme.breakpoints.down('sm'));
@@ -3547,6 +3550,7 @@ const ChatPage = _ref => {
         contactId: chat == null ? void 0 : chat.userId
       }
     });
+    onEnterRoom(chat);
   }, [socket == null ? void 0 : socket.id, dispatch]);
   const onEnterRoom = React.useCallback(chat => {
     if (!chat.messages || chat.messages.length === 0) return;
@@ -3603,7 +3607,6 @@ const ChatPage = _ref => {
     if (activeChatUserId != null && !isEmpty(state.contactGather)) {
       const Chat = Object.values(state.contactGather).find(item => item.userId === activeChatUserId);
       onChangeChat(Chat);
-      onEnterRoom(Chat);
     }
     const mmkId = getParam('mmk');
     const guid = getParam('guid');
@@ -3611,11 +3614,9 @@ const ChatPage = _ref => {
       //console.log("mmkId", mmkId);
       const changeChatByMmkId = async () => {
         const userId = await getUserByMmk(mmkId, guid);
-        console.log('userId', userId);
         if (userId != null) {
           const Chat = Object.values(state.contactGather).find(item => item.userId === userId);
           onChangeChat(Chat);
-          onEnterRoom(Chat);
         }
       };
       changeChatByMmkId();
@@ -3626,7 +3627,6 @@ const ChatPage = _ref => {
       const onlyChat = Object.values(state.groupGather).find(item => item.groupId === activeGroupId);
       if (!isEmpty(onlyChat)) {
         onChangeChat(onlyChat);
-        onEnterRoom(onlyChat);
       }
     }
   }, [state.groupGather]);
@@ -3640,6 +3640,7 @@ const ChatPage = _ref => {
   //     ringAudio.play();
   //   else ringAudio.pause();
   // }, [state.conference.data?.id, state.conference.ringPlayed]);
+  console.log('state--', state);
   const renderRoom = state.activeRoom != null && /*#__PURE__*/React.createElement(Room, {
     apiUrl: apiUrl,
     user: state.user,
@@ -3714,10 +3715,13 @@ const ChatPage = _ref => {
       size: "large"
     }, /*#__PURE__*/React.createElement(iconsMaterial.ArrowForward, null))))))) : /*#__PURE__*/React.createElement(GetRoomList, null);
   }, depsContats);
-  //console.log('chat state', state);
+  //console.log('inModale -- ', inModale);
   return /*#__PURE__*/React.createElement(material.Container, {
     maxWidth: "lg",
-    className: classes.root
+    className: classes.root,
+    sx: theme => ({
+      width: inModale ? "calc(100vw - " + theme.spacing(8) + ")" : '100%'
+    })
   }, isMobile ? /*#__PURE__*/React.createElement(React.Fragment, null, Contacts, renderRoom) : /*#__PURE__*/React.createElement(material.Grid, {
     container: true,
     spacing: 1,
@@ -3878,13 +3882,7 @@ const getLang = () => {
   const str = localStorage.getItem('user');
   if (str) {
     const user = JSON.parse(str);
-    if (!user) {
-      return 'ru';
-    }
-    const {
-      lang
-    } = JSON.parse(user);
-    return lang;
+    return user == null ? void 0 : user.lang;
   }
   return 'ru';
 };
@@ -3967,11 +3965,13 @@ const ChatIndex = _ref => {
     lang,
     chatBaseURLApi,
     chatWsUrl,
-    chatWsPath
+    chatWsPath,
+    tokenKey = 'authToken',
+    inModale = false
   } = _ref;
   return /*#__PURE__*/React__default.createElement(AppLanguageProvider, null, /*#__PURE__*/React__default.createElement(ChatProvider, {
     defLang: lang,
-    tokenKey: "authToken"
+    tokenKey: tokenKey
   }, /*#__PURE__*/React__default.createElement(RestProvider, {
     baseURLApi: chatBaseURLApi,
     pageSize: 25
@@ -3980,7 +3980,8 @@ const ChatIndex = _ref => {
     wsPath: chatWsPath
   }, /*#__PURE__*/React__default.createElement(ChatPage, {
     activeGroupId: activeGroupId,
-    activeChatUserId: activeChatUserId
+    activeChatUserId: activeChatUserId,
+    inModale: inModale
   })))));
 };
 

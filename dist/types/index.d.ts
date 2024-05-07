@@ -5,10 +5,13 @@ export interface ChatProps {
     chatBaseURLApi: string;
     chatWsUrl: string;
     chatWsPath: string;
+    inModale?: boolean;
+    tokenKey?: string;
 }
 export interface ChatPageProps {
     activeGroupId?: number;
     activeChatUserId?: number;
+    inModale?: boolean;
 }
 export declare type MessageType = 'text' | 'image' | 'file' | 'video' | 'notify' | 'video_conference';
 export declare enum MessageStatus {
