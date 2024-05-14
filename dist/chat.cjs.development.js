@@ -1368,6 +1368,7 @@ const RoomMessageList = props => {
   const [scrollDo, setScrollDo] = React__default.useState(true);
   const messages = chat == null ? void 0 : chat.messages;
   const messageCount = (messages == null ? void 0 : messages.length) || 0;
+  const lastMessage = (chat == null ? void 0 : chat.messages) && chat.messages[messageCount - 1];
   // const refOnMess = React.useRef<HTMLDivElement>(null);
   // const refOnLastMess = React.useRef<HTMLDivElement>(null);
   const refList = React__default.useRef(null);
@@ -1404,8 +1405,10 @@ const RoomMessageList = props => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [getChatId(chat)]);
   React__default.useEffect(() => {
-    scrollDown();
-    setScrollDo(true);
+    if (lastMessage && user.userId === lastMessage.userId) {
+      scrollDown();
+      setScrollDo(true);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [messageCount]);
   const scrollDown = () => {
@@ -1413,7 +1416,7 @@ const RoomMessageList = props => {
       refList.current.scrollTop = refList.current.scrollHeight;
     }
   };
-  //console.log('--messageCount', messageCount);
+  //sconsole.log('--user', user, 'lastMessage', lastMessage);
   const handlerScrollDown = () => {
     scrollDown();
   };
