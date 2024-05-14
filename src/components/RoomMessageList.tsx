@@ -115,6 +115,8 @@ const RoomMessageList: React.FC<RoomMessageListProps> = (
 
   const messages = chat?.messages;
   const messageCount = messages?.length || 0;
+  const lastMessage =
+    chat?.messages && chat.messages[messageCount - 1];
 
   // const refOnMess = React.useRef<HTMLDivElement>(null);
   // const refOnLastMess = React.useRef<HTMLDivElement>(null);
@@ -166,8 +168,10 @@ const RoomMessageList: React.FC<RoomMessageListProps> = (
   }, [getChatId(chat)]);
 
   React.useEffect(() => {
-    scrollDown();
-    setScrollDo(true);
+    if (lastMessage && user.userId === lastMessage.userId) {
+      scrollDown();
+      setScrollDo(true);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [messageCount]);
 
@@ -176,7 +180,7 @@ const RoomMessageList: React.FC<RoomMessageListProps> = (
       refList.current.scrollTop = refList.current.scrollHeight;
     }
   };
-  //console.log('--messageCount', messageCount);
+  //sconsole.log('--user', user, 'lastMessage', lastMessage);
   const handlerScrollDown = () => {
     scrollDown();
   };
