@@ -705,7 +705,7 @@ function AlertDialog(_ref) {
     children,
     open,
     setOpen,
-    severity = "warning"
+    severity = 'warning'
   } = _ref;
   const {
     t
@@ -722,12 +722,12 @@ function AlertDialog(_ref) {
     "aria-describedby": "alert-dialog-description"
   }, /*#__PURE__*/React__default.createElement(DialogContent, null, /*#__PURE__*/React__default.createElement(Alert, {
     severity: severity
-  }, typeof children === "string" ? /*#__PURE__*/React__default.createElement(Typography, {
+  }, typeof children === 'string' ? /*#__PURE__*/React__default.createElement(Typography, {
     variant: "body2"
   }, children) : children)), /*#__PURE__*/React__default.createElement(DialogActions, null, /*#__PURE__*/React__default.createElement(Button, {
     onClick: handleClose,
     variant: "text"
-  }, t("COMPONENT.BUT_CLOSE"))));
+  }, t('CHAT.BUT_CLOSE'))));
 }
 
 //import { useTranslation } from "react-i18next";
@@ -3778,7 +3778,8 @@ var CHAT = {
 	ADD_CONTACT: "Add contact",
 	INPUT_MESSAGE: "Please write a message...",
 	INPUT_SEARCH_CONTACT: "Surname Name",
-	MEMBERS: "members"
+	MEMBERS: "members",
+	BUT_CLOSE: "Close"
 };
 var en = {
 	CHAT: CHAT
@@ -3825,7 +3826,8 @@ var CHAT$1 = {
 	ADD_CONTACT: "Ajouter un contact",
 	INPUT_MESSAGE: "Veuillez écrire un message...",
 	INPUT_SEARCH_CONTACT: "Surname Name",
-	MEMBERS: "members"
+	MEMBERS: "members",
+	BUT_CLOSE: "Fermer"
 };
 var fr = {
 	CHAT: CHAT$1
@@ -3872,7 +3874,8 @@ var CHAT$2 = {
 	ADD_CONTACT: "Добавить контакт",
 	INPUT_MESSAGE: "Напишите сообщение...",
 	INPUT_SEARCH_CONTACT: "Фамилия Имя Отчество",
-	MEMBERS: "участников"
+	MEMBERS: "участников",
+	BUT_CLOSE: "Закрыть"
 };
 var ru = {
 	CHAT: CHAT$2

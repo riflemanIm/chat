@@ -40,6 +40,7 @@
     "ADD_CONTACT": "Ajouter un contact",
     "INPUT_MESSAGE": "Veuillez écrire un message...",
     "INPUT_SEARCH_CONTACT": "Surname Name",
-    "MEMBERS": "members"
+    "MEMBERS": "members",
+    "BUT_CLOSE": "Fermer"
   }
 }

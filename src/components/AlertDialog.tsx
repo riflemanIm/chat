@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React from "react";
+import React from 'react';
 import {
   Alert,
   Dialog,
@@ -8,17 +8,17 @@ import {
   Button,
   DialogActions,
   Typography,
-  AlertColor
-} from "@mui/material";
-import { useTranslation } from "react-i18next";
+  AlertColor,
+} from '@mui/material';
+import { useTranslation } from 'react-i18next';
 
-import { TransitionProps } from "@mui/material/transitions";
+import { TransitionProps } from '@mui/material/transitions';
 
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & {
     children: React.ReactElement<any, any>;
   },
-  ref: React.Ref<unknown>
+  ref: React.Ref<unknown>,
 ) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
@@ -34,7 +34,7 @@ export default function AlertDialog({
   children,
   open,
   setOpen,
-  severity = "warning"
+  severity = 'warning',
 }: AlertDialogProps) {
   const { t } = useTranslation();
 
@@ -52,7 +52,7 @@ export default function AlertDialog({
     >
       <DialogContent>
         <Alert severity={severity}>
-          {typeof children === "string" ? (
+          {typeof children === 'string' ? (
             <Typography variant="body2">{children}</Typography>
           ) : (
             children
@@ -61,7 +61,7 @@ export default function AlertDialog({
       </DialogContent>
       <DialogActions>
         <Button onClick={handleClose} variant="text">
-          {t("COMPONENT.BUT_CLOSE")}
+          {t('CHAT.BUT_CLOSE')}
         </Button>
       </DialogActions>
     </Dialog>
