@@ -1989,15 +1989,14 @@ const ConferenceCall = _ref => {
 
 const emptyUser = {
   userId: 0,
-  username: "",
-  password: "",
-  avatar: "",
-  langCode: ""
+  username: '',
+  password: '',
+  avatar: '',
+  langCode: ''
 };
 const emptyChatState = {
-  tokenKey: "",
   user: emptyUser,
-  token: "",
+  token: '',
   activeRoom: null,
   chatOld: null,
   groupGather: {},
@@ -2013,7 +2012,7 @@ const emptyChatState = {
   typing: null,
   loading: false,
   error: undefined,
-  success: undefined // НЕ ошибка
+  success: undefined
 };
 const getFreshActiveRoom = state => {
   if (state.activeRoom) return state.groupGather[state.activeRoom.groupId] || state.contactGather[state.activeRoom.userId];
@@ -2367,17 +2366,15 @@ const setActiveRoom = (state, data) => {
   };
 };
 const setToken = (state, token) => {
-  localStorage.setItem(state.tokenKey, token);
   return {
     ...state,
     token
   };
 };
 const clearUser = state => {
-  localStorage.removeItem(state.tokenKey);
   return {
     ...state,
-    token: "",
+    token: '',
     user: emptyUser
   };
 };
@@ -2421,7 +2418,7 @@ const stopConference = (state, conference) => {
 };
 function chatReducer(state, action) {
   switch (action.type) {
-    case "SET_GROUP_GATHER":
+    case 'SET_GROUP_GATHER':
       return {
         ...state,
         groupGather: {
@@ -2429,7 +2426,7 @@ function chatReducer(state, action) {
           [action.payload.groupId]: action.payload
         }
       };
-    case "SET_CONTACT_GATHER":
+    case 'SET_CONTACT_GATHER':
       return {
         ...state,
         contactGather: {
@@ -2437,13 +2434,13 @@ function chatReducer(state, action) {
           [action.payload.userId]: action.payload
         }
       };
-    case "DEL_GROUP":
+    case 'DEL_GROUP':
       return delGroup(state, action.payload);
-    case "DEL_GROUP_MEMBER":
+    case 'DEL_GROUP_MEMBER':
       return delGroupMember(state, action.payload);
-    case "DEL_CONTACT":
+    case 'DEL_CONTACT':
       return delContact(state, action.payload.userId);
-    case "SET_USER_GATHER":
+    case 'SET_USER_GATHER':
       return {
         ...state,
         userGather: {
@@ -2451,45 +2448,45 @@ function chatReducer(state, action) {
           [action.payload.userId]: action.payload
         }
       };
-    case "UPDATE_ACTIVE_ROOM":
+    case 'UPDATE_ACTIVE_ROOM':
       return {
         ...state,
         activeRoom: getActiveRoom(state)
       };
-    case "SET_ACTIVE_ROOM":
+    case 'SET_ACTIVE_ROOM':
       return setActiveRoom(state, action.payload);
-    case "USER_ONLINE":
+    case 'USER_ONLINE':
       return setUserOnline(state, action.payload, 1);
-    case "USER_OFFLINE":
+    case 'USER_OFFLINE':
       return setUserOnline(state, action.payload, 0);
-    case "ADD_GROUP_MESSAGE":
+    case 'ADD_GROUP_MESSAGE':
       return addGroupMessage(state, action.payload);
-    case "ADD_PRIVATE_MESSAGE":
+    case 'ADD_PRIVATE_MESSAGE':
       return addPrivateMessage(state, action.payload);
-    case "ADD_GROUP_UNREAD_GATHER":
+    case 'ADD_GROUP_UNREAD_GATHER':
       return groupUnreadGather(state, action.payload, x => (x || 0) + 1);
-    case "ADD_CONTACT_UNREAD_GATHER":
+    case 'ADD_CONTACT_UNREAD_GATHER':
       return contactUnreadGather(state, action.payload, x => (x || 0) + 1);
-    case "SET_TYPING":
+    case 'SET_TYPING':
       return {
         ...state,
         typing: action.payload
       };
-    case "LOSE_GROUP_UNREAD_GATHER":
+    case 'LOSE_GROUP_UNREAD_GATHER':
       return groupUnreadGather(state, action.payload, () => 0);
-    case "LOSE_CONTACT_UNREAD_GATHER":
+    case 'LOSE_CONTACT_UNREAD_GATHER':
       return contactUnreadGather(state, action.payload, () => 0);
-    case "REVOKE_MESSAGE":
+    case 'REVOKE_MESSAGE':
       return revokeMessage(state, action.payload);
-    case "UPDATE_GROUP_INFO":
+    case 'UPDATE_GROUP_INFO':
       return updateGroupInfo(state, action.payload);
-    case "UPDATE_USER_INFO":
+    case 'UPDATE_USER_INFO':
       return updateUserInfo(state, action.payload);
-    case "ADD_GROUP_MEMBER":
+    case 'ADD_GROUP_MEMBER':
       return addGroupMember(state, action.payload);
-    case "SET_CONFERENCE":
+    case 'SET_CONFERENCE':
       return setConference(state, action.payload);
-    case "JOIN_CONFERENCE":
+    case 'JOIN_CONFERENCE':
       return {
         ...state,
         conference: {
@@ -2500,44 +2497,44 @@ function chatReducer(state, action) {
           ringPlayed: false
         }
       };
-    case "PAUSE_CONFERENCE":
+    case 'PAUSE_CONFERENCE':
       return pauseConference(state, action.payload);
-    case "STOP_CONFERENCE":
+    case 'STOP_CONFERENCE':
       return stopConference(state, action.payload);
-    case "MARK_PRIVATE_MESSAGES_READ":
+    case 'MARK_PRIVATE_MESSAGES_READ':
       return markPrivateMessagesRead(state, action.payload);
-    case "ADD_PRIVATE_MESSAGES":
+    case 'ADD_PRIVATE_MESSAGES':
       return addPrivateMessages(state, action.payload);
-    case "ADD_GROUP_MESSAGES":
+    case 'ADD_GROUP_MESSAGES':
       return addGroupMessages(state, action.payload);
-    case "SET_LOADING":
+    case 'SET_LOADING':
       return {
         ...state,
         loading: action.payload,
-        error: ""
+        error: ''
       };
-    case "SET_ERROR":
+    case 'SET_ERROR':
       return {
         ...state,
         error: action.payload,
         success: undefined
       };
-    case "SET_SUCCES":
+    case 'SET_SUCCES':
       return {
         ...state,
         success: action.payload,
         error: undefined
       };
-    case "SET_TOKEN":
+    case 'SET_TOKEN':
       return setToken(state, action.payload);
-    case "SET_USER":
+    case 'SET_USER':
       return {
         ...state,
         user: action.payload
       };
-    case "CLEAR_USER":
+    case 'CLEAR_USER':
       return clearUser(state);
-    case "CLEAR_CHAT_DATA":
+    case 'CLEAR_CHAT_DATA':
       return {
         ...state,
         activeRoom: null,
@@ -2551,7 +2548,7 @@ function chatReducer(state, action) {
         },
         typing: null
       };
-    case "SET_OPERATORS":
+    case 'SET_OPERATORS':
       return {
         ...state,
         operators: action.payload
@@ -2566,10 +2563,9 @@ const ChatContext = /*#__PURE__*/React__default.createContext({
 });
 const ChatProvider = props => {
   emptyUser.langCode = props.defLang;
-  const token = localStorage.getItem(props.tokenKey);
+  const token = props.token;
   const chatState = {
     ...emptyChatState,
-    tokenKey: props.tokenKey,
     token
   };
   const [state, dispatch] = React__default.useReducer(chatReducer, chatState);
@@ -3640,7 +3636,7 @@ const ChatPage = _ref => {
   //     ringAudio.play();
   //   else ringAudio.pause();
   // }, [state.conference.data?.id, state.conference.ringPlayed]);
-  console.log('state--', state);
+  // console.log('state--', state);
   const renderRoom = state.activeRoom != null && /*#__PURE__*/createElement(Room, {
     apiUrl: apiUrl,
     user: state.user,
@@ -3969,12 +3965,12 @@ const ChatIndex = _ref => {
     chatBaseURLApi,
     chatWsUrl,
     chatWsPath,
-    tokenKey = 'authToken',
+    token,
     inModale = false
   } = _ref;
   return /*#__PURE__*/React__default.createElement(AppLanguageProvider, null, /*#__PURE__*/React__default.createElement(ChatProvider, {
     defLang: lang,
-    tokenKey: tokenKey
+    token: token
   }, /*#__PURE__*/React__default.createElement(RestProvider, {
     baseURLApi: chatBaseURLApi,
     pageSize: 25
