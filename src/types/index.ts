@@ -6,7 +6,7 @@ export interface ChatProps {
   chatWsUrl: string;
   chatWsPath: string;
   inModale?: boolean;
-  tokenKey?: string;
+  token: string;
 }
 export interface ChatPageProps {
   activeGroupId?: number;
