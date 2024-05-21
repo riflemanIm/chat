@@ -17,6 +17,17 @@ import { ChatIndex } from './chat';
 />;
 ```
 
+пример:
+
+```
+   chatBaseURLApi=https://chat.mobimed.ru/
+    chatWsUrl=wss://chat.mobimed.ru
+    chatWsPath=/socket.io
+    activeGroupId=1
+    activeChatUserId=undefined
+    inModale=true
+```
+
 где:
 
 - chatBaseURLApi - урл на REST API
@@ -25,7 +36,11 @@ import { ChatIndex } from './chat';
 - activeGroupId - id группы
 - activeChatUserId - id абонента (доктор или пациент)
 - inModale (bool) - открывается в модальном окне или нет
-- token - авторизационный токен пользователя
+- token - токен авторизации пользователя
+
+---
+
+## Подробнее
 
 Структура проекта:
 
