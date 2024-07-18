@@ -16,6 +16,7 @@ import {
   GroupMap,
 } from '../types';
 import { ChatContext } from './ChatContext';
+import { getRefreshToken } from './RestContext';
 
 // Формат ответа сервера
 interface ServerRes {
@@ -72,7 +73,7 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({
   useEffect(() => {
     const listener = (msg: string) => {
       console.log('unauthorized msg', msg);
-      dispatch({ type: 'CLEAR_USER' });
+      getRefreshToken(state.token, state.refreshToken, dispatch);
     };
 
     // attach

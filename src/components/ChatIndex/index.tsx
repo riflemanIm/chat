@@ -16,10 +16,15 @@ export const ChatIndex: React.FC<ChatProps> = ({
   chatWsPath,
   token,
   inModale = false,
+  refreshToken,
 }: ChatProps) => {
   return (
     <AppLanguageProvider>
-      <ChatProvider defLang={lang} token={token}>
+      <ChatProvider
+        defLang={lang}
+        token={token}
+        refreshToken={refreshToken}
+      >
         <RestProvider baseURLApi={chatBaseURLApi} pageSize={25}>
           <SocketProvider wsUrl={chatWsUrl} wsPath={chatWsPath}>
             <ChatPage

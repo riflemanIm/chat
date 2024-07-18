@@ -3,6 +3,7 @@ import { AddGroupMessages, AddPrivateMessages, ChatRoom, Contact, ContactGather,
 export interface ChatState {
     user: User;
     token: string;
+    refreshToken: string;
     activeRoom: ChatRoom | null;
     chatOld: ChatRoom | null;
     groupGather: GroupGather;
@@ -29,6 +30,7 @@ export declare type ChatDispatch = React.Dispatch<Action>;
 declare type ChatProviderProps = {
     defLang: string | undefined;
     token: string;
+    refreshToken: string;
     children: JSX.Element | JSX.Element[];
 };
 export declare const ChatContext: React.Context<{

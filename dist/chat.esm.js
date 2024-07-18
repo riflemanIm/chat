@@ -1432,7 +1432,8 @@ const RoomMessageList = props => {
     },
     hasMore: chat && !chat.noMoreData ? true : false,
     loader: /*#__PURE__*/React__default.createElement(Loading, {
-      loading: loading
+      loading: loading,
+      key: 0
     }),
     isReverse: true,
     useCapture: true,
@@ -1997,6 +1998,7 @@ const emptyUser = {
 const emptyChatState = {
   user: emptyUser,
   token: '',
+  refreshToken: '',
   activeRoom: null,
   chatOld: null,
   groupGather: {},
@@ -2564,9 +2566,11 @@ const ChatContext = /*#__PURE__*/React__default.createContext({
 const ChatProvider = props => {
   emptyUser.langCode = props.defLang;
   const token = props.token;
+  const refreshToken = props.token;
   const chatState = {
     ...emptyChatState,
-    token
+    token,
+    refreshToken
   };
   const [state, dispatch] = React__default.useReducer(chatReducer, chatState);
   return /*#__PURE__*/React__default.createElement(ChatContext.Provider, {
@@ -2579,6 +2583,41 @@ const ChatProvider = props => {
 
 const initialContext = {};
 const RestContext = /*#__PURE__*/createContext(initialContext);
+function clearLocalStorage() {
+  localStorage.removeItem('authToken');
+  localStorage.removeItem('refreshToken');
+  localStorage.removeItem('user');
+  localStorage.removeItem('doctor');
+  localStorage.removeItem('chatUser');
+}
+const signOut = async () => {
+  try {
+    await axios.post('auth/logout');
+  } catch (error) {
+    console.log('ERROR Logout', error);
+  }
+  clearLocalStorage();
+  window.location.href = '/';
+};
+const getRefreshToken = async (authToken, refreshToken, dispatch) => {
+  try {
+    const {
+      data
+    } = await axios.post('auth/refreshToken', {
+      authToken,
+      refreshToken
+    });
+    localStorage.setItem('authToken', data == null ? void 0 : data.authToken);
+    localStorage.setItem('refreshToken', data == null ? void 0 : data.refreshToken);
+    window.location.href = '/';
+  } catch (error) {
+    console.log('ERROR RefreshToken', error);
+    dispatch({
+      type: 'CLEAR_USER'
+    });
+    signOut();
+  }
+};
 const RestProvider = _ref => {
   let {
     baseURLApi,
@@ -2589,6 +2628,11 @@ const RestProvider = _ref => {
     state,
     dispatch
   } = useContext(ChatContext);
+  const errorInterceptor = error => {
+    if (error.response != null && error.response.status === 401) {
+      getRefreshToken(state.token, state.refreshToken, dispatch);
+    }
+  };
   const fetch = axios.create({
     timeout: 60000,
     baseURL: baseURLApi,
@@ -2598,6 +2642,13 @@ const RestProvider = _ref => {
       Authorization: "Bearer " + state.token
     },
     withCredentials: false
+  });
+  fetch.interceptors.response.use(response => {
+    return response;
+  }, error => {
+    console.log('ERROR AxiosError');
+    errorInterceptor(error);
+    return Promise.reject(error);
   });
   const getPrivateMessages = useCallback(async (chat, callback) => {
     var _chat$messages;
@@ -2793,9 +2844,7 @@ const SocketProvider = _ref => {
   useEffect(() => {
     const listener = msg => {
       console.log('unauthorized msg', msg);
-      dispatch({
-        type: 'CLEAR_USER'
-      });
+      getRefreshToken(state.token, state.refreshToken, dispatch);
     };
     // attach
     socket == null || socket.on('unauthorized', listener);
@@ -3966,11 +4015,13 @@ const ChatIndex = _ref => {
     chatWsUrl,
     chatWsPath,
     token,
-    inModale = false
+    inModale = false,
+    refreshToken
   } = _ref;
   return /*#__PURE__*/React__default.createElement(AppLanguageProvider, null, /*#__PURE__*/React__default.createElement(ChatProvider, {
     defLang: lang,
-    token: token
+    token: token,
+    refreshToken: refreshToken
   }, /*#__PURE__*/React__default.createElement(RestProvider, {
     baseURLApi: chatBaseURLApi,
     pageSize: 25
@@ -3984,5 +4035,5 @@ const ChatIndex = _ref => {
   })))));
 };
 
-export { AddContact, ChatContext, ChatIndex, ChatPage, ChatProvider, Conference, ConferenceCall, ContextMenuType, Emoji, Message, MessageStatus, RestContext, RestProvider, Role, Room, RoomList, SocketContext, SocketProvider, Typing };
+export { AddContact, ChatContext, ChatIndex, ChatPage, ChatProvider, Conference, ConferenceCall, ContextMenuType, Emoji, Message, MessageStatus, RestContext, RestProvider, Role, Room, RoomList, SocketContext, SocketProvider, Typing, clearLocalStorage, getRefreshToken, signOut };
 //# sourceMappingURL=chat.esm.js.map

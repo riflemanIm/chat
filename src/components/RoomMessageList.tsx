@@ -202,7 +202,7 @@ const RoomMessageList: React.FC<RoomMessageListProps> = (
             }
           }}
           hasMore={chat && !chat.noMoreData ? true : false}
-          loader={<Loading loading={loading} />}
+          loader={<Loading loading={loading} key={0} />}
           isReverse
           useCapture
           useWindow={false}

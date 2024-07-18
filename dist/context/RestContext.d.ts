@@ -15,5 +15,8 @@ declare type RestProviderProps = {
     pageSize: number;
     children: JSX.Element;
 };
+export declare function clearLocalStorage(): void;
+export declare const signOut: () => Promise<void>;
+export declare const getRefreshToken: (authToken: string, refreshToken: string, dispatch: any) => Promise<void>;
 export declare const RestProvider: React.FC<RestProviderProps>;
 export {};

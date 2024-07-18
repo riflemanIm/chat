@@ -23,6 +23,7 @@ import { chatRoomComparer } from '../utils/common';
 export interface ChatState {
   user: User;
   token: string;
+  refreshToken: string;
   activeRoom: ChatRoom | null;
   chatOld: ChatRoom | null;
 
@@ -53,6 +54,7 @@ const emptyUser: User = {
 const emptyChatState: ChatState = {
   user: emptyUser, // пользователь
   token: '', // токен
+  refreshToken: '',
   activeRoom: null, // активная комната
   chatOld: null, // активная комната
 
@@ -790,6 +792,7 @@ const emptyDispatch: ChatDispatch = () => null;
 type ChatProviderProps = {
   defLang: string | undefined;
   token: string;
+  refreshToken: string;
   children: JSX.Element | JSX.Element[];
 };
 
@@ -804,9 +807,11 @@ export const ChatProvider: React.FC<ChatProviderProps> = (
   emptyUser.langCode = props.defLang;
 
   const token = props.token;
+  const refreshToken = props.token;
   const chatState: ChatState = {
     ...emptyChatState,
     token,
+    refreshToken,
   };
 
   const [state, dispatch] = React.useReducer(chatReducer, chatState);

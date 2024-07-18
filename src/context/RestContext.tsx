@@ -1,5 +1,5 @@
 import React, { createContext, useCallback, useContext } from 'react';
-import { ChatContext } from './ChatContext';
+import { ChatContext, ChatDispatch } from './ChatContext';
 import axios, { AxiosError, AxiosInstance } from 'axios';
 import {
   Contact,
@@ -31,12 +31,54 @@ type RestProviderProps = {
   children: JSX.Element;
 };
 
+export function clearLocalStorage() {
+  localStorage.removeItem('authToken');
+  localStorage.removeItem('refreshToken');
+  localStorage.removeItem('user');
+  localStorage.removeItem('doctor');
+  localStorage.removeItem('chatUser');
+}
+export const signOut = async () => {
+  try {
+    await axios.post('auth/logout');
+  } catch (error) {
+    console.log('ERROR Logout', error);
+  }
+
+  clearLocalStorage();
+  window.location.href = '/';
+};
+
+export const getRefreshToken = async (
+  authToken: string,
+  refreshToken: string,
+  dispatch: ChatDispatch,
+) => {
+  try {
+    const { data } = await axios.post('auth/refreshToken', {
+      authToken,
+      refreshToken,
+    });
+    localStorage.setItem('authToken', data?.authToken);
+    localStorage.setItem('refreshToken', data?.refreshToken);
+    window.location.href = '/';
+  } catch (error) {
+    console.log('ERROR RefreshToken', error);
+    dispatch({ type: 'CLEAR_USER' });
+    signOut();
+  }
+};
 export const RestProvider: React.FC<RestProviderProps> = ({
   baseURLApi,
   pageSize,
   children,
 }: RestProviderProps) => {
   const { state, dispatch } = useContext(ChatContext);
+  const errorInterceptor = (error: AxiosError) => {
+    if (error.response != null && error.response.status === 401) {
+      getRefreshToken(state.token, state.refreshToken, dispatch);
+    }
+  };
 
   const fetch: AxiosInstance = axios.create({
     timeout: 60000, // Таймаут минута
@@ -48,6 +90,17 @@ export const RestProvider: React.FC<RestProviderProps> = ({
     },
     withCredentials: false,
   });
+
+  fetch.interceptors.response.use(
+    response => {
+      return response;
+    },
+    (error: AxiosError) => {
+      console.log('ERROR AxiosError');
+      errorInterceptor(error);
+      return Promise.reject(error);
+    },
+  );
 
   const getPrivateMessages = useCallback(
     async (chat: Contact, callback?: () => void) => {
@@ -143,6 +196,7 @@ export const RestProvider: React.FC<RestProviderProps> = ({
       console.log('err getUserByMmk', error);
     }
   };
+
   return (
     <RestContext.Provider
       value={{
