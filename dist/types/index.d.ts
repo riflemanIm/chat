@@ -60,6 +60,16 @@ export interface Contact {
     isManager?: 1 | 0;
     noMoreData?: boolean;
 }
+export interface VisitData {
+    chatFrom: Date;
+    conferenceStatus: 'started' | 'finished';
+    contactId: number;
+    duration: number;
+    plExamName: string;
+    planningId: number;
+    visitDate: Date;
+    visitId: number;
+}
 export interface ContactGather {
     [userId: number]: Contact;
 }
@@ -156,6 +166,7 @@ export interface ChatData {
     userData: User[];
     operatorData: Contact[];
     conferenceData: ConferenceData;
+    visitData: VisitData[];
 }
 export interface GroupMember {
     groupId: number;

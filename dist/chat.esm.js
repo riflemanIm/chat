@@ -1,11 +1,12 @@
 import React__default, { createElement, useState, useRef, useEffect, useMemo, Fragment, useCallback, createContext, useContext, useReducer } from 'react';
-import { Box, Typography, TextField, InputAdornment, IconButton, SvgIcon, Popover, List, ListItem, ListItemAvatar, Avatar, ListItemText, Dialog, DialogTitle, DialogContent, Alert, DialogActions, Button, Slide, CardHeader, Link, CardContent, Fab, Backdrop, CircularProgress, useMediaQuery, Card, Tooltip, Divider, Menu, MenuItem, ListItemIcon, Chip, Badge, Paper, Snackbar, Container, Grid } from '@mui/material';
+import { Box, Typography, TextField, InputAdornment, IconButton, SvgIcon, Popover, List, ListItem, ListItemAvatar, Avatar, ListItemText, Dialog, DialogTitle, DialogContent, Alert, DialogActions, Button, Slide, CardHeader, FormControl, InputLabel, MenuItem, Link, CardContent, Fab, Backdrop, CircularProgress, useMediaQuery, Card, Tooltip, Divider, Menu, ListItemIcon, Chip, Badge, Paper, Snackbar, Container, Grid } from '@mui/material';
 import { makeStyles, createStyles, withStyles } from '@mui/styles';
 import FileCopyIcon from '@mui/icons-material/FileCopy';
 import DeleteIcon from '@mui/icons-material/Delete';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { InsertEmoticon, Send, Done, DoneAll, ArrowForward } from '@mui/icons-material';
 import { useTranslation, initReactI18next, I18nextProvider } from 'react-i18next';
+import Select from '@mui/material/Select';
 import GroupIcon from '@mui/icons-material/Group';
 import VideoCallIcon from '@mui/icons-material/VideoCall';
 import CallEndIcon from '@mui/icons-material/CallEnd';
@@ -511,24 +512,27 @@ const ContactStatus = props => {
 };
 
 function isEmpty(value) {
-  return value == null || typeof value === "object" && Object.keys(value).length === 0 || typeof value === "string" && value.trim().length === 0;
+  return value == null || typeof value === 'object' && Object.keys(value).length === 0 || typeof value === 'string' && value.trim().length === 0;
 }
 /**
  * Формитирование времени сообщения
  * @param time
  */
-function formatTime(time) {
-  if (typeof time === "undefined") return null;
-  if (typeof time === "string") time = new Date(time);
+function formatTime(time, format) {
+  if (format === void 0) {
+    format = 'DD.MM.YYYY HH:mm';
+  }
+  if (typeof time === 'undefined') return null;
+  if (typeof time === 'string') time = new Date(time);
   // больше чем вчера
-  if (dayjs().add(-1, "days").startOf("day").isAfter(time)) {
-    return dayjs(time).format("DD.MM.YYYY HH:mm");
+  if (dayjs().add(-1, 'days').startOf('day').isAfter(time)) {
+    return dayjs(time).format(format);
   }
   // вчера
-  if (dayjs().startOf("day").isAfter(time)) {
-    return "\u0412\u0447\u0435\u0440\u0430 \u0432 " + dayjs(time).format("HH:mm");
+  if (dayjs().startOf('day').isAfter(time)) {
+    return "\u0412\u0447\u0435\u0440\u0430 \u0432 " + dayjs(time).format('HH:mm');
   }
-  return dayjs(time).format("HH:mm");
+  return dayjs(time).format('HH:mm');
 }
 /**
  * Раскрыть содержимое
@@ -537,7 +541,7 @@ function formatTime(time) {
 function getFileMeta(content) {
   // Формат  [date]$[userId]$[size]$[fileName]
   // Например fileName = 1606980397047$1a01e20f-3780-4227-84b5-5c69ca766ee5$15.41KB$123.docx
-  const meta = content.split("$");
+  const meta = content.split('$');
   const [date, userId, size, name] = meta;
   return {
     date,
@@ -547,10 +551,10 @@ function getFileMeta(content) {
   };
 }
 function splitFileName(name) {
-  const idx = name.lastIndexOf(".");
+  const idx = name.lastIndexOf('.');
   if (idx === -1) return {
     name,
-    ext: ""
+    ext: ''
   };
   return {
     name: name.slice(0, idx),
@@ -834,12 +838,14 @@ const getGroupStatus = (group, t) => {
   return status.join(', ');
 };
 const RoomHeader = _ref => {
+  var _visitData$;
   let {
     apiUrl,
     user,
     chat,
     typing,
     conference,
+    visitData,
     conferenceJoined,
     className,
     operators,
@@ -853,8 +859,14 @@ const RoomHeader = _ref => {
   const {
     t
   } = useTranslation();
-  const [anchorEl, setAnchorEl] = React__default.useState(null);
-  const [addOperatorOpen, setAddOperatorOpen] = React__default.useState(false);
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [addOperatorOpen, setAddOperatorOpen] = useState(false);
+  console.log('visitData', visitData);
+  const [visitId, setVisitId] = useState("" + ((_visitData$ = visitData[0]) == null ? void 0 : _visitData$.visitId));
+  const handleChangeVisitData = e => {
+    console.log('e.target.value', e.target.value);
+    setVisitId("" + e.target.value);
+  };
   if (!chat) return /*#__PURE__*/React__default.createElement(CardHeader, {
     avatar: /*#__PURE__*/React__default.createElement(Avatar, null),
     title: "",
@@ -961,14 +973,44 @@ const RoomHeader = _ref => {
       style: {
         marginLeft: 8
       }
-    }, t('CHAT.CONFERENCE.FINISH')), isEmpty(conference) && onVideoCall != null && user.role && [3, 4].includes(user.role) && /*#__PURE__*/React__default.createElement(Button, {
+    }, t('CHAT.CONFERENCE.FINISH')), isEmpty(conference) && onVideoCall != null && user.role && [3, 4].includes(user.role) && /*#__PURE__*/React__default.createElement(React__default.Fragment, null, !isEmpty(visitData), /*#__PURE__*/React__default.createElement(FormControl, {
+      fullWidth: true,
+      variant: "standard",
+      margin: "dense"
+    }, /*#__PURE__*/React__default.createElement(InputLabel, {
+      id: "demo-simple-select-label"
+    }, "\u0412\u0438\u0437\u0438\u0442\u044B"), /*#__PURE__*/React__default.createElement(Select, {
+      labelId: "demo-simple-select-label",
+      id: "demo-simple-select",
+      value: "" + visitId,
+      label: "\u0412\u0438\u0437\u0438\u0442\u044B",
+      onChange: handleChangeVisitData,
+      fullWidth: true,
+      size: "small"
+    }, visitData.map(item => {
+      return /*#__PURE__*/React__default.createElement(MenuItem, {
+        key: item.visitId,
+        value: item.visitId
+      }, /*#__PURE__*/React__default.createElement(Typography, {
+        variant: "body1",
+        sx: {
+          fontSize: 14
+        }
+      }, item.plExamName), /*#__PURE__*/React__default.createElement(Typography, {
+        variant: "body2",
+        sx: {
+          fontSize: 13
+        }
+      }, formatTime(item.chatFrom, 'HH:mm'), " -", ' ', formatTime(item.visitDate, 'HH:mm'), ' ', item.conferenceStatus));
+    }))), /*#__PURE__*/React__default.createElement(Button, {
       "aria-label": "video call",
       variant: "contained",
       color: "primary",
       size: "small",
       startIcon: /*#__PURE__*/React__default.createElement(VideoCallIcon, null),
-      onClick: () => onVideoCall(contact)
-    }, t('CHAT.CONFERENCE.START')), (conference == null ? void 0 : conference.finishDate) != null && /*#__PURE__*/React__default.createElement(ConferenceTime, {
+      onClick: () => onVideoCall(contact, visitId ? parseInt(visitId, 10) : null),
+      fullWidth: true
+    }, t('CHAT.CONFERENCE.START'))), (conference == null ? void 0 : conference.finishDate) != null && /*#__PURE__*/React__default.createElement(ConferenceTime, {
       finishDate: conference.finishDate
     }))
   });
@@ -1519,6 +1561,7 @@ const Room = props => {
     chat,
     typing,
     conference,
+    visitData,
     conferenceJoined,
     loading,
     pageSize
@@ -1566,6 +1609,7 @@ const Room = props => {
     chat: chat,
     typing: typing,
     conference: conference,
+    visitData: visitData,
     conferenceJoined: conferenceJoined,
     operators: props.operators,
     className: classes.roomHeader,
@@ -2014,7 +2058,8 @@ const emptyChatState = {
   typing: null,
   loading: false,
   error: undefined,
-  success: undefined
+  success: undefined,
+  visitData: []
 };
 const getFreshActiveRoom = state => {
   if (state.activeRoom) return state.groupGather[state.activeRoom.groupId] || state.contactGather[state.activeRoom.userId];
@@ -2555,6 +2600,11 @@ function chatReducer(state, action) {
         ...state,
         operators: action.payload
       };
+    case 'SET_VISIT_DATA':
+      return {
+        ...state,
+        visitData: action.payload
+      };
   }
   return state;
 }
@@ -2863,6 +2913,7 @@ const SocketProvider = _ref => {
         });
         return;
       }
+      console.log('res.data', res.data);
       const payload = res.data;
       const groupArr = payload.groupData;
       const contactArr = payload.contactData;
@@ -2914,6 +2965,10 @@ const SocketProvider = _ref => {
       dispatch({
         type: 'SET_CONFERENCE',
         payload: payload.conferenceData
+      });
+      dispatch({
+        type: 'SET_VISIT_DATA',
+        payload: payload.visitData
       });
     };
     socket == null || socket.on('chatData', listener);
@@ -3611,10 +3666,14 @@ const ChatPage = _ref => {
       });
     }
   }, [socket == null ? void 0 : socket.id]);
-  const onVideoCall = useCallback(chat => {
+  const onVideoCall = useCallback(function (chat, visitId) {
+    if (visitId === void 0) {
+      visitId = null;
+    }
     socket == null || socket.emit('startConference', {
       groupId: chat.groupId,
-      contactId: chat.userId
+      contactId: chat.userId,
+      visitId
     });
   }, [socket == null ? void 0 : socket.id]);
   const onVideoEnd = useCallback(conference => {
@@ -3694,6 +3753,7 @@ const ChatPage = _ref => {
     chat: state.activeRoom,
     typing: state.typing,
     conference: state.conference.data,
+    visitData: state.visitData,
     conferenceJoined: state.conference.joined,
     loading: state.loading,
     pageSize: pageSize,
@@ -3760,7 +3820,7 @@ const ChatPage = _ref => {
       size: "large"
     }, /*#__PURE__*/createElement(ArrowForward, null))))))) : /*#__PURE__*/createElement(GetRoomList, null);
   }, depsContats);
-  //console.log('inModale -- ', inModale);
+  console.log('chat state', state);
   return /*#__PURE__*/createElement(Container, {
     maxWidth: "lg",
     className: classes.root,

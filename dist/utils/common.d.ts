@@ -1,4 +1,4 @@
-import { ChatRoom, ContactGather, GroupGather } from "../types";
+import { ChatRoom, ContactGather, GroupGather } from '../types';
 export declare function isEmpty(value: unknown): boolean;
 export declare function isContainStr(str1: string, str2: string): boolean;
 /**
@@ -10,7 +10,7 @@ export declare function isUrl(text: string): boolean;
  * Формитирование времени сообщения
  * @param time
  */
-export declare function formatTime(time: Date | string | undefined): string | null;
+export declare function formatTime(time: Date | string | undefined, format?: string): string | null;
 /**
  * Раскрыть содержимое
  * @param content - данные в строке

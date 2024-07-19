@@ -1,5 +1,5 @@
 import React from 'react';
-import { ChatRoom, Contact, Group, SetTyping, User, ConferenceData } from '../types';
+import { ChatRoom, Contact, Group, SetTyping, User, ConferenceData, VisitData } from '../types';
 declare type RoomHeaderProps = {
     apiUrl: string;
     user: User;
@@ -9,7 +9,8 @@ declare type RoomHeaderProps = {
     conferenceJoined: boolean;
     className: string;
     operators: Contact[];
-    onVideoCall?: (chat: ChatRoom) => void;
+    visitData: VisitData[];
+    onVideoCall?: (chat: ChatRoom, visitId: number | null) => void;
     onVideoEnd?: (conference: ConferenceData) => void;
     onConferencePause?: (conference: ConferenceData) => void;
     onOperatorAdd?: (chat: Group, operator: Contact) => void;

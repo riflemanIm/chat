@@ -1,5 +1,5 @@
 import React from 'react';
-import { ChatMessage, ChatRoom, SendMessage, SetTyping, User, Contact, ConferenceData, Group, ContactGather } from '../types';
+import { ChatMessage, ChatRoom, SendMessage, SetTyping, User, Contact, ConferenceData, Group, ContactGather, VisitData } from '../types';
 declare type RoomProps = {
     apiUrl: string;
     user: User;
@@ -7,6 +7,7 @@ declare type RoomProps = {
     chat: ChatRoom | null;
     typing: SetTyping | null;
     conference: ConferenceData | null;
+    visitData: VisitData[];
     conferenceJoined: boolean;
     loading: boolean;
     pageSize: number;

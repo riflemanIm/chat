@@ -1,11 +1,16 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Avatar,
   CardHeader,
   Button,
   Popover,
   IconButton,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Typography,
 } from '@mui/material';
+import Select, { SelectChangeEvent } from '@mui/material/Select';
 import { Theme } from '@mui/material/styles';
 import GroupIcon from '@mui/icons-material/Group';
 import { useTranslation } from 'react-i18next';
@@ -23,10 +28,12 @@ import {
   SetTyping,
   User,
   ConferenceData,
+  VisitData,
 } from '../types';
 import { makeStyles, createStyles } from '@mui/styles';
-import { combineURLs, isEmpty } from '../utils/common';
+import { combineURLs, formatTime, isEmpty } from '../utils/common';
 import ConferenceTime from './ConferenceTime';
+
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     popover: {
@@ -51,7 +58,8 @@ type RoomHeaderProps = {
   conferenceJoined: boolean;
   className: string;
   operators: Contact[];
-  onVideoCall?: (chat: ChatRoom) => void;
+  visitData: VisitData[];
+  onVideoCall?: (chat: ChatRoom, visitId: number | null) => void;
   onVideoEnd?: (conference: ConferenceData) => void;
   onConferencePause?: (conference: ConferenceData) => void;
   onOperatorAdd?: (chat: Group, operator: Contact) => void;
@@ -75,6 +83,7 @@ const RoomHeader: React.FC<RoomHeaderProps> = ({
   chat,
   typing,
   conference,
+  visitData,
   conferenceJoined,
   className,
   operators,
@@ -86,10 +95,14 @@ const RoomHeader: React.FC<RoomHeaderProps> = ({
 }: RoomHeaderProps) => {
   const classes = useStyles();
   const { t } = useTranslation();
-  const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(
-    null,
-  );
-  const [addOperatorOpen, setAddOperatorOpen] = React.useState(false);
+  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+  const [addOperatorOpen, setAddOperatorOpen] = useState(false);
+  console.log('visitData', visitData);
+  const [visitId, setVisitId] = useState(`${visitData[0]?.visitId}`);
+  const handleChangeVisitData = (e: SelectChangeEvent) => {
+    console.log('e.target.value', e.target.value);
+    setVisitId(`${e.target.value}`);
+  };
 
   if (!chat)
     return (
@@ -190,7 +203,7 @@ const RoomHeader: React.FC<RoomHeaderProps> = ({
             )}
             {user.role === 4 &&
               group.members?.find(
-                (it) => it.userId !== user.userId && it.role === 4,
+                it => it.userId !== user.userId && it.role === 4,
               ) &&
               onLeaveGroup && (
                 <IconButton
@@ -265,16 +278,67 @@ const RoomHeader: React.FC<RoomHeaderProps> = ({
             onVideoCall != null &&
             user.role &&
             [3, 4].includes(user.role) && (
-              <Button
-                aria-label="video call"
-                variant="contained"
-                color="primary"
-                size="small"
-                startIcon={<VideoCallIcon />}
-                onClick={() => onVideoCall(contact)}
-              >
-                {t('CHAT.CONFERENCE.START')}
-              </Button>
+              <>
+                {!isEmpty(visitData)}
+                <FormControl
+                  fullWidth
+                  variant="standard"
+                  margin="dense"
+                >
+                  <InputLabel id="demo-simple-select-label">
+                    Визиты
+                  </InputLabel>
+                  <Select
+                    labelId="demo-simple-select-label"
+                    id="demo-simple-select"
+                    value={`${visitId}`}
+                    label="Визиты"
+                    onChange={handleChangeVisitData}
+                    fullWidth
+                    size="small"
+                  >
+                    {visitData.map(item => {
+                      return (
+                        <MenuItem
+                          key={item.visitId}
+                          value={item.visitId}
+                        >
+                          <Typography
+                            variant="body1"
+                            sx={{ fontSize: 14 }}
+                          >
+                            {item.plExamName}
+                          </Typography>
+                          <Typography
+                            variant="body2"
+                            sx={{ fontSize: 13 }}
+                          >
+                            {formatTime(item.chatFrom, 'HH:mm')} -{' '}
+                            {formatTime(item.visitDate, 'HH:mm')}{' '}
+                            {item.conferenceStatus}
+                          </Typography>
+                        </MenuItem>
+                      );
+                    })}
+                  </Select>
+                </FormControl>
+                <Button
+                  aria-label="video call"
+                  variant="contained"
+                  color="primary"
+                  size="small"
+                  startIcon={<VideoCallIcon />}
+                  onClick={() =>
+                    onVideoCall(
+                      contact,
+                      visitId ? parseInt(visitId, 10) : null,
+                    )
+                  }
+                  fullWidth
+                >
+                  {t('CHAT.CONFERENCE.START')}
+                </Button>
+              </>
             )}
 
           {conference?.finishDate != null && (

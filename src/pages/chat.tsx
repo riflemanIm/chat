@@ -179,10 +179,11 @@ export const ChatPage: React.FC<ChatPageProps> = ({
   );
 
   const onVideoCall = React.useCallback(
-    (chat: ChatRoom) => {
+    (chat: ChatRoom, visitId: number | null = null) => {
       socket?.emit('startConference', {
         groupId: (chat as Group).groupId,
         contactId: chat.userId,
+        visitId,
       });
     },
     [socket?.id],
@@ -300,6 +301,7 @@ export const ChatPage: React.FC<ChatPageProps> = ({
       chat={state.activeRoom}
       typing={state.typing}
       conference={state.conference.data}
+      visitData={state.visitData}
       conferenceJoined={state.conference.joined}
       loading={state.loading}
       pageSize={pageSize}
@@ -419,7 +421,7 @@ export const ChatPage: React.FC<ChatPageProps> = ({
     depsContats,
   );
 
-  //console.log('inModale -- ', inModale);
+  console.log('chat state', state);
 
   return (
     <Container

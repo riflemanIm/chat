@@ -30,6 +30,7 @@ import {
   ConferenceData,
   Group,
   ContactGather,
+  VisitData,
 } from '../types';
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -70,6 +71,7 @@ type RoomProps = {
   chat: ChatRoom | null;
   typing: SetTyping | null;
   conference: ConferenceData | null;
+  visitData: VisitData[];
   conferenceJoined: boolean;
   loading: boolean;
   pageSize: number;
@@ -95,6 +97,7 @@ const Room: React.FC<RoomProps> = (props: RoomProps) => {
     chat,
     typing,
     conference,
+    visitData,
     conferenceJoined,
     loading,
     pageSize,
@@ -156,6 +159,7 @@ const Room: React.FC<RoomProps> = (props: RoomProps) => {
           chat={chat}
           typing={typing}
           conference={conference}
+          visitData={visitData}
           conferenceJoined={conferenceJoined}
           operators={props.operators}
           className={classes.roomHeader}

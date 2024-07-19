@@ -17,6 +17,7 @@ import {
   User,
   ConferenceData,
   GroupMap,
+  VisitData,
 } from '../types';
 import { chatRoomComparer } from '../utils/common';
 
@@ -41,6 +42,7 @@ export interface ChatState {
   loading: boolean;
   error?: string;
   success?: string;
+  visitData: VisitData[];
 }
 
 const emptyUser: User = {
@@ -72,6 +74,7 @@ const emptyChatState: ChatState = {
   loading: false, // загрузка данных
   error: undefined, // ошибка
   success: undefined, // НЕ ошибка
+  visitData: [],
 };
 
 type ChatActionType =
@@ -114,7 +117,8 @@ type ChatActionType =
   | 'SET_TOKEN'
   | 'CLEAR_USER'
   | 'CLEAR_CHAT_DATA'
-  | 'SET_OPERATORS';
+  | 'SET_OPERATORS'
+  | 'SET_VISIT_DATA';
 
 type Action = {
   type: ChatActionType;
@@ -136,7 +140,8 @@ type Action = {
     | SetActiveRoom
     | ConferenceData
     | Contact[]
-    | GroupMap;
+    | GroupMap
+    | VisitData[];
 };
 
 const getFreshActiveRoom = (state: ChatState) => {
@@ -780,6 +785,11 @@ function chatReducer(state: ChatState, action: Action): ChatState {
       return {
         ...state,
         operators: action.payload as Contact[],
+      };
+    case 'SET_VISIT_DATA':
+      return {
+        ...state,
+        visitData: action.payload as VisitData[],
       };
   }
 

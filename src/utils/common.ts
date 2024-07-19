@@ -1,11 +1,17 @@
-import dayjs from "dayjs";
-import { ChatRoom, Contact, ContactGather, Group, GroupGather } from "../types";
+import dayjs from 'dayjs';
+import {
+  ChatRoom,
+  Contact,
+  ContactGather,
+  Group,
+  GroupGather,
+} from '../types';
 
 export function isEmpty(value: unknown): boolean {
   return (
     value == null ||
-    (typeof value === "object" && Object.keys(value).length === 0) ||
-    (typeof value === "string" && value.trim().length === 0)
+    (typeof value === 'object' && Object.keys(value).length === 0) ||
+    (typeof value === 'string' && value.trim().length === 0)
   );
 }
 
@@ -20,7 +26,9 @@ export function isContainStr(str1: string, str2: string): boolean {
  */
 export function isUrl(text: string): boolean {
   // parse url
-  const UrlReg = new RegExp(/http(s)?:\/\/([\w-]+\.)+[\w-]+(\/[\w- ./?%&=]*)?/);
+  const UrlReg = new RegExp(
+    /http(s)?:\/\/([\w-]+\.)+[\w-]+(\/[\w- ./?%&=]*)?/,
+  );
   return UrlReg.test(text);
 }
 
@@ -28,28 +36,31 @@ export function isUrl(text: string): boolean {
  * Формитирование времени сообщения
  * @param time
  */
-export function formatTime(time: Date | string | undefined) {
-  if (typeof time === "undefined") return null;
-  if (typeof time === "string") time = new Date(time);
+export function formatTime(
+  time: Date | string | undefined,
+  format = 'DD.MM.YYYY HH:mm',
+) {
+  if (typeof time === 'undefined') return null;
+  if (typeof time === 'string') time = new Date(time);
   // больше чем вчера
   if (
     dayjs()
-      .add(-1, "days")
-      .startOf("day")
+      .add(-1, 'days')
+      .startOf('day')
       .isAfter(time)
   ) {
-    return dayjs(time).format("DD.MM.YYYY HH:mm");
+    return dayjs(time).format(format);
   }
   // вчера
   if (
     dayjs()
-      .startOf("day")
+      .startOf('day')
       .isAfter(time)
   ) {
-    return `Вчера в ${dayjs(time).format("HH:mm")}`;
+    return `Вчера в ${dayjs(time).format('HH:mm')}`;
   }
 
-  return dayjs(time).format("HH:mm");
+  return dayjs(time).format('HH:mm');
 }
 
 /**
@@ -57,7 +68,7 @@ export function formatTime(time: Date | string | undefined) {
  * @param content - данные в строке
  */
 export function getFileMeta(
-  content: string
+  content: string,
 ): {
   date: string;
   userId: string;
@@ -66,18 +77,18 @@ export function getFileMeta(
 } {
   // Формат  [date]$[userId]$[size]$[fileName]
   // Например fileName = 1606980397047$1a01e20f-3780-4227-84b5-5c69ca766ee5$15.41KB$123.docx
-  const meta = content.split("$");
+  const meta = content.split('$');
   const [date, userId, size, name] = meta;
   return {
     date,
     userId,
     size,
-    name
+    name,
   };
 }
 
 export function getImageMeta(
-  content: string
+  content: string,
 ): {
   date: string;
   userId: string;
@@ -85,26 +96,28 @@ export function getImageMeta(
   height: string;
 } {
   // Формат [date]$[userId]$[width]$[height]$...
-  const meta = content.split("$");
+  const meta = content.split('$');
   const [date, userId, width, height] = meta;
   return {
     date,
     userId,
     width,
-    height
+    height,
   };
 }
 
-export function splitFileName(name: string): { name: string; ext: string } {
-  const idx = name.lastIndexOf(".");
+export function splitFileName(
+  name: string,
+): { name: string; ext: string } {
+  const idx = name.lastIndexOf('.');
   if (idx === -1)
     return {
       name,
-      ext: ""
+      ext: '',
     };
   return {
     name: name.slice(0, idx),
-    ext: name.slice(idx + 1)
+    ext: name.slice(idx + 1),
   };
 }
 
@@ -127,9 +140,14 @@ export const allMessCount = (chats: GroupGather | ContactGather) => {
     .reduce((a: number, b: number) => a + b, 0);
 };
 
-export const chatRoomComparer = (a: ChatRoom, b: ChatRoom): number => {
-  const hasMessagesA = Array.isArray(a.messages) && a.messages.length > 0;
-  const hasMessagesB = Array.isArray(b.messages) && b.messages.length > 0;
+export const chatRoomComparer = (
+  a: ChatRoom,
+  b: ChatRoom,
+): number => {
+  const hasMessagesA =
+    Array.isArray(a.messages) && a.messages.length > 0;
+  const hasMessagesB =
+    Array.isArray(b.messages) && b.messages.length > 0;
   if (
     hasMessagesA &&
     hasMessagesB &&
@@ -163,11 +181,21 @@ export const getParam = (param: string) => {
   return urlParams.get(param);
 };
 
-export const combineURLs = (baseURL: string, relativeURL: string, queryParams?: Record<string, string>): string => {
+export const combineURLs = (
+  baseURL: string,
+  relativeURL: string,
+  queryParams?: Record<string, string>,
+): string => {
   const url = relativeURL
-    ? baseURL.replace(/\/?\/$/, '') + '/' + relativeURL.replace(/^\/+/, '')
+    ? baseURL.replace(/\/?\/$/, '') +
+      '/' +
+      relativeURL.replace(/^\/+/, '')
     : baseURL;
   if (!queryParams) return url;
 
-  return url + (url.includes('?') ? '&' : '?') + new URLSearchParams(queryParams).toString();
-}
+  return (
+    url +
+    (url.includes('?') ? '&' : '?') +
+    new URLSearchParams(queryParams).toString()
+  );
+};

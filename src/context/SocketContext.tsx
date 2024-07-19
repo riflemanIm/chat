@@ -91,6 +91,7 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({
         dispatch({ type: 'SET_ERROR', payload: res.msg });
         return;
       }
+      console.log('res.data', res.data);
       const payload = res.data as ChatData;
       const groupArr = payload.groupData;
       const contactArr = payload.contactData;
@@ -126,6 +127,10 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({
       dispatch({
         type: 'SET_CONFERENCE',
         payload: payload.conferenceData,
+      });
+      dispatch({
+        type: 'SET_VISIT_DATA',
+        payload: payload.visitData,
       });
     };
     socket?.on('chatData', listener);
