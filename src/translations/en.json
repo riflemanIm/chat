@@ -24,6 +24,8 @@
     "CONFERENCE": {
       "JOIN": "Join",
       "START": "Start",
+      "RESTART": "Recreate the conference",
+      "CONFIRM_RECREATE_CONF": "Are you sure you want to re-create the conference?",
       "PAUSE": "Pause",
       "FINISH": "Finish",
       "BACK": "Back to chat",
@@ -41,6 +43,7 @@
     "INPUT_MESSAGE": "Please write a message...",
     "INPUT_SEARCH_CONTACT": "Surname Name",
     "MEMBERS": "members",
-    "BUT_CLOSE": "Close"
+    "BUT_CLOSE": "Close",
+    "BUT_CONFIRM": "Yes"
   }
 }

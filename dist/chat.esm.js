@@ -1,4 +1,4 @@
-import React__default, { createElement, useState, useRef, useEffect, useMemo, Fragment, useCallback, createContext, useContext, useReducer } from 'react';
+import React__default, { createElement, useState, useRef, useEffect, useMemo, Fragment, forwardRef, useCallback, createContext, useContext, useReducer } from 'react';
 import { Box, Typography, TextField, InputAdornment, IconButton, SvgIcon, Popover, List, ListItem, ListItemAvatar, Avatar, ListItemText, Dialog, DialogTitle, DialogContent, Alert, DialogActions, Button, Slide, CardHeader, FormControl, InputLabel, MenuItem, Link, CardContent, Fab, Backdrop, CircularProgress, useMediaQuery, Card, Tooltip, Divider, Menu, ListItemIcon, Chip, Badge, Paper, Snackbar, Container, Grid } from '@mui/material';
 import { makeStyles, createStyles, withStyles } from '@mui/styles';
 import FileCopyIcon from '@mui/icons-material/FileCopy';
@@ -13,6 +13,11 @@ import CallEndIcon from '@mui/icons-material/CallEnd';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import StarIcon from '@mui/icons-material/Star';
 import dayjs from 'dayjs';
+import Button$1 from '@mui/material/Button';
+import Dialog$1 from '@mui/material/Dialog';
+import DialogActions$1 from '@mui/material/DialogActions';
+import DialogContent$1 from '@mui/material/DialogContent';
+import Slide$1 from '@mui/material/Slide';
 import KeyboardArrowDown from '@mui/icons-material/KeyboardArrowDown';
 import { AspectRatio } from 'react-aspect-ratio';
 import InfiniteScroll from 'react-infinite-scroller';
@@ -818,6 +823,46 @@ const ConferenceTime = _ref2 => {
   }));
 };
 
+const Transition$1 = /*#__PURE__*/forwardRef(function Transition(props, ref) {
+  return /*#__PURE__*/createElement(Slide$1, _extends({
+    direction: "up",
+    ref: ref
+  }, props));
+});
+function ConfirmDialogSlide(_ref) {
+  let {
+    open,
+    setOpen,
+    contentText,
+    callback
+  } = _ref;
+  const {
+    t
+  } = useTranslation();
+  const handleClose = () => {
+    setOpen(false);
+  };
+  const handleCloseOk = () => {
+    setOpen(false);
+    callback();
+  };
+  return /*#__PURE__*/createElement(Fragment, null, /*#__PURE__*/createElement(Dialog$1, {
+    open: open,
+    TransitionComponent: Transition$1,
+    keepMounted: true,
+    onClose: handleClose,
+    "aria-describedby": "alert-dialog-slide-description"
+  }, /*#__PURE__*/createElement(DialogContent$1, null, /*#__PURE__*/createElement(Typography, {
+    variant: "h6"
+  }, contentText)), /*#__PURE__*/createElement(DialogActions$1, null, /*#__PURE__*/createElement(Button$1, {
+    onClick: handleClose,
+    color: "primary"
+  }, t('CHAT.BUT_CLOSE')), /*#__PURE__*/createElement(Button$1, {
+    onClick: handleCloseOk,
+    color: "warning"
+  }, t('CHAT.BUT_CONFIRM')))));
+}
+
 const useStyles$4 = /*#__PURE__*/makeStyles(theme => createStyles({
   popover: {
     pointerEvents: 'none'
@@ -861,12 +906,12 @@ const RoomHeader = _ref => {
   } = useTranslation();
   const [anchorEl, setAnchorEl] = useState(null);
   const [addOperatorOpen, setAddOperatorOpen] = useState(false);
-  console.log('visitData', visitData);
   const [visitId, setVisitId] = useState("" + ((_visitData$ = visitData[0]) == null ? void 0 : _visitData$.visitId));
   const handleChangeVisitData = e => {
     console.log('e.target.value', e.target.value);
     setVisitId("" + e.target.value);
   };
+  const [confirmReCreateVisit, setConfirmReCreateVisit] = useState(false);
   if (!chat) return /*#__PURE__*/React__default.createElement(CardHeader, {
     avatar: /*#__PURE__*/React__default.createElement(Avatar, null),
     title: "",
@@ -973,7 +1018,7 @@ const RoomHeader = _ref => {
       style: {
         marginLeft: 8
       }
-    }, t('CHAT.CONFERENCE.FINISH')), isEmpty(conference) && onVideoCall != null && user.role && [3, 4].includes(user.role) && /*#__PURE__*/React__default.createElement(React__default.Fragment, null, !isEmpty(visitData), /*#__PURE__*/React__default.createElement(FormControl, {
+    }, t('CHAT.CONFERENCE.FINISH')), isEmpty(conference) && onVideoCall != null && user.role && [3, 4].includes(user.role) && /*#__PURE__*/React__default.createElement(React__default.Fragment, null, !isEmpty(visitData) && /*#__PURE__*/React__default.createElement(React__default.Fragment, null, /*#__PURE__*/React__default.createElement(FormControl, {
       fullWidth: true,
       variant: "standard",
       margin: "dense"
@@ -1002,15 +1047,20 @@ const RoomHeader = _ref => {
           fontSize: 13
         }
       }, formatTime(item.chatFrom, 'HH:mm'), " -", ' ', formatTime(item.visitDate, 'HH:mm'), ' ', item.conferenceStatus));
-    }))), /*#__PURE__*/React__default.createElement(Button, {
+    }))), /*#__PURE__*/React__default.createElement(ConfirmDialogSlide, {
+      open: confirmReCreateVisit,
+      setOpen: setConfirmReCreateVisit,
+      contentText: t('CHAT.CONFERENCE.CONFIRM_RECREATE_CONF'),
+      callback: () => onVideoCall(contact, parseInt(visitId, 10))
+    })), /*#__PURE__*/React__default.createElement(Button, {
       "aria-label": "video call",
       variant: "contained",
       color: "primary",
       size: "small",
       startIcon: /*#__PURE__*/React__default.createElement(VideoCallIcon, null),
-      onClick: () => onVideoCall(contact, visitId ? parseInt(visitId, 10) : null),
+      onClick: () => visitId ? setConfirmReCreateVisit(true) : onVideoCall(contact, null),
       fullWidth: true
-    }, t('CHAT.CONFERENCE.START'))), (conference == null ? void 0 : conference.finishDate) != null && /*#__PURE__*/React__default.createElement(ConferenceTime, {
+    }, t(visitId ? 'CHAT.CONFERENCE.RESTART' : 'CHAT.CONFERENCE.START'))), (conference == null ? void 0 : conference.finishDate) != null && /*#__PURE__*/React__default.createElement(ConferenceTime, {
       finishDate: conference.finishDate
     }))
   });
@@ -3867,6 +3917,8 @@ var CHAT = {
 	CONFERENCE: {
 		JOIN: "Join",
 		START: "Start",
+		RESTART: "Recreate the conference",
+		CONFIRM_RECREATE_CONF: "Are you sure you want to re-create the conference?",
 		PAUSE: "Pause",
 		FINISH: "Finish",
 		BACK: "Back to chat",
@@ -3884,7 +3936,8 @@ var CHAT = {
 	INPUT_MESSAGE: "Please write a message...",
 	INPUT_SEARCH_CONTACT: "Surname Name",
 	MEMBERS: "members",
-	BUT_CLOSE: "Close"
+	BUT_CLOSE: "Close",
+	BUT_CONFIRM: "Yes"
 };
 var en = {
 	CHAT: CHAT
@@ -3915,6 +3968,8 @@ var CHAT$1 = {
 	CONFERENCE: {
 		JOIN: "Rejoindre",
 		START: "Démarrer",
+		RESTART: "Recréer la conférence",
+		CONFIRM_RECREATE_CONF: "êtes-vous sûr de vouloir recréer la conférence?",
 		PAUSE: "Pause",
 		FINISH: "Terminer",
 		BACK: "Retour au chat",
@@ -3932,7 +3987,8 @@ var CHAT$1 = {
 	INPUT_MESSAGE: "Veuillez écrire un message...",
 	INPUT_SEARCH_CONTACT: "Surname Name",
 	MEMBERS: "members",
-	BUT_CLOSE: "Fermer"
+	BUT_CLOSE: "Fermer",
+	BUT_CONFIRM: "Oui"
 };
 var fr = {
 	CHAT: CHAT$1
@@ -3963,6 +4019,8 @@ var CHAT$2 = {
 	CONFERENCE: {
 		JOIN: "Присоединиться",
 		START: "Начать",
+		RESTART: "Пересоздать конференцию",
+		CONFIRM_RECREATE_CONF: "Вы уверена что хотите пересоздать конференцию?",
 		PAUSE: "Остановить",
 		FINISH: "Завершить",
 		BACK: "Вернуться в чат",
@@ -3980,7 +4038,8 @@ var CHAT$2 = {
 	INPUT_MESSAGE: "Напишите сообщение...",
 	INPUT_SEARCH_CONTACT: "Фамилия Имя Отчество",
 	MEMBERS: "участников",
-	BUT_CLOSE: "Закрыть"
+	BUT_CLOSE: "Закрыть",
+	BUT_CONFIRM: "Да"
 };
 var ru = {
 	CHAT: CHAT$2

@@ -33,6 +33,7 @@ import {
 import { makeStyles, createStyles } from '@mui/styles';
 import { combineURLs, formatTime, isEmpty } from '../utils/common';
 import ConferenceTime from './ConferenceTime';
+import ConfirmDialogSlide from './ConfirmDialogSlide';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -97,12 +98,17 @@ const RoomHeader: React.FC<RoomHeaderProps> = ({
   const { t } = useTranslation();
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const [addOperatorOpen, setAddOperatorOpen] = useState(false);
-  console.log('visitData', visitData);
+
   const [visitId, setVisitId] = useState(`${visitData[0]?.visitId}`);
+
   const handleChangeVisitData = (e: SelectChangeEvent) => {
     console.log('e.target.value', e.target.value);
     setVisitId(`${e.target.value}`);
   };
+
+  const [confirmReCreateVisit, setConfirmReCreateVisit] = useState(
+    false,
+  );
 
   if (!chat)
     return (
@@ -279,49 +285,64 @@ const RoomHeader: React.FC<RoomHeaderProps> = ({
             user.role &&
             [3, 4].includes(user.role) && (
               <>
-                {!isEmpty(visitData)}
-                <FormControl
-                  fullWidth
-                  variant="standard"
-                  margin="dense"
-                >
-                  <InputLabel id="demo-simple-select-label">
-                    Визиты
-                  </InputLabel>
-                  <Select
-                    labelId="demo-simple-select-label"
-                    id="demo-simple-select"
-                    value={`${visitId}`}
-                    label="Визиты"
-                    onChange={handleChangeVisitData}
-                    fullWidth
-                    size="small"
-                  >
-                    {visitData.map(item => {
-                      return (
-                        <MenuItem
-                          key={item.visitId}
-                          value={item.visitId}
-                        >
-                          <Typography
-                            variant="body1"
-                            sx={{ fontSize: 14 }}
-                          >
-                            {item.plExamName}
-                          </Typography>
-                          <Typography
-                            variant="body2"
-                            sx={{ fontSize: 13 }}
-                          >
-                            {formatTime(item.chatFrom, 'HH:mm')} -{' '}
-                            {formatTime(item.visitDate, 'HH:mm')}{' '}
-                            {item.conferenceStatus}
-                          </Typography>
-                        </MenuItem>
-                      );
-                    })}
-                  </Select>
-                </FormControl>
+                {!isEmpty(visitData) && (
+                  <>
+                    <FormControl
+                      fullWidth
+                      variant="standard"
+                      margin="dense"
+                    >
+                      <InputLabel id="demo-simple-select-label">
+                        Визиты
+                      </InputLabel>
+                      <Select
+                        labelId="demo-simple-select-label"
+                        id="demo-simple-select"
+                        value={`${visitId}`}
+                        label="Визиты"
+                        onChange={handleChangeVisitData}
+                        fullWidth
+                        size="small"
+                      >
+                        {visitData.map(item => {
+                          return (
+                            <MenuItem
+                              key={item.visitId}
+                              value={item.visitId}
+                            >
+                              <Typography
+                                variant="body1"
+                                sx={{ fontSize: 14 }}
+                              >
+                                {item.plExamName}
+                              </Typography>
+                              <Typography
+                                variant="body2"
+                                sx={{ fontSize: 13 }}
+                              >
+                                {formatTime(item.chatFrom, 'HH:mm')} -{' '}
+                                {formatTime(item.visitDate, 'HH:mm')}{' '}
+                                {item.conferenceStatus}
+                              </Typography>
+                            </MenuItem>
+                          );
+                        })}
+                      </Select>
+                    </FormControl>
+
+                    <ConfirmDialogSlide
+                      open={confirmReCreateVisit}
+                      setOpen={setConfirmReCreateVisit}
+                      contentText={t(
+                        'CHAT.CONFERENCE.CONFIRM_RECREATE_CONF',
+                      )}
+                      callback={() =>
+                        onVideoCall(contact, parseInt(visitId, 10))
+                      }
+                    />
+                  </>
+                )}
+
                 <Button
                   aria-label="video call"
                   variant="contained"
@@ -329,14 +350,17 @@ const RoomHeader: React.FC<RoomHeaderProps> = ({
                   size="small"
                   startIcon={<VideoCallIcon />}
                   onClick={() =>
-                    onVideoCall(
-                      contact,
-                      visitId ? parseInt(visitId, 10) : null,
-                    )
+                    visitId
+                      ? setConfirmReCreateVisit(true)
+                      : onVideoCall(contact, null)
                   }
                   fullWidth
                 >
-                  {t('CHAT.CONFERENCE.START')}
+                  {t(
+                    visitId
+                      ? 'CHAT.CONFERENCE.RESTART'
+                      : 'CHAT.CONFERENCE.START',
+                  )}
                 </Button>
               </>
             )}
