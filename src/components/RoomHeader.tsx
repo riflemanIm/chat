@@ -99,10 +99,24 @@ const RoomHeader: React.FC<RoomHeaderProps> = ({
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const [addOperatorOpen, setAddOperatorOpen] = useState(false);
 
-  const [visitId, setVisitId] = useState(`${visitData[0]?.visitId}`);
+  const startVisitId = () => {
+    if (isEmpty(visitData)) return null;
+    if (
+      !isEmpty(visitData.find(it => it.conferenceStatus === 'none'))
+    )
+      return visitData.find(it => it.conferenceStatus === 'finished')
+        ?.visitId;
+    return visitData[0].visitId;
+  };
+
+  const [visitId, setVisitId] = useState(`${startVisitId()}`);
+  console.log(
+    'conferenceStatus',
+    visitData.find(it => `${it.visitId}` === visitId)
+      ?.conferenceStatus,
+  );
 
   const handleChangeVisitData = (e: SelectChangeEvent) => {
-    console.log('e.target.value', e.target.value);
     setVisitId(`${e.target.value}`);
   };
 
@@ -357,7 +371,10 @@ const RoomHeader: React.FC<RoomHeaderProps> = ({
                   fullWidth
                 >
                   {t(
-                    visitId
+                    !isEmpty(visitData) &&
+                      visitData.find(
+                        it => `${it.visitId}` === visitId,
+                      )?.conferenceStatus === 'finished'
                       ? 'CHAT.CONFERENCE.RESTART'
                       : 'CHAT.CONFERENCE.START',
                   )}

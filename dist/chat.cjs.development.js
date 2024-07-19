@@ -886,7 +886,7 @@ const getGroupStatus = (group, t) => {
   return status.join(', ');
 };
 const RoomHeader = _ref => {
-  var _visitData$;
+  var _visitData$find2, _visitData$find3;
   let {
     apiUrl,
     user,
@@ -909,9 +909,15 @@ const RoomHeader = _ref => {
   } = reactI18next.useTranslation();
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [addOperatorOpen, setAddOperatorOpen] = React.useState(false);
-  const [visitId, setVisitId] = React.useState("" + ((_visitData$ = visitData[0]) == null ? void 0 : _visitData$.visitId));
+  const startVisitId = () => {
+    var _visitData$find;
+    if (isEmpty(visitData)) return null;
+    if (!isEmpty(visitData.find(it => it.conferenceStatus === 'none'))) return (_visitData$find = visitData.find(it => it.conferenceStatus === 'finished')) == null ? void 0 : _visitData$find.visitId;
+    return visitData[0].visitId;
+  };
+  const [visitId, setVisitId] = React.useState("" + startVisitId());
+  console.log('conferenceStatus', (_visitData$find2 = visitData.find(it => "" + it.visitId === visitId)) == null ? void 0 : _visitData$find2.conferenceStatus);
   const handleChangeVisitData = e => {
-    console.log('e.target.value', e.target.value);
     setVisitId("" + e.target.value);
   };
   const [confirmReCreateVisit, setConfirmReCreateVisit] = React.useState(false);
@@ -1063,7 +1069,7 @@ const RoomHeader = _ref => {
       startIcon: /*#__PURE__*/React__default.createElement(VideoCallIcon, null),
       onClick: () => visitId ? setConfirmReCreateVisit(true) : onVideoCall(contact, null),
       fullWidth: true
-    }, t(visitId ? 'CHAT.CONFERENCE.RESTART' : 'CHAT.CONFERENCE.START'))), (conference == null ? void 0 : conference.finishDate) != null && /*#__PURE__*/React__default.createElement(ConferenceTime, {
+    }, t(!isEmpty(visitData) && ((_visitData$find3 = visitData.find(it => "" + it.visitId === visitId)) == null ? void 0 : _visitData$find3.conferenceStatus) === 'finished' ? 'CHAT.CONFERENCE.RESTART' : 'CHAT.CONFERENCE.START'))), (conference == null ? void 0 : conference.finishDate) != null && /*#__PURE__*/React__default.createElement(ConferenceTime, {
       finishDate: conference.finishDate
     }))
   });
