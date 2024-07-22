@@ -916,8 +916,7 @@ const RoomHeader = _ref => {
   };
   const [visitId, setVisitId] = React.useState(startVisitId());
   const handleChangeVisitData = e => {
-    const visit = visitData.find(it => it.conferenceStatus === 'finished' && it.visitId === parseInt(e.target.value, 10));
-    if (!isEmpty(visit)) setVisitId(e.target.value);else setVisitId(null);
+    setVisitId(e.target.value);
   };
   const [confirmReCreateVisit, setConfirmReCreateVisit] = React.useState(false);
   if (!chat) return /*#__PURE__*/React__default.createElement(material.CardHeader, {
@@ -1066,7 +1065,7 @@ const RoomHeader = _ref => {
       color: "primary",
       size: "small",
       startIcon: /*#__PURE__*/React__default.createElement(VideoCallIcon, null),
-      onClick: () => visitId ? setConfirmReCreateVisit(true) : onVideoCall(contact, null),
+      onClick: () => visitId && !isEmpty(visitData.find(it => it.conferenceStatus === 'finished' && it.visitId === parseInt(visitId, 10))) ? setConfirmReCreateVisit(true) : onVideoCall(contact, null),
       fullWidth: true
     }, t(visitId ? 'CHAT.CONFERENCE.RESTART' : 'CHAT.CONFERENCE.START'))), (conference == null ? void 0 : conference.finishDate) != null && /*#__PURE__*/React__default.createElement(ConferenceTime, {
       finishDate: conference.finishDate
@@ -3728,6 +3727,12 @@ const ChatPage = _ref => {
     if (visitId === void 0) {
       visitId = null;
     }
+    // console.log('-----------', {
+    //   groupId: (chat as Group).groupId,
+    //   contactId: chat.userId,
+    //   visitId,
+    //   recreate: visitId ? true : false,
+    // });
     socket == null || socket.emit('startConference', {
       groupId: chat.groupId,
       contactId: chat.userId,

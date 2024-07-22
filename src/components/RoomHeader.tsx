@@ -114,13 +114,7 @@ const RoomHeader: React.FC<RoomHeaderProps> = ({
   );
 
   const handleChangeVisitData = (e: SelectChangeEvent) => {
-    const visit = visitData.find(
-      it =>
-        it.conferenceStatus === 'finished' &&
-        it.visitId === parseInt(e.target.value, 10),
-    );
-    if (!isEmpty(visit)) setVisitId(e.target.value);
-    else setVisitId(null);
+    setVisitId(e.target.value);
   };
 
   const [confirmReCreateVisit, setConfirmReCreateVisit] = useState(
@@ -370,7 +364,14 @@ const RoomHeader: React.FC<RoomHeaderProps> = ({
                   size="small"
                   startIcon={<VideoCallIcon />}
                   onClick={() =>
-                    visitId
+                    visitId &&
+                    !isEmpty(
+                      visitData.find(
+                        it =>
+                          it.conferenceStatus === 'finished' &&
+                          it.visitId === parseInt(visitId, 10),
+                      ),
+                    )
                       ? setConfirmReCreateVisit(true)
                       : onVideoCall(contact, null)
                   }

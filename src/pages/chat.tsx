@@ -180,6 +180,12 @@ export const ChatPage: React.FC<ChatPageProps> = ({
 
   const onVideoCall = React.useCallback(
     (chat: ChatRoom, visitId: number | null = null) => {
+      // console.log('-----------', {
+      //   groupId: (chat as Group).groupId,
+      //   contactId: chat.userId,
+      //   visitId,
+      //   recreate: visitId ? true : false,
+      // });
       socket?.emit('startConference', {
         groupId: (chat as Group).groupId,
         contactId: chat.userId,
