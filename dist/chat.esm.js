@@ -883,7 +883,6 @@ const getGroupStatus = (group, t) => {
   return status.join(', ');
 };
 const RoomHeader = _ref => {
-  var _visitData$find;
   let {
     apiUrl,
     user,
@@ -909,13 +908,13 @@ const RoomHeader = _ref => {
   const startVisitId = () => {
     if (isEmpty(visitData)) return null;
     const visit = visitData.find(it => it.conferenceStatus === 'finished');
-    if (!isEmpty(visit)) return visit == null ? void 0 : visit.visitId;
-    return visitData[0].visitId;
+    if (!isEmpty(visit)) return "" + (visit == null ? void 0 : visit.visitId);
+    return null;
   };
-  const [visitId, setVisitId] = useState("" + startVisitId());
-  console.log('visitId', visitId);
+  const [visitId, setVisitId] = useState(startVisitId());
   const handleChangeVisitData = e => {
-    setVisitId("" + e.target.value);
+    const visit = visitData.find(it => it.conferenceStatus === 'finished' && it.visitId === parseInt(e.target.value, 10));
+    if (!isEmpty(visit)) setVisitId(e.target.value);else setVisitId(null);
   };
   const [confirmReCreateVisit, setConfirmReCreateVisit] = useState(false);
   if (!chat) return /*#__PURE__*/React__default.createElement(CardHeader, {
@@ -1057,7 +1056,7 @@ const RoomHeader = _ref => {
       open: confirmReCreateVisit,
       setOpen: setConfirmReCreateVisit,
       contentText: t('CHAT.CONFERENCE.CONFIRM_RECREATE_CONF'),
-      callback: () => onVideoCall(contact, parseInt(visitId, 10))
+      callback: () => onVideoCall(contact, visitId ? parseInt(visitId, 10) : null)
     })), /*#__PURE__*/React__default.createElement(Button, {
       "aria-label": "video call",
       variant: "contained",
@@ -1066,7 +1065,7 @@ const RoomHeader = _ref => {
       startIcon: /*#__PURE__*/React__default.createElement(VideoCallIcon, null),
       onClick: () => visitId ? setConfirmReCreateVisit(true) : onVideoCall(contact, null),
       fullWidth: true
-    }, t(!isEmpty(visitData) && ((_visitData$find = visitData.find(it => "" + it.visitId === visitId)) == null ? void 0 : _visitData$find.conferenceStatus) === 'finished' ? 'CHAT.CONFERENCE.RESTART' : 'CHAT.CONFERENCE.START'))), (conference == null ? void 0 : conference.finishDate) != null && /*#__PURE__*/React__default.createElement(ConferenceTime, {
+    }, t(visitId ? 'CHAT.CONFERENCE.RESTART' : 'CHAT.CONFERENCE.START'))), (conference == null ? void 0 : conference.finishDate) != null && /*#__PURE__*/React__default.createElement(ConferenceTime, {
       finishDate: conference.finishDate
     }))
   });

@@ -104,15 +104,23 @@ const RoomHeader: React.FC<RoomHeaderProps> = ({
     const visit = visitData.find(
       it => it.conferenceStatus === 'finished',
     );
-    if (!isEmpty(visit)) return visit?.visitId;
-    return visitData[0].visitId;
+
+    if (!isEmpty(visit)) return `${visit?.visitId}`;
+    return null;
   };
 
-  const [visitId, setVisitId] = useState(`${startVisitId()}`);
-  console.log('visitId', visitId);
+  const [visitId, setVisitId] = useState<string | null>(
+    startVisitId(),
+  );
 
   const handleChangeVisitData = (e: SelectChangeEvent) => {
-    setVisitId(`${e.target.value}`);
+    const visit = visitData.find(
+      it =>
+        it.conferenceStatus === 'finished' &&
+        it.visitId === parseInt(e.target.value, 10),
+    );
+    if (!isEmpty(visit)) setVisitId(e.target.value);
+    else setVisitId(null);
   };
 
   const [confirmReCreateVisit, setConfirmReCreateVisit] = useState(
@@ -346,7 +354,10 @@ const RoomHeader: React.FC<RoomHeaderProps> = ({
                         'CHAT.CONFERENCE.CONFIRM_RECREATE_CONF',
                       )}
                       callback={() =>
-                        onVideoCall(contact, parseInt(visitId, 10))
+                        onVideoCall(
+                          contact,
+                          visitId ? parseInt(visitId, 10) : null,
+                        )
                       }
                     />
                   </>
@@ -366,10 +377,7 @@ const RoomHeader: React.FC<RoomHeaderProps> = ({
                   fullWidth
                 >
                   {t(
-                    !isEmpty(visitData) &&
-                      visitData.find(
-                        it => `${it.visitId}` === visitId,
-                      )?.conferenceStatus === 'finished'
+                    visitId
                       ? 'CHAT.CONFERENCE.RESTART'
                       : 'CHAT.CONFERENCE.START',
                   )}
