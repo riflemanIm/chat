@@ -184,6 +184,7 @@ export const ChatPage: React.FC<ChatPageProps> = ({
         groupId: (chat as Group).groupId,
         contactId: chat.userId,
         visitId,
+        recreate: visitId ? true : false,
       });
     },
     [socket?.id],

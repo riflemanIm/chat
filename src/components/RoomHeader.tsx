@@ -101,20 +101,15 @@ const RoomHeader: React.FC<RoomHeaderProps> = ({
 
   const startVisitId = () => {
     if (isEmpty(visitData)) return null;
-    if (
-      !isEmpty(visitData.find(it => it.conferenceStatus === 'none'))
-    )
-      return visitData.find(it => it.conferenceStatus === 'finished')
-        ?.visitId;
+    const visit = visitData.find(
+      it => it.conferenceStatus === 'finished',
+    );
+    if (!isEmpty(visit)) return visit?.visitId;
     return visitData[0].visitId;
   };
 
   const [visitId, setVisitId] = useState(`${startVisitId()}`);
-  console.log(
-    'conferenceStatus',
-    visitData.find(it => `${it.visitId}` === visitId)
-      ?.conferenceStatus,
-  );
+  console.log('visitId', visitId);
 
   const handleChangeVisitData = (e: SelectChangeEvent) => {
     setVisitId(`${e.target.value}`);

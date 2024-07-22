@@ -883,7 +883,7 @@ const getGroupStatus = (group, t) => {
   return status.join(', ');
 };
 const RoomHeader = _ref => {
-  var _visitData$find2, _visitData$find3;
+  var _visitData$find;
   let {
     apiUrl,
     user,
@@ -907,13 +907,13 @@ const RoomHeader = _ref => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [addOperatorOpen, setAddOperatorOpen] = useState(false);
   const startVisitId = () => {
-    var _visitData$find;
     if (isEmpty(visitData)) return null;
-    if (!isEmpty(visitData.find(it => it.conferenceStatus === 'none'))) return (_visitData$find = visitData.find(it => it.conferenceStatus === 'finished')) == null ? void 0 : _visitData$find.visitId;
+    const visit = visitData.find(it => it.conferenceStatus === 'finished');
+    if (!isEmpty(visit)) return visit == null ? void 0 : visit.visitId;
     return visitData[0].visitId;
   };
   const [visitId, setVisitId] = useState("" + startVisitId());
-  console.log('conferenceStatus', (_visitData$find2 = visitData.find(it => "" + it.visitId === visitId)) == null ? void 0 : _visitData$find2.conferenceStatus);
+  console.log('visitId', visitId);
   const handleChangeVisitData = e => {
     setVisitId("" + e.target.value);
   };
@@ -1066,7 +1066,7 @@ const RoomHeader = _ref => {
       startIcon: /*#__PURE__*/React__default.createElement(VideoCallIcon, null),
       onClick: () => visitId ? setConfirmReCreateVisit(true) : onVideoCall(contact, null),
       fullWidth: true
-    }, t(!isEmpty(visitData) && ((_visitData$find3 = visitData.find(it => "" + it.visitId === visitId)) == null ? void 0 : _visitData$find3.conferenceStatus) === 'finished' ? 'CHAT.CONFERENCE.RESTART' : 'CHAT.CONFERENCE.START'))), (conference == null ? void 0 : conference.finishDate) != null && /*#__PURE__*/React__default.createElement(ConferenceTime, {
+    }, t(!isEmpty(visitData) && ((_visitData$find = visitData.find(it => "" + it.visitId === visitId)) == null ? void 0 : _visitData$find.conferenceStatus) === 'finished' ? 'CHAT.CONFERENCE.RESTART' : 'CHAT.CONFERENCE.START'))), (conference == null ? void 0 : conference.finishDate) != null && /*#__PURE__*/React__default.createElement(ConferenceTime, {
       finishDate: conference.finishDate
     }))
   });
@@ -3729,7 +3729,8 @@ const ChatPage = _ref => {
     socket == null || socket.emit('startConference', {
       groupId: chat.groupId,
       contactId: chat.userId,
-      visitId
+      visitId,
+      recreate: visitId ? true : false
     });
   }, [socket == null ? void 0 : socket.id]);
   const onVideoEnd = useCallback(conference => {
