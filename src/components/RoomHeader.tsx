@@ -78,6 +78,12 @@ const getGroupStatus = (group: Group, t: (key: string) => string) => {
   return status.join(', ');
 };
 
+const getVisitMessage = (visit: VisitData) => {
+  const visitDate = new Date(visit.visitDate);
+
+  return `${formatTime(visitDate, 'HH:mm')} - ${formatTime(new Date(visitDate.getTime() + visit.duration * 60_000), 'HH:mm')} ${visit.conferenceStatus}`;
+}
+
 const RoomHeader: React.FC<RoomHeaderProps> = ({
   apiUrl,
   user,
@@ -331,9 +337,7 @@ const RoomHeader: React.FC<RoomHeaderProps> = ({
                                 variant="body2"
                                 sx={{ fontSize: 13 }}
                               >
-                                {formatTime(item.visitDate, 'HH:mm')} -{' '}
-                                {formatTime(new Date(item.visitDate.getTime() + item.duration * 60_000), 'HH:mm')}{' '}
-                                {item.conferenceStatus}
+                                {getVisitMessage(item)}
                               </Typography>
                             </MenuItem>
                           );
