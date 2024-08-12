@@ -1099,6 +1099,12 @@ function ConferenceButton(props) {
       props.onVideoCall(props.chat, item.visitId);
     }
   };
+
+  var visitData = React.useMemo(function () {
+    return props.visitData.filter(function (it) {
+      return it.contactId === props.chat.userId;
+    });
+  }, [props.visitData, props.chat]);
   /**
    * <Button
                   aria-label="video call"
@@ -1128,7 +1134,6 @@ function ConferenceButton(props) {
                 </Button>
    */
 
-
   return /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement(Button, {
     id: "conference-button",
     "aria-controls": open ? 'conference-menu' : undefined,
@@ -1140,7 +1145,8 @@ function ConferenceButton(props) {
     disableElevation: true,
     onClick: handleClick,
     startIcon: /*#__PURE__*/React.createElement(VideoCallIcon, null),
-    endIcon: /*#__PURE__*/React.createElement(KeyboardArrowDownIcon, null)
+    endIcon: /*#__PURE__*/React.createElement(KeyboardArrowDownIcon, null),
+    disabled: visitData.length === 0
   }, t('CHAT.CONFERENCE.START')), /*#__PURE__*/React.createElement(ConfirmDialogSlide, {
     open: confirmReCreateVisit,
     setOpen: setConfirmReCreateVisit,
@@ -1158,7 +1164,7 @@ function ConferenceButton(props) {
     anchorEl: anchorEl,
     open: open,
     onClose: handleClose
-  }, props.visitData.map(function (item) {
+  }, visitData.map(function (item) {
     return /*#__PURE__*/React.createElement(MenuItem, {
       onClick: function onClick() {
         return handleStart(item);

@@ -106,6 +106,12 @@ export default function ConferenceButton(
     }
   };
 
+  const visitData = React.useMemo(() => {
+    return props.visitData.filter(
+      (it) => it.contactId === props.chat.userId,
+    );
+  }, [props.visitData, props.chat]);
+
   /**
    * <Button
                   aria-label="video call"
@@ -149,6 +155,7 @@ export default function ConferenceButton(
         onClick={handleClick}
         startIcon={<VideoCallIcon />}
         endIcon={<KeyboardArrowDownIcon />}
+        disabled={visitData.length === 0}
       >
         {t('CHAT.CONFERENCE.START')}
       </Button>
@@ -171,7 +178,7 @@ export default function ConferenceButton(
         open={open}
         onClose={handleClose}
       >
-        {props.visitData.map((item) => {
+        {visitData.map((item) => {
           return (
             <MenuItem
               onClick={() => handleStart(item)}
