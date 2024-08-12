@@ -1,24 +1,28 @@
 import React__default, { createElement, useState, useRef, useEffect, useMemo, Fragment, forwardRef, useCallback, createContext, useContext, useReducer } from 'react';
-import { Box, Typography, TextField, InputAdornment, IconButton, SvgIcon, Popover, List, ListItem, ListItemAvatar, Avatar, ListItemText, Dialog, DialogTitle, DialogContent, Alert, DialogActions, Button, Slide, CardHeader, FormControl, InputLabel, MenuItem, Link, CardContent, Fab, Backdrop, CircularProgress, useMediaQuery, Card, Tooltip, Divider, Menu, ListItemIcon, Chip, Badge, Paper, Snackbar, Container, Grid } from '@mui/material';
+import { Box, Typography, TextField, InputAdornment, IconButton, SvgIcon, Popover, List, ListItem, ListItemAvatar, Avatar, ListItemText, Dialog, DialogTitle, DialogContent, Alert, DialogActions, Button, Slide, CardHeader, Link, CardContent, Fab, Backdrop, CircularProgress, useMediaQuery, Card, Tooltip, Divider, Menu as Menu$1, MenuItem as MenuItem$1, ListItemIcon, Chip, Badge, Paper, Snackbar, Container, Grid } from '@mui/material';
 import { makeStyles, createStyles, withStyles } from '@mui/styles';
 import FileCopyIcon from '@mui/icons-material/FileCopy';
 import DeleteIcon from '@mui/icons-material/Delete';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { InsertEmoticon, Send, Done, DoneAll, ArrowForward } from '@mui/icons-material';
 import { useTranslation, initReactI18next, I18nextProvider } from 'react-i18next';
-import Select from '@mui/material/Select';
 import GroupIcon from '@mui/icons-material/Group';
-import VideoCallIcon from '@mui/icons-material/VideoCall';
 import CallEndIcon from '@mui/icons-material/CallEnd';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import StarIcon from '@mui/icons-material/Star';
 import dayjs from 'dayjs';
+import { styled, alpha } from '@mui/material/styles';
 import Button$1 from '@mui/material/Button';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import PlayArrowIcon from '@mui/icons-material/PlayArrow';
+import RestartAltIcon from '@mui/icons-material/RestartAlt';
+import VideoCallIcon from '@mui/icons-material/VideoCall';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import Dialog$1 from '@mui/material/Dialog';
 import DialogActions$1 from '@mui/material/DialogActions';
 import DialogContent$1 from '@mui/material/DialogContent';
 import Slide$1 from '@mui/material/Slide';
-import KeyboardArrowDown from '@mui/icons-material/KeyboardArrowDown';
 import { AspectRatio } from 'react-aspect-ratio';
 import InfiniteScroll from 'react-infinite-scroller';
 import List$1 from '@mui/material/List';
@@ -1016,6 +1020,156 @@ function ConfirmDialogSlide(_ref) {
   }, t('CHAT.BUT_CONFIRM')))));
 }
 
+var StyledMenu = /*#__PURE__*/styled(function (props) {
+  return /*#__PURE__*/createElement(Menu, _extends({
+    elevation: 0,
+    anchorOrigin: {
+      vertical: 'bottom',
+      horizontal: 'right'
+    },
+    transformOrigin: {
+      vertical: 'top',
+      horizontal: 'right'
+    }
+  }, props));
+})(function (_ref) {
+  var theme = _ref.theme;
+  return {
+    '& .MuiPaper-root': {
+      borderRadius: 6,
+      marginTop: theme.spacing(1),
+      minWidth: 180,
+      color: theme.palette.mode === 'light' ? 'rgb(55, 65, 81)' : theme.palette.grey[300],
+      boxShadow: 'rgb(255, 255, 255) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 0px 0px 1px, rgba(0, 0, 0, 0.1) 0px 10px 15px -3px, rgba(0, 0, 0, 0.05) 0px 4px 6px -2px',
+      '& .MuiMenu-list': {
+        padding: '4px 0'
+      },
+      '& .MuiMenuItem-root': {
+        '& .MuiSvgIcon-root': {
+          fontSize: 18,
+          color: theme.palette.text.secondary,
+          marginRight: theme.spacing(1.5)
+        },
+        '&:active': {
+          backgroundColor: alpha(theme.palette.primary.main, theme.palette.action.selectedOpacity)
+        }
+      }
+    }
+  };
+});
+
+var getVisitMessage = function getVisitMessage(visit) {
+  var visitDate = new Date(visit.visitDate);
+  return visit.plExamName + " (" + formatTime(visitDate, 'HH:mm') + " - " + formatTime(new Date(visitDate.getTime() + visit.duration * 60000), 'HH:mm') + ")";
+};
+
+function ConferenceButton(props) {
+  var _useTranslation = useTranslation(),
+      t = _useTranslation.t;
+
+  var _React$useState = useState(null),
+      anchorEl = _React$useState[0],
+      setAnchorEl = _React$useState[1];
+
+  var _React$useState2 = useState(null),
+      visitId = _React$useState2[0],
+      setVisitId = _React$useState2[1];
+
+  var _React$useState3 = useState(false),
+      confirmReCreateVisit = _React$useState3[0],
+      setConfirmReCreateVisit = _React$useState3[1];
+
+  var open = Boolean(anchorEl);
+
+  var handleClick = function handleClick(event) {
+    setAnchorEl(event.currentTarget);
+  };
+
+  var handleClose = function handleClose() {
+    setAnchorEl(null);
+  };
+
+  var handleStart = function handleStart(item) {
+    setAnchorEl(null);
+    setVisitId(item.visitId);
+
+    if (item.conferenceStatus === 'finished') {
+      setConfirmReCreateVisit(true);
+    } else {
+      props.onVideoCall(props.chat, item.visitId);
+    }
+  };
+  /**
+   * <Button
+                  aria-label="video call"
+                  variant="contained"
+                  color="primary"
+                  size="small"
+                  startIcon={<VideoCallIcon />}
+                  onClick={() =>
+                    visitId &&
+                    !isEmpty(
+                      visitData.find(
+                        (it) =>
+                          it.conferenceStatus === 'finished' &&
+                          it.visitId === Number(visitId),
+                      ),
+                    )
+                      ? setConfirmReCreateVisit(true)
+                      : onVideoCall(contact, null)
+                  }
+                  fullWidth
+                >
+                  {t(
+                    visitId
+                      ? 'CHAT.CONFERENCE.RESTART'
+                      : 'CHAT.CONFERENCE.START',
+                  )}
+                </Button>
+   */
+
+
+  return /*#__PURE__*/createElement("div", null, /*#__PURE__*/createElement(Button$1, {
+    id: "conference-button",
+    "aria-controls": open ? 'conference-menu' : undefined,
+    "aria-haspopup": "true",
+    "aria-expanded": open ? 'true' : undefined,
+    color: "primary",
+    size: "small",
+    variant: "contained",
+    disableElevation: true,
+    onClick: handleClick,
+    startIcon: /*#__PURE__*/createElement(VideoCallIcon, null),
+    endIcon: /*#__PURE__*/createElement(KeyboardArrowDownIcon, null)
+  }, t('CHAT.CONFERENCE.START')), /*#__PURE__*/createElement(ConfirmDialogSlide, {
+    open: confirmReCreateVisit,
+    setOpen: setConfirmReCreateVisit,
+    contentText: t('CHAT.CONFERENCE.CONFIRM_RECREATE_CONF'),
+    callback: function callback() {
+      if (visitId && confirmReCreateVisit) {
+        props.onVideoCall(props.chat, visitId, true);
+      }
+    }
+  }), /*#__PURE__*/createElement(StyledMenu, {
+    id: "conference-menu",
+    MenuListProps: {
+      'aria-labelledby': 'conference-button'
+    },
+    anchorEl: anchorEl,
+    open: open,
+    onClose: handleClose
+  }, props.visitData.map(function (item) {
+    return /*#__PURE__*/createElement(MenuItem, {
+      onClick: function onClick() {
+        return handleStart(item);
+      },
+      key: item.visitId,
+      value: item.visitId,
+      disableRipple: true
+    }, item.conferenceStatus === 'finished' ? /*#__PURE__*/createElement(RestartAltIcon, null) : /*#__PURE__*/createElement(PlayArrowIcon, null), getVisitMessage(item));
+  })));
+}
+
 var useStyles$4 = /*#__PURE__*/makeStyles(function (theme) {
   return createStyles({
     popover: {
@@ -1040,11 +1194,6 @@ var getGroupStatus = function getGroupStatus(group, t) {
   }, 0);
   if (onlineCount) status.push(onlineCount + " " + t('CHAT.STATUS.ONLINE'));
   return status.join(', ');
-};
-
-var getVisitMessage = function getVisitMessage(visit) {
-  var visitDate = new Date(visit.visitDate);
-  return formatTime(visitDate, 'HH:mm') + " - " + formatTime(new Date(visitDate.getTime() + visit.duration * 60000), 'HH:mm') + " " + visit.conferenceStatus;
 };
 
 var RoomHeader = function RoomHeader(_ref) {
@@ -1074,27 +1223,6 @@ var RoomHeader = function RoomHeader(_ref) {
   var _useState2 = useState(false),
       addOperatorOpen = _useState2[0],
       setAddOperatorOpen = _useState2[1];
-
-  var startVisitId = function startVisitId() {
-    if (isEmpty(visitData)) return null;
-    var visit = visitData.find(function (it) {
-      return it.conferenceStatus === 'finished';
-    });
-    if (!isEmpty(visit)) return "" + (visit == null ? void 0 : visit.visitId);
-    return null;
-  };
-
-  var _useState3 = useState(startVisitId()),
-      visitId = _useState3[0],
-      setVisitId = _useState3[1];
-
-  var handleChangeVisitData = function handleChangeVisitData(e) {
-    setVisitId(e.target.value);
-  };
-
-  var _useState4 = useState(false),
-      confirmReCreateVisit = _useState4[0],
-      setConfirmReCreateVisit = _useState4[1];
 
   if (!chat) return /*#__PURE__*/React__default.createElement(CardHeader, {
     avatar: /*#__PURE__*/React__default.createElement(Avatar, null),
@@ -1218,55 +1346,11 @@ var RoomHeader = function RoomHeader(_ref) {
       style: {
         marginLeft: 8
       }
-    }, t('CHAT.CONFERENCE.FINISH')), isEmpty(conference) && onVideoCall != null && user.role && [3, 4].includes(user.role) && /*#__PURE__*/React__default.createElement(React__default.Fragment, null, !isEmpty(visitData) && /*#__PURE__*/React__default.createElement(React__default.Fragment, null, /*#__PURE__*/React__default.createElement(FormControl, {
-      fullWidth: true,
-      variant: "standard",
-      margin: "dense"
-    }, /*#__PURE__*/React__default.createElement(InputLabel, {
-      id: "demo-simple-select-label"
-    }, "\u0412\u0438\u0437\u0438\u0442\u044B"), /*#__PURE__*/React__default.createElement(Select, {
-      labelId: "demo-simple-select-label",
-      id: "demo-simple-select",
-      value: "" + visitId,
-      label: "\u0412\u0438\u0437\u0438\u0442\u044B",
-      onChange: handleChangeVisitData,
-      fullWidth: true,
-      size: "small"
-    }, visitData.map(function (item) {
-      return /*#__PURE__*/React__default.createElement(MenuItem, {
-        key: item.visitId,
-        value: item.visitId
-      }, /*#__PURE__*/React__default.createElement(Typography, {
-        variant: "body1",
-        sx: {
-          fontSize: 14
-        }
-      }, item.plExamName), /*#__PURE__*/React__default.createElement(Typography, {
-        variant: "body2",
-        sx: {
-          fontSize: 13
-        }
-      }, getVisitMessage(item)));
-    }))), /*#__PURE__*/React__default.createElement(ConfirmDialogSlide, {
-      open: confirmReCreateVisit,
-      setOpen: setConfirmReCreateVisit,
-      contentText: t('CHAT.CONFERENCE.CONFIRM_RECREATE_CONF'),
-      callback: function callback() {
-        return onVideoCall(contact, visitId ? parseInt(visitId, 10) : null);
-      }
-    })), /*#__PURE__*/React__default.createElement(Button, {
-      "aria-label": "video call",
-      variant: "contained",
-      color: "primary",
-      size: "small",
-      startIcon: /*#__PURE__*/React__default.createElement(VideoCallIcon, null),
-      onClick: function onClick() {
-        return visitId && !isEmpty(visitData.find(function (it) {
-          return it.conferenceStatus === 'finished' && it.visitId === parseInt(visitId, 10);
-        })) ? setConfirmReCreateVisit(true) : onVideoCall(contact, null);
-      },
-      fullWidth: true
-    }, t(visitId ? 'CHAT.CONFERENCE.RESTART' : 'CHAT.CONFERENCE.START'))), (conference == null ? void 0 : conference.finishDate) != null && /*#__PURE__*/React__default.createElement(ConferenceTime, {
+    }, t('CHAT.CONFERENCE.FINISH')), isEmpty(conference) && onVideoCall != null && user.role && [3, 4].includes(user.role) && /*#__PURE__*/React__default.createElement(ConferenceButton, {
+      visitData: visitData,
+      chat: contact,
+      onVideoCall: onVideoCall
+    }), (conference == null ? void 0 : conference.finishDate) != null && /*#__PURE__*/React__default.createElement(ConferenceTime, {
       finishDate: conference.finishDate
     }))
   });
@@ -1791,7 +1875,7 @@ var RoomMessageList = function RoomMessageList(props) {
     "aria-label": "add",
     size: "medium",
     onClick: handlerScrollDown
-  }, /*#__PURE__*/React__default.createElement(KeyboardArrowDown, null))), viewerData.visible && /*#__PURE__*/React__default.createElement(Backdrop, {
+  }, /*#__PURE__*/React__default.createElement(KeyboardArrowDownIcon, null))), viewerData.visible && /*#__PURE__*/React__default.createElement(Backdrop, {
     sx: {
       color: '#fff',
       zIndex: function zIndex(theme) {
@@ -1922,7 +2006,7 @@ var Room = function Room(props) {
     chat: chat,
     onTyping: props.onTyping,
     onSendMessage: props.onSendMessage
-  })), /*#__PURE__*/React__default.createElement(Menu, {
+  })), /*#__PURE__*/React__default.createElement(Menu$1, {
     keepMounted: true,
     open: menuState.mouseY !== null,
     onClose: handleMenuClose,
@@ -1931,7 +2015,7 @@ var Room = function Room(props) {
       top: menuState.mouseY,
       left: menuState.mouseX
     } : undefined
-  }, /*#__PURE__*/React__default.createElement(MenuItem, {
+  }, /*#__PURE__*/React__default.createElement(MenuItem$1, {
     onClick: handleCopy,
     disabled: !menuState.canCopy
   }, /*#__PURE__*/React__default.createElement("span", {
@@ -1940,7 +2024,7 @@ var Room = function Room(props) {
     className: classes.flexEnd
   }, /*#__PURE__*/React__default.createElement(FileCopyIcon, {
     fontSize: "small"
-  }))), /*#__PURE__*/React__default.createElement(MenuItem, {
+  }))), /*#__PURE__*/React__default.createElement(MenuItem$1, {
     onClick: handleDelete,
     disabled: !menuState.canDelete
   }, /*#__PURE__*/React__default.createElement("span", {
@@ -5125,11 +5209,7 @@ var ChatPage = function ChatPage(_ref) {
       });
     }
   }, [socket == null ? void 0 : socket.id]);
-  var onVideoCall = useCallback(function (chat, visitId) {
-    if (visitId === void 0) {
-      visitId = null;
-    }
-
+  var onVideoCall = useCallback(function (chat, visitId, recreate) {
     // console.log('-----------', {
     //   groupId: (chat as Group).groupId,
     //   contactId: chat.userId,
@@ -5140,7 +5220,7 @@ var ChatPage = function ChatPage(_ref) {
       groupId: chat.groupId,
       contactId: chat.userId,
       visitId: visitId,
-      recreate: visitId ? true : false
+      recreate: recreate
     });
   }, [socket == null ? void 0 : socket.id]);
   var onVideoEnd = useCallback(function (conference) {
@@ -5486,7 +5566,7 @@ var CHAT$2 = {
 		JOIN: "Присоединиться",
 		START: "Начать",
 		RESTART: "Пересоздать конференцию",
-		CONFIRM_RECREATE_CONF: "Вы уверена что хотите пересоздать конференцию?",
+		CONFIRM_RECREATE_CONF: "Вы уверены что хотите пересоздать конференцию?",
 		PAUSE: "Остановить",
 		FINISH: "Завершить",
 		BACK: "Вернуться в чат",

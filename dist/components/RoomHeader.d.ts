@@ -10,7 +10,7 @@ declare type RoomHeaderProps = {
     className: string;
     operators: Contact[];
     visitData: VisitData[];
-    onVideoCall?: (chat: ChatRoom, visitId: number | null) => void;
+    onVideoCall?: (chat: ChatRoom, visitId?: number, recreate?: boolean) => void;
     onVideoEnd?: (conference: ConferenceData) => void;
     onConferencePause?: (conference: ConferenceData) => void;
     onOperatorAdd?: (chat: Group, operator: Contact) => void;

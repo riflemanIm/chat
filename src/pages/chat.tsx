@@ -179,7 +179,7 @@ export const ChatPage: React.FC<ChatPageProps> = ({
   );
 
   const onVideoCall = React.useCallback(
-    (chat: ChatRoom, visitId: number | null = null) => {
+    (chat: ChatRoom, visitId?: number, recreate?: boolean) => {
       // console.log('-----------', {
       //   groupId: (chat as Group).groupId,
       //   contactId: chat.userId,
@@ -190,7 +190,7 @@ export const ChatPage: React.FC<ChatPageProps> = ({
         groupId: (chat as Group).groupId,
         contactId: chat.userId,
         visitId,
-        recreate: visitId ? true : false,
+        recreate,
       });
     },
     [socket?.id],
@@ -250,7 +250,7 @@ export const ChatPage: React.FC<ChatPageProps> = ({
   React.useEffect(() => {
     if (activeChatUserId != null && !isEmpty(state.contactGather)) {
       const Chat = Object.values(state.contactGather).find(
-        item => item.userId === activeChatUserId,
+        (item) => item.userId === activeChatUserId,
       );
       onChangeChat(Chat);
     }
@@ -266,7 +266,7 @@ export const ChatPage: React.FC<ChatPageProps> = ({
         const userId = await getUserByMmk(mmkId, guid);
         if (userId != null) {
           const Chat = Object.values(state.contactGather).find(
-            item => item.userId === userId,
+            (item) => item.userId === userId,
           );
           onChangeChat(Chat);
         }
@@ -278,7 +278,7 @@ export const ChatPage: React.FC<ChatPageProps> = ({
   React.useEffect(() => {
     if (activeGroupId != null && !isEmpty(state.groupGather)) {
       const onlyChat = Object.values(state.groupGather).find(
-        item => item.groupId === activeGroupId,
+        (item) => item.groupId === activeGroupId,
       );
 
       if (!isEmpty(onlyChat)) {
@@ -434,7 +434,7 @@ export const ChatPage: React.FC<ChatPageProps> = ({
     <Container
       maxWidth="lg"
       className={classes.root}
-      sx={theme => ({
+      sx={(theme) => ({
         width: inModale
           ? `calc(100vw - ${theme.spacing(8)})`
           : '100%',

@@ -5,16 +5,10 @@ import {
   Button,
   Popover,
   IconButton,
-  FormControl,
-  InputLabel,
-  MenuItem,
-  Typography,
 } from '@mui/material';
-import Select, { SelectChangeEvent } from '@mui/material/Select';
 import { Theme } from '@mui/material/styles';
 import GroupIcon from '@mui/icons-material/Group';
 import { useTranslation } from 'react-i18next';
-import VideoCallIcon from '@mui/icons-material/VideoCall';
 import CallEndIcon from '@mui/icons-material/CallEnd';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -34,6 +28,7 @@ import { makeStyles, createStyles } from '@mui/styles';
 import { combineURLs, formatTime, isEmpty } from '../utils/common';
 import ConferenceTime from './ConferenceTime';
 import ConfirmDialogSlide from './ConfirmDialogSlide';
+import ConferenceButton from './ConferenceButton';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -60,7 +55,11 @@ type RoomHeaderProps = {
   className: string;
   operators: Contact[];
   visitData: VisitData[];
-  onVideoCall?: (chat: ChatRoom, visitId: number | null) => void;
+  onVideoCall?: (
+    chat: ChatRoom,
+    visitId?: number,
+    recreate?: boolean,
+  ) => void;
   onVideoEnd?: (conference: ConferenceData) => void;
   onConferencePause?: (conference: ConferenceData) => void;
   onOperatorAdd?: (chat: Group, operator: Contact) => void;
@@ -81,8 +80,11 @@ const getGroupStatus = (group: Group, t: (key: string) => string) => {
 const getVisitMessage = (visit: VisitData) => {
   const visitDate = new Date(visit.visitDate);
 
-  return `${formatTime(visitDate, 'HH:mm')} - ${formatTime(new Date(visitDate.getTime() + visit.duration * 60_000), 'HH:mm')} ${visit.conferenceStatus}`;
-}
+  return `${formatTime(visitDate, 'HH:mm')} - ${formatTime(
+    new Date(visitDate.getTime() + visit.duration * 60_000),
+    'HH:mm',
+  )} ${visit.conferenceStatus}`;
+};
 
 const RoomHeader: React.FC<RoomHeaderProps> = ({
   apiUrl,
@@ -104,28 +106,6 @@ const RoomHeader: React.FC<RoomHeaderProps> = ({
   const { t } = useTranslation();
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const [addOperatorOpen, setAddOperatorOpen] = useState(false);
-
-  const startVisitId = () => {
-    if (isEmpty(visitData)) return null;
-    const visit = visitData.find(
-      it => it.conferenceStatus === 'finished',
-    );
-
-    if (!isEmpty(visit)) return `${visit?.visitId}`;
-    return null;
-  };
-
-  const [visitId, setVisitId] = useState<string | null>(
-    startVisitId(),
-  );
-
-  const handleChangeVisitData = (e: SelectChangeEvent) => {
-    setVisitId(e.target.value);
-  };
-
-  const [confirmReCreateVisit, setConfirmReCreateVisit] = useState(
-    false,
-  );
 
   if (!chat)
     return (
@@ -226,7 +206,7 @@ const RoomHeader: React.FC<RoomHeaderProps> = ({
             )}
             {user.role === 4 &&
               group.members?.find(
-                it => it.userId !== user.userId && it.role === 4,
+                (it) => it.userId !== user.userId && it.role === 4,
               ) &&
               onLeaveGroup && (
                 <IconButton
@@ -301,93 +281,11 @@ const RoomHeader: React.FC<RoomHeaderProps> = ({
             onVideoCall != null &&
             user.role &&
             [3, 4].includes(user.role) && (
-              <>
-                {!isEmpty(visitData) && (
-                  <>
-                    <FormControl
-                      fullWidth
-                      variant="standard"
-                      margin="dense"
-                    >
-                      <InputLabel id="demo-simple-select-label">
-                        Визиты
-                      </InputLabel>
-                      <Select
-                        labelId="demo-simple-select-label"
-                        id="demo-simple-select"
-                        value={`${visitId}`}
-                        label="Визиты"
-                        onChange={handleChangeVisitData}
-                        fullWidth
-                        size="small"
-                      >
-                        {visitData.map(item => {
-                          return (
-                            <MenuItem
-                              key={item.visitId}
-                              value={item.visitId}
-                            >
-                              <Typography
-                                variant="body1"
-                                sx={{ fontSize: 14 }}
-                              >
-                                {item.plExamName}
-                              </Typography>
-                              <Typography
-                                variant="body2"
-                                sx={{ fontSize: 13 }}
-                              >
-                                {getVisitMessage(item)}
-                              </Typography>
-                            </MenuItem>
-                          );
-                        })}
-                      </Select>
-                    </FormControl>
-
-                    <ConfirmDialogSlide
-                      open={confirmReCreateVisit}
-                      setOpen={setConfirmReCreateVisit}
-                      contentText={t(
-                        'CHAT.CONFERENCE.CONFIRM_RECREATE_CONF',
-                      )}
-                      callback={() =>
-                        onVideoCall(
-                          contact,
-                          visitId ? parseInt(visitId, 10) : null,
-                        )
-                      }
-                    />
-                  </>
-                )}
-
-                <Button
-                  aria-label="video call"
-                  variant="contained"
-                  color="primary"
-                  size="small"
-                  startIcon={<VideoCallIcon />}
-                  onClick={() =>
-                    visitId &&
-                    !isEmpty(
-                      visitData.find(
-                        it =>
-                          it.conferenceStatus === 'finished' &&
-                          it.visitId === parseInt(visitId, 10),
-                      ),
-                    )
-                      ? setConfirmReCreateVisit(true)
-                      : onVideoCall(contact, null)
-                  }
-                  fullWidth
-                >
-                  {t(
-                    visitId
-                      ? 'CHAT.CONFERENCE.RESTART'
-                      : 'CHAT.CONFERENCE.START',
-                  )}
-                </Button>
-              </>
+              <ConferenceButton
+                visitData={visitData}
+                chat={contact}
+                onVideoCall={onVideoCall}
+              />
             )}
 
           {conference?.finishDate != null && (

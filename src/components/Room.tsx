@@ -82,7 +82,11 @@ type RoomProps = {
   onMeesageDelete?: (chat: ChatRoom, message: ChatMessage) => void;
   onTyping?: (chat: ChatRoom) => void;
   onSendMessage?: (chat: ChatRoom, data: SendMessage) => void;
-  onVideoCall?: (chat: ChatRoom) => void;
+  onVideoCall?: (
+    chat: ChatRoom,
+    visitId?: number,
+    recreate?: boolean,
+  ) => void;
   onVideoEnd?: (chat: ConferenceData) => void;
   onConferencePause?: (conference: ConferenceData) => void;
   onOperatorAdd?: (chat: Group, operator: Contact) => void;
