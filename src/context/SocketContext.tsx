@@ -14,6 +14,7 @@ import {
   ConferenceData,
   SetActiveRoom,
   GroupMap,
+  VisitData,
 } from '../types';
 import { ChatContext } from './ChatContext';
 import { getRefreshToken } from './RestContext';
@@ -550,6 +551,24 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({
     socket?.on('setActiveRoom', listener);
     return () => {
       socket?.off('setActiveRoom', listener);
+    };
+  }, [socket?.id]);
+
+  useEffect(() => {
+    const listener = (res: ServerRes) => {
+      if (res.code) {
+        dispatch({ type: 'SET_ERROR', payload: res.msg });
+        return;
+      }
+      const payload = res.data as {visitData: VisitData};
+      dispatch({
+        type: 'SET_VISIT_DATA',
+        payload: payload.visitData,
+      });
+    };
+    socket?.on('visitData', listener);
+    return () => {
+      socket?.off('visitData', listener);
     };
   }, [socket?.id]);
 

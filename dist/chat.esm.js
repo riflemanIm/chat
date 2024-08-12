@@ -4843,6 +4843,28 @@ var SocketProvider = function SocketProvider(_ref) {
       socket == null ? void 0 : socket.off('setActiveRoom', listener);
     };
   }, [socket == null ? void 0 : socket.id]);
+  useEffect(function () {
+    var listener = function listener(res) {
+      if (res.code) {
+        dispatch({
+          type: 'SET_ERROR',
+          payload: res.msg
+        });
+        return;
+      }
+
+      var payload = res.data;
+      dispatch({
+        type: 'SET_VISIT_DATA',
+        payload: payload.visitData
+      });
+    };
+
+    socket == null ? void 0 : socket.on('visitData', listener);
+    return function () {
+      socket == null ? void 0 : socket.off('visitData', listener);
+    };
+  }, [socket == null ? void 0 : socket.id]);
   return /*#__PURE__*/React__default.createElement(SocketContext.Provider, {
     value: {
       socket: socket,
