@@ -1042,6 +1042,11 @@ var getGroupStatus = function getGroupStatus(group, t) {
   return status.join(', ');
 };
 
+var getVisitMessage = function getVisitMessage(visit) {
+  var visitDate = new Date(visit.visitDate);
+  return formatTime(visitDate, 'HH:mm') + " - " + formatTime(new Date(visitDate.getTime() + visit.duration * 60000), 'HH:mm') + " " + visit.conferenceStatus;
+};
+
 var RoomHeader = function RoomHeader(_ref) {
   var apiUrl = _ref.apiUrl,
       user = _ref.user,
@@ -1241,7 +1246,7 @@ var RoomHeader = function RoomHeader(_ref) {
         sx: {
           fontSize: 13
         }
-      }, formatTime(item.visitDate, 'HH:mm'), " -", ' ', formatTime(new Date(item.visitDate.getTime() + item.duration * 60000), 'HH:mm'), ' ', item.conferenceStatus));
+      }, getVisitMessage(item)));
     }))), /*#__PURE__*/React__default.createElement(ConfirmDialogSlide, {
       open: confirmReCreateVisit,
       setOpen: setConfirmReCreateVisit,
