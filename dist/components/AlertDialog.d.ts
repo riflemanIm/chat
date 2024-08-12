@@ -1,4 +1,4 @@
-import React from 'react';
+/// <reference types="react" />
 import { AlertColor } from '@mui/material';
 declare type AlertDialogProps = {
     children: JSX.Element | JSX.Element[] | string;
@@ -6,5 +6,5 @@ declare type AlertDialogProps = {
     setOpen: (value: boolean) => void;
     severity: AlertColor;
 };
-export default function AlertDialog({ children, open, setOpen, severity, }: AlertDialogProps): React.JSX.Element;
+export default function AlertDialog({ children, open, setOpen, severity, }: AlertDialogProps): JSX.Element;
 export {};

@@ -331,8 +331,8 @@ const RoomHeader: React.FC<RoomHeaderProps> = ({
                                 variant="body2"
                                 sx={{ fontSize: 13 }}
                               >
-                                {formatTime(item.chatFrom, 'HH:mm')} -{' '}
-                                {formatTime(item.visitDate, 'HH:mm')}{' '}
+                                {formatTime(item.visitDate, 'HH:mm')} -{' '}
+                                {formatTime(new Date(item.visitDate.getTime() + item.duration * 60_000), 'HH:mm')}{' '}
                                 {item.conferenceStatus}
                               </Typography>
                             </MenuItem>
