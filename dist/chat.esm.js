@@ -5085,12 +5085,14 @@ var useStyles$f = /*#__PURE__*/makeStyles(function (theme) {
   };
 });
 var ChatPage = function ChatPage(_ref) {
-  var _state$conference$dat, _state$conference$dat2, _state$conference$dat3, _state$activeRoom, _state$activeRoom2, _state$conference$dat5, _state$conference$dat6;
+  var _state$conference$dat, _state$conference$dat2, _state$conference$dat3, _state$activeRoom, _state$activeRoom2, _state$conference$dat5, _state$conference$dat6, _state$conference$dat7;
 
   var activeGroupId = _ref.activeGroupId,
       activeChatUserId = _ref.activeChatUserId,
       _ref$inModale = _ref.inModale,
-      inModale = _ref$inModale === void 0 ? true : _ref$inModale;
+      inModale = _ref$inModale === void 0 ? true : _ref$inModale,
+      _ref$hideRooms = _ref.hideRooms,
+      hideRooms = _ref$hideRooms === void 0 ? false : _ref$hideRooms;
   var classes = useStyles$f();
   var isMobile = useMediaQuery(function (theme) {
     return theme.breakpoints.down('sm');
@@ -5433,13 +5435,13 @@ var ChatPage = function ChatPage(_ref) {
     container: true,
     spacing: 1,
     className: classes.innerGrid
-  }, /*#__PURE__*/createElement(Grid, {
+  }, (((_state$conference$dat5 = state.conference.data) == null ? void 0 : _state$conference$dat5.id) != null || !hideRooms) && /*#__PURE__*/createElement(Grid, {
     item: true,
-    sm: ((_state$conference$dat5 = state.conference.data) == null ? void 0 : _state$conference$dat5.id) != null ? 6 : 4,
+    sm: ((_state$conference$dat6 = state.conference.data) == null ? void 0 : _state$conference$dat6.id) != null ? 6 : 4,
     className: classes.innerGrid
   }, Contacts), /*#__PURE__*/createElement(Grid, {
     item: true,
-    sm: ((_state$conference$dat6 = state.conference.data) == null ? void 0 : _state$conference$dat6.id) != null ? 6 : 8,
+    sm: ((_state$conference$dat7 = state.conference.data) == null ? void 0 : _state$conference$dat7.id) != null ? 6 : hideRooms ? 12 : 8,
     className: classes.innerGrid
   }, renderRoom)), /*#__PURE__*/createElement(ChatAlert, null));
 };
@@ -5692,6 +5694,8 @@ var AppLanguageProvider = function AppLanguageProvider(props) {
 var ChatIndex = function ChatIndex(_ref) {
   var activeGroupId = _ref.activeGroupId,
       activeChatUserId = _ref.activeChatUserId,
+      _ref$hideRooms = _ref.hideRooms,
+      hideRooms = _ref$hideRooms === void 0 ? false : _ref$hideRooms,
       lang = _ref.lang,
       chatBaseURLApi = _ref.chatBaseURLApi,
       chatWsUrl = _ref.chatWsUrl,
@@ -5713,6 +5717,7 @@ var ChatIndex = function ChatIndex(_ref) {
   }, /*#__PURE__*/React__default.createElement(ChatPage, {
     activeGroupId: activeGroupId,
     activeChatUserId: activeChatUserId,
+    hideRooms: hideRooms,
     inModale: inModale
   })))));
 };

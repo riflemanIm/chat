@@ -10,6 +10,7 @@ import { ChatPage } from '../../pages/chat';
 export const ChatIndex: React.FC<ChatProps> = ({
   activeGroupId,
   activeChatUserId,
+  hideRooms = false,
   lang,
   chatBaseURLApi,
   chatWsUrl,
@@ -30,6 +31,7 @@ export const ChatIndex: React.FC<ChatProps> = ({
             <ChatPage
               activeGroupId={activeGroupId}
               activeChatUserId={activeChatUserId}
+              hideRooms={hideRooms}
               inModale={inModale}
             />
           </SocketProvider>

@@ -1,6 +1,7 @@
 export interface ChatProps {
     activeGroupId?: number;
     activeChatUserId?: number;
+    hideRooms?: boolean;
     lang: 'ru' | 'en' | 'fr';
     chatBaseURLApi: string;
     chatWsUrl: string;
@@ -13,6 +14,7 @@ export interface ChatPageProps {
     activeGroupId?: number;
     activeChatUserId?: number;
     inModale?: boolean;
+    hideRooms?: boolean;
 }
 export declare type MessageType = 'text' | 'image' | 'file' | 'video' | 'notify' | 'video_conference';
 export declare enum MessageStatus {

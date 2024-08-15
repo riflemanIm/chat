@@ -63,6 +63,7 @@ export const ChatPage: React.FC<ChatPageProps> = ({
   activeGroupId,
   activeChatUserId,
   inModale = true,
+  hideRooms = false,
 }: ChatPageProps) => {
   const classes = useStyles();
   const isMobile = useMediaQuery((theme: Theme) =>
@@ -441,23 +442,30 @@ export const ChatPage: React.FC<ChatPageProps> = ({
       })}
     >
       {isMobile ? (
-        <>
+        <React.Fragment>
           {Contacts}
           {renderRoom}
-        </>
+        </React.Fragment>
       ) : (
         <Grid container spacing={1} className={classes.innerGrid}>
+          {(state.conference.data?.id != null || !hideRooms) && (
+            <Grid
+              item
+              sm={state.conference.data?.id != null ? 6 : 4}
+              className={classes.innerGrid}
+            >
+              {Contacts}
+            </Grid>
+          )}
           <Grid
             item
-            sm={state.conference.data?.id != null ? 6 : 4}
-            className={classes.innerGrid}
-          >
-            {Contacts}
-          </Grid>
-
-          <Grid
-            item
-            sm={state.conference.data?.id != null ? 6 : 8}
+            sm={
+              state.conference.data?.id != null
+                ? 6
+                : hideRooms
+                ? 12
+                : 8
+            }
             className={classes.innerGrid}
           >
             {renderRoom}
