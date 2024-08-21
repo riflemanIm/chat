@@ -6,6 +6,7 @@ import {
   List,
   Backdrop,
   Fab,
+  Typography,
 } from '@mui/material';
 import { Theme } from '@mui/material/styles';
 import { makeStyles, createStyles } from '@mui/styles';
@@ -15,6 +16,7 @@ import Message from './Message';
 import InfiniteScroll from 'react-infinite-scroller';
 import { getChatId } from '../utils/common';
 import { ChatMessage, ChatRoom, User, ContactGather } from '../types';
+import { ChatContext } from '../context/ChatContext';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -107,16 +109,20 @@ const RoomMessageList: React.FC<RoomMessageListProps> = (
     initialMenuState,
   } = props;
   const classes = useStyles();
-
+  const { dispatch } = React.useContext(ChatContext);
   const [scrollDownButton, setScrollDownButton] = React.useState(
     false,
   );
-  const [scrollDo, setScrollDo] = React.useState(true);
 
   const messages = chat?.messages;
   const messageCount = messages?.length || 0;
   const lastMessage =
     chat?.messages && chat.messages[messageCount - 1];
+  const gap = 540;
+
+  const messageCountUnreaded =
+    messages &&
+    messages.filter(it => it?.status != null && it.status === 0);
 
   // const refOnMess = React.useRef<HTMLDivElement>(null);
   // const refOnLastMess = React.useRef<HTMLDivElement>(null);
@@ -155,14 +161,12 @@ const RoomMessageList: React.FC<RoomMessageListProps> = (
   });
   React.useEffect(() => {
     setTimeout(() => {
-      setScrollDo(true);
       scrollDown();
     }, 500);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   React.useEffect(() => {
-    setScrollDo(true);
     scrollDown();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [getChatId(chat)]);
@@ -170,17 +174,23 @@ const RoomMessageList: React.FC<RoomMessageListProps> = (
   React.useEffect(() => {
     if (lastMessage && user.userId === lastMessage.userId) {
       scrollDown();
-      setScrollDo(true);
+    }
+    if (lastMessage && user.userId !== lastMessage.userId) {
+      setScrollDownButton(true);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [messageCount]);
 
   const scrollDown = () => {
-    if (refList.current && scrollDo) {
+    if (refList.current) {
+      dispatch({
+        type: 'MARK_PRIVATE_MESSAGES_READ',
+        payload: user.userId,
+      });
       refList.current.scrollTop = refList.current.scrollHeight;
     }
   };
-  //sconsole.log('--user', user, 'lastMessage', lastMessage);
+
   const handlerScrollDown = () => {
     scrollDown();
   };
@@ -197,7 +207,6 @@ const RoomMessageList: React.FC<RoomMessageListProps> = (
               props.onNeedMoreMessages &&
               chat
             ) {
-              setScrollDo(false);
               props.onNeedMoreMessages(chat);
             }
           }}
@@ -208,7 +217,6 @@ const RoomMessageList: React.FC<RoomMessageListProps> = (
           useWindow={false}
           getScrollParent={() => {
             if (refList.current) {
-              const gap = 1540;
               const isShowButton =
                 refList.current.scrollTop <
                 refList.current.scrollHeight - gap;
@@ -248,7 +256,7 @@ const RoomMessageList: React.FC<RoomMessageListProps> = (
         </InfiniteScroll>
       </List>
       {scrollDownButton && (
-        <Box className={classes.arrowDown}>
+        <Box className={classes.arrowDown} textAlign="center">
           <Fab
             color="info"
             aria-label="add"
@@ -257,6 +265,31 @@ const RoomMessageList: React.FC<RoomMessageListProps> = (
           >
             <KeyboardArrowDown />
           </Fab>
+          {messageCountUnreaded != null &&
+            messageCountUnreaded.length > 0 && (
+              <Fab
+                color="warning"
+                aria-label="add"
+                size="small"
+                sx={{
+                  width: 24,
+                  height: 24,
+                  minHeight: 24,
+                  position: 'relative',
+                  top: -10,
+                  pointerEvents: 'none',
+                }}
+              >
+                <Typography
+                  variant="body2"
+                  sx={theme => ({
+                    color: theme.palette.background.default,
+                  })}
+                >
+                  {messageCountUnreaded.length}
+                </Typography>
+              </Fab>
+            )}
         </Box>
       )}
       {viewerData.visible && (

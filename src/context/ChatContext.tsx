@@ -497,7 +497,14 @@ const markPrivateMessagesRead = (
 
   // обновляем активный чат
   newState.activeRoom = getFreshActiveRoom(newState);
-
+  // помечаем все не прочитанные как прочитанные
+  if (newState.activeRoom != null && newState.activeRoom.messages) {
+    for (let i = 0; i < newState.activeRoom.messages.length; i++)
+      newState.activeRoom.messages[i] = {
+        ...newState.activeRoom.messages[i],
+        status: 1,
+      };
+  }
   return newState;
 };
 

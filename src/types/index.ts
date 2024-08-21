@@ -103,6 +103,7 @@ export interface GroupMessage {
   cdate: string;
   isRevoke?: boolean;
   revokeUserName?: string;
+  status?: MessageStatus;
 }
 
 // Группа
