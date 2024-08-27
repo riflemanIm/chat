@@ -577,9 +577,6 @@ const getChatId = chat => {
 const getChatName = chat => {
   return chat.groupId ? chat.name : chat.username;
 };
-const allMessCount = chats => {
-  return Object.values(chats).map(it => (it == null ? void 0 : it.messages) != null ? it == null ? void 0 : it.messages.length : 0).reduce((a, b) => a + b, 0);
-};
 const chatRoomComparer = (a, b) => {
   const hasMessagesA = Array.isArray(a.messages) && a.messages.length > 0;
   const hasMessagesB = Array.isArray(b.messages) && b.messages.length > 0;
@@ -2159,7 +2156,9 @@ const RoomMessageList = props => {
   const [scrollDownButton, setScrollDownButton] = React__default.useState(false);
   const messages = chat == null ? void 0 : chat.messages;
   const messageCount = (messages == null ? void 0 : messages.length) || 0;
-  const gap = 550;
+  // const lastMessage =
+  //   chat?.messages && chat.messages[messageCount - 1];
+  const [gap, setGap] = React__default.useState(564);
   const messageCountUnreaded = messages && messages.filter(it => (it == null ? void 0 : it.status) != null && it.status === 0);
   // const refOnMess = React.useRef<HTMLDivElement>(null);
   // const refOnLastMess = React.useRef<HTMLDivElement>(null);
@@ -2185,9 +2184,18 @@ const RoomMessageList = props => {
     src: ''
   });
   React__default.useEffect(() => {
-    setTimeout(() => {
-      scrollDown();
-    }, 500);
+    const first = () => {
+      setTimeout(() => {
+        if (refList.current) {
+          dispatch({
+            type: 'MARK_PRIVATE_MESSAGES_READ',
+            payload: user.userId
+          });
+          refList.current.scrollTop = refList.current.scrollHeight;
+        }
+      }, 1000);
+    };
+    first();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   React__default.useEffect(() => {
@@ -2201,10 +2209,9 @@ const RoomMessageList = props => {
         payload: user.userId
       });
       refList.current.scrollTop = refList.current.scrollHeight;
+      const newGap = refList.current.scrollHeight - refList.current.scrollTop;
+      setGap(newGap);
     }
-  };
-  const handlerScrollDown = () => {
-    scrollDown();
   };
   return /*#__PURE__*/React__default.createElement(CardContent, {
     className: classes.messageListOuter
@@ -2231,7 +2238,14 @@ const RoomMessageList = props => {
         const diff = refList.current.scrollHeight - refList.current.scrollTop;
         const isShowButton = refList.current.scrollTop < refList.current.scrollHeight - gap;
         setScrollDownButton(isShowButton);
-        console.log('scrollTop', refList.current.scrollTop, 'scrollHeight', refList.current.scrollHeight, 'diff:', diff);
+        // console.log(
+        //   'scrollTop',
+        //   refList.current.scrollTop,
+        //   'scrollHeight',
+        //   refList.current.scrollHeight,
+        //   'diff:',
+        //   diff,
+        // );
         if (diff > gap && diff < gap + 90) {
           scrollDown();
         }
@@ -2259,7 +2273,7 @@ const RoomMessageList = props => {
     color: "info",
     "aria-label": "add",
     size: "medium",
-    onClick: handlerScrollDown
+    onClick: scrollDown
   }, /*#__PURE__*/React__default.createElement(KeyboardArrowDownIcon, null)), messageCountUnreaded != null && messageCountUnreaded.length > 0 && /*#__PURE__*/React__default.createElement(Fab, {
     color: "warning",
     "aria-label": "add",
@@ -3763,7 +3777,7 @@ const useStyles$f = /*#__PURE__*/makeStyles(theme => ({
   }
 }));
 const ChatPage = _ref => {
-  var _state$conference$dat, _state$conference$dat2, _state$conference$dat3, _state$activeRoom, _state$activeRoom2, _state$conference$dat5, _state$conference$dat6, _state$conference$dat7;
+  var _state$conference$dat, _state$conference$dat2, _state$conference$dat3, _state$activeRoom, _state$activeRoom2, _state$activeRoom3, _state$activeRoom4, _state$conference$dat5, _state$conference$dat6, _state$conference$dat7;
   let {
     activeGroupId,
     activeChatUserId,
@@ -3990,7 +4004,7 @@ const ChatPage = _ref => {
   //   const messages = ;
   //   return messages.reduce((a: number, b: number) => a + b, 0);
   // };
-  const depsContats = (_state$conference$dat = state.conference.data) != null && _state$conference$dat.id ? [state.conference.joined, (_state$conference$dat2 = state.conference.data) == null ? void 0 : _state$conference$dat2.id, (_state$conference$dat3 = state.conference.data) == null ? void 0 : _state$conference$dat3.contactId, (_state$activeRoom = state.activeRoom) == null ? void 0 : _state$activeRoom.groupId, (_state$activeRoom2 = state.activeRoom) == null ? void 0 : _state$activeRoom2.userId] : [state.activeRoom, allMessCount(state.groupGather), allMessCount(state.contactGather)];
+  const depsContats = (_state$conference$dat = state.conference.data) != null && _state$conference$dat.id ? [state.conference.joined, (_state$conference$dat2 = state.conference.data) == null ? void 0 : _state$conference$dat2.id, (_state$conference$dat3 = state.conference.data) == null ? void 0 : _state$conference$dat3.contactId, (_state$activeRoom = state.activeRoom) == null ? void 0 : _state$activeRoom.groupId, (_state$activeRoom2 = state.activeRoom) == null ? void 0 : _state$activeRoom2.userId] : [(_state$activeRoom3 = state.activeRoom) == null ? void 0 : _state$activeRoom3.groupId, (_state$activeRoom4 = state.activeRoom) == null ? void 0 : _state$activeRoom4.userId];
   const Contacts = useMemo(() => {
     var _state$conference$dat4;
     return ((_state$conference$dat4 = state.conference.data) == null ? void 0 : _state$conference$dat4.id) != null ? /*#__PURE__*/createElement(Fragment, null, state.conference.joined ? /*#__PURE__*/createElement(GetConference, null) : /*#__PURE__*/createElement(GetConferenceCall, null), /*#__PURE__*/createElement(Box, {
