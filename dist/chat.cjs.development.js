@@ -2162,8 +2162,7 @@ const RoomMessageList = props => {
   const [scrollDownButton, setScrollDownButton] = React__default.useState(false);
   const messages = chat == null ? void 0 : chat.messages;
   const messageCount = (messages == null ? void 0 : messages.length) || 0;
-  const lastMessage = (chat == null ? void 0 : chat.messages) && chat.messages[messageCount - 1];
-  const gap = 540;
+  const gap = 550;
   const messageCountUnreaded = messages && messages.filter(it => (it == null ? void 0 : it.status) != null && it.status === 0);
   // const refOnMess = React.useRef<HTMLDivElement>(null);
   // const refOnLastMess = React.useRef<HTMLDivElement>(null);
@@ -2198,15 +2197,6 @@ const RoomMessageList = props => {
     scrollDown();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [getChatId(chat)]);
-  React__default.useEffect(() => {
-    if (lastMessage && user.userId === lastMessage.userId) {
-      scrollDown();
-    }
-    if (lastMessage && user.userId !== lastMessage.userId) {
-      setScrollDownButton(true);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [messageCount]);
   const scrollDown = () => {
     if (refList.current) {
       dispatch({
@@ -2241,8 +2231,13 @@ const RoomMessageList = props => {
     useWindow: false,
     getScrollParent: () => {
       if (refList.current) {
+        const diff = refList.current.scrollHeight - refList.current.scrollTop;
         const isShowButton = refList.current.scrollTop < refList.current.scrollHeight - gap;
         setScrollDownButton(isShowButton);
+        console.log('scrollTop', refList.current.scrollTop, 'scrollHeight', refList.current.scrollHeight, 'diff:', diff);
+        if (diff > gap && diff < gap + 90) {
+          scrollDown();
+        }
         //
       }
       return refList.current;
@@ -3753,7 +3748,10 @@ const useStyles$f = /*#__PURE__*/styles.makeStyles(theme => ({
   root: {
     height: '100%',
     overflow: 'hidden',
-    padding: 0
+    padding: 0,
+    [theme.breakpoints.down('sm')]: {
+      width: '100%'
+    }
   },
   innerGrid: {
     height: '100%',
