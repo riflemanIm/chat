@@ -116,9 +116,10 @@ const RoomMessageList: React.FC<RoomMessageListProps> = (
 
   const messages = chat?.messages;
   const messageCount = messages?.length || 0;
-  const lastMessage =
-    chat?.messages && chat.messages[messageCount - 1];
-  const gap = 550;
+  // const lastMessage =
+  //   chat?.messages && chat.messages[messageCount - 1];
+
+  const [gap, setGap] = React.useState(564);
 
   const messageCountUnreaded =
     messages &&
@@ -159,13 +160,23 @@ const RoomMessageList: React.FC<RoomMessageListProps> = (
     visible: false,
     src: '',
   });
+
   React.useEffect(() => {
-    setTimeout(() => {
-      scrollDown();
-    }, 500);
+    const first = () => {
+      setTimeout(() => {
+        if (refList.current) {
+          dispatch({
+            type: 'MARK_PRIVATE_MESSAGES_READ',
+            payload: user.userId,
+          });
+          refList.current.scrollTop = refList.current.scrollHeight;
+        }
+      }, 1000);
+    };
+    first();
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
   React.useEffect(() => {
     scrollDown();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -177,12 +188,13 @@ const RoomMessageList: React.FC<RoomMessageListProps> = (
         type: 'MARK_PRIVATE_MESSAGES_READ',
         payload: user.userId,
       });
-      refList.current.scrollTop = refList.current.scrollHeight;
-    }
-  };
 
-  const handlerScrollDown = () => {
-    scrollDown();
+      refList.current.scrollTop = refList.current.scrollHeight;
+      const newGap =
+        refList.current.scrollHeight - refList.current.scrollTop;
+
+      setGap(newGap);
+    }
   };
 
   return (
@@ -215,15 +227,15 @@ const RoomMessageList: React.FC<RoomMessageListProps> = (
                 refList.current.scrollHeight - gap;
 
               setScrollDownButton(isShowButton);
-              console.log(
-                'scrollTop',
-                refList.current.scrollTop,
-                'scrollHeight',
+              // console.log(
+              //   'scrollTop',
+              //   refList.current.scrollTop,
+              //   'scrollHeight',
 
-                refList.current.scrollHeight,
-                'diff:',
-                diff,
-              );
+              //   refList.current.scrollHeight,
+              //   'diff:',
+              //   diff,
+              // );
               if (diff > gap && diff < gap + 90) {
                 scrollDown();
               }
@@ -267,7 +279,7 @@ const RoomMessageList: React.FC<RoomMessageListProps> = (
             color="info"
             aria-label="add"
             size="medium"
-            onClick={handlerScrollDown}
+            onClick={scrollDown}
           >
             <KeyboardArrowDown />
           </Fab>

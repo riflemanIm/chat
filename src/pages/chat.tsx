@@ -379,9 +379,10 @@ export const ChatPage: React.FC<ChatPageProps> = ({
         state.activeRoom?.userId,
       ]
     : [
-        state.activeRoom,
-        allMessCount(state.groupGather),
-        allMessCount(state.contactGather),
+        state.activeRoom?.groupId,
+        state.activeRoom?.userId,
+        // allMessCount(state.groupGather),
+        // allMessCount(state.contactGather),
       ];
 
   const Contacts = React.useMemo(
