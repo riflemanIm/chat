@@ -118,7 +118,7 @@ const RoomMessageList: React.FC<RoomMessageListProps> = (
   const messageCount = messages?.length || 0;
   const lastMessage =
     chat?.messages && chat.messages[messageCount - 1];
-  const gap = 540;
+  const gap = 550;
 
   const messageCountUnreaded =
     messages &&
@@ -171,16 +171,6 @@ const RoomMessageList: React.FC<RoomMessageListProps> = (
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [getChatId(chat)]);
 
-  React.useEffect(() => {
-    if (lastMessage && user.userId === lastMessage.userId) {
-      scrollDown();
-    }
-    if (lastMessage && user.userId !== lastMessage.userId) {
-      setScrollDownButton(true);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [messageCount]);
-
   const scrollDown = () => {
     if (refList.current) {
       dispatch({
@@ -217,10 +207,26 @@ const RoomMessageList: React.FC<RoomMessageListProps> = (
           useWindow={false}
           getScrollParent={() => {
             if (refList.current) {
+              const diff =
+                refList.current.scrollHeight -
+                refList.current.scrollTop;
               const isShowButton =
                 refList.current.scrollTop <
                 refList.current.scrollHeight - gap;
+
               setScrollDownButton(isShowButton);
+              console.log(
+                'scrollTop',
+                refList.current.scrollTop,
+                'scrollHeight',
+
+                refList.current.scrollHeight,
+                'diff:',
+                diff,
+              );
+              if (diff > gap && diff < gap + 90) {
+                scrollDown();
+              }
 
               //
             }
