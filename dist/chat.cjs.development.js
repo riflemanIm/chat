@@ -3780,7 +3780,7 @@ const useStyles$f = /*#__PURE__*/styles.makeStyles(theme => ({
   }
 }));
 const ChatPage = _ref => {
-  var _state$conference$dat, _state$conference$dat2, _state$conference$dat3, _state$activeRoom, _state$activeRoom2, _state$activeRoom3, _state$activeRoom4, _state$conference$dat5, _state$conference$dat6, _state$conference$dat7;
+  var _state$activeRoom, _state$activeRoom2, _state$conference$dat, _state$conference$dat2, _state$conference$dat3, _state$activeRoom3, _state$activeRoom4, _state$activeRoom5, _state$activeRoom6, _state$conference$dat5, _state$conference$dat6, _state$conference$dat7;
   let {
     activeGroupId,
     activeChatUserId,
@@ -4007,7 +4007,8 @@ const ChatPage = _ref => {
   //   const messages = ;
   //   return messages.reduce((a: number, b: number) => a + b, 0);
   // };
-  const depsContats = (_state$conference$dat = state.conference.data) != null && _state$conference$dat.id ? [state.conference.joined, (_state$conference$dat2 = state.conference.data) == null ? void 0 : _state$conference$dat2.id, (_state$conference$dat3 = state.conference.data) == null ? void 0 : _state$conference$dat3.contactId, (_state$activeRoom = state.activeRoom) == null ? void 0 : _state$activeRoom.groupId, (_state$activeRoom2 = state.activeRoom) == null ? void 0 : _state$activeRoom2.userId] : [(_state$activeRoom3 = state.activeRoom) == null ? void 0 : _state$activeRoom3.groupId, (_state$activeRoom4 = state.activeRoom) == null ? void 0 : _state$activeRoom4.userId];
+  const messageCountUnreaded = ((_state$activeRoom = state.activeRoom) == null ? void 0 : _state$activeRoom.messages) && ((_state$activeRoom2 = state.activeRoom) == null ? void 0 : _state$activeRoom2.messages.filter(it => (it == null ? void 0 : it.status) != null && it.status === 0));
+  const depsContats = (_state$conference$dat = state.conference.data) != null && _state$conference$dat.id ? [state.conference.joined, (_state$conference$dat2 = state.conference.data) == null ? void 0 : _state$conference$dat2.id, (_state$conference$dat3 = state.conference.data) == null ? void 0 : _state$conference$dat3.contactId, (_state$activeRoom3 = state.activeRoom) == null ? void 0 : _state$activeRoom3.groupId, (_state$activeRoom4 = state.activeRoom) == null ? void 0 : _state$activeRoom4.userId] : [(_state$activeRoom5 = state.activeRoom) == null ? void 0 : _state$activeRoom5.groupId, (_state$activeRoom6 = state.activeRoom) == null ? void 0 : _state$activeRoom6.userId, messageCountUnreaded];
   const Contacts = React.useMemo(() => {
     var _state$conference$dat4;
     return ((_state$conference$dat4 = state.conference.data) == null ? void 0 : _state$conference$dat4.id) != null ? /*#__PURE__*/React.createElement(React.Fragment, null, state.conference.joined ? /*#__PURE__*/React.createElement(GetConference, null) : /*#__PURE__*/React.createElement(GetConferenceCall, null), /*#__PURE__*/React.createElement(material.Box, {

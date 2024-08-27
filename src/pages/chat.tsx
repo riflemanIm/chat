@@ -370,6 +370,12 @@ export const ChatPage: React.FC<ChatPageProps> = ({
   //   return messages.reduce((a: number, b: number) => a + b, 0);
   // };
 
+  const messageCountUnreaded =
+    state.activeRoom?.messages &&
+    state.activeRoom?.messages.filter(
+      it => it?.status != null && it.status === 0,
+    );
+
   const depsContats = state.conference.data?.id
     ? [
         state.conference.joined,
@@ -381,7 +387,7 @@ export const ChatPage: React.FC<ChatPageProps> = ({
     : [
         state.activeRoom?.groupId,
         state.activeRoom?.userId,
-        // allMessCount(state.groupGather),
+        messageCountUnreaded,
         // allMessCount(state.contactGather),
       ];
 
