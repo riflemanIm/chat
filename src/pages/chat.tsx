@@ -365,80 +365,48 @@ export const ChatPage: React.FC<ChatPageProps> = ({
     />
   );
 
-  // const getMessCount = (data: GroupGather) => {
-  //   const messages = ;
-  //   return messages.reduce((a: number, b: number) => a + b, 0);
-  // };
+  const Contacts = () =>
+    state.conference.data?.id != null ? (
+      <>
+        {state.conference.joined ? (
+          <GetConference />
+        ) : (
+          <GetConferenceCall />
+        )}
+        <Box className={classes.conAbsOnConf}>
+          <Paper style={{ borderRadius: 8 }}>
+            <Box display="flex" flexDirection="row" my={3}>
+              {((isEmpty(state.activeRoom) && isMobile) ||
+                (!isEmpty(state.activeRoom) && !isMobile)) && (
+                <>
+                  <CheckAudiVideoPerm audio={true} video={false} />
+                  <CheckAudiVideoPerm audio={false} video={true} />
+                </>
+              )}
 
-  const messageCountUnreaded =
-    state.activeRoom?.messages &&
-    state.activeRoom?.messages.filter(
-      it => it?.status != null && it.status === 0,
-    );
-
-  const depsContats = state.conference.data?.id
-    ? [
-        state.conference.joined,
-        state.conference.data?.id,
-        state.conference.data?.contactId,
-        state.activeRoom?.groupId,
-        state.activeRoom?.userId,
-      ]
-    : [
-        state.activeRoom?.groupId,
-        state.activeRoom?.userId,
-        messageCountUnreaded,
-        // allMessCount(state.contactGather),
-      ];
-
-  const Contacts = React.useMemo(
-    () =>
-      state.conference.data?.id != null ? (
-        <>
-          {state.conference.joined ? (
-            <GetConference />
-          ) : (
-            <GetConferenceCall />
-          )}
-          <Box className={classes.conAbsOnConf}>
-            <Paper style={{ borderRadius: 8 }}>
-              <Box display="flex" flexDirection="row" my={3}>
-                {((isEmpty(state.activeRoom) && isMobile) ||
-                  (!isEmpty(state.activeRoom) && !isMobile)) && (
-                  <>
-                    <CheckAudiVideoPerm audio={true} video={false} />
-                    <CheckAudiVideoPerm audio={false} video={true} />
-                  </>
+              {isEmpty(state.activeRoom) &&
+                state.chatOld != null &&
+                isMobile && (
+                  <Tooltip title={t('CHAT.CONFERENCE.BACK')}>
+                    <IconButton
+                      aria-label="check"
+                      onClick={() =>
+                        state.chatOld != null &&
+                        onChangeChat(state.chatOld)
+                      }
+                      size="large"
+                    >
+                      <ArrowForward />
+                    </IconButton>
+                  </Tooltip>
                 )}
-
-                {isEmpty(state.activeRoom) &&
-                  state.chatOld != null &&
-                  isMobile && (
-                    <Tooltip title={t('CHAT.CONFERENCE.BACK')}>
-                      <IconButton
-                        aria-label="check"
-                        onClick={() =>
-                          state.chatOld != null &&
-                          onChangeChat(state.chatOld)
-                        }
-                        size="large"
-                      >
-                        <ArrowForward />
-                      </IconButton>
-                    </Tooltip>
-                  )}
-              </Box>
-            </Paper>
-          </Box>
-        </>
-      ) : (
-        <GetRoomList />
-      ),
-
-    depsContats,
-  );
-
-  console.log('chat state', state);
+            </Box>
+          </Paper>
+        </Box>
+      </>
+    ) : (
+      <GetRoomList />
+    );
 
   return (
     <Container
@@ -452,7 +420,7 @@ export const ChatPage: React.FC<ChatPageProps> = ({
     >
       {isMobile ? (
         <React.Fragment>
-          {Contacts}
+          <Contacts />
           {renderRoom}
         </React.Fragment>
       ) : (
@@ -463,7 +431,7 @@ export const ChatPage: React.FC<ChatPageProps> = ({
               sm={state.conference.data?.id != null ? 6 : 4}
               className={classes.innerGrid}
             >
-              {Contacts}
+              <Contacts />
             </Grid>
           )}
           <Grid

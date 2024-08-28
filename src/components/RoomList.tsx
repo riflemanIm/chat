@@ -1,33 +1,33 @@
-import React from "react";
-import List from "@mui/material/List";
-import { Theme } from "@mui/material/styles";
+import React from 'react';
+import List from '@mui/material/List';
+import { Theme } from '@mui/material/styles';
 
-import { Card, CardHeader, Divider, TextField } from "@mui/material";
-import RoomListItem from "./RoomListItem";
+import { Card, CardHeader, Divider, TextField } from '@mui/material';
+import RoomListItem from './RoomListItem';
 import {
   chatRoomComparer,
   getChatId,
   getChatName,
-  isEmpty
-} from "../utils/common";
-import { useTranslation } from "react-i18next";
-import { ChatRoom, Contact, Group, SetTyping, User } from "../types";
-import { makeStyles } from "@mui/styles";
+  isEmpty,
+} from '../utils/common';
+import { useTranslation } from 'react-i18next';
+import { ChatRoom, Contact, Group, SetTyping, User } from '../types';
+import { makeStyles } from '@mui/styles';
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
-    width: "100%",
-    height: "100%"
+    width: '100%',
+    height: '100%',
   },
   searchField: {
-    width: "100%"
+    width: '100%',
   },
   listStyle: {
-    height: "89.5%",
-    overflowY: "auto",
-    scrollbarWidth: "thin",
-    scrollbarColor: `${theme.palette.primary.light} #fff`
-  }
+    height: '89.5%',
+    overflowY: 'auto',
+    scrollbarWidth: 'thin',
+    scrollbarColor: `${theme.palette.primary.light} #fff`,
+  },
 }));
 
 type RoomListProps = {
@@ -40,21 +40,24 @@ type RoomListProps = {
   onChangeChat?: (chat: ChatRoom) => void;
 };
 
-const filterChats = (chats: ChatRoom[], filter: string | null): ChatRoom[] => {
+const filterChats = (
+  chats: ChatRoom[],
+  filter: string | null,
+): ChatRoom[] => {
   if (filter === null) return chats;
   const lowerFilter = filter.toLowerCase();
   return chats.filter(
     chat =>
       getChatName(chat)
         .toLowerCase()
-        .indexOf(lowerFilter.toLowerCase()) !== -1
+        .indexOf(lowerFilter.toLowerCase()) !== -1,
   );
 };
 
 const sortChats = (
   userId: number,
   groups: ChatRoom[],
-  contacts: ChatRoom[]
+  contacts: ChatRoom[],
 ) => {
   let roomArr = [...groups, ...contacts];
   //console.log('groups', groups, 'contacts', contacts);
@@ -63,7 +66,9 @@ const sortChats = (
   roomArr = roomArr.sort(chatRoomComparer);
 
   // Проверяем, есть ли список, который нужно закрепить
-  const topChatId = localStorage.getItem(`${userId}-topChatId`) as string;
+  const topChatId = localStorage.getItem(
+    `${userId}-topChatId`,
+  ) as string;
   if (topChatId) {
     const chat = roomArr.find(c => getChatId(c) === topChatId);
     if (chat) {
@@ -85,32 +90,49 @@ const RoomList: React.FC<RoomListProps> = (props: RoomListProps) => {
     sortChats(
       props.user.userId,
       filterChats(props.groups, null),
-      filterChats(props.contacts, null)
-    )
+      filterChats(props.contacts, null),
+    ),
   );
 
-  const onSearchChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
+  const onSearchChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+  ): void => {
     //console.log("e.target.value", e.target.value);
 
     setChats(
       sortChats(
         props.user.userId,
         filterChats(props.groups, e.target.value),
-        filterChats(props.contacts, e.target.value)
-      )
+        filterChats(props.contacts, e.target.value),
+      ),
     );
   };
   //const activeItem = (id: number) => id === props.activeRoom?.userId;
 
   //console.log("chats", chats);
-
+  const roomList = React.useMemo(
+    () =>
+      chats.map(chat => (
+        <RoomListItem
+          key={getChatId(chat)}
+          apiUrl={props.apiUrl}
+          chat={chat}
+          active={chat === props.activeRoom}
+          typing={props.typing}
+          onClick={() =>
+            props.onChangeChat != null && props.onChangeChat(chat)
+          }
+        />
+      )),
+    [props.activeRoom, props.typing],
+  );
   return (
     <Card elevation={1} className={classes.root}>
       <CardHeader
         title={
           <TextField
             className={classes.searchField}
-            label={t("CHAT.INPUT_SEARCH_CONTACT")}
+            label={t('CHAT.INPUT_SEARCH_CONTACT')}
             variant="outlined"
             size="small"
             fullWidth
@@ -120,22 +142,7 @@ const RoomList: React.FC<RoomListProps> = (props: RoomListProps) => {
       />
       <Divider />
       <List aria-label="rooms" className={classes.listStyle}>
-        {!isEmpty(chats) &&
-          chats.map(
-            chat =>
-              !isEmpty(chat) && (
-                <RoomListItem
-                  key={getChatId(chat)}
-                  apiUrl={props.apiUrl}
-                  chat={chat}
-                  active={chat === props.activeRoom}
-                  typing={props.typing}
-                  onClick={() =>
-                    props.onChangeChat != null && props.onChangeChat(chat)
-                  }
-                />
-              )
-          )}
+        {roomList}
       </List>
     </Card>
   );
