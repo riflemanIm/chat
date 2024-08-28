@@ -2447,66 +2447,66 @@ const Room = props => {
 
 const useStyles$b = /*#__PURE__*/makeStyles(theme => createStyles({
   main: {
-    flex: "1 1 auto",
-    whiteSpace: "nowrap",
-    overflow: "hidden",
-    textOverflow: "ellipsis"
+    flex: '1 1 auto',
+    whiteSpace: 'nowrap',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis'
   },
   time: {
     paddingLeft: theme.spacing(1),
-    justifyContent: "flex-end",
-    whiteSpace: "nowrap"
+    justifyContent: 'flex-end',
+    whiteSpace: 'nowrap'
   },
   unread: {
-    justifyContent: "flex-end",
+    justifyContent: 'flex-end',
     maxHeight: 20
   },
   avatarGroup: {
-    backgroundColor: "#28B7C6",
-    color: "#fff"
+    backgroundColor: '#28B7C6',
+    color: '#fff'
   }
 }));
 const getMessageText = (message, t) => {
   if (!message) return null;
   switch (message.messageType) {
-    case "text":
+    case 'text':
       return message.content;
-    case "image":
-      return "[" + t("CHAT.MESSAGE.TYPE.IMAGE") + "]";
-    case "video":
-      return "[" + t("CHAT.MESSAGE.TYPE.VIDEO") + "]";
-    case "file":
-      return "[" + t("CHAT.MESSAGE.TYPE.FILE") + "]";
-    case "notify":
-      return "[" + t("CHAT.MESSAGE.TYPE.NOTIFY") + "]";
+    case 'image':
+      return "[" + t('CHAT.MESSAGE.TYPE.IMAGE') + "]";
+    case 'video':
+      return "[" + t('CHAT.MESSAGE.TYPE.VIDEO') + "]";
+    case 'file':
+      return "[" + t('CHAT.MESSAGE.TYPE.FILE') + "]";
+    case 'notify':
+      return "[" + t('CHAT.MESSAGE.TYPE.NOTIFY') + "]";
     default:
       return null;
   }
 };
 const TypingBadge = /*#__PURE__*/withStyles(theme => createStyles({
   badge: {
-    backgroundColor: "#44b700",
-    color: "#44b700",
+    backgroundColor: '#44b700',
+    color: '#44b700',
     boxShadow: "0 0 0 2px " + theme.palette.background.paper,
-    "&::after": {
-      position: "absolute",
+    '&::after': {
+      position: 'absolute',
       top: 0,
       left: 0,
-      width: "100%",
-      height: "100%",
-      borderRadius: "50%",
-      animation: "$ripple 1.2s infinite ease-in-out",
-      border: "1px solid currentColor",
+      width: '100%',
+      height: '100%',
+      borderRadius: '50%',
+      animation: '$ripple 1.2s infinite ease-in-out',
+      border: '1px solid currentColor',
       content: '""'
     }
   },
-  "@keyframes ripple": {
-    "0%": {
-      transform: "scale(.8)",
+  '@keyframes ripple': {
+    '0%': {
+      transform: 'scale(.8)',
       opacity: 1
     },
-    "100%": {
-      transform: "scale(2.4)",
+    '100%': {
+      transform: 'scale(2.4)',
       opacity: 0
     }
   }
@@ -2520,22 +2520,22 @@ const OnlineBadge = /*#__PURE__*/withStyles(theme => createStyles({
 const contactAvatar = (apiUrl, contact, typing) => {
   const avatar = /*#__PURE__*/React__default.createElement(Avatar, {
     alt: contact.username,
-    src: contact.avatar ? combineURLs(apiUrl, contact.avatar) : ""
+    src: contact.avatar ? combineURLs(apiUrl, contact.avatar) : ''
   });
   const isTyping = !!(typing != null && typing.contactId) && (typing == null ? void 0 : typing.userId) === contact.userId;
   if (isTyping) return /*#__PURE__*/React__default.createElement(TypingBadge, {
     overlap: "circular",
     anchorOrigin: {
-      vertical: "bottom",
-      horizontal: "right"
+      vertical: 'bottom',
+      horizontal: 'right'
     },
     variant: "dot"
   }, avatar);
   if (contact != null && contact.online) return /*#__PURE__*/React__default.createElement(OnlineBadge, {
     overlap: "circular",
     anchorOrigin: {
-      vertical: "bottom",
-      horizontal: "right"
+      vertical: 'bottom',
+      horizontal: 'right'
     },
     variant: "dot"
   }, avatar);
@@ -2555,17 +2555,17 @@ const RoomListItem = props => {
   const avatar = chat.groupId ? /*#__PURE__*/React__default.createElement(Avatar, {
     alt: roomName,
     className: classes.avatarGroup
-  }, /*#__PURE__*/React__default.createElement(GroupIcon, null), " ") : contactAvatar(apiUrl, chat, typing);
+  }, /*#__PURE__*/React__default.createElement(GroupIcon, null), ' ') : contactAvatar(apiUrl, chat, typing);
   const lastMessage = chat.messages && chat.messages.length > 0 ? chat.messages[chat.messages.length - 1] : null;
   const roomText = getMessageText(lastMessage, t);
   const roomTime = lastMessage == null ? void 0 : lastMessage.cdate;
-  return /*#__PURE__*/React__default.createElement(ListItem, {
+  const listItem = useMemo(() => /*#__PURE__*/React__default.createElement(ListItem, {
     button: true,
     selected: props.active,
     onClick: props.onClick
   }, /*#__PURE__*/React__default.createElement(ListItemAvatar, null, avatar), /*#__PURE__*/React__default.createElement(ListItemText, {
     secondaryTypographyProps: {
-      component: "span"
+      component: 'span'
     },
     primary: /*#__PURE__*/React__default.createElement(Box, {
       display: "flex",
@@ -2587,21 +2587,22 @@ const RoomListItem = props => {
       color: "primary",
       label: chat.unreadCount
     }) : null)
-  }));
+  })), [roomTime]);
+  return listItem;
 };
 
 const useStyles$c = /*#__PURE__*/makeStyles(theme => ({
   root: {
-    width: "100%",
-    height: "100%"
+    width: '100%',
+    height: '100%'
   },
   searchField: {
-    width: "100%"
+    width: '100%'
   },
   listStyle: {
-    height: "89.5%",
-    overflowY: "auto",
-    scrollbarWidth: "thin",
+    height: '89.5%',
+    overflowY: 'auto',
+    scrollbarWidth: 'thin',
     scrollbarColor: theme.palette.primary.light + " #fff"
   }
 }));
@@ -2640,13 +2641,21 @@ const RoomList = props => {
   };
   //const activeItem = (id: number) => id === props.activeRoom?.userId;
   //console.log("chats", chats);
+  const roomList = React__default.useMemo(() => chats.map(chat => /*#__PURE__*/React__default.createElement(RoomListItem, {
+    key: getChatId(chat),
+    apiUrl: props.apiUrl,
+    chat: chat,
+    active: chat === props.activeRoom,
+    typing: props.typing,
+    onClick: () => props.onChangeChat != null && props.onChangeChat(chat)
+  })), [props.activeRoom, props.typing]);
   return /*#__PURE__*/React__default.createElement(Card, {
     elevation: 1,
     className: classes.root
   }, /*#__PURE__*/React__default.createElement(CardHeader, {
     title: /*#__PURE__*/React__default.createElement(TextField, {
       className: classes.searchField,
-      label: t("CHAT.INPUT_SEARCH_CONTACT"),
+      label: t('CHAT.INPUT_SEARCH_CONTACT'),
       variant: "outlined",
       size: "small",
       fullWidth: true,
@@ -2655,14 +2664,7 @@ const RoomList = props => {
   }), /*#__PURE__*/React__default.createElement(Divider, null), /*#__PURE__*/React__default.createElement(List$1, {
     "aria-label": "rooms",
     className: classes.listStyle
-  }, !isEmpty(chats) && chats.map(chat => !isEmpty(chat) && /*#__PURE__*/React__default.createElement(RoomListItem, {
-    key: getChatId(chat),
-    apiUrl: props.apiUrl,
-    chat: chat,
-    active: chat === props.activeRoom,
-    typing: props.typing,
-    onClick: () => props.onChangeChat != null && props.onChangeChat(chat)
-  }))));
+  }, roomList));
 };
 
 function updateUrlParameter(url, param, value) {
@@ -3777,7 +3779,7 @@ const useStyles$f = /*#__PURE__*/makeStyles(theme => ({
   }
 }));
 const ChatPage = _ref => {
-  var _state$activeRoom, _state$activeRoom2, _state$conference$dat, _state$conference$dat2, _state$conference$dat3, _state$activeRoom3, _state$activeRoom4, _state$activeRoom5, _state$activeRoom6, _state$conference$dat5, _state$conference$dat6, _state$conference$dat7;
+  var _state$conference$dat2, _state$conference$dat3, _state$conference$dat4;
   let {
     activeGroupId,
     activeChatUserId,
@@ -4000,15 +4002,9 @@ const ChatPage = _ref => {
     onClose: onConferencePause,
     langCode: state.user.langCode
   });
-  // const getMessCount = (data: GroupGather) => {
-  //   const messages = ;
-  //   return messages.reduce((a: number, b: number) => a + b, 0);
-  // };
-  const messageCountUnreaded = ((_state$activeRoom = state.activeRoom) == null ? void 0 : _state$activeRoom.messages) && ((_state$activeRoom2 = state.activeRoom) == null ? void 0 : _state$activeRoom2.messages.filter(it => (it == null ? void 0 : it.status) != null && it.status === 0));
-  const depsContats = (_state$conference$dat = state.conference.data) != null && _state$conference$dat.id ? [state.conference.joined, (_state$conference$dat2 = state.conference.data) == null ? void 0 : _state$conference$dat2.id, (_state$conference$dat3 = state.conference.data) == null ? void 0 : _state$conference$dat3.contactId, (_state$activeRoom3 = state.activeRoom) == null ? void 0 : _state$activeRoom3.groupId, (_state$activeRoom4 = state.activeRoom) == null ? void 0 : _state$activeRoom4.userId] : [(_state$activeRoom5 = state.activeRoom) == null ? void 0 : _state$activeRoom5.groupId, (_state$activeRoom6 = state.activeRoom) == null ? void 0 : _state$activeRoom6.userId, messageCountUnreaded];
-  const Contacts = useMemo(() => {
-    var _state$conference$dat4;
-    return ((_state$conference$dat4 = state.conference.data) == null ? void 0 : _state$conference$dat4.id) != null ? /*#__PURE__*/createElement(Fragment, null, state.conference.joined ? /*#__PURE__*/createElement(GetConference, null) : /*#__PURE__*/createElement(GetConferenceCall, null), /*#__PURE__*/createElement(Box, {
+  const Contacts = () => {
+    var _state$conference$dat;
+    return ((_state$conference$dat = state.conference.data) == null ? void 0 : _state$conference$dat.id) != null ? /*#__PURE__*/createElement(Fragment, null, state.conference.joined ? /*#__PURE__*/createElement(GetConference, null) : /*#__PURE__*/createElement(GetConferenceCall, null), /*#__PURE__*/createElement(Box, {
       className: classes.conAbsOnConf
     }, /*#__PURE__*/createElement(Paper, {
       style: {
@@ -4031,25 +4027,24 @@ const ChatPage = _ref => {
       onClick: () => state.chatOld != null && onChangeChat(state.chatOld),
       size: "large"
     }, /*#__PURE__*/createElement(ArrowForward, null))))))) : /*#__PURE__*/createElement(GetRoomList, null);
-  }, depsContats);
-  console.log('chat state', state);
+  };
   return /*#__PURE__*/createElement(Container, {
     maxWidth: "lg",
     className: classes.root,
     sx: theme => ({
       width: inModale ? "calc(100vw - " + theme.spacing(8) + ")" : '100%'
     })
-  }, isMobile ? /*#__PURE__*/createElement(Fragment, null, Contacts, renderRoom) : /*#__PURE__*/createElement(Grid, {
+  }, isMobile ? /*#__PURE__*/createElement(Fragment, null, /*#__PURE__*/createElement(Contacts, null), renderRoom) : /*#__PURE__*/createElement(Grid, {
     container: true,
     spacing: 1,
     className: classes.innerGrid
-  }, (((_state$conference$dat5 = state.conference.data) == null ? void 0 : _state$conference$dat5.id) != null || !hideRooms) && /*#__PURE__*/createElement(Grid, {
+  }, (((_state$conference$dat2 = state.conference.data) == null ? void 0 : _state$conference$dat2.id) != null || !hideRooms) && /*#__PURE__*/createElement(Grid, {
     item: true,
-    sm: ((_state$conference$dat6 = state.conference.data) == null ? void 0 : _state$conference$dat6.id) != null ? 6 : 4,
+    sm: ((_state$conference$dat3 = state.conference.data) == null ? void 0 : _state$conference$dat3.id) != null ? 6 : 4,
     className: classes.innerGrid
-  }, Contacts), /*#__PURE__*/createElement(Grid, {
+  }, /*#__PURE__*/createElement(Contacts, null)), /*#__PURE__*/createElement(Grid, {
     item: true,
-    sm: ((_state$conference$dat7 = state.conference.data) == null ? void 0 : _state$conference$dat7.id) != null ? 6 : hideRooms ? 12 : 8,
+    sm: ((_state$conference$dat4 = state.conference.data) == null ? void 0 : _state$conference$dat4.id) != null ? 6 : hideRooms ? 12 : 8,
     className: classes.innerGrid
   }, renderRoom)), /*#__PURE__*/createElement(ChatAlert, null));
 };
