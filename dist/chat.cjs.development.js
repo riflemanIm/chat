@@ -580,6 +580,9 @@ const getChatId = chat => {
 const getChatName = chat => {
   return chat.groupId ? chat.name : chat.username;
 };
+const allMessCount = chats => {
+  return Object.values(chats).map(it => (it == null ? void 0 : it.messages) != null ? it == null ? void 0 : it.messages.length : 0).reduce((a, b) => a + b, 0);
+};
 const chatRoomComparer = (a, b) => {
   const hasMessagesA = Array.isArray(a.messages) && a.messages.length > 0;
   const hasMessagesB = Array.isArray(b.messages) && b.messages.length > 0;
@@ -3782,7 +3785,7 @@ const useStyles$f = /*#__PURE__*/styles.makeStyles(theme => ({
   }
 }));
 const ChatPage = _ref => {
-  var _state$conference$dat, _state$conference$dat2, _state$activeRoom, _state$activeRoom2, _state$conference$dat4, _state$conference$dat5, _state$conference$dat6;
+  var _state$activeRoom, _state$activeRoom2, _state$conference$dat, _state$conference$dat2, _state$activeRoom3, _state$conference$dat4, _state$conference$dat5, _state$conference$dat6;
   let {
     activeGroupId,
     activeChatUserId,
@@ -3985,7 +3988,7 @@ const ChatPage = _ref => {
     onOperatorAdd: onOperatorAdd,
     onLeaveGroup: onLeaveGroup
   });
-  const GetRoomList = () => /*#__PURE__*/React.createElement(RoomList, {
+  const getRoomList = React.useMemo(() => /*#__PURE__*/React.createElement(RoomList, {
     apiUrl: apiUrl,
     user: state.user,
     activeRoom: state.activeRoom,
@@ -3993,7 +3996,7 @@ const ChatPage = _ref => {
     contacts: Object.values(state.contactGather),
     typing: state.typing,
     onChangeChat: onChangeChat
-  });
+  }), [(_state$activeRoom = state.activeRoom) == null ? void 0 : _state$activeRoom.groupId, (_state$activeRoom2 = state.activeRoom) == null ? void 0 : _state$activeRoom2.userId, allMessCount(state.contactGather), allMessCount(state.groupGather)]);
   const GetConferenceCall = () => state.conference.data && /*#__PURE__*/React.createElement(ConferenceCall, {
     apiUrl: apiUrl,
     contact: state.contactGather[state.user.userId === state.conference.data.userId ? state.conference.data.contactId : state.conference.data.userId],
@@ -4005,7 +4008,7 @@ const ChatPage = _ref => {
     onClose: onConferencePause,
     langCode: state.user.langCode
   });
-  const conf = React.useMemo(() => /*#__PURE__*/React.createElement(React.Fragment, null, state.conference.joined ? /*#__PURE__*/React.createElement(GetConference, null) : /*#__PURE__*/React.createElement(GetConferenceCall, null), /*#__PURE__*/React.createElement(material.Box, {
+  const getGonf = React.useMemo(() => state.conference.joined ? /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement(GetConference, null), /*#__PURE__*/React.createElement(material.Box, {
     className: classes.conAbsOnConf
   }, /*#__PURE__*/React.createElement(material.Paper, {
     style: {
@@ -4027,12 +4030,12 @@ const ChatPage = _ref => {
     "aria-label": "check",
     onClick: () => state.chatOld != null && onChangeChat(state.chatOld),
     size: "large"
-  }, /*#__PURE__*/React.createElement(iconsMaterial.ArrowForward, null))))))),
+  }, /*#__PURE__*/React.createElement(iconsMaterial.ArrowForward, null))))))) : /*#__PURE__*/React.createElement(GetConferenceCall, null),
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  [state.conference.joined, (_state$conference$dat = state.conference.data) == null ? void 0 : _state$conference$dat.id, (_state$conference$dat2 = state.conference.data) == null ? void 0 : _state$conference$dat2.contactId, (_state$activeRoom = state.activeRoom) == null ? void 0 : _state$activeRoom.groupId, (_state$activeRoom2 = state.activeRoom) == null ? void 0 : _state$activeRoom2.userId]);
+  [state.conference.joined, (_state$conference$dat = state.conference.data) == null ? void 0 : _state$conference$dat.id, (_state$conference$dat2 = state.conference.data) == null ? void 0 : _state$conference$dat2.contactId, (_state$activeRoom3 = state.activeRoom) == null ? void 0 : _state$activeRoom3.userId]);
   const Contacts = () => {
     var _state$conference$dat3;
-    return ((_state$conference$dat3 = state.conference.data) == null ? void 0 : _state$conference$dat3.id) != null ? conf : /*#__PURE__*/React.createElement(GetRoomList, null);
+    return ((_state$conference$dat3 = state.conference.data) == null ? void 0 : _state$conference$dat3.id) != null ? getGonf : getRoomList;
   };
   return /*#__PURE__*/React.createElement(material.Container, {
     maxWidth: "lg",

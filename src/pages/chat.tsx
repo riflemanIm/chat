@@ -329,16 +329,24 @@ export const ChatPage: React.FC<ChatPageProps> = ({
     />
   );
 
-  const GetRoomList = () => (
-    <RoomList
-      apiUrl={apiUrl}
-      user={state.user}
-      activeRoom={state.activeRoom}
-      groups={Object.values(state.groupGather)}
-      contacts={Object.values(state.contactGather)}
-      typing={state.typing}
-      onChangeChat={onChangeChat}
-    />
+  const getRoomList = React.useMemo(
+    () => (
+      <RoomList
+        apiUrl={apiUrl}
+        user={state.user}
+        activeRoom={state.activeRoom}
+        groups={Object.values(state.groupGather)}
+        contacts={Object.values(state.contactGather)}
+        typing={state.typing}
+        onChangeChat={onChangeChat}
+      />
+    ),
+    [
+      state.activeRoom?.groupId,
+      state.activeRoom?.userId,
+      allMessCount(state.contactGather),
+      allMessCount(state.groupGather),
+    ],
   );
 
   const GetConferenceCall = () =>
@@ -365,58 +373,56 @@ export const ChatPage: React.FC<ChatPageProps> = ({
     />
   );
 
-  const conf = React.useMemo(
-    () => (
-      <>
-        {state.conference.joined ? (
+  const getGonf = React.useMemo(
+    () =>
+      state.conference.joined ? (
+        <>
           <GetConference />
-        ) : (
-          <GetConferenceCall />
-        )}
-        <Box className={classes.conAbsOnConf}>
-          <Paper style={{ borderRadius: 8 }}>
-            <Box display="flex" flexDirection="row" my={3}>
-              {((isEmpty(state.activeRoom) && isMobile) ||
-                (!isEmpty(state.activeRoom) && !isMobile)) && (
-                <>
-                  <CheckAudiVideoPerm audio={true} video={false} />
-                  <CheckAudiVideoPerm audio={false} video={true} />
-                </>
-              )}
-
-              {isEmpty(state.activeRoom) &&
-                state.chatOld != null &&
-                isMobile && (
-                  <Tooltip title={t('CHAT.CONFERENCE.BACK')}>
-                    <IconButton
-                      aria-label="check"
-                      onClick={() =>
-                        state.chatOld != null &&
-                        onChangeChat(state.chatOld)
-                      }
-                      size="large"
-                    >
-                      <ArrowForward />
-                    </IconButton>
-                  </Tooltip>
+          <Box className={classes.conAbsOnConf}>
+            <Paper style={{ borderRadius: 8 }}>
+              <Box display="flex" flexDirection="row" my={3}>
+                {((isEmpty(state.activeRoom) && isMobile) ||
+                  (!isEmpty(state.activeRoom) && !isMobile)) && (
+                  <>
+                    <CheckAudiVideoPerm audio={true} video={false} />
+                    <CheckAudiVideoPerm audio={false} video={true} />
+                  </>
                 )}
-            </Box>
-          </Paper>
-        </Box>
-      </>
-    ),
+
+                {isEmpty(state.activeRoom) &&
+                  state.chatOld != null &&
+                  isMobile && (
+                    <Tooltip title={t('CHAT.CONFERENCE.BACK')}>
+                      <IconButton
+                        aria-label="check"
+                        onClick={() =>
+                          state.chatOld != null &&
+                          onChangeChat(state.chatOld)
+                        }
+                        size="large"
+                      >
+                        <ArrowForward />
+                      </IconButton>
+                    </Tooltip>
+                  )}
+              </Box>
+            </Paper>
+          </Box>
+        </>
+      ) : (
+        <GetConferenceCall />
+      ),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [
       state.conference.joined,
       state.conference.data?.id,
       state.conference.data?.contactId,
-      state.activeRoom?.groupId,
       state.activeRoom?.userId,
     ],
   );
 
   const Contacts = () =>
-    state.conference.data?.id != null ? conf : <GetRoomList />;
+    state.conference.data?.id != null ? getGonf : getRoomList;
 
   return (
     <Container
