@@ -365,8 +365,8 @@ export const ChatPage: React.FC<ChatPageProps> = ({
     />
   );
 
-  const Contacts = () =>
-    state.conference.data?.id != null ? (
+  const conf = React.useMemo(
+    () => (
       <>
         {state.conference.joined ? (
           <GetConference />
@@ -404,9 +404,19 @@ export const ChatPage: React.FC<ChatPageProps> = ({
           </Paper>
         </Box>
       </>
-    ) : (
-      <GetRoomList />
-    );
+    ),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [
+      state.conference.joined,
+      state.conference.data?.id,
+      state.conference.data?.contactId,
+      state.activeRoom?.groupId,
+      state.activeRoom?.userId,
+    ],
+  );
+
+  const Contacts = () =>
+    state.conference.data?.id != null ? conf : <GetRoomList />;
 
   return (
     <Container

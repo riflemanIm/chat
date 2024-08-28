@@ -3782,7 +3782,7 @@ const useStyles$f = /*#__PURE__*/styles.makeStyles(theme => ({
   }
 }));
 const ChatPage = _ref => {
-  var _state$conference$dat2, _state$conference$dat3, _state$conference$dat4;
+  var _state$conference$dat, _state$conference$dat2, _state$activeRoom, _state$activeRoom2, _state$conference$dat4, _state$conference$dat5, _state$conference$dat6;
   let {
     activeGroupId,
     activeChatUserId,
@@ -4005,31 +4005,34 @@ const ChatPage = _ref => {
     onClose: onConferencePause,
     langCode: state.user.langCode
   });
+  const conf = React.useMemo(() => /*#__PURE__*/React.createElement(React.Fragment, null, state.conference.joined ? /*#__PURE__*/React.createElement(GetConference, null) : /*#__PURE__*/React.createElement(GetConferenceCall, null), /*#__PURE__*/React.createElement(material.Box, {
+    className: classes.conAbsOnConf
+  }, /*#__PURE__*/React.createElement(material.Paper, {
+    style: {
+      borderRadius: 8
+    }
+  }, /*#__PURE__*/React.createElement(material.Box, {
+    display: "flex",
+    flexDirection: "row",
+    my: 3
+  }, (isEmpty(state.activeRoom) && isMobile || !isEmpty(state.activeRoom) && !isMobile) && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement(CheckAudiVideoPerm, {
+    audio: true,
+    video: false
+  }), /*#__PURE__*/React.createElement(CheckAudiVideoPerm, {
+    audio: false,
+    video: true
+  })), isEmpty(state.activeRoom) && state.chatOld != null && isMobile && /*#__PURE__*/React.createElement(material.Tooltip, {
+    title: t('CHAT.CONFERENCE.BACK')
+  }, /*#__PURE__*/React.createElement(material.IconButton, {
+    "aria-label": "check",
+    onClick: () => state.chatOld != null && onChangeChat(state.chatOld),
+    size: "large"
+  }, /*#__PURE__*/React.createElement(iconsMaterial.ArrowForward, null))))))),
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  [state.conference.joined, (_state$conference$dat = state.conference.data) == null ? void 0 : _state$conference$dat.id, (_state$conference$dat2 = state.conference.data) == null ? void 0 : _state$conference$dat2.contactId, (_state$activeRoom = state.activeRoom) == null ? void 0 : _state$activeRoom.groupId, (_state$activeRoom2 = state.activeRoom) == null ? void 0 : _state$activeRoom2.userId]);
   const Contacts = () => {
-    var _state$conference$dat;
-    return ((_state$conference$dat = state.conference.data) == null ? void 0 : _state$conference$dat.id) != null ? /*#__PURE__*/React.createElement(React.Fragment, null, state.conference.joined ? /*#__PURE__*/React.createElement(GetConference, null) : /*#__PURE__*/React.createElement(GetConferenceCall, null), /*#__PURE__*/React.createElement(material.Box, {
-      className: classes.conAbsOnConf
-    }, /*#__PURE__*/React.createElement(material.Paper, {
-      style: {
-        borderRadius: 8
-      }
-    }, /*#__PURE__*/React.createElement(material.Box, {
-      display: "flex",
-      flexDirection: "row",
-      my: 3
-    }, (isEmpty(state.activeRoom) && isMobile || !isEmpty(state.activeRoom) && !isMobile) && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement(CheckAudiVideoPerm, {
-      audio: true,
-      video: false
-    }), /*#__PURE__*/React.createElement(CheckAudiVideoPerm, {
-      audio: false,
-      video: true
-    })), isEmpty(state.activeRoom) && state.chatOld != null && isMobile && /*#__PURE__*/React.createElement(material.Tooltip, {
-      title: t('CHAT.CONFERENCE.BACK')
-    }, /*#__PURE__*/React.createElement(material.IconButton, {
-      "aria-label": "check",
-      onClick: () => state.chatOld != null && onChangeChat(state.chatOld),
-      size: "large"
-    }, /*#__PURE__*/React.createElement(iconsMaterial.ArrowForward, null))))))) : /*#__PURE__*/React.createElement(GetRoomList, null);
+    var _state$conference$dat3;
+    return ((_state$conference$dat3 = state.conference.data) == null ? void 0 : _state$conference$dat3.id) != null ? conf : /*#__PURE__*/React.createElement(GetRoomList, null);
   };
   return /*#__PURE__*/React.createElement(material.Container, {
     maxWidth: "lg",
@@ -4041,13 +4044,13 @@ const ChatPage = _ref => {
     container: true,
     spacing: 1,
     className: classes.innerGrid
-  }, (((_state$conference$dat2 = state.conference.data) == null ? void 0 : _state$conference$dat2.id) != null || !hideRooms) && /*#__PURE__*/React.createElement(material.Grid, {
+  }, (((_state$conference$dat4 = state.conference.data) == null ? void 0 : _state$conference$dat4.id) != null || !hideRooms) && /*#__PURE__*/React.createElement(material.Grid, {
     item: true,
-    sm: ((_state$conference$dat3 = state.conference.data) == null ? void 0 : _state$conference$dat3.id) != null ? 6 : 4,
+    sm: ((_state$conference$dat5 = state.conference.data) == null ? void 0 : _state$conference$dat5.id) != null ? 6 : 4,
     className: classes.innerGrid
   }, /*#__PURE__*/React.createElement(Contacts, null)), /*#__PURE__*/React.createElement(material.Grid, {
     item: true,
-    sm: ((_state$conference$dat4 = state.conference.data) == null ? void 0 : _state$conference$dat4.id) != null ? 6 : hideRooms ? 12 : 8,
+    sm: ((_state$conference$dat6 = state.conference.data) == null ? void 0 : _state$conference$dat6.id) != null ? 6 : hideRooms ? 12 : 8,
     className: classes.innerGrid
   }, renderRoom)), /*#__PURE__*/React.createElement(ChatAlert, null));
 };
