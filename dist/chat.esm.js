@@ -3782,7 +3782,7 @@ const useStyles$f = /*#__PURE__*/makeStyles(theme => ({
   }
 }));
 const ChatPage = _ref => {
-  var _state$activeRoom, _state$activeRoom2, _state$conference$dat, _state$conference$dat2, _state$activeRoom3, _state$conference$dat4, _state$conference$dat5, _state$conference$dat6;
+  var _state$conference$dat2, _state$conference$dat3, _state$activeRoom, _state$activeRoom2, _state$conference$dat4, _state$conference$dat5, _state$conference$dat6;
   let {
     activeGroupId,
     activeChatUserId,
@@ -3985,7 +3985,7 @@ const ChatPage = _ref => {
     onOperatorAdd: onOperatorAdd,
     onLeaveGroup: onLeaveGroup
   });
-  const getRoomList = useMemo(() => /*#__PURE__*/createElement(RoomList, {
+  const GetRoomList = () => /*#__PURE__*/createElement(RoomList, {
     apiUrl: apiUrl,
     user: state.user,
     activeRoom: state.activeRoom,
@@ -3993,7 +3993,7 @@ const ChatPage = _ref => {
     contacts: Object.values(state.contactGather),
     typing: state.typing,
     onChangeChat: onChangeChat
-  }), [(_state$activeRoom = state.activeRoom) == null ? void 0 : _state$activeRoom.groupId, (_state$activeRoom2 = state.activeRoom) == null ? void 0 : _state$activeRoom2.userId, allMessCount(state.contactGather), allMessCount(state.groupGather)]);
+  });
   const GetConferenceCall = () => state.conference.data && /*#__PURE__*/createElement(ConferenceCall, {
     apiUrl: apiUrl,
     contact: state.contactGather[state.user.userId === state.conference.data.userId ? state.conference.data.contactId : state.conference.data.userId],
@@ -4005,7 +4005,7 @@ const ChatPage = _ref => {
     onClose: onConferencePause,
     langCode: state.user.langCode
   });
-  const getGonf = useMemo(() => state.conference.joined ? /*#__PURE__*/createElement(Fragment, null, /*#__PURE__*/createElement(GetConference, null), /*#__PURE__*/createElement(Box, {
+  const Gonf = () => state.conference.joined ? /*#__PURE__*/createElement(Fragment, null, /*#__PURE__*/createElement(GetConference, null), /*#__PURE__*/createElement(Box, {
     className: classes.conAbsOnConf
   }, /*#__PURE__*/createElement(Paper, {
     style: {
@@ -4027,20 +4027,18 @@ const ChatPage = _ref => {
     "aria-label": "check",
     onClick: () => state.chatOld != null && onChangeChat(state.chatOld),
     size: "large"
-  }, /*#__PURE__*/createElement(ArrowForward, null))))))) : /*#__PURE__*/createElement(GetConferenceCall, null),
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  [state.conference.joined, (_state$conference$dat = state.conference.data) == null ? void 0 : _state$conference$dat.id, (_state$conference$dat2 = state.conference.data) == null ? void 0 : _state$conference$dat2.contactId, (_state$activeRoom3 = state.activeRoom) == null ? void 0 : _state$activeRoom3.userId]);
-  const Contacts = () => {
-    var _state$conference$dat3;
-    return ((_state$conference$dat3 = state.conference.data) == null ? void 0 : _state$conference$dat3.id) != null ? getGonf : getRoomList;
-  };
+  }, /*#__PURE__*/createElement(ArrowForward, null))))))) : /*#__PURE__*/createElement(GetConferenceCall, null);
+  const contacts = useMemo(() => {
+    var _state$conference$dat;
+    return ((_state$conference$dat = state.conference.data) == null ? void 0 : _state$conference$dat.id) != null ? /*#__PURE__*/createElement(Gonf, null) : /*#__PURE__*/createElement(GetRoomList, null);
+  }, ((_state$conference$dat2 = state.conference.data) == null ? void 0 : _state$conference$dat2.id) != null ? [state.conference.joined, (_state$conference$dat3 = state.conference.data) == null ? void 0 : _state$conference$dat3.id] : [(_state$activeRoom = state.activeRoom) == null ? void 0 : _state$activeRoom.groupId, (_state$activeRoom2 = state.activeRoom) == null ? void 0 : _state$activeRoom2.userId, allMessCount(state.contactGather), allMessCount(state.groupGather)]);
   return /*#__PURE__*/createElement(Container, {
     maxWidth: "lg",
     className: classes.root,
     sx: theme => ({
       width: inModale ? "calc(100vw - " + theme.spacing(8) + ")" : '100%'
     })
-  }, isMobile ? /*#__PURE__*/createElement(Fragment, null, /*#__PURE__*/createElement(Contacts, null), renderRoom) : /*#__PURE__*/createElement(Grid, {
+  }, isMobile ? /*#__PURE__*/createElement(Fragment, null, contacts, renderRoom) : /*#__PURE__*/createElement(Grid, {
     container: true,
     spacing: 1,
     className: classes.innerGrid
@@ -4048,7 +4046,7 @@ const ChatPage = _ref => {
     item: true,
     sm: ((_state$conference$dat5 = state.conference.data) == null ? void 0 : _state$conference$dat5.id) != null ? 6 : 4,
     className: classes.innerGrid
-  }, /*#__PURE__*/createElement(Contacts, null)), /*#__PURE__*/createElement(Grid, {
+  }, contacts), /*#__PURE__*/createElement(Grid, {
     item: true,
     sm: ((_state$conference$dat6 = state.conference.data) == null ? void 0 : _state$conference$dat6.id) != null ? 6 : hideRooms ? 12 : 8,
     className: classes.innerGrid
