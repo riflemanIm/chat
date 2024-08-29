@@ -329,24 +329,16 @@ export const ChatPage: React.FC<ChatPageProps> = ({
     />
   );
 
-  const getRoomList = React.useMemo(
-    () => (
-      <RoomList
-        apiUrl={apiUrl}
-        user={state.user}
-        activeRoom={state.activeRoom}
-        groups={Object.values(state.groupGather)}
-        contacts={Object.values(state.contactGather)}
-        typing={state.typing}
-        onChangeChat={onChangeChat}
-      />
-    ),
-    [
-      state.activeRoom?.groupId,
-      state.activeRoom?.userId,
-      allMessCount(state.contactGather),
-      allMessCount(state.groupGather),
-    ],
+  const GetRoomList = () => (
+    <RoomList
+      apiUrl={apiUrl}
+      user={state.user}
+      activeRoom={state.activeRoom}
+      groups={Object.values(state.groupGather)}
+      contacts={Object.values(state.contactGather)}
+      typing={state.typing}
+      onChangeChat={onChangeChat}
+    />
   );
 
   const GetConferenceCall = () =>
@@ -373,56 +365,57 @@ export const ChatPage: React.FC<ChatPageProps> = ({
     />
   );
 
-  const getGonf = React.useMemo(
-    () =>
-      state.conference.joined ? (
-        <>
-          <GetConference />
-          <Box className={classes.conAbsOnConf}>
-            <Paper style={{ borderRadius: 8 }}>
-              <Box display="flex" flexDirection="row" my={3}>
-                {((isEmpty(state.activeRoom) && isMobile) ||
-                  (!isEmpty(state.activeRoom) && !isMobile)) && (
-                  <>
-                    <CheckAudiVideoPerm audio={true} video={false} />
-                    <CheckAudiVideoPerm audio={false} video={true} />
-                  </>
+  const Gonf = () =>
+    state.conference.joined ? (
+      <>
+        <GetConference />
+        <Box className={classes.conAbsOnConf}>
+          <Paper style={{ borderRadius: 8 }}>
+            <Box display="flex" flexDirection="row" my={3}>
+              {((isEmpty(state.activeRoom) && isMobile) ||
+                (!isEmpty(state.activeRoom) && !isMobile)) && (
+                <>
+                  <CheckAudiVideoPerm audio={true} video={false} />
+                  <CheckAudiVideoPerm audio={false} video={true} />
+                </>
+              )}
+
+              {isEmpty(state.activeRoom) &&
+                state.chatOld != null &&
+                isMobile && (
+                  <Tooltip title={t('CHAT.CONFERENCE.BACK')}>
+                    <IconButton
+                      aria-label="check"
+                      onClick={() =>
+                        state.chatOld != null &&
+                        onChangeChat(state.chatOld)
+                      }
+                      size="large"
+                    >
+                      <ArrowForward />
+                    </IconButton>
+                  </Tooltip>
                 )}
+            </Box>
+          </Paper>
+        </Box>
+      </>
+    ) : (
+      <GetConferenceCall />
+    );
 
-                {isEmpty(state.activeRoom) &&
-                  state.chatOld != null &&
-                  isMobile && (
-                    <Tooltip title={t('CHAT.CONFERENCE.BACK')}>
-                      <IconButton
-                        aria-label="check"
-                        onClick={() =>
-                          state.chatOld != null &&
-                          onChangeChat(state.chatOld)
-                        }
-                        size="large"
-                      >
-                        <ArrowForward />
-                      </IconButton>
-                    </Tooltip>
-                  )}
-              </Box>
-            </Paper>
-          </Box>
-        </>
-      ) : (
-        <GetConferenceCall />
-      ),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [
-      state.conference.joined,
-      state.conference.data?.id,
-      state.conference.data?.contactId,
-      state.activeRoom?.userId,
-    ],
+  const contacts = React.useMemo(
+    () =>
+      state.conference.data?.id != null ? <Gonf /> : <GetRoomList />,
+    state.conference.data?.id != null
+      ? [state.conference.joined, state.conference.data?.id]
+      : [
+          state.activeRoom?.groupId,
+          state.activeRoom?.userId,
+          allMessCount(state.contactGather),
+          allMessCount(state.groupGather),
+        ],
   );
-
-  const Contacts = () =>
-    state.conference.data?.id != null ? getGonf : getRoomList;
 
   return (
     <Container
@@ -436,7 +429,7 @@ export const ChatPage: React.FC<ChatPageProps> = ({
     >
       {isMobile ? (
         <React.Fragment>
-          <Contacts />
+          {contacts}
           {renderRoom}
         </React.Fragment>
       ) : (
@@ -447,7 +440,7 @@ export const ChatPage: React.FC<ChatPageProps> = ({
               sm={state.conference.data?.id != null ? 6 : 4}
               className={classes.innerGrid}
             >
-              <Contacts />
+              {contacts}
             </Grid>
           )}
           <Grid
