@@ -106,7 +106,9 @@ const RoomHeader: React.FC<RoomHeaderProps> = ({
   const { t } = useTranslation();
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const [addOperatorOpen, setAddOperatorOpen] = useState(false);
-
+  const [confirmFinishConf, setConfirmFinishConf] = React.useState(
+    false,
+  );
   if (!chat)
     return (
       <CardHeader
@@ -206,7 +208,7 @@ const RoomHeader: React.FC<RoomHeaderProps> = ({
             )}
             {user.role === 4 &&
               group.members?.find(
-                (it) => it.userId !== user.userId && it.role === 4,
+                it => it.userId !== user.userId && it.role === 4,
               ) &&
               onLeaveGroup && (
                 <IconButton
@@ -264,17 +266,29 @@ const RoomHeader: React.FC<RoomHeaderProps> = ({
             onVideoEnd != null &&
             user.role != null &&
             [3, 4].includes(user.role) && (
-              <Button
-                aria-label="cancel call"
-                variant="contained"
-                color="primary"
-                size="small"
-                startIcon={<CallEndIcon color="error" />}
-                onClick={() => onVideoEnd(conference)}
-                style={{ marginLeft: 8 }}
-              >
-                {t('CHAT.CONFERENCE.FINISH')}
-              </Button>
+              <>
+                <Button
+                  aria-label="cancel call"
+                  variant="contained"
+                  color="primary"
+                  size="small"
+                  startIcon={<CallEndIcon color="error" />}
+                  onClick={() => setConfirmFinishConf(true)}
+                  style={{ marginLeft: 8 }}
+                >
+                  {t('CHAT.CONFERENCE.FINISH')}
+                </Button>
+                <ConfirmDialogSlide
+                  open={confirmFinishConf}
+                  setOpen={setConfirmFinishConf}
+                  contentText={t(
+                    'CHAT.CONFERENCE.CONFIRM_FINISH_CONF',
+                  )}
+                  callback={() => {
+                    onVideoEnd(conference);
+                  }}
+                />
+              </>
             )}
 
           {isEmpty(conference) &&

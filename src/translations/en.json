@@ -26,6 +26,7 @@
       "START": "Start",
       "RESTART": "Recreate the conference",
       "CONFIRM_RECREATE_CONF": "Are you sure you want to re-create the conference?",
+      "CONFIRM_FINISH_CONF": "Are you sure you want to end the conference?",
       "PAUSE": "Pause",
       "FINISH": "Finish",
       "BACK": "Back to chat",

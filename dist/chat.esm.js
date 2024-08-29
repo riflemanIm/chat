@@ -11,18 +11,18 @@ import CallEndIcon from '@mui/icons-material/CallEnd';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import StarIcon from '@mui/icons-material/Star';
 import dayjs from 'dayjs';
-import { styled, alpha } from '@mui/material/styles';
 import Button$1 from '@mui/material/Button';
+import Dialog$1 from '@mui/material/Dialog';
+import DialogActions$1 from '@mui/material/DialogActions';
+import DialogContent$1 from '@mui/material/DialogContent';
+import Slide$1 from '@mui/material/Slide';
+import { styled, alpha } from '@mui/material/styles';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
 import VideoCallIcon from '@mui/icons-material/VideoCall';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import Dialog$1 from '@mui/material/Dialog';
-import DialogActions$1 from '@mui/material/DialogActions';
-import DialogContent$1 from '@mui/material/DialogContent';
-import Slide$1 from '@mui/material/Slide';
 import { AspectRatio } from 'react-aspect-ratio';
 import InfiniteScroll from 'react-infinite-scroller';
 import List$1 from '@mui/material/List';
@@ -1044,6 +1044,7 @@ const RoomHeader = _ref => {
   } = useTranslation();
   const [anchorEl, setAnchorEl] = useState(null);
   const [addOperatorOpen, setAddOperatorOpen] = useState(false);
+  const [confirmFinishConf, setConfirmFinishConf] = React__default.useState(false);
   if (!chat) return /*#__PURE__*/React__default.createElement(CardHeader, {
     avatar: /*#__PURE__*/React__default.createElement(Avatar, null),
     title: "",
@@ -1138,7 +1139,7 @@ const RoomHeader = _ref => {
         color: "error"
       }),
       onClick: () => onConferencePause(conference)
-    }, t('CHAT.CONFERENCE.PAUSE')), conference && !isEmpty(conference) && onVideoEnd != null && user.role != null && [3, 4].includes(user.role) && /*#__PURE__*/React__default.createElement(Button, {
+    }, t('CHAT.CONFERENCE.PAUSE')), conference && !isEmpty(conference) && onVideoEnd != null && user.role != null && [3, 4].includes(user.role) && /*#__PURE__*/React__default.createElement(React__default.Fragment, null, /*#__PURE__*/React__default.createElement(Button, {
       "aria-label": "cancel call",
       variant: "contained",
       color: "primary",
@@ -1146,11 +1147,18 @@ const RoomHeader = _ref => {
       startIcon: /*#__PURE__*/React__default.createElement(CallEndIcon, {
         color: "error"
       }),
-      onClick: () => onVideoEnd(conference),
+      onClick: () => setConfirmFinishConf(true),
       style: {
         marginLeft: 8
       }
-    }, t('CHAT.CONFERENCE.FINISH')), isEmpty(conference) && onVideoCall != null && user.role && [3, 4].includes(user.role) && /*#__PURE__*/React__default.createElement(ConferenceButton, {
+    }, t('CHAT.CONFERENCE.FINISH')), /*#__PURE__*/React__default.createElement(ConfirmDialogSlide, {
+      open: confirmFinishConf,
+      setOpen: setConfirmFinishConf,
+      contentText: t('CHAT.CONFERENCE.CONFIRM_FINISH_CONF'),
+      callback: () => {
+        onVideoEnd(conference);
+      }
+    })), isEmpty(conference) && onVideoCall != null && user.role && [3, 4].includes(user.role) && /*#__PURE__*/React__default.createElement(ConferenceButton, {
       visitData: visitData,
       chat: contact,
       onVideoCall: onVideoCall
@@ -4080,6 +4088,7 @@ var CHAT = {
 		START: "Start",
 		RESTART: "Recreate the conference",
 		CONFIRM_RECREATE_CONF: "Are you sure you want to re-create the conference?",
+		CONFIRM_FINISH_CONF: "Are you sure you want to end the conference?",
 		PAUSE: "Pause",
 		FINISH: "Finish",
 		BACK: "Back to chat",
@@ -4131,6 +4140,7 @@ var CHAT$1 = {
 		START: "Démarrer",
 		RESTART: "Recréer la conférence",
 		CONFIRM_RECREATE_CONF: "êtes-vous sûr de vouloir recréer la conférence?",
+		CONFIRM_FINISH_CONF: "êtes-vous sûr de vouloir terminer la conférence?",
 		PAUSE: "Pause",
 		FINISH: "Terminer",
 		BACK: "Retour au chat",
@@ -4182,6 +4192,7 @@ var CHAT$2 = {
 		START: "Начать",
 		RESTART: "Пересоздать конференцию",
 		CONFIRM_RECREATE_CONF: "Вы уверены что хотите пересоздать конференцию?",
+		CONFIRM_FINISH_CONF: "Вы уверены что хотите завершить конференцию?",
 		PAUSE: "Остановить",
 		FINISH: "Завершить",
 		BACK: "Вернуться в чат",

@@ -26,6 +26,7 @@
       "START": "Démarrer",
       "RESTART": "Recréer la conférence",
       "CONFIRM_RECREATE_CONF": "êtes-vous sûr de vouloir recréer la conférence?",
+      "CONFIRM_FINISH_CONF": "êtes-vous sûr de vouloir terminer la conférence?",
       "PAUSE": "Pause",
       "FINISH": "Terminer",
       "BACK": "Retour au chat",

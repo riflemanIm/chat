@@ -18,18 +18,18 @@ var CallEndIcon = _interopDefault(require('@mui/icons-material/CallEnd'));
 var PersonAddIcon = _interopDefault(require('@mui/icons-material/PersonAdd'));
 var StarIcon = _interopDefault(require('@mui/icons-material/Star'));
 var dayjs = _interopDefault(require('dayjs'));
-var styles$1 = require('@mui/material/styles');
 var Button = _interopDefault(require('@mui/material/Button'));
+var Dialog = _interopDefault(require('@mui/material/Dialog'));
+var DialogActions = _interopDefault(require('@mui/material/DialogActions'));
+var DialogContent = _interopDefault(require('@mui/material/DialogContent'));
+var Slide = _interopDefault(require('@mui/material/Slide'));
+var styles$1 = require('@mui/material/styles');
 var Menu = _interopDefault(require('@mui/material/Menu'));
 var MenuItem = _interopDefault(require('@mui/material/MenuItem'));
 var PlayArrowIcon = _interopDefault(require('@mui/icons-material/PlayArrow'));
 var RestartAltIcon = _interopDefault(require('@mui/icons-material/RestartAlt'));
 var VideoCallIcon = _interopDefault(require('@mui/icons-material/VideoCall'));
 var KeyboardArrowDownIcon = _interopDefault(require('@mui/icons-material/KeyboardArrowDown'));
-var Dialog = _interopDefault(require('@mui/material/Dialog'));
-var DialogActions = _interopDefault(require('@mui/material/DialogActions'));
-var DialogContent = _interopDefault(require('@mui/material/DialogContent'));
-var Slide = _interopDefault(require('@mui/material/Slide'));
 var reactAspectRatio = require('react-aspect-ratio');
 var InfiniteScroll = _interopDefault(require('react-infinite-scroller'));
 var List = _interopDefault(require('@mui/material/List'));
@@ -1047,6 +1047,7 @@ const RoomHeader = _ref => {
   } = reactI18next.useTranslation();
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [addOperatorOpen, setAddOperatorOpen] = React.useState(false);
+  const [confirmFinishConf, setConfirmFinishConf] = React__default.useState(false);
   if (!chat) return /*#__PURE__*/React__default.createElement(material.CardHeader, {
     avatar: /*#__PURE__*/React__default.createElement(material.Avatar, null),
     title: "",
@@ -1141,7 +1142,7 @@ const RoomHeader = _ref => {
         color: "error"
       }),
       onClick: () => onConferencePause(conference)
-    }, t('CHAT.CONFERENCE.PAUSE')), conference && !isEmpty(conference) && onVideoEnd != null && user.role != null && [3, 4].includes(user.role) && /*#__PURE__*/React__default.createElement(material.Button, {
+    }, t('CHAT.CONFERENCE.PAUSE')), conference && !isEmpty(conference) && onVideoEnd != null && user.role != null && [3, 4].includes(user.role) && /*#__PURE__*/React__default.createElement(React__default.Fragment, null, /*#__PURE__*/React__default.createElement(material.Button, {
       "aria-label": "cancel call",
       variant: "contained",
       color: "primary",
@@ -1149,11 +1150,18 @@ const RoomHeader = _ref => {
       startIcon: /*#__PURE__*/React__default.createElement(CallEndIcon, {
         color: "error"
       }),
-      onClick: () => onVideoEnd(conference),
+      onClick: () => setConfirmFinishConf(true),
       style: {
         marginLeft: 8
       }
-    }, t('CHAT.CONFERENCE.FINISH')), isEmpty(conference) && onVideoCall != null && user.role && [3, 4].includes(user.role) && /*#__PURE__*/React__default.createElement(ConferenceButton, {
+    }, t('CHAT.CONFERENCE.FINISH')), /*#__PURE__*/React__default.createElement(ConfirmDialogSlide, {
+      open: confirmFinishConf,
+      setOpen: setConfirmFinishConf,
+      contentText: t('CHAT.CONFERENCE.CONFIRM_FINISH_CONF'),
+      callback: () => {
+        onVideoEnd(conference);
+      }
+    })), isEmpty(conference) && onVideoCall != null && user.role && [3, 4].includes(user.role) && /*#__PURE__*/React__default.createElement(ConferenceButton, {
       visitData: visitData,
       chat: contact,
       onVideoCall: onVideoCall
@@ -4083,6 +4091,7 @@ var CHAT = {
 		START: "Start",
 		RESTART: "Recreate the conference",
 		CONFIRM_RECREATE_CONF: "Are you sure you want to re-create the conference?",
+		CONFIRM_FINISH_CONF: "Are you sure you want to end the conference?",
 		PAUSE: "Pause",
 		FINISH: "Finish",
 		BACK: "Back to chat",
@@ -4134,6 +4143,7 @@ var CHAT$1 = {
 		START: "Démarrer",
 		RESTART: "Recréer la conférence",
 		CONFIRM_RECREATE_CONF: "êtes-vous sûr de vouloir recréer la conférence?",
+		CONFIRM_FINISH_CONF: "êtes-vous sûr de vouloir terminer la conférence?",
 		PAUSE: "Pause",
 		FINISH: "Terminer",
 		BACK: "Retour au chat",
@@ -4185,6 +4195,7 @@ var CHAT$2 = {
 		START: "Начать",
 		RESTART: "Пересоздать конференцию",
 		CONFIRM_RECREATE_CONF: "Вы уверены что хотите пересоздать конференцию?",
+		CONFIRM_FINISH_CONF: "Вы уверены что хотите завершить конференцию?",
 		PAUSE: "Остановить",
 		FINISH: "Завершить",
 		BACK: "Вернуться в чат",
