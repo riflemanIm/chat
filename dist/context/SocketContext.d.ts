@@ -8,7 +8,7 @@ export declare const SocketContext: React.Context<ISocketContext>;
 declare type SocketProviderProps = {
     wsUrl: string;
     wsPath: string;
-    children: JSX.Element;
+    children: React.JSX.Element;
 };
 export declare const SocketProvider: React.FC<SocketProviderProps>;
 export {};

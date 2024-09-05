@@ -28,7 +28,7 @@ export const RestContext: React.Context<IRestContext> = createContext(
 type RestProviderProps = {
   baseURLApi: string;
   pageSize: number;
-  children: JSX.Element;
+  children: React.JSX.Element;
 };
 
 export function clearLocalStorage() {

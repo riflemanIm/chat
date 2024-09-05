@@ -58,10 +58,13 @@ const reducer = (
 };
 
 export const LanguageContext = createContext({} as LanguageContextI);
+
 interface AppLanguageProviderProps {
   children: React.ReactNode;
 }
-export const AppLanguageProvider: React.FC<AppLanguageProviderProps> = props => {
+export const AppLanguageProvider: React.FC<AppLanguageProviderProps> = ({
+  children,
+}) => {
   const [languageState, dispatchLanguage] = useReducer(reducer, {
     language: languageWithoutCountry(),
   });
@@ -73,7 +76,7 @@ export const AppLanguageProvider: React.FC<AppLanguageProviderProps> = props => 
         dispatchLanguage,
       }}
     >
-      <I18nextProvider i18n={i18n}>{props.children}</I18nextProvider>
+      <I18nextProvider i18n={i18n}>{children}</I18nextProvider>
     </LanguageContext.Provider>
   );
 };

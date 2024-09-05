@@ -41,7 +41,7 @@ export const SocketContext: React.Context<ISocketContext> = createContext(
 type SocketProviderProps = {
   wsUrl: string;
   wsPath: string;
-  children: JSX.Element;
+  children: React.JSX.Element;
 };
 
 export const SocketProvider: React.FC<SocketProviderProps> = ({
@@ -560,7 +560,7 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({
         dispatch({ type: 'SET_ERROR', payload: res.msg });
         return;
       }
-      const payload = res.data as {visitData: VisitData};
+      const payload = res.data as { visitData: VisitData };
       dispatch({
         type: 'SET_VISIT_DATA',
         payload: payload.visitData,

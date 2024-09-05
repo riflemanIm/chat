@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import {
   AddGroupMessages,
   AddPrivateMessages,
@@ -810,7 +810,7 @@ type ChatProviderProps = {
   defLang: string | undefined;
   token: string;
   refreshToken: string;
-  children: JSX.Element | JSX.Element[];
+  children: React.JSX.Element | React.JSX.Element[];
 };
 
 export const ChatContext = React.createContext({
@@ -832,9 +832,10 @@ export const ChatProvider: React.FC<ChatProviderProps> = (
   };
 
   const [state, dispatch] = React.useReducer(chatReducer, chatState);
+  const value = useMemo(() => ({ state, dispatch }), [state]);
 
   return (
-    <ChatContext.Provider value={{ state, dispatch }}>
+    <ChatContext.Provider value={value}>
       {props.children}
     </ChatContext.Provider>
   );
