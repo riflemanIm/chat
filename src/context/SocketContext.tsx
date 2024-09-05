@@ -1,4 +1,9 @@
-import React, { createContext, useContext, useEffect } from 'react';
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useMemo,
+} from 'react';
 import { Socket } from 'socket.io-client';
 import { useSocket } from '../hooks/useSocket';
 import {
@@ -41,7 +46,7 @@ export const SocketContext: React.Context<ISocketContext> = createContext(
 type SocketProviderProps = {
   wsUrl: string;
   wsPath: string;
-  children: JSX.Element;
+  children: React.JSX.Element;
 };
 
 export const SocketProvider: React.FC<SocketProviderProps> = ({
@@ -560,7 +565,7 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({
         dispatch({ type: 'SET_ERROR', payload: res.msg });
         return;
       }
-      const payload = res.data as {visitData: VisitData};
+      const payload = res.data as { visitData: VisitData };
       dispatch({
         type: 'SET_VISIT_DATA',
         payload: payload.visitData,
@@ -572,8 +577,10 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({
     };
   }, [socket?.id]);
 
+  const value = useMemo(() => ({ socket, online }), [socket, online]);
+
   return (
-    <SocketContext.Provider value={{ socket, online }}>
+    <SocketContext.Provider value={value}>
       {children}
     </SocketContext.Provider>
   );

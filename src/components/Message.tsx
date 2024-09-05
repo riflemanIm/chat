@@ -33,7 +33,7 @@ const wrapMessage = (
   onContextMenu:
     | ((event: React.MouseEvent<HTMLElement>) => void)
     | undefined,
-  child: JSX.Element,
+  child: React.JSX.Element,
 ) => {
   const { messageType } = message;
 

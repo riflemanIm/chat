@@ -2095,11 +2095,12 @@ const ChatProvider = props => {
     refreshToken
   };
   const [state, dispatch] = React__default.useReducer(chatReducer, chatState);
+  const value = React.useMemo(() => ({
+    state,
+    dispatch
+  }), [state]);
   return /*#__PURE__*/React__default.createElement(ChatContext.Provider, {
-    value: {
-      state,
-      dispatch
-    }
+    value: value
   }, props.children);
 };
 
@@ -3003,15 +3004,16 @@ const RestProvider = _ref => {
       console.log('err getUserByMmk', error);
     }
   };
+  const value = React.useMemo(() => ({
+    apiUrl: baseURLApi,
+    pageSize,
+    fetch,
+    getPrivateMessages,
+    getGroupMessages,
+    getUserByMmk
+  }), [baseURLApi, pageSize]);
   return /*#__PURE__*/React__default.createElement(RestContext.Provider, {
-    value: {
-      apiUrl: baseURLApi,
-      pageSize,
-      fetch,
-      getPrivateMessages,
-      getGroupMessages,
-      getUserByMmk
-    }
+    value: value
   }, children);
 };
 
@@ -3672,11 +3674,12 @@ const SocketProvider = _ref => {
       socket == null || socket.off('visitData', listener);
     };
   }, [socket == null ? void 0 : socket.id]);
+  const value = React.useMemo(() => ({
+    socket,
+    online
+  }), [socket, online]);
   return /*#__PURE__*/React__default.createElement(SocketContext.Provider, {
-    value: {
-      socket,
-      online
-    }
+    value: value
   }, children);
 };
 
@@ -4286,18 +4289,22 @@ const reducer = (state, action) => {
   }
 };
 const LanguageContext = /*#__PURE__*/React.createContext({});
-const AppLanguageProvider = props => {
+const AppLanguageProvider = _ref => {
+  let {
+    children
+  } = _ref;
   const [languageState, dispatchLanguage] = React.useReducer(reducer, {
     language: languageWithoutCountry()
   });
+  const value = React.useMemo(() => ({
+    languageState,
+    dispatchLanguage
+  }), [languageState]);
   return /*#__PURE__*/React__default.createElement(LanguageContext.Provider, {
-    value: {
-      languageState,
-      dispatchLanguage
-    }
+    value: value
   }, /*#__PURE__*/React__default.createElement(reactI18next.I18nextProvider, {
     i18n: i18n
-  }, props.children));
+  }, children));
 };
 
 const ChatIndex = _ref => {

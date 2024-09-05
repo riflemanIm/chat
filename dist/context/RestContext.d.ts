@@ -13,7 +13,7 @@ export declare const RestContext: React.Context<IRestContext>;
 declare type RestProviderProps = {
     baseURLApi: string;
     pageSize: number;
-    children: JSX.Element;
+    children: React.JSX.Element;
 };
 export declare function clearLocalStorage(): void;
 export declare const signOut: () => Promise<void>;

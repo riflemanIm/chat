@@ -3,6 +3,7 @@ import React, {
   useReducer,
   Dispatch,
   createContext,
+  useMemo,
 } from 'react';
 import { I18nextProvider } from 'react-i18next';
 import i18n from '../translations';
@@ -58,22 +59,22 @@ const reducer = (
 };
 
 export const LanguageContext = createContext({} as LanguageContextI);
+
 interface AppLanguageProviderProps {
   children: React.ReactNode;
 }
-export const AppLanguageProvider: React.FC<AppLanguageProviderProps> = props => {
+export const AppLanguageProvider: React.FC<AppLanguageProviderProps> = ({
+  children,
+}) => {
   const [languageState, dispatchLanguage] = useReducer(reducer, {
     language: languageWithoutCountry(),
   });
-
+  const value = useMemo(() => ({ languageState, dispatchLanguage }), [
+    languageState,
+  ]);
   return (
-    <LanguageContext.Provider
-      value={{
-        languageState,
-        dispatchLanguage,
-      }}
-    >
-      <I18nextProvider i18n={i18n}>{props.children}</I18nextProvider>
+    <LanguageContext.Provider value={value}>
+      <I18nextProvider i18n={i18n}>{children}</I18nextProvider>
     </LanguageContext.Provider>
   );
 };

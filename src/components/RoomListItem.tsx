@@ -123,7 +123,7 @@ const contactAvatar = (
   apiUrl: string,
   contact: Contact,
   typing: SetTyping | null,
-): JSX.Element => {
+): React.JSX.Element => {
   const avatar = (
     <Avatar
       alt={contact.username}

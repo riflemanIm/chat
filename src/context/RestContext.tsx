@@ -1,4 +1,9 @@
-import React, { createContext, useCallback, useContext } from 'react';
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useMemo,
+} from 'react';
 import { ChatContext, ChatDispatch } from './ChatContext';
 import axios, { AxiosError, AxiosInstance } from 'axios';
 import {
@@ -28,7 +33,7 @@ export const RestContext: React.Context<IRestContext> = createContext(
 type RestProviderProps = {
   baseURLApi: string;
   pageSize: number;
-  children: JSX.Element;
+  children: React.JSX.Element;
 };
 
 export function clearLocalStorage() {
@@ -197,17 +202,20 @@ export const RestProvider: React.FC<RestProviderProps> = ({
     }
   };
 
+  const value = useMemo(
+    () => ({
+      apiUrl: baseURLApi,
+      pageSize,
+      fetch,
+      getPrivateMessages,
+      getGroupMessages,
+      getUserByMmk,
+    }),
+    [baseURLApi, pageSize],
+  );
+
   return (
-    <RestContext.Provider
-      value={{
-        apiUrl: baseURLApi,
-        pageSize,
-        fetch,
-        getPrivateMessages,
-        getGroupMessages,
-        getUserByMmk,
-      }}
-    >
+    <RestContext.Provider value={value}>
       {children}
     </RestContext.Provider>
   );

@@ -32,7 +32,7 @@ declare type ChatProviderProps = {
     defLang: string | undefined;
     token: string;
     refreshToken: string;
-    children: JSX.Element | JSX.Element[];
+    children: React.JSX.Element | React.JSX.Element[];
 };
 export declare const ChatContext: React.Context<{
     state: ChatState;
