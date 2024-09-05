@@ -420,7 +420,7 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({
     };
   }, [
     socket?.id,
-    state.activeRoom?.groupId,
+    state.activeRoom?.userId,
     state.activeRoom?.groupId,
   ]);
 
