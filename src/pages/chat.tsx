@@ -276,7 +276,7 @@ export const ChatPage: React.FC<ChatPageProps> = ({
       };
       changeChatByMmkId();
     }
-  }, [state.contactGather]);
+  }, [allMessCount(state.contactGather)]);
 
   React.useEffect(() => {
     if (activeGroupId != null && !isEmpty(state.groupGather)) {
@@ -288,7 +288,7 @@ export const ChatPage: React.FC<ChatPageProps> = ({
         onChangeChat(onlyChat);
       }
     }
-  }, [state.groupGather]);
+  }, [allMessCount(state.groupGather)]);
 
   // Отключили проигрыш звука
   // React.useEffect(() => {

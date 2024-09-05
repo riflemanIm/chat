@@ -23,6 +23,7 @@ import {
 } from '../types';
 import { ChatContext } from './ChatContext';
 import { getRefreshToken } from './RestContext';
+import { allMessCount } from '../utils/common';
 
 // Формат ответа сервера
 interface ServerRes {
@@ -66,38 +67,27 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({
     if (state.token) {
       connectSocket();
     }
+    if (!state.token) disconnectSocket();
     return () => {
       disconnectSocket();
     };
-  }, [state.token, connectSocket]);
+  }, [state.token]);
 
   useEffect(() => {
-    if (!state.token) disconnectSocket();
-  }, [state.token, disconnectSocket]);
-
-  // listen unauthorized event
-  useEffect(() => {
+    // listen unauthorized event
     const listener = (msg: string) => {
       console.log('unauthorized msg', msg);
       getRefreshToken(state.token, state.refreshToken, dispatch);
     };
-
-    // attach
     socket?.on('unauthorized', listener);
-    // detatch
-    return () => {
-      socket?.off('unauthorized', listener);
-    };
-  }, [socket?.id]);
 
-  // listen chatData event
-  useEffect(() => {
-    const listener = (res: ServerRes) => {
+    // listen chatData event
+    const listener1 = (res: ServerRes) => {
       if (res.code) {
         dispatch({ type: 'SET_ERROR', payload: res.msg });
         return;
       }
-      console.log('res.data', res.data);
+
       const payload = res.data as ChatData;
       const groupArr = payload.groupData;
       const contactArr = payload.contactData;
@@ -139,81 +129,238 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({
         payload: payload.visitData,
       });
     };
-    socket?.on('chatData', listener);
-    return () => {
-      socket?.off('chatData', listener);
-    };
-  }, [socket?.id]);
+    socket?.on('chatData', listener1);
 
-  // listen user online
-  useEffect(() => {
-    const listener = (res: ServerRes) => {
+    // listen user online
+    const listener2 = (res: ServerRes) => {
       dispatch({ type: 'USER_ONLINE', payload: res.data as number });
     };
-    socket?.on('userOnline', listener);
-    return () => {
-      socket?.off('userOnline', listener);
-    };
-  }, [socket?.id]);
+    socket?.on('userOnline', listener2);
 
-  // listen user offline
-  useEffect(() => {
-    const listener = (res: ServerRes) => {
+    // listen user offline
+    const listener3 = (res: ServerRes) => {
       dispatch({ type: 'USER_OFFLINE', payload: res.data as number });
     };
-    socket?.on('userOffline', listener);
-    return () => {
-      socket?.off('userOffline', listener);
-    };
-  }, [socket?.id]);
+    socket?.on('userOffline', listener3);
 
-  // listen private socket join
-  useEffect(() => {
-    const listener = (res: ServerRes) => {
+    // listen private socket join
+    const listener4 = (res: ServerRes) => {
       if (res.code) {
         dispatch({ type: 'SET_ERROR', payload: res.msg });
         return;
       }
       console.log('Успешно вошел в приватный чат');
     };
-    socket?.on('joinPrivateSocket', listener);
-    return () => {
-      socket?.off('joinPrivateSocket', listener);
-    };
-  }, [socket?.id]);
+    socket?.on('joinPrivateSocket', listener4);
 
-  // listen group socket join
-  useEffect(() => {
-    const listener = (res: ServerRes) => {
+    // typing
+    let timer: NodeJS.Timeout;
+    const listener5 = (res: ServerRes) => {
       if (res.code) {
         dispatch({ type: 'SET_ERROR', payload: res.msg });
         return;
       }
-      const data = res.data as JoinGroup;
-      const newUser: Contact = data.user;
-      newUser.online = 1;
-      const { group } = data;
-      const groupObj = state.groupGather[group.groupId];
-      // Информация о присоединении к группе новых пользователей
-      if (
-        groupObj &&
-        !groupObj.members?.find(
-          member => member.userId === newUser.userId,
-        )
-      ) {
-        newUser.isManager = 0;
-        groupObj.members?.push(newUser);
-        // Vue.prototype.$message.info(res.msg);
+      if (timer) clearTimeout(timer);
+      dispatch({
+        type: 'SET_TYPING',
+        payload: res.data as SetTyping,
+      });
+      timer = setTimeout(() => {
+        dispatch({ type: 'SET_TYPING', payload: null });
+      }, 1000);
+    };
+    socket?.on('typing', listener5);
+
+    // revoke
+    const listener6 = (res: ServerRes) => {
+      if (res.code) {
+        dispatch({ type: 'SET_ERROR', payload: res.msg });
+        return;
       }
-      dispatch({ type: 'SET_USER_GATHER', payload: newUser });
+      const data = res.data as MessageOperation;
+      dispatch({ type: 'REVOKE_MESSAGE', payload: data });
     };
-    socket?.on('joinGroupSocket', listener);
+    socket?.on('revokeMessage', listener6);
+
+    // set group gather
+    const listener7 = (res: ServerRes) => {
+      if (res.code) {
+        dispatch({ type: 'SET_ERROR', payload: res.msg });
+        return;
+      }
+      dispatch({
+        type: 'SET_GROUP_GATHER',
+        payload: res.data as Group,
+      });
+    };
+    socket?.on('addGroup', listener7);
+
+    // set contact gather, user gather
+    const listener8 = (res: ServerRes) => {
+      if (res.code) {
+        dispatch({ type: 'SET_ERROR', payload: res.msg });
+        return;
+      }
+      const data = res.data as Contact;
+      dispatch({ type: 'SET_CONTACT_GATHER', payload: data });
+      dispatch({ type: 'SET_USER_GATHER', payload: data });
+      socket?.emit('joinPrivateSocket', {
+        contactId: data.userId,
+      });
+    };
+    socket?.on('addContact', listener8);
+
+    // delete contact
+    const listener10 = (res: ServerRes) => {
+      if (res.code) {
+        dispatch({ type: 'SET_ERROR', payload: res.msg });
+        return;
+      }
+      const data = res.data as Contact;
+      dispatch({ type: 'DEL_CONTACT', payload: data });
+    };
+    socket?.on('deleteContact', listener10);
+
+    // update GroupInfo
+    const listener11 = (res: ServerRes) => {
+      if (res.code) {
+        dispatch({ type: 'SET_ERROR', payload: res.msg });
+        return;
+      }
+      const data = res.data as Group;
+      dispatch({ type: 'UPDATE_GROUP_INFO', payload: data });
+    };
+    socket?.on('updateGroupInfo', listener11);
+
+    // update UserInfo
+    const listener12 = (res: ServerRes) => {
+      if (res.code) {
+        dispatch({ type: 'SET_ERROR', payload: res.msg });
+        return;
+      }
+      const data = res.data as User;
+      dispatch({ type: 'UPDATE_USER_INFO', payload: data });
+    };
+    socket?.on('updateUserInfo', listener12);
+
+    // start Conference
+    const listener13 = (res: ServerRes) => {
+      if (res.code) {
+        dispatch({ type: 'SET_ERROR', payload: res.msg });
+        return;
+      }
+      dispatch({
+        type: 'SET_CONFERENCE',
+        payload: res.data as ConferenceData,
+      });
+    };
+    socket?.on('startConference', listener13);
+
+    // pause Conference
+    const listener14 = (res: ServerRes) => {
+      if (res.code) {
+        dispatch({ type: 'SET_ERROR', payload: res.msg });
+        return;
+      }
+      dispatch({
+        type: 'PAUSE_CONFERENCE',
+        payload: res.data as ConferenceData,
+      });
+    };
+    socket?.on('pauseConference', listener14);
+
+    // stop Conference
+    const listener15 = (res: ServerRes) => {
+      if (res.code) {
+        dispatch({ type: 'SET_ERROR', payload: res.msg });
+        return;
+      }
+      dispatch({
+        type: 'STOP_CONFERENCE',
+        payload: res.data as ConferenceData,
+      });
+    };
+    socket?.on('stopConference', listener15);
+
+    // add Operator
+    const listener16 = (res: ServerRes) => {
+      if (res.code) {
+        dispatch({ type: 'SET_ERROR', payload: res.msg });
+        return;
+      }
+    };
+    socket?.on('addOperator', listener16);
+
+    // set ActiveRoom
+    const listener17 = (res: ServerRes) => {
+      if (res.code) {
+        dispatch({ type: 'SET_ERROR', payload: res.msg });
+        return;
+      }
+      dispatch({
+        type: 'SET_ACTIVE_ROOM',
+        payload: res.data as SetActiveRoom,
+      });
+    };
+    socket?.on('setActiveRoom', listener17);
+
+    // visit Data
+    const listener18 = (res: ServerRes) => {
+      if (res.code) {
+        dispatch({ type: 'SET_ERROR', payload: res.msg });
+        return;
+      }
+      const payload = res.data as { visitData: VisitData };
+      dispatch({
+        type: 'SET_VISIT_DATA',
+        payload: payload.visitData,
+      });
+    };
+    socket?.on('visitData', listener18);
+
     return () => {
-      socket?.off('joinGroupSocket', listener);
+      // detatch
+      socket?.off('unauthorized', listener);
+
+      socket?.off('chatData', listener1);
+
+      socket?.off('userOnline', listener2);
+
+      socket?.off('userOffline', listener3);
+
+      socket?.off('joinPrivateSocket', listener4);
+
+      if (timer) clearTimeout(timer);
+      socket?.off('typing', listener5);
+
+      socket?.off('revokeMessage', listener6);
+
+      socket?.off('addGroup', listener7);
+
+      socket?.off('addContact', listener8);
+
+      socket?.off('deleteContact', listener10);
+
+      socket?.off('updateGroupInfo', listener11);
+
+      socket?.off('updateUserInfo', listener12);
+
+      socket?.off('startConference', listener13);
+
+      socket?.off('pauseConference', listener14);
+
+      socket?.off('stopConference', listener15);
+
+      socket?.off('addOperator', listener16);
+
+      socket?.off('setActiveRoom', listener17);
+
+      socket?.off('visitData', listener18);
     };
-  }, [socket?.id, state.groupGather]);
+  }, [socket?.id]);
 
   useEffect(() => {
+    // group Message
     const listener = async (res: ServerRes) => {
       if (res.code) {
         dispatch({ type: 'SET_ERROR', payload: res.msg });
@@ -233,15 +380,10 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({
         });
       }
     };
-
     socket?.on('groupMessage', listener);
-    return () => {
-      socket?.off('groupMessage', listener);
-    };
-  }, [socket?.id, state.activeRoom]);
 
-  useEffect(() => {
-    const listener = async (res: ServerRes) => {
+    // private Message
+    const listener1 = async (res: ServerRes) => {
       if (res.code) {
         dispatch({ type: 'SET_ERROR', payload: res.msg });
         return;
@@ -270,37 +412,20 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({
       }
     };
 
-    socket?.on('privateMessage', listener);
+    socket?.on('privateMessage', listener1);
+
     return () => {
-      socket?.off('privateMessage', listener);
+      socket?.off('groupMessage', listener);
+      socket?.off('privateMessage', listener1);
     };
-  }, [socket?.id, state.activeRoom]);
+  }, [
+    socket?.id,
+    state.activeRoom?.groupId,
+    state.activeRoom?.groupId,
+  ]);
 
   useEffect(() => {
-    let timer: NodeJS.Timeout;
-
-    const listener = (res: ServerRes) => {
-      if (res.code) {
-        dispatch({ type: 'SET_ERROR', payload: res.msg });
-        return;
-      }
-      if (timer) clearTimeout(timer);
-      dispatch({
-        type: 'SET_TYPING',
-        payload: res.data as SetTyping,
-      });
-      timer = setTimeout(() => {
-        dispatch({ type: 'SET_TYPING', payload: null });
-      }, 1000);
-    };
-    socket?.on('typing', listener);
-    return () => {
-      if (timer) clearTimeout(timer);
-      socket?.off('typing', listener);
-    };
-  }, [socket?.id]);
-
-  useEffect(() => {
+    // mark As Read
     const listener = (res: ServerRes) => {
       if (res.code) {
         dispatch({ type: 'SET_ERROR', payload: res.msg });
@@ -328,64 +453,9 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({
       }
     };
     socket?.on('markAsRead', listener);
-    return () => {
-      socket?.off('markAsRead', listener);
-    };
-  }, [socket?.id, state.user.userId]);
 
-  useEffect(() => {
-    const listener = (res: ServerRes) => {
-      if (res.code) {
-        dispatch({ type: 'SET_ERROR', payload: res.msg });
-        return;
-      }
-      const data = res.data as MessageOperation;
-      dispatch({ type: 'REVOKE_MESSAGE', payload: data });
-    };
-    socket?.on('revokeMessage', listener);
-    return () => {
-      socket?.off('revokeMessage', listener);
-    };
-  }, [socket?.id]);
-
-  useEffect(() => {
-    const listener = (res: ServerRes) => {
-      if (res.code) {
-        dispatch({ type: 'SET_ERROR', payload: res.msg });
-        return;
-      }
-      dispatch({
-        type: 'SET_GROUP_GATHER',
-        payload: res.data as Group,
-      });
-    };
-    socket?.on('addGroup', listener);
-    return () => {
-      socket?.off('addGroup', listener);
-    };
-  }, [socket?.id]);
-
-  useEffect(() => {
-    const listener = (res: ServerRes) => {
-      if (res.code) {
-        dispatch({ type: 'SET_ERROR', payload: res.msg });
-        return;
-      }
-      const data = res.data as Contact;
-      dispatch({ type: 'SET_CONTACT_GATHER', payload: data });
-      dispatch({ type: 'SET_USER_GATHER', payload: data });
-      socket?.emit('joinPrivateSocket', {
-        contactId: data.userId,
-      });
-    };
-    socket?.on('addContact', listener);
-    return () => {
-      socket?.off('addContact', listener);
-    };
-  }, [socket?.id]);
-
-  useEffect(() => {
-    const listener = (res: ServerRes) => {
+    // delete Group
+    const listener1 = (res: ServerRes) => {
       if (res.code) {
         dispatch({ type: 'SET_ERROR', payload: res.msg });
         return;
@@ -398,59 +468,9 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({
         dispatch({ type: 'DEL_GROUP_MEMBER', payload: data });
       }
     };
-    socket?.on('deleteGroup', listener);
-    return () => {
-      socket?.off('deleteGroup', listener);
-    };
-  }, [socket?.id, state.user]);
+    socket?.on('deleteGroup', listener1);
 
-  useEffect(() => {
-    const listener = (res: ServerRes) => {
-      if (res.code) {
-        dispatch({ type: 'SET_ERROR', payload: res.msg });
-        return;
-      }
-      const data = res.data as Contact;
-      dispatch({ type: 'DEL_CONTACT', payload: data });
-    };
-    socket?.on('deleteContact', listener);
-    return () => {
-      socket?.off('deleteContact', listener);
-    };
-  }, [socket?.id]);
-
-  useEffect(() => {
-    const listener = (res: ServerRes) => {
-      if (res.code) {
-        dispatch({ type: 'SET_ERROR', payload: res.msg });
-        return;
-      }
-      const data = res.data as Group;
-      dispatch({ type: 'UPDATE_GROUP_INFO', payload: data });
-    };
-    socket?.on('updateGroupInfo', listener);
-    return () => {
-      socket?.off('updateGroupInfo', listener);
-    };
-  }, [socket?.id]);
-
-  useEffect(() => {
-    const listener = (res: ServerRes) => {
-      if (res.code) {
-        dispatch({ type: 'SET_ERROR', payload: res.msg });
-        return;
-      }
-      const data = res.data as User;
-      dispatch({ type: 'UPDATE_USER_INFO', payload: data });
-    };
-    socket?.on('updateUserInfo', listener);
-    return () => {
-      socket?.off('updateUserInfo', listener);
-    };
-  }, [socket?.id]);
-
-  useEffect(() => {
-    const listener = (res: ServerRes) => {
+    const listener2 = (res: ServerRes) => {
       if (res.code) {
         dispatch({ type: 'SET_ERROR', payload: res.msg });
         return;
@@ -472,110 +492,48 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({
         });
       }
     };
-    socket?.on('joinGroup', listener);
-    return () => {
-      socket?.off('joinGroup', listener);
-    };
-  }, [socket?.id, state.user, state.groupGather]);
+    socket?.on('joinGroup', listener2);
 
-  useEffect(() => {
-    const listener = (res: ServerRes) => {
+    // listen group socket join
+    const listener4 = (res: ServerRes) => {
       if (res.code) {
         dispatch({ type: 'SET_ERROR', payload: res.msg });
         return;
       }
-      dispatch({
-        type: 'SET_CONFERENCE',
-        payload: res.data as ConferenceData,
-      });
-    };
-    socket?.on('startConference', listener);
-    return () => {
-      socket?.off('startConference', listener);
-    };
-  }, [socket?.id]);
-
-  useEffect(() => {
-    const listener = (res: ServerRes) => {
-      if (res.code) {
-        dispatch({ type: 'SET_ERROR', payload: res.msg });
-        return;
+      const data = res.data as JoinGroup;
+      const newUser: Contact = data.user;
+      newUser.online = 1;
+      const { group } = data;
+      const groupObj = state.groupGather[group.groupId];
+      // Информация о присоединении к группе новых пользователей
+      if (
+        groupObj &&
+        !groupObj.members?.find(
+          member => member.userId === newUser.userId,
+        )
+      ) {
+        newUser.isManager = 0;
+        groupObj.members?.push(newUser);
+        // Vue.prototype.$message.info(res.msg);
       }
-      dispatch({
-        type: 'PAUSE_CONFERENCE',
-        payload: res.data as ConferenceData,
-      });
+      dispatch({ type: 'SET_USER_GATHER', payload: newUser });
     };
-    socket?.on('pauseConference', listener);
-    return () => {
-      socket?.off('pauseConference', listener);
-    };
-  }, [socket?.id]);
+    socket?.on('joinGroupSocket', listener4);
 
-  useEffect(() => {
-    const listener = (res: ServerRes) => {
-      if (res.code) {
-        dispatch({ type: 'SET_ERROR', payload: res.msg });
-        return;
-      }
-      dispatch({
-        type: 'STOP_CONFERENCE',
-        payload: res.data as ConferenceData,
-      });
-    };
-    socket?.on('stopConference', listener);
     return () => {
-      socket?.off('stopConference', listener);
-    };
-  }, [socket?.id]);
+      socket?.off('markAsRead', listener);
 
-  useEffect(() => {
-    const listener = (res: ServerRes) => {
-      if (res.code) {
-        dispatch({ type: 'SET_ERROR', payload: res.msg });
-        return;
-      }
-    };
-    socket?.on('addOperator', listener);
-    return () => {
-      socket?.off('addOperator', listener);
-    };
-  }, [socket?.id]);
+      socket?.off('deleteGroup', listener1);
 
-  useEffect(() => {
-    const listener = (res: ServerRes) => {
-      if (res.code) {
-        dispatch({ type: 'SET_ERROR', payload: res.msg });
-        return;
-      }
-      dispatch({
-        type: 'SET_ACTIVE_ROOM',
-        payload: res.data as SetActiveRoom,
-      });
-    };
-    socket?.on('setActiveRoom', listener);
-    return () => {
-      socket?.off('setActiveRoom', listener);
-    };
-  }, [socket?.id]);
+      socket?.off('joinGroup', listener2);
 
-  useEffect(() => {
-    const listener = (res: ServerRes) => {
-      if (res.code) {
-        dispatch({ type: 'SET_ERROR', payload: res.msg });
-        return;
-      }
-      const payload = res.data as { visitData: VisitData };
-      dispatch({
-        type: 'SET_VISIT_DATA',
-        payload: payload.visitData,
-      });
+      socket?.off('joinGroupSocket', listener4);
     };
-    socket?.on('visitData', listener);
-    return () => {
-      socket?.off('visitData', listener);
-    };
-  }, [socket?.id]);
+  }, [
+    socket?.id,
+    state.user.userId,
+    allMessCount(state.groupGather),
+  ]);
 
   const value = useMemo(() => ({ socket, online }), [socket, online]);
 
