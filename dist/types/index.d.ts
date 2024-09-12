@@ -1,3 +1,4 @@
+/// <reference types="react" />
 export interface ChatProps {
     activeGroupId?: number;
     activeChatUserId?: number;
@@ -48,6 +49,7 @@ export interface PrivateMessage {
     type?: string;
     isRevoke?: boolean;
     revokeUserName?: string;
+    ref?: React.RefObject<HTMLLIElement>;
 }
 export interface Contact {
     userId: number;
@@ -85,6 +87,7 @@ export interface GroupMessage {
     isRevoke?: boolean;
     revokeUserName?: string;
     status?: MessageStatus;
+    ref?: React.RefObject<HTMLLIElement>;
 }
 export interface Group {
     groupId: number;

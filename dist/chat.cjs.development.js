@@ -1203,13 +1203,13 @@ const File = _ref => {
 
 const useStyles$6 = /*#__PURE__*/styles.makeStyles(theme => ({
   mediaContent: {
-    maxWidth: 284,
-    maxHeight: 190,
     backgroundColor: theme.palette.secondary.main,
     borderRadius: theme.spacing(1.2),
+    maxWidth: 284,
+    height: 190,
     [theme.breakpoints.down('sm')]: {
       maxWidth: 250,
-      maxHeight: 210
+      height: 170
     }
   }
 }));
@@ -1247,10 +1247,10 @@ const useStyles$7 = /*#__PURE__*/styles.makeStyles(theme => styles.createStyles(
   },
   aspect: {
     maxWidth: 284,
-    maxHeight: 190,
+    height: 190,
     [theme.breakpoints.down('sm')]: {
       maxWidth: 250,
-      maxHeight: 170
+      height: 170
     }
   }
 }));
@@ -1423,7 +1423,7 @@ const wrapMessage = (apiUrl, message, classes, isUserFirst, isUserLast, onContex
   } = message;
   const className = isUserFirst && isUserLast ? classes.message + " " + classes.firstMessage + " " + classes.lastMessage : isUserFirst ? classes.message + " " + classes.firstMessage : isUserLast ? classes.message + " " + classes.lastMessage : classes.message;
   if (messageType === 'file') {
-    return /*#__PURE__*/React.createElement(material.Link, {
+    return /*#__PURE__*/React__default.createElement(material.Link, {
       className: className + " " + classes.file,
       underline: "none",
       href: combineURLs(apiUrl, "/static/file/" + message.content),
@@ -1433,7 +1433,7 @@ const wrapMessage = (apiUrl, message, classes, isUserFirst, isUserLast, onContex
     }, child);
   }
   const isMedia = messageType === 'image' || messageType === 'video' || messageType === 'video_conference';
-  return /*#__PURE__*/React.createElement(material.Box, {
+  return /*#__PURE__*/React__default.createElement(material.Box, {
     display: "flex",
     flexDirection: isMedia ? 'column' : 'row',
     flexWrap: "wrap",
@@ -1441,7 +1441,7 @@ const wrapMessage = (apiUrl, message, classes, isUserFirst, isUserLast, onContex
     onContextMenu: onContextMenu
   }, child);
 };
-const Message = props => {
+const Message = /*#__PURE__*/React.memo( /*#__PURE__*/React.forwardRef((props, ref) => {
   const classes = useStyles$8();
   const {
     t
@@ -1460,9 +1460,10 @@ const Message = props => {
   if (message.messageType === 'notify') {
     // Уведомление - особый случай
     const content = message.content[0] === '{' ? JSON.parse(message.content) : message.content;
-    return /*#__PURE__*/React.createElement(material.ListItem, {
-      className: classes.rootNotify
-    }, /*#__PURE__*/React.createElement(material.Alert
+    return /*#__PURE__*/React__default.createElement(material.ListItem, {
+      className: classes.rootNotify,
+      ref: ref
+    }, /*#__PURE__*/React__default.createElement(material.Alert
     //ref={refOnMess}
     , {
       severity: typeof content === 'string' ? 'info' : content.severity
@@ -1470,32 +1471,35 @@ const Message = props => {
   }
   if (message.isRevoke) {
     // Удаленное сообщение
-    return /*#__PURE__*/React.createElement(material.ListItem, {
-      className: classes.rootNotify
-    }, /*#__PURE__*/React.createElement(material.Typography, {
+    return /*#__PURE__*/React__default.createElement(material.ListItem, {
+      className: classes.rootNotify,
+      ref: ref
+    }, /*#__PURE__*/React__default.createElement(material.Typography, {
       variant: "body2",
       align: "center"
     }, message.userId === user.userId ? t('CHAT.MESSAGE.REVOKED.YOU') : message.revokeUserName + " " + t('CHAT.MESSAGE.REVOKED.CONTACT')));
   }
   const isMine = user.userId === message.userId;
-  return /*#__PURE__*/React.createElement(material.ListItem, {
+  return /*#__PURE__*/React__default.createElement(material.ListItem, {
+    ref: ref,
     className: message.messageType === 'video_conference' ? classes.rootNotify : isMine ? classes.rootUser : classes.rootContact
-  }, wrapMessage(apiUrl, message, classes, isUserFirst, isUserLast, props.onContextMenu, /*#__PURE__*/React.createElement(React.Fragment, null, !isMine && isGroupMessage && owner && isUserFirst && /*#__PURE__*/React.createElement("div", {
+  }, wrapMessage(apiUrl, message, classes, isUserFirst, isUserLast, props.onContextMenu, /*#__PURE__*/React__default.createElement(React__default.Fragment, null, !isMine && isGroupMessage && owner && isUserFirst && /*#__PURE__*/React__default.createElement("div", {
     className: classes.header
-  }, owner.username), /*#__PURE__*/React.createElement("div", {
+  }, owner.username), /*#__PURE__*/React__default.createElement("div", {
     className: classes.body
-  }, /*#__PURE__*/React.createElement(MessageContent, {
+  }, /*#__PURE__*/React__default.createElement(MessageContent, {
     message: message,
     apiUrl: apiUrl,
     setViewerData: setViewerData
-  })), /*#__PURE__*/React.createElement("div", {
+  })), /*#__PURE__*/React__default.createElement("div", {
     className: classes.status
-  }, /*#__PURE__*/React.createElement("span", null, isMine ? message.status === 0 ? /*#__PURE__*/React.createElement(iconsMaterial.Done, {
+  }, /*#__PURE__*/React__default.createElement("span", null, isMine ? message.status === 0 ? /*#__PURE__*/React__default.createElement(iconsMaterial.Done, {
     className: classes.statusImage
-  }) : /*#__PURE__*/React.createElement(iconsMaterial.DoneAll, {
+  }) : /*#__PURE__*/React__default.createElement(iconsMaterial.DoneAll, {
     className: classes.statusImage
   }) : null, formatTime(message.cdate))))));
-};
+}));
+Message.displayName = 'Message';
 
 const emptyUser = {
   userId: 0,
@@ -2154,6 +2158,7 @@ const Loading = _ref => {
   }, /*#__PURE__*/React__default.createElement(material.CircularProgress, null));
 };
 const RoomMessageList = props => {
+  var _lastMessage$ref, _lastMessage$ref2;
   const {
     apiUrl,
     user,
@@ -2171,8 +2176,8 @@ const RoomMessageList = props => {
   const [scrollDownButton, setScrollDownButton] = React__default.useState(false);
   const messages = chat == null ? void 0 : chat.messages;
   const messageCount = (messages == null ? void 0 : messages.length) || 0;
-  // const lastMessage =
-  //   chat?.messages && chat.messages[messageCount - 1];
+  const lastMessage = messages && messages[messageCount - 1];
+  const lastMessagetHeight = lastMessage != null && (_lastMessage$ref = lastMessage.ref) != null && _lastMessage$ref.current ? lastMessage == null || (_lastMessage$ref2 = lastMessage.ref) == null ? void 0 : _lastMessage$ref2.current.offsetHeight : 50;
   const [gap, setGap] = React__default.useState(564);
   const messageCountUnreaded = messages && messages.filter(it => (it == null ? void 0 : it.status) != null && it.status === 0);
   // const refOnMess = React.useRef<HTMLDivElement>(null);
@@ -2199,22 +2204,9 @@ const RoomMessageList = props => {
     src: ''
   });
   React__default.useEffect(() => {
-    const first = () => {
-      setTimeout(() => {
-        if (refList.current) {
-          dispatch({
-            type: 'MARK_PRIVATE_MESSAGES_READ',
-            payload: user.userId
-          });
-          refList.current.scrollTop = refList.current.scrollHeight;
-        }
-      }, 1000);
-    };
-    first();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-  React__default.useEffect(() => {
-    scrollDown();
+    setTimeout(() => {
+      scrollDown();
+    }, 500);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [getChatId(chat)]);
   const scrollDown = () => {
@@ -2225,6 +2217,7 @@ const RoomMessageList = props => {
       });
       refList.current.scrollTop = refList.current.scrollHeight;
       const newGap = refList.current.scrollHeight - refList.current.scrollTop;
+      //console.log('newGap', newGap);
       setGap(newGap);
     }
   };
@@ -2249,39 +2242,56 @@ const RoomMessageList = props => {
     useCapture: true,
     useWindow: false,
     getScrollParent: () => {
+      // messages &&
+      //   messages.forEach(it => {
+      //     if (
+      //       it.ref?.current &&
+      //       isVisibleInViewport(it.ref.current)
+      //     ) {
+      //       console.log(formatTime(it.cdate));
+      //       return;
+      //     }
+      //   });
       if (refList.current) {
         const diff = refList.current.scrollHeight - refList.current.scrollTop;
         const isShowButton = refList.current.scrollTop < refList.current.scrollHeight - gap;
         setScrollDownButton(isShowButton);
-        // console.log(
-        //   'scrollTop',
-        //   refList.current.scrollTop,
-        //   'scrollHeight',
-        //   refList.current.scrollHeight,
-        //   'diff:',
-        //   diff,
-        // );
-        if (diff > gap && diff < gap + 90) {
+        if (diff > gap && diff < gap + lastMessagetHeight) {
+          // console.log(
+          //   'scrollTop',
+          //   refList.current.scrollTop,
+          //   'scrollHeight',
+          //   refList.current.scrollHeight,
+          //   'diff:',
+          //   diff,
+          //   'lastMessage?.ref?.current.offsetHeight',
+          //   lastMessage?.ref?.current.offsetHeight,
+          // );
           scrollDown();
         }
         //
       }
       return refList.current;
     }
-  }, messages && messages.map((message, inx) => /*#__PURE__*/React__default.createElement(Message, {
-    key: inx,
-    apiUrl: apiUrl,
-    user: user,
-    message: message,
-    owner: users[message.userId],
-    isGroupMessage: !!(chat != null && chat.groupId),
-    isUserFirst: inx === 0 || messages[inx - 1].messageType === 'notify' || messages[inx - 1].userId !== messages[inx].userId,
-    isUserLast: inx === messages.length - 1 || messages[inx + 1].messageType === 'notify' || messages[inx + 1].userId !== messages[inx].userId,
-    onContextMenu: event => handleMenuPopup(message, event)
-    //refOnMess={defineRefOnMess(inx)}
-    ,
-    setViewerData: setViewerData
-  })))), scrollDownButton && /*#__PURE__*/React__default.createElement(material.Box, {
+  }, messages && messages.map((message, inx) => {
+    const refMes = /*#__PURE__*/React__default.createRef();
+    messages[inx].ref = refMes;
+    return /*#__PURE__*/React__default.createElement(Message, {
+      ref: refMes,
+      key: inx,
+      apiUrl: apiUrl,
+      user: user,
+      message: message,
+      owner: users[message.userId],
+      isGroupMessage: !!(chat != null && chat.groupId),
+      isUserFirst: inx === 0 || messages[inx - 1].messageType === 'notify' || messages[inx - 1].userId !== messages[inx].userId,
+      isUserLast: inx === messages.length - 1 || messages[inx + 1].messageType === 'notify' || messages[inx + 1].userId !== messages[inx].userId,
+      onContextMenu: event => handleMenuPopup(message, event)
+      //refOnMess={defineRefOnMess(inx)}
+      ,
+      setViewerData: setViewerData
+    });
+  }))), scrollDownButton && /*#__PURE__*/React__default.createElement(material.Box, {
     className: classes.arrowDown,
     textAlign: "center"
   }, /*#__PURE__*/React__default.createElement(material.Fab, {
@@ -2557,6 +2567,7 @@ const contactAvatar = (apiUrl, contact, typing) => {
   return avatar;
 };
 const RoomListItem = props => {
+  var _chat$messages;
   const classes = useStyles$b();
   const {
     t
@@ -2602,7 +2613,7 @@ const RoomListItem = props => {
       color: "primary",
       label: chat.unreadCount
     }) : null)
-  })), [roomTime]);
+  })), [(_chat$messages = chat.messages) == null ? void 0 : _chat$messages.length]);
   return listItem;
 };
 
@@ -3483,7 +3494,7 @@ const SocketProvider = _ref => {
       socket == null || socket.off('groupMessage', listener);
       socket == null || socket.off('privateMessage', listener1);
     };
-  }, [socket == null ? void 0 : socket.id, (_state$activeRoom2 = state.activeRoom) == null ? void 0 : _state$activeRoom2.groupId, (_state$activeRoom3 = state.activeRoom) == null ? void 0 : _state$activeRoom3.groupId]);
+  }, [socket == null ? void 0 : socket.id, (_state$activeRoom2 = state.activeRoom) == null ? void 0 : _state$activeRoom2.userId, (_state$activeRoom3 = state.activeRoom) == null ? void 0 : _state$activeRoom3.groupId]);
   React.useEffect(() => {
     // mark As Read
     const listener = res => {

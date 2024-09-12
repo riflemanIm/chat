@@ -1,10 +1,12 @@
 {
   "name": "@pmt/chat",
-  "version": "1.2.4",
-  "main": "src/index.ts",
-  "types": "src/index.ts",
+  "version": "1.21.13",
+  "description": "PMT Chat, last global change mui v5",
+  "main": "dist/index.js",
+  "module": "dist/index.es.js",
+  "types": "dist/index.d.ts",
   "files": [
-    "src"
+    "dist"
   ],
   "repository": {
     "type": "git",
@@ -16,5 +18,58 @@
   "keywords": [
     "chat, telechat"
   ],
-  "author": "Pavel Ishenin"
+  "author": "Pavel Ishenin",
+  "license": "ISC",
+  "eslintConfig": {
+    "extends": [
+      "react-app"
+    ]
+  },
+  "scripts": {
+    "build": "tsdx build --transpileOnly --entry ./src/index.ts",
+    "prepare": "yarn build"
+  },
+  "dependencies": {
+    "axios": "^0.27.2",
+    "classnames": "^2.3.2",
+    "dayjs": "^1.11.10",
+    "i18next": "^23.5.1",
+    "i18next-browser-languagedetector": "^7.0.1",
+    "react-aspect-ratio": "^1.1.6",
+    "react-i18next": "^14.1.1",
+    "socket.io-client": "^4.4.1",
+    "react-infinite-scroller": "^1.2.6"
+  },
+  "peerDependencies": {
+    "@emotion/core": "^11.0.0",
+    "@emotion/css": "^11.10.5",
+    "@emotion/react": "^11.10.5",
+    "@emotion/styled": "^11.10.5",
+    "@mui/icons-material": "^5.14.13",
+    "@mui/lab": "^5.0.0-alpha.148",
+    "@mui/material": "^5.14.13",
+    "@mui/styles": "^5.14.13",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^6.26.1"
+  },
+  "devDependencies": {
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
+    "@babel/preset-react": "^7.18.6",
+    "@emotion/babel-preset-css-prop": "^11.10.0",
+    "@types/react": "^18.3.5",
+    "@types/react-dom": "^18.3.0",
+    "@types/react-infinite-scroller": "^1.2.5",
+    "@types/typography": "^0.16.5",
+    "@typescript-eslint/eslint-plugin": "^6.7.5",
+    "@typescript-eslint/parser": "^6.7.5",
+    "eslint": "^8.51.0",
+    "eslint-config-airbnb": "^19.0.4",
+    "eslint-plugin-import": "^2.28.1",
+    "eslint-plugin-jsx-a11y": "^6.7.1",
+    "eslint-plugin-react": "^7.33.2",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "tsdx": "^0.14.1",
+    "typescript": "^5.2.2"
+  }
 }

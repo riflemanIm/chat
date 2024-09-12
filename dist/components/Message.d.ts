@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { ChatMessage, Contact, User } from '../types';
 declare type MessageProps = {
     apiUrl: string;
@@ -14,5 +14,5 @@ declare type MessageProps = {
         src: string;
     }) => void;
 };
-declare const Message: React.FC<MessageProps>;
+declare const Message: React.MemoExoticComponent<React.ForwardRefExoticComponent<MessageProps & React.RefAttributes<HTMLLIElement>>>;
 export default Message;
