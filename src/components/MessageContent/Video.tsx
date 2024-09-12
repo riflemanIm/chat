@@ -6,13 +6,13 @@ import { combineURLs } from '../../utils/common';
 
 const useStyles = makeStyles((theme: Theme) => ({
   mediaContent: {
-    maxWidth: 284,
-    maxHeight: 190,
     backgroundColor: theme.palette.secondary.main,
     borderRadius: theme.spacing(1.2),
+    maxWidth: 284,
+    height: 190,
     [theme.breakpoints.down('sm')]: {
       maxWidth: 250,
-      maxHeight: 210,
+      height: 170,
     },
   },
 }));

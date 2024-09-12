@@ -223,7 +223,7 @@ const RoomListItem: React.FC<RoomListItemProps> = (
         />
       </ListItem>
     ),
-    [roomTime],
+    [chat.messages?.length],
   );
   return listItem;
 };

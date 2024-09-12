@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ForwardedRef } from 'react';
 import {
   Box,
   CardContent,
@@ -116,9 +116,10 @@ const RoomMessageList: React.FC<RoomMessageListProps> = (
 
   const messages = chat?.messages;
   const messageCount = messages?.length || 0;
-  // const lastMessage =
-  //   chat?.messages && chat.messages[messageCount - 1];
-
+  const lastMessage = messages && messages[messageCount - 1];
+  const lastMessagetHeight = lastMessage?.ref?.current
+    ? lastMessage?.ref?.current.offsetHeight
+    : 50;
   const [gap, setGap] = React.useState(564);
 
   const messageCountUnreaded =
@@ -162,23 +163,10 @@ const RoomMessageList: React.FC<RoomMessageListProps> = (
   });
 
   React.useEffect(() => {
-    const first = () => {
-      setTimeout(() => {
-        if (refList.current) {
-          dispatch({
-            type: 'MARK_PRIVATE_MESSAGES_READ',
-            payload: user.userId,
-          });
-          refList.current.scrollTop = refList.current.scrollHeight;
-        }
-      }, 1000);
-    };
-    first();
+    setTimeout(() => {
+      scrollDown();
+    }, 500);
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-  React.useEffect(() => {
-    scrollDown();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [getChatId(chat)]);
 
@@ -190,9 +178,10 @@ const RoomMessageList: React.FC<RoomMessageListProps> = (
       });
 
       refList.current.scrollTop = refList.current.scrollHeight;
+
       const newGap =
         refList.current.scrollHeight - refList.current.scrollTop;
-
+      //console.log('newGap', newGap);
       setGap(newGap);
     }
   };
@@ -218,6 +207,17 @@ const RoomMessageList: React.FC<RoomMessageListProps> = (
           useCapture
           useWindow={false}
           getScrollParent={() => {
+            // messages &&
+            //   messages.forEach(it => {
+            //     if (
+            //       it.ref?.current &&
+            //       isVisibleInViewport(it.ref.current)
+            //     ) {
+            //       console.log(formatTime(it.cdate));
+            //       return;
+            //     }
+            //   });
+
             if (refList.current) {
               const diff =
                 refList.current.scrollHeight -
@@ -227,16 +227,20 @@ const RoomMessageList: React.FC<RoomMessageListProps> = (
                 refList.current.scrollHeight - gap;
 
               setScrollDownButton(isShowButton);
-              // console.log(
-              //   'scrollTop',
-              //   refList.current.scrollTop,
-              //   'scrollHeight',
 
-              //   refList.current.scrollHeight,
-              //   'diff:',
-              //   diff,
-              // );
-              if (diff > gap && diff < gap + 90) {
+              if (diff > gap && diff < gap + lastMessagetHeight) {
+                // console.log(
+                //   'scrollTop',
+                //   refList.current.scrollTop,
+                //   'scrollHeight',
+
+                //   refList.current.scrollHeight,
+                //   'diff:',
+                //   diff,
+                //   'lastMessage?.ref?.current.offsetHeight',
+                //   lastMessage?.ref?.current.offsetHeight,
+                // );
+
                 scrollDown();
               }
 
@@ -246,31 +250,36 @@ const RoomMessageList: React.FC<RoomMessageListProps> = (
           }}
         >
           {messages &&
-            (messages as ChatMessage[]).map((message, inx) => (
-              <Message
-                key={inx}
-                apiUrl={apiUrl}
-                user={user}
-                message={message}
-                owner={users[message.userId]}
-                isGroupMessage={!!chat?.groupId}
-                isUserFirst={
-                  inx === 0 ||
-                  messages[inx - 1].messageType === 'notify' ||
-                  messages[inx - 1].userId !== messages[inx].userId
-                }
-                isUserLast={
-                  inx === messages.length - 1 ||
-                  messages[inx + 1].messageType === 'notify' ||
-                  messages[inx + 1].userId !== messages[inx].userId
-                }
-                onContextMenu={event =>
-                  handleMenuPopup(message, event)
-                }
-                //refOnMess={defineRefOnMess(inx)}
-                setViewerData={setViewerData}
-              />
-            ))}
+            (messages as ChatMessage[]).map((message, inx) => {
+              const refMes = React.createRef<HTMLLIElement>();
+              messages[inx].ref = refMes;
+              return (
+                <Message
+                  ref={refMes}
+                  key={inx}
+                  apiUrl={apiUrl}
+                  user={user}
+                  message={message}
+                  owner={users[message.userId]}
+                  isGroupMessage={!!chat?.groupId}
+                  isUserFirst={
+                    inx === 0 ||
+                    messages[inx - 1].messageType === 'notify' ||
+                    messages[inx - 1].userId !== messages[inx].userId
+                  }
+                  isUserLast={
+                    inx === messages.length - 1 ||
+                    messages[inx + 1].messageType === 'notify' ||
+                    messages[inx + 1].userId !== messages[inx].userId
+                  }
+                  onContextMenu={event =>
+                    handleMenuPopup(message, event)
+                  }
+                  //refOnMess={defineRefOnMess(inx)}
+                  setViewerData={setViewerData}
+                />
+              );
+            })}
         </InfiniteScroll>
       </List>
       {scrollDownButton && (

@@ -20,10 +20,10 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     aspect: {
       maxWidth: 284,
-      maxHeight: 190,
+      height: 190,
       [theme.breakpoints.down('sm')]: {
         maxWidth: 250,
-        maxHeight: 170,
+        height: 170,
       },
     },
   }),

@@ -61,6 +61,7 @@ export interface PrivateMessage {
   type?: string;
   isRevoke?: boolean;
   revokeUserName?: string;
+  ref?: React.RefObject<HTMLLIElement>;
 }
 
 // Контакт
@@ -104,6 +105,7 @@ export interface GroupMessage {
   isRevoke?: boolean;
   revokeUserName?: string;
   status?: MessageStatus;
+  ref?: React.RefObject<HTMLLIElement>;
 }
 
 // Группа
