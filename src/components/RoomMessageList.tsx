@@ -1,4 +1,11 @@
-import React, { ForwardedRef } from 'react';
+import React, {
+  ForwardedRef,
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+} from 'react';
 import {
   Box,
   CardContent,
@@ -7,16 +14,18 @@ import {
   Backdrop,
   Fab,
   Typography,
+  ListItem,
 } from '@mui/material';
 import { Theme } from '@mui/material/styles';
 import { makeStyles, createStyles } from '@mui/styles';
 import KeyboardArrowDown from '@mui/icons-material/KeyboardArrowDown';
 
 import Message from './Message';
-import InfiniteScroll from 'react-infinite-scroller';
+
 import { getChatId } from '../utils/common';
 import { ChatMessage, ChatRoom, User, ContactGather } from '../types';
 import { ChatContext } from '../context/ChatContext';
+import useInfiniteScroll from 'react-infinite-scroll-hook';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -25,13 +34,11 @@ const useStyles = makeStyles((theme: Theme) =>
       overflowY: 'auto',
       margin: 0,
       padding: 0,
-    },
-    messageList: {
       height: '100%',
-      overflowY: 'auto',
       scrollbarWidth: 'thin',
       scrollbarColor: `${theme.palette.primary.light} #fff`,
     },
+    messageList: {},
     img: {
       cursor: 'pointer',
       borderRadius: theme.spacing(1.2),
@@ -85,16 +92,6 @@ type RoomMessageListProps = {
   >;
 };
 
-const Loading = ({ loading }: { loading: boolean }) => {
-  return (
-    loading && (
-      <Box sx={{ width: '100%', mx: 'auto', textAlign: 'center' }}>
-        <CircularProgress />
-      </Box>
-    )
-  );
-};
-
 const RoomMessageList: React.FC<RoomMessageListProps> = (
   props: RoomMessageListProps,
 ) => {
@@ -109,26 +106,84 @@ const RoomMessageList: React.FC<RoomMessageListProps> = (
     initialMenuState,
   } = props;
   const classes = useStyles();
+
+  const [viewerData, setViewerData] = React.useState<{
+    visible: boolean;
+    src: string;
+  }>({
+    visible: false,
+    src: '',
+  });
+
   const { dispatch } = React.useContext(ChatContext);
   const [scrollDownButton, setScrollDownButton] = React.useState(
-    false,
+    true,
+  );
+  const hasNextPage =
+    chat && chat.noMoreData != null && !chat.noMoreData
+      ? true
+      : false;
+  console.log('hasNextPage', hasNextPage, chat, chat?.noMoreData);
+  const messages = useMemo(
+    () => (chat?.messages ? chat.messages : []),
+    [chat?.messages],
+  );
+  const messageCount = messages?.length;
+
+  const messageCountUnreaded = messages.filter(
+    it => it?.status != null && it.status === 0,
   );
 
-  const messages = chat?.messages;
-  const messageCount = messages?.length || 0;
-  const lastMessage = messages && messages[messageCount - 1];
-  const lastMessagetHeight = lastMessage?.ref?.current
-    ? lastMessage?.ref?.current.offsetHeight
-    : 50;
-  const [gap, setGap] = React.useState(564);
+  const loadMore = () => {
+    chat && props.onNeedMoreMessages(chat);
+  };
 
-  const messageCountUnreaded =
-    messages &&
-    messages.filter(it => it?.status != null && it.status === 0);
+  const [infiniteRef, { rootRef }] = useInfiniteScroll({
+    loading,
+    hasNextPage,
+    onLoadMore: loadMore,
+    disabled: false,
+  });
 
-  // const refOnMess = React.useRef<HTMLDivElement>(null);
-  // const refOnLastMess = React.useRef<HTMLDivElement>(null);
-  const refList = React.useRef<HTMLUListElement>(null);
+  const scrollableRootRef = useRef<React.ElementRef<'div'> | null>(
+    null,
+  );
+  const lastScrollDistanceToBottomRef = useRef<number>();
+
+  // We keep the scroll position when new items are added etc.
+  useLayoutEffect(() => {
+    const scrollableRoot = scrollableRootRef.current;
+    const lastScrollDistanceToBottom =
+      lastScrollDistanceToBottomRef.current ?? 0;
+    if (scrollableRoot) {
+      scrollableRoot.scrollTop =
+        scrollableRoot.scrollHeight - lastScrollDistanceToBottom;
+    }
+  }, [getChatId(chat), messageCount, rootRef]);
+
+  const handleRootScroll = useCallback(() => {
+    const rootNode = scrollableRootRef.current;
+    if (rootNode) {
+      const scrollDistanceToBottom =
+        rootNode.scrollHeight - rootNode.scrollTop;
+      lastScrollDistanceToBottomRef.current = scrollDistanceToBottom;
+    }
+  }, []);
+
+  const scrollDown = () => {
+    if (scrollableRootRef.current) {
+      scrollableRootRef.current.scrollTop =
+        scrollableRootRef.current.scrollHeight;
+    }
+  };
+
+  const rootRefSetter = useCallback(
+    (node: HTMLDivElement) => {
+      rootRef(node);
+      scrollableRootRef.current = node;
+    },
+    [rootRef],
+  );
 
   const handleMenuPopup = (
     message: ChatMessage,
@@ -154,133 +209,52 @@ const RoomMessageList: React.FC<RoomMessageListProps> = (
     });
   };
 
-  const [viewerData, setViewerData] = React.useState<{
-    visible: boolean;
-    src: string;
-  }>({
-    visible: false,
-    src: '',
-  });
-
-  React.useEffect(() => {
-    setTimeout(() => {
-      scrollDown();
-    }, 500);
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [getChatId(chat)]);
-
-  const scrollDown = () => {
-    if (refList.current) {
-      dispatch({
-        type: 'MARK_PRIVATE_MESSAGES_READ',
-        payload: user.userId,
-      });
-
-      refList.current.scrollTop = refList.current.scrollHeight;
-
-      const newGap =
-        refList.current.scrollHeight - refList.current.scrollTop;
-      //console.log('newGap', newGap);
-      setGap(newGap);
-    }
-  };
-
+  console.log('messages', messages);
   return (
-    <CardContent className={classes.messageListOuter}>
-      <List className={classes.messageList} ref={refList}>
-        <InfiniteScroll
-          pageStart={0}
-          loadMore={() => {
-            if (
-              messageCount >= pageSize &&
-              !loading &&
-              props.onNeedMoreMessages &&
-              chat
-            ) {
-              props.onNeedMoreMessages(chat);
-            }
-          }}
-          hasMore={chat && !chat.noMoreData ? true : false}
-          loader={<Loading loading={loading} key={0} />}
-          isReverse
-          useCapture
-          useWindow={false}
-          getScrollParent={() => {
-            // messages &&
-            //   messages.forEach(it => {
-            //     if (
-            //       it.ref?.current &&
-            //       isVisibleInViewport(it.ref.current)
-            //     ) {
-            //       console.log(formatTime(it.cdate));
-            //       return;
-            //     }
-            //   });
-
-            if (refList.current) {
-              const diff =
-                refList.current.scrollHeight -
-                refList.current.scrollTop;
-              const isShowButton =
-                refList.current.scrollTop <
-                refList.current.scrollHeight - gap;
-
-              setScrollDownButton(isShowButton);
-
-              if (diff > gap && diff < gap + lastMessagetHeight) {
-                // console.log(
-                //   'scrollTop',
-                //   refList.current.scrollTop,
-                //   'scrollHeight',
-
-                //   refList.current.scrollHeight,
-                //   'diff:',
-                //   diff,
-                //   'lastMessage?.ref?.current.offsetHeight',
-                //   lastMessage?.ref?.current.offsetHeight,
-                // );
-
-                scrollDown();
+    <CardContent
+      className={classes.messageListOuter}
+      ref={rootRefSetter}
+      onScroll={handleRootScroll}
+    >
+      <List className={classes.messageList}>
+        {hasNextPage && (
+          <ListItem
+            ref={infiniteRef}
+            sx={{
+              justifyContent: 'center',
+            }}
+          >
+            <CircularProgress />
+          </ListItem>
+        )}
+        {(messages as ChatMessage[]).map((message, inx) => {
+          const refMes = React.createRef<HTMLLIElement>();
+          messages[inx].ref = refMes;
+          return (
+            <Message
+              ref={refMes}
+              key={inx}
+              apiUrl={apiUrl}
+              user={user}
+              message={message}
+              owner={users[message.userId]}
+              isGroupMessage={!!chat?.groupId}
+              isUserFirst={
+                inx === 0 ||
+                messages[inx - 1].messageType === 'notify' ||
+                messages[inx - 1].userId !== messages[inx].userId
               }
-
-              //
-            }
-            return refList.current;
-          }}
-        >
-          {messages &&
-            (messages as ChatMessage[]).map((message, inx) => {
-              const refMes = React.createRef<HTMLLIElement>();
-              messages[inx].ref = refMes;
-              return (
-                <Message
-                  ref={refMes}
-                  key={inx}
-                  apiUrl={apiUrl}
-                  user={user}
-                  message={message}
-                  owner={users[message.userId]}
-                  isGroupMessage={!!chat?.groupId}
-                  isUserFirst={
-                    inx === 0 ||
-                    messages[inx - 1].messageType === 'notify' ||
-                    messages[inx - 1].userId !== messages[inx].userId
-                  }
-                  isUserLast={
-                    inx === messages.length - 1 ||
-                    messages[inx + 1].messageType === 'notify' ||
-                    messages[inx + 1].userId !== messages[inx].userId
-                  }
-                  onContextMenu={event =>
-                    handleMenuPopup(message, event)
-                  }
-                  //refOnMess={defineRefOnMess(inx)}
-                  setViewerData={setViewerData}
-                />
-              );
-            })}
-        </InfiniteScroll>
+              isUserLast={
+                inx === messages.length - 1 ||
+                messages[inx + 1].messageType === 'notify' ||
+                messages[inx + 1].userId !== messages[inx].userId
+              }
+              onContextMenu={event => handleMenuPopup(message, event)}
+              //refOnMess={defineRefOnMess(inx)}
+              setViewerData={setViewerData}
+            />
+          );
+        })}
       </List>
       {scrollDownButton && (
         <Box className={classes.arrowDown} textAlign="center">
@@ -288,7 +262,7 @@ const RoomMessageList: React.FC<RoomMessageListProps> = (
             color="info"
             aria-label="add"
             size="medium"
-            onClick={scrollDown}
+            onClick={() => scrollDown()}
           >
             <KeyboardArrowDown />
           </Fab>
