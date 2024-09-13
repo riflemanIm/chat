@@ -525,7 +525,7 @@ const addPrivateMessages = (
       ],
       noMoreData: messages?.length
         ? messages?.length < data.pageSize
-        : false,
+        : true,
     };
   }
 
@@ -551,7 +551,7 @@ const addGroupMessages = (
       ],
       noMoreData: messages?.length
         ? messages?.length < data.pageSize
-        : false,
+        : true,
     };
   }
 

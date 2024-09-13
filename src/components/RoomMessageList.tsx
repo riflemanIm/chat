@@ -117,13 +117,14 @@ const RoomMessageList: React.FC<RoomMessageListProps> = (
 
   const { dispatch } = React.useContext(ChatContext);
   const [scrollDownButton, setScrollDownButton] = React.useState(
-    true,
+    false,
   );
+
   const hasNextPage =
-    chat && chat.noMoreData != null && !chat.noMoreData
+    chat == null || chat?.noMoreData == null
       ? true
-      : false;
-  console.log('hasNextPage', hasNextPage, chat, chat?.noMoreData);
+      : !chat.noMoreData;
+
   const messages = useMemo(
     () => (chat?.messages ? chat.messages : []),
     [chat?.messages],
@@ -167,11 +168,21 @@ const RoomMessageList: React.FC<RoomMessageListProps> = (
       const scrollDistanceToBottom =
         rootNode.scrollHeight - rootNode.scrollTop;
       lastScrollDistanceToBottomRef.current = scrollDistanceToBottom;
+      const gap =
+        (rootNode.scrollHeight - scrollDistanceToBottom) * 1.2;
+
+      setScrollDownButton(
+        hasNextPage && scrollDistanceToBottom > 700,
+      );
     }
   }, []);
 
   const scrollDown = () => {
     if (scrollableRootRef.current) {
+      dispatch({
+        type: 'MARK_PRIVATE_MESSAGES_READ',
+        payload: user.userId,
+      });
       scrollableRootRef.current.scrollTop =
         scrollableRootRef.current.scrollHeight;
     }
@@ -209,7 +220,7 @@ const RoomMessageList: React.FC<RoomMessageListProps> = (
     });
   };
 
-  console.log('messages', messages);
+  //console.log('messages', messages);
   return (
     <CardContent
       className={classes.messageListOuter}
