@@ -151,8 +151,15 @@ const RoomMessageList: React.FC<RoomMessageListProps> = (
   );
   const lastScrollDistanceToBottomRef = useRef<number>();
 
-  // We keep the scroll position when new items are added etc.
   useLayoutEffect(() => {
+    if (scrollableRootRef.current) {
+      scrollableRootRef.current.scrollTop =
+        scrollableRootRef.current.scrollHeight;
+    }
+  }, [getChatId(chat)]);
+
+  // We keep the scroll position when new items are added etc.
+  useEffect(() => {
     const scrollableRoot = scrollableRootRef.current;
     const lastScrollDistanceToBottom =
       lastScrollDistanceToBottomRef.current ?? 0;
@@ -160,7 +167,7 @@ const RoomMessageList: React.FC<RoomMessageListProps> = (
       scrollableRoot.scrollTop =
         scrollableRoot.scrollHeight - lastScrollDistanceToBottom;
     }
-  }, [getChatId(chat), messageCount, rootRef]);
+  }, [messageCount]);
 
   const handleRootScroll = useCallback(() => {
     const rootNode = scrollableRootRef.current;
@@ -168,8 +175,13 @@ const RoomMessageList: React.FC<RoomMessageListProps> = (
       const scrollDistanceToBottom =
         rootNode.scrollHeight - rootNode.scrollTop;
       lastScrollDistanceToBottomRef.current = scrollDistanceToBottom;
-      const gap =
-        (rootNode.scrollHeight - scrollDistanceToBottom) * 1.2;
+
+      console.log(
+        'rootNode.scrollHeight',
+        rootNode.scrollHeight,
+        'scrollDistanceToBottom',
+        scrollDistanceToBottom,
+      );
 
       setScrollDownButton(
         hasNextPage && scrollDistanceToBottom > 700,
