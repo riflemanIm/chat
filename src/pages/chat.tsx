@@ -326,6 +326,7 @@ export const ChatPage: React.FC<ChatPageProps> = ({
       onConferencePause={onConferencePause}
       onOperatorAdd={onOperatorAdd}
       onLeaveGroup={onLeaveGroup}
+      inModale={inModale}
     />
   );
 

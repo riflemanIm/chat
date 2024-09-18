@@ -1,11 +1,4 @@
-import React, {
-  ForwardedRef,
-  useCallback,
-  useEffect,
-  useLayoutEffect,
-  useMemo,
-  useRef,
-} from 'react';
+import React from 'react';
 import {
   Box,
   CardContent,
@@ -15,6 +8,9 @@ import {
   Fab,
   Typography,
   ListItem,
+  Fade,
+  Alert,
+  useMediaQuery,
 } from '@mui/material';
 import { Theme } from '@mui/material/styles';
 import { makeStyles, createStyles } from '@mui/styles';
@@ -26,6 +22,23 @@ import { getChatId } from '../utils/common';
 import { ChatMessage, ChatRoom, User, ContactGather } from '../types';
 import { ChatContext } from '../context/ChatContext';
 import useInfiniteScroll from 'react-infinite-scroll-hook';
+import dayjs from 'dayjs';
+import useInterval from '../hooks/useInterval';
+
+function isVisibleInViewport(
+  element: HTMLLIElement,
+  root: HTMLDivElement,
+) {
+  const rect = element.getBoundingClientRect();
+  // console.log(
+  //   'rect.top',
+  //   rect.top,
+  //   'rect.bottom',
+  //   rect.bottom,
+  //   root.clientHeight,
+  // );
+  return rect.top >= 50 && rect.bottom <= root.clientHeight;
+}
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -90,6 +103,8 @@ type RoomMessageListProps = {
   setMenuState: React.Dispatch<
     React.SetStateAction<InitialMenuState>
   >;
+  inModale?: boolean;
+  isConference: boolean;
 };
 
 const RoomMessageList: React.FC<RoomMessageListProps> = (
@@ -104,8 +119,15 @@ const RoomMessageList: React.FC<RoomMessageListProps> = (
     pageSize,
     setMenuState,
     initialMenuState,
+    inModale,
+    isConference,
   } = props;
+
   const classes = useStyles();
+  const isMobile = useMediaQuery((theme: Theme) =>
+    theme.breakpoints.down('sm'),
+  );
+  const DEF = 900;
 
   const [viewerData, setViewerData] = React.useState<{
     visible: boolean;
@@ -120,19 +142,38 @@ const RoomMessageList: React.FC<RoomMessageListProps> = (
     false,
   );
 
+  const scrollableRootRef = React.useRef<React.ElementRef<
+    'div'
+  > | null>(null);
+  const lastScrollDistanceToBottomRef = React.useRef<number>();
+  const lastMessageCount = React.useRef<number>();
+
   const hasNextPage =
     chat == null || chat?.noMoreData == null
       ? true
       : !chat.noMoreData;
 
-  const messages = useMemo(
-    () => (chat?.messages ? chat.messages : []),
+  const messages = React.useMemo(
+    () =>
+      chat?.messages
+        ? chat.messages.map(it => ({
+            ...it,
+            ref: React.createRef<HTMLLIElement>(),
+          }))
+        : [],
     [chat?.messages],
   );
-  const messageCount = messages?.length;
+
+  const messageCount = messages?.length || 0;
+
+  const lastMessage = messageCount && messages[messageCount - 1];
 
   const messageCountUnreaded = messages.filter(
     it => it?.status != null && it.status === 0,
+  );
+
+  const [isVisible, setIsVisible] = React.useState<string>(
+    messages[messageCount - 1].cdate,
   );
 
   const loadMore = () => {
@@ -146,61 +187,97 @@ const RoomMessageList: React.FC<RoomMessageListProps> = (
     disabled: false,
   });
 
-  const scrollableRootRef = useRef<React.ElementRef<'div'> | null>(
-    null,
-  );
-  const lastScrollDistanceToBottomRef = useRef<number>();
-
-  useLayoutEffect(() => {
-    if (scrollableRootRef.current) {
-      scrollableRootRef.current.scrollTop =
-        scrollableRootRef.current.scrollHeight;
+  React.useEffect(() => {
+    if (scrollableRootRef.current && messageCount) {
+      setIsVisible(messages[messageCount - 1].cdate);
+      scrollDown();
     }
   }, [getChatId(chat)]);
 
-  // We keep the scroll position when new items are added etc.
-  useEffect(() => {
+  useInterval(
+    () => {
+      setIsVisible('');
+    },
+    isVisible,
+    3700,
+  );
+
+  // ------ keep the scroll position and lastMessageCount when messageCount changed ----------
+  React.useEffect(() => {
     const scrollableRoot = scrollableRootRef.current;
     const lastScrollDistanceToBottom =
       lastScrollDistanceToBottomRef.current ?? 0;
-    if (scrollableRoot) {
-      scrollableRoot.scrollTop =
-        scrollableRoot.scrollHeight - lastScrollDistanceToBottom;
+
+    if (scrollableRoot && lastMessage && chat) {
+      // -----  scroll to prev lastScrollDistanceToBottom -----------
+      if (lastMessageCount.current === messageCount - pageSize) {
+        scrollableRoot.scrollTop =
+          scrollableRoot.scrollHeight - lastScrollDistanceToBottom;
+      } else if (
+        // -----  scroll to bottom forced -----------
+        lastMessage.userId !== chat.userId ||
+        lastScrollDistanceToBottom <= DEF
+      ) {
+        scrollDown();
+      }
     }
+    lastMessageCount.current = messageCount;
   }, [messageCount]);
 
-  const handleRootScroll = useCallback(() => {
+  const handleRootScroll = React.useCallback(() => {
     const rootNode = scrollableRootRef.current;
+
     if (rootNode) {
       const scrollDistanceToBottom =
         rootNode.scrollHeight - rootNode.scrollTop;
       lastScrollDistanceToBottomRef.current = scrollDistanceToBottom;
 
-      console.log(
-        'rootNode.scrollHeight',
-        rootNode.scrollHeight,
-        'scrollDistanceToBottom',
-        scrollDistanceToBottom,
-      );
+      const isShowScrollButton =
+        hasNextPage && scrollDistanceToBottom > DEF;
+      setScrollDownButton(isShowScrollButton);
 
-      setScrollDownButton(
-        hasNextPage && scrollDistanceToBottom > 700,
-      );
+      if (!isShowScrollButton) {
+        dispatch({
+          type: 'MARK_PRIVATE_MESSAGES_READ',
+          payload: user.userId,
+        });
+      }
+
+      for (let i = 0; i < messageCount; i++) {
+        const mess = messages[i];
+        // console.log(
+        //   '------------loop------------',
+        //   //mess?.ref?.current,
+        // );
+
+        if (mess?.ref?.current) {
+          const isVisibleMess = isVisibleInViewport(
+            mess.ref.current,
+            rootNode,
+          );
+          if (isVisibleMess) {
+            // console.log(
+            //   'visible',
+            //   dayjs(mess.cdate).format('DD.MM.YYYY'),
+            // );
+            setIsVisible(mess.cdate);
+            break;
+          }
+        } else {
+          break;
+        }
+      }
     }
-  }, []);
+  }, [messageCount, getChatId(chat)]);
 
   const scrollDown = () => {
     if (scrollableRootRef.current) {
-      dispatch({
-        type: 'MARK_PRIVATE_MESSAGES_READ',
-        payload: user.userId,
-      });
       scrollableRootRef.current.scrollTop =
         scrollableRootRef.current.scrollHeight;
     }
   };
 
-  const rootRefSetter = useCallback(
+  const rootRefSetter = React.useCallback(
     (node: HTMLDivElement) => {
       rootRef(node);
       scrollableRootRef.current = node;
@@ -232,105 +309,141 @@ const RoomMessageList: React.FC<RoomMessageListProps> = (
     });
   };
 
-  //console.log('messages', messages);
   return (
-    <CardContent
-      className={classes.messageListOuter}
-      ref={rootRefSetter}
-      onScroll={handleRootScroll}
-    >
-      <List className={classes.messageList}>
-        {hasNextPage && (
-          <ListItem
-            ref={infiniteRef}
-            sx={{
-              justifyContent: 'center',
-            }}
-          >
-            <CircularProgress />
-          </ListItem>
-        )}
-        {(messages as ChatMessage[]).map((message, inx) => {
-          const refMes = React.createRef<HTMLLIElement>();
-          messages[inx].ref = refMes;
-          return (
-            <Message
-              ref={refMes}
-              key={inx}
-              apiUrl={apiUrl}
-              user={user}
-              message={message}
-              owner={users[message.userId]}
-              isGroupMessage={!!chat?.groupId}
-              isUserFirst={
-                inx === 0 ||
-                messages[inx - 1].messageType === 'notify' ||
-                messages[inx - 1].userId !== messages[inx].userId
+    <>
+      <Fade
+        in={!!isVisible}
+        style={
+          isVisible
+            ? {
+                display: 'block',
+                position: 'relative',
+                width: 'auto',
               }
-              isUserLast={
-                inx === messages.length - 1 ||
-                messages[inx + 1].messageType === 'notify' ||
-                messages[inx + 1].userId !== messages[inx].userId
-              }
-              onContextMenu={event => handleMenuPopup(message, event)}
-              //refOnMess={defineRefOnMess(inx)}
-              setViewerData={setViewerData}
-            />
-          );
-        })}
-      </List>
-      {scrollDownButton && (
-        <Box className={classes.arrowDown} textAlign="center">
-          <Fab
-            color="info"
-            aria-label="add"
-            size="medium"
-            onClick={() => scrollDown()}
-          >
-            <KeyboardArrowDown />
-          </Fab>
-          {messageCountUnreaded != null &&
-            messageCountUnreaded.length > 0 && (
-              <Fab
-                color="warning"
-                aria-label="add"
-                size="small"
-                sx={{
-                  width: 24,
-                  height: 24,
-                  minHeight: 24,
-                  position: 'relative',
-                  top: -10,
-                  pointerEvents: 'none',
-                }}
-              >
-                <Typography
-                  variant="body2"
-                  sx={theme => ({
-                    color: theme.palette.background.default,
-                  })}
-                >
-                  {messageCountUnreaded.length}
-                </Typography>
-              </Fab>
-            )}
-        </Box>
-      )}
-      {viewerData.visible && (
-        <Backdrop
-          sx={{
-            color: '#fff',
-            zIndex: (theme: Theme) => theme.zIndex.drawer + 1,
-          }}
-          open={viewerData.visible}
-          onClick={() => {
-            setViewerData({ visible: false, src: '' });
+            : { display: 'none' }
+        }
+        timeout={2000}
+      >
+        <Alert
+          severity="warning"
+          icon={false}
+          style={{
+            width: 'auto',
+            position: 'absolute',
+            left: isMobile ? '50%' : isConference ? '69%' : '60%',
+
+            top: inModale ? 105 : 50,
+            zIndex: 10,
           }}
         >
-          <img src={viewerData.src} className={classes.img} alt="" />
-        </Backdrop>
-      )}
-    </CardContent>
+          <Typography variant="h6" textAlign="center">
+            {dayjs(isVisible).format('DD.MM.YYYY')}
+          </Typography>
+        </Alert>
+      </Fade>
+
+      <CardContent
+        className={classes.messageListOuter}
+        ref={rootRefSetter}
+        onScroll={handleRootScroll}
+      >
+        <List className={classes.messageList}>
+          {hasNextPage && (
+            <ListItem
+              ref={infiniteRef}
+              sx={{
+                justifyContent: 'center',
+              }}
+            >
+              <CircularProgress />
+            </ListItem>
+          )}
+          {(messages as ChatMessage[]).map((message, inx) => {
+            return (
+              <Message
+                ref={message.ref}
+                key={inx}
+                apiUrl={apiUrl}
+                user={user}
+                message={message}
+                owner={users[message.userId]}
+                isGroupMessage={!!chat?.groupId}
+                isUserFirst={
+                  inx === 0 ||
+                  messages[inx - 1].messageType === 'notify' ||
+                  messages[inx - 1].userId !== messages[inx].userId
+                }
+                isUserLast={
+                  inx === messages.length - 1 ||
+                  messages[inx + 1].messageType === 'notify' ||
+                  messages[inx + 1].userId !== messages[inx].userId
+                }
+                onContextMenu={event =>
+                  handleMenuPopup(message, event)
+                }
+                //refOnMess={defineRefOnMess(inx)}
+                setViewerData={setViewerData}
+              />
+            );
+          })}
+        </List>
+        {scrollDownButton && (
+          <Box className={classes.arrowDown} textAlign="center">
+            <Fab
+              color="info"
+              aria-label="add"
+              size="medium"
+              onClick={() => scrollDown()}
+            >
+              <KeyboardArrowDown />
+            </Fab>
+            {messageCountUnreaded != null &&
+              messageCountUnreaded.length > 0 && (
+                <Fab
+                  color="warning"
+                  aria-label="add"
+                  size="small"
+                  sx={{
+                    width: 24,
+                    height: 24,
+                    minHeight: 24,
+                    position: 'relative',
+                    top: -10,
+                    pointerEvents: 'none',
+                  }}
+                >
+                  <Typography
+                    variant="body2"
+                    sx={theme => ({
+                      color: theme.palette.background.default,
+                    })}
+                  >
+                    {messageCountUnreaded.length}
+                  </Typography>
+                </Fab>
+              )}
+          </Box>
+        )}
+        {viewerData.visible && (
+          <Backdrop
+            sx={{
+              color: '#fff',
+              zIndex: (theme: Theme) => theme.zIndex.drawer + 1,
+            }}
+            open={viewerData.visible}
+            onClick={() => {
+              setViewerData({ visible: false, src: '' });
+            }}
+          >
+            <img
+              src={viewerData.src}
+              className={classes.img}
+              alt=""
+            />
+          </Backdrop>
+        )}
+      </CardContent>
+    </>
   );
 };
 
