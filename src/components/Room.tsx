@@ -91,6 +91,7 @@ type RoomProps = {
   onConferencePause?: (conference: ConferenceData) => void;
   onOperatorAdd?: (chat: Group, operator: Contact) => void;
   onLeaveGroup?: (chat: Group) => void;
+  inModale?: boolean;
 };
 
 const Room: React.FC<RoomProps> = (props: RoomProps) => {
@@ -105,6 +106,7 @@ const Room: React.FC<RoomProps> = (props: RoomProps) => {
     conferenceJoined,
     loading,
     pageSize,
+    inModale,
   } = props;
   const classes = useStyles();
   const { t } = useTranslation();
@@ -186,6 +188,8 @@ const Room: React.FC<RoomProps> = (props: RoomProps) => {
         onNeedMoreMessages={props.onNeedMoreMessages}
         onMeesageDelete={props.onMeesageDelete}
         setMenuState={setMenuState}
+        inModale={inModale}
+        isConference={!!conference?.id}
       />
       <Divider />
       <CardContent>

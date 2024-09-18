@@ -1,6 +1,6 @@
 {
   "name": "@pmt/chat",
-  "version": "1.21.13",
+  "version": "1.22.0",
   "description": "PMT Chat, last global change mui v5",
   "main": "dist/index.js",
   "module": "dist/index.es.js",
@@ -37,8 +37,8 @@
     "i18next-browser-languagedetector": "^7.0.1",
     "react-aspect-ratio": "^1.1.6",
     "react-i18next": "^14.1.1",
-    "socket.io-client": "^4.4.1",
-    "react-infinite-scroller": "^1.2.6"
+    "react-infinite-scroll-hook": "^5.0.1",
+    "socket.io-client": "^4.4.1"
   },
   "peerDependencies": {
     "@emotion/core": "^11.0.0",

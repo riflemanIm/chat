@@ -23,6 +23,7 @@ declare type RoomProps = {
     onConferencePause?: (conference: ConferenceData) => void;
     onOperatorAdd?: (chat: Group, operator: Contact) => void;
     onLeaveGroup?: (chat: Group) => void;
+    inModale?: boolean;
 };
 declare const Room: React.FC<RoomProps>;
 export default Room;

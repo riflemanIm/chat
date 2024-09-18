@@ -6,6 +6,7 @@ export declare function isContainStr(str1: string, str2: string): boolean;
  * @param text
  */
 export declare function isUrl(text: string): boolean;
+export declare const compareDates: (d1: Date | string | undefined, d2: Date | string | undefined, period?: 'day' | 'millisecond' | 'second' | 'minute' | 'hour' | 'month' | 'year' | 'date' | 'milliseconds' | 'seconds' | 'minutes' | 'hours' | 'days', count?: number) => boolean;
 /**
  * Формитирование времени сообщения
  * @param time

@@ -31,7 +31,7 @@ var RestartAltIcon = _interopDefault(require('@mui/icons-material/RestartAlt'));
 var VideoCallIcon = _interopDefault(require('@mui/icons-material/VideoCall'));
 var KeyboardArrowDownIcon = _interopDefault(require('@mui/icons-material/KeyboardArrowDown'));
 var reactAspectRatio = require('react-aspect-ratio');
-var InfiniteScroll = _interopDefault(require('react-infinite-scroller'));
+var useInfiniteScroll = _interopDefault(require('react-infinite-scroll-hook'));
 var List = _interopDefault(require('@mui/material/List'));
 var axios = _interopDefault(require('axios'));
 var io = _interopDefault(require('socket.io-client'));
@@ -1843,7 +1843,7 @@ const addPrivateMessages = (state, data) => {
     newState.contactGather[contactId] = {
       ...newState.contactGather[contactId],
       messages: [...(messages || []), ...(newState.contactGather[contactId].messages || [])],
-      noMoreData: messages != null && messages.length ? (messages == null ? void 0 : messages.length) < data.pageSize : false
+      noMoreData: messages != null && messages.length ? (messages == null ? void 0 : messages.length) < data.pageSize : true
     };
   }
   // обновляем активный чат
@@ -1863,7 +1863,7 @@ const addGroupMessages = (state, data) => {
     newState.groupGather[groupId] = {
       ...newState.groupGather[groupId],
       messages: [...(messages || []), ...(newState.groupGather[groupId].messages || [])],
-      noMoreData: messages != null && messages.length ? (messages == null ? void 0 : messages.length) < data.pageSize : false
+      noMoreData: messages != null && messages.length ? (messages == null ? void 0 : messages.length) < data.pageSize : true
     };
   }
   newState.userGather = {
@@ -2108,19 +2108,48 @@ const ChatProvider = props => {
   }, props.children);
 };
 
+function useInterval(callback, state, delay) {
+  const savedCallback = React.useRef();
+
+  // Remember the latest callback.
+  React.useEffect(() => {
+    savedCallback.current = callback;
+  }, [callback]);
+
+  // Set up the interval.
+  React.useEffect(() => {
+    function tick() {
+      savedCallback.current();
+    }
+    if (state) {
+      let id = setInterval(tick, delay);
+      return () => clearInterval(id);
+    }
+  }, [state]);
+}
+
+function isVisibleInViewport(element, root) {
+  const rect = element.getBoundingClientRect();
+  // console.log(
+  //   'rect.top',
+  //   rect.top,
+  //   'rect.bottom',
+  //   rect.bottom,
+  //   root.clientHeight,
+  // );
+  return rect.top >= 50 && rect.bottom <= root.clientHeight;
+}
 const useStyles$9 = /*#__PURE__*/styles.makeStyles(theme => styles.createStyles({
   messageListOuter: {
     flex: 1,
     overflowY: 'auto',
     margin: 0,
-    padding: 0
-  },
-  messageList: {
+    padding: 0,
     height: '100%',
-    overflowY: 'auto',
     scrollbarWidth: 'thin',
     scrollbarColor: theme.palette.primary.light + " #fff"
   },
+  messageList: {},
   img: {
     cursor: 'pointer',
     borderRadius: theme.spacing(1.2),
@@ -2145,18 +2174,6 @@ const useStyles$9 = /*#__PURE__*/styles.makeStyles(theme => styles.createStyles(
     }
   }
 }));
-const Loading = _ref => {
-  let {
-    loading
-  } = _ref;
-  return loading && /*#__PURE__*/React__default.createElement(material.Box, {
-    sx: {
-      width: '100%',
-      mx: 'auto',
-      textAlign: 'center'
-    }
-  }, /*#__PURE__*/React__default.createElement(material.CircularProgress, null));
-};
 const RoomMessageList = props => {
   var _lastMessage$ref, _lastMessage$ref2;
   const {
@@ -2167,22 +2184,115 @@ const RoomMessageList = props => {
     loading,
     pageSize,
     setMenuState,
-    initialMenuState
+    initialMenuState,
+    inModale,
+    isConference
   } = props;
   const classes = useStyles$9();
+  const isMobile = material.useMediaQuery(theme => theme.breakpoints.down('sm'));
+  const DEF = 900;
+  const [viewerData, setViewerData] = React__default.useState({
+    visible: false,
+    src: ''
+  });
   const {
     dispatch
   } = React__default.useContext(ChatContext);
   const [scrollDownButton, setScrollDownButton] = React__default.useState(false);
-  const messages = chat == null ? void 0 : chat.messages;
+  const scrollableRootRef = React__default.useRef(null);
+  const lastScrollDistanceToBottomRef = React__default.useRef();
+  const lastMessageCount = React__default.useRef();
+  const hasNextPage = chat == null || (chat == null ? void 0 : chat.noMoreData) == null ? true : !chat.noMoreData;
+  const messages = React__default.useMemo(() => chat != null && chat.messages ? chat.messages.map(it => ({
+    ...it,
+    ref: /*#__PURE__*/React__default.createRef()
+  })) : [], [chat == null ? void 0 : chat.messages]);
   const messageCount = (messages == null ? void 0 : messages.length) || 0;
-  const lastMessage = messages && messages[messageCount - 1];
-  const lastMessagetHeight = lastMessage != null && (_lastMessage$ref = lastMessage.ref) != null && _lastMessage$ref.current ? lastMessage == null || (_lastMessage$ref2 = lastMessage.ref) == null ? void 0 : _lastMessage$ref2.current.offsetHeight : 50;
-  const [gap, setGap] = React__default.useState(564);
-  const messageCountUnreaded = messages && messages.filter(it => (it == null ? void 0 : it.status) != null && it.status === 0);
-  // const refOnMess = React.useRef<HTMLDivElement>(null);
-  // const refOnLastMess = React.useRef<HTMLDivElement>(null);
-  const refList = React__default.useRef(null);
+  const lastMessage = messageCount && messages[messageCount - 1];
+  const messageCountUnreaded = messages.filter(it => (it == null ? void 0 : it.status) != null && it.status === 0);
+  const [isVisible, setIsVisible] = React__default.useState(messages[messageCount - 1].cdate);
+  const loadMore = () => {
+    chat && props.onNeedMoreMessages(chat);
+  };
+  const [infiniteRef, {
+    rootRef
+  }] = useInfiniteScroll({
+    loading,
+    hasNextPage,
+    onLoadMore: loadMore,
+    disabled: false
+  });
+  React__default.useEffect(() => {
+    if (scrollableRootRef.current && messageCount) {
+      setIsVisible(messages[messageCount - 1].cdate);
+      scrollDown();
+    }
+  }, [getChatId(chat)]);
+  useInterval(() => {
+    setIsVisible('');
+  }, isVisible, 3700);
+  // ------ keep the scroll position and lastMessageCount when messageCount changed ----------
+  React__default.useEffect(() => {
+    var _lastScrollDistanceTo;
+    const scrollableRoot = scrollableRootRef.current;
+    const lastScrollDistanceToBottom = (_lastScrollDistanceTo = lastScrollDistanceToBottomRef.current) != null ? _lastScrollDistanceTo : 0;
+    if (scrollableRoot && lastMessage && chat) {
+      // -----  scroll to prev lastScrollDistanceToBottom -----------
+      if (lastMessageCount.current === messageCount - pageSize) {
+        scrollableRoot.scrollTop = scrollableRoot.scrollHeight - lastScrollDistanceToBottom;
+      } else if (
+      // -----  scroll to bottom forced -----------
+      lastMessage.userId !== chat.userId || lastScrollDistanceToBottom <= DEF) {
+        scrollDown();
+      }
+    }
+    lastMessageCount.current = messageCount;
+  }, [messageCount]);
+  const handleRootScroll = React__default.useCallback(() => {
+    const rootNode = scrollableRootRef.current;
+    if (rootNode) {
+      const scrollDistanceToBottom = rootNode.scrollHeight - rootNode.scrollTop;
+      lastScrollDistanceToBottomRef.current = scrollDistanceToBottom;
+      const isShowScrollButton = hasNextPage && scrollDistanceToBottom > DEF;
+      setScrollDownButton(isShowScrollButton);
+      if (!isShowScrollButton) {
+        dispatch({
+          type: 'MARK_PRIVATE_MESSAGES_READ',
+          payload: user.userId
+        });
+      }
+      for (let i = 0; i < messageCount; i++) {
+        var _mess$ref;
+        const mess = messages[i];
+        // console.log(
+        //   '------------loop------------',
+        //   //mess?.ref?.current,
+        // );
+        if (mess != null && (_mess$ref = mess.ref) != null && _mess$ref.current) {
+          const isVisibleMess = isVisibleInViewport(mess.ref.current, rootNode);
+          if (isVisibleMess) {
+            // console.log(
+            //   'visible',
+            //   dayjs(mess.cdate).format('DD.MM.YYYY'),
+            // );
+            setIsVisible(mess.cdate);
+            break;
+          }
+        } else {
+          break;
+        }
+      }
+    }
+  }, [messageCount, getChatId(chat)]);
+  const scrollDown = () => {
+    if (scrollableRootRef.current) {
+      scrollableRootRef.current.scrollTop = scrollableRootRef.current.scrollHeight;
+    }
+  };
+  const rootRefSetter = React__default.useCallback(node => {
+    rootRef(node);
+    scrollableRootRef.current = node;
+  }, [rootRef]);
   const handleMenuPopup = (message, event) => {
     const canCopy = message.messageType === 'text';
     const canDelete = user.userId === message.userId && !!props.onMeesageDelete && new Date().getTime() - new Date(message.cdate).getTime() <= 1000 * 60 * 2;
@@ -2199,85 +2309,43 @@ const RoomMessageList = props => {
       canDelete
     });
   };
-  const [viewerData, setViewerData] = React__default.useState({
-    visible: false,
-    src: ''
-  });
-  React__default.useEffect(() => {
-    setTimeout(() => {
-      scrollDown();
-    }, 500);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [getChatId(chat)]);
-  const scrollDown = () => {
-    if (refList.current) {
-      dispatch({
-        type: 'MARK_PRIVATE_MESSAGES_READ',
-        payload: user.userId
-      });
-      refList.current.scrollTop = refList.current.scrollHeight;
-      const newGap = refList.current.scrollHeight - refList.current.scrollTop;
-      //console.log('newGap', newGap);
-      setGap(newGap);
-    }
-  };
-  return /*#__PURE__*/React__default.createElement(material.CardContent, {
-    className: classes.messageListOuter
-  }, /*#__PURE__*/React__default.createElement(material.List, {
-    className: classes.messageList,
-    ref: refList
-  }, /*#__PURE__*/React__default.createElement(InfiniteScroll, {
-    pageStart: 0,
-    loadMore: () => {
-      if (messageCount >= pageSize && !loading && props.onNeedMoreMessages && chat) {
-        props.onNeedMoreMessages(chat);
-      }
+  return /*#__PURE__*/React__default.createElement(React__default.Fragment, null, /*#__PURE__*/React__default.createElement(material.Fade, {
+    in: !!isVisible,
+    style: isVisible ? {
+      display: 'block',
+      position: 'relative',
+      width: 'auto'
+    } : {
+      display: 'none'
     },
-    hasMore: chat && !chat.noMoreData ? true : false,
-    loader: /*#__PURE__*/React__default.createElement(Loading, {
-      loading: loading,
-      key: 0
-    }),
-    isReverse: true,
-    useCapture: true,
-    useWindow: false,
-    getScrollParent: () => {
-      // messages &&
-      //   messages.forEach(it => {
-      //     if (
-      //       it.ref?.current &&
-      //       isVisibleInViewport(it.ref.current)
-      //     ) {
-      //       console.log(formatTime(it.cdate));
-      //       return;
-      //     }
-      //   });
-      if (refList.current) {
-        const diff = refList.current.scrollHeight - refList.current.scrollTop;
-        const isShowButton = refList.current.scrollTop < refList.current.scrollHeight - gap;
-        setScrollDownButton(isShowButton);
-        if (diff > gap && diff < gap + lastMessagetHeight) {
-          // console.log(
-          //   'scrollTop',
-          //   refList.current.scrollTop,
-          //   'scrollHeight',
-          //   refList.current.scrollHeight,
-          //   'diff:',
-          //   diff,
-          //   'lastMessage?.ref?.current.offsetHeight',
-          //   lastMessage?.ref?.current.offsetHeight,
-          // );
-          scrollDown();
-        }
-        //
-      }
-      return refList.current;
+    timeout: 2000
+  }, /*#__PURE__*/React__default.createElement(material.Alert, {
+    severity: "warning",
+    icon: false,
+    style: {
+      width: 'auto',
+      position: 'absolute',
+      left: isMobile ? '50%' : isConference ? '69%' : '60%',
+      top: inModale ? 105 : 50,
+      zIndex: 10
     }
-  }, messages && messages.map((message, inx) => {
-    const refMes = /*#__PURE__*/React__default.createRef();
-    messages[inx].ref = refMes;
+  }, /*#__PURE__*/React__default.createElement(material.Typography, {
+    variant: "h6",
+    textAlign: "center"
+  }, dayjs(isVisible).format('DD.MM.YYYY')))), /*#__PURE__*/React__default.createElement(material.CardContent, {
+    className: classes.messageListOuter,
+    ref: rootRefSetter,
+    onScroll: handleRootScroll
+  }, /*#__PURE__*/React__default.createElement(material.List, {
+    className: classes.messageList
+  }, hasNextPage && /*#__PURE__*/React__default.createElement(material.ListItem, {
+    ref: infiniteRef,
+    sx: {
+      justifyContent: 'center'
+    }
+  }, /*#__PURE__*/React__default.createElement(material.CircularProgress, null)), messages.map((message, inx) => {
     return /*#__PURE__*/React__default.createElement(Message, {
-      ref: refMes,
+      ref: message.ref,
       key: inx,
       apiUrl: apiUrl,
       user: user,
@@ -2291,14 +2359,14 @@ const RoomMessageList = props => {
       ,
       setViewerData: setViewerData
     });
-  }))), scrollDownButton && /*#__PURE__*/React__default.createElement(material.Box, {
+  })), scrollDownButton && /*#__PURE__*/React__default.createElement(material.Box, {
     className: classes.arrowDown,
     textAlign: "center"
   }, /*#__PURE__*/React__default.createElement(material.Fab, {
     color: "info",
     "aria-label": "add",
     size: "medium",
-    onClick: scrollDown
+    onClick: () => scrollDown()
   }, /*#__PURE__*/React__default.createElement(KeyboardArrowDownIcon, null)), messageCountUnreaded != null && messageCountUnreaded.length > 0 && /*#__PURE__*/React__default.createElement(material.Fab, {
     color: "warning",
     "aria-label": "add",
@@ -2332,7 +2400,7 @@ const RoomMessageList = props => {
     src: viewerData.src,
     className: classes.img,
     alt: ""
-  })));
+  }))));
 };
 
 const useStyles$a = /*#__PURE__*/styles.makeStyles(theme => styles.createStyles({
@@ -2371,7 +2439,8 @@ const Room = props => {
     visitData,
     conferenceJoined,
     loading,
-    pageSize
+    pageSize,
+    inModale
   } = props;
   const classes = useStyles$a();
   const {
@@ -2435,7 +2504,9 @@ const Room = props => {
     initialMenuState: initialMenuState,
     onNeedMoreMessages: props.onNeedMoreMessages,
     onMeesageDelete: props.onMeesageDelete,
-    setMenuState: setMenuState
+    setMenuState: setMenuState,
+    inModale: inModale,
+    isConference: !!(conference != null && conference.id)
   }), /*#__PURE__*/React__default.createElement(material.Divider, null), /*#__PURE__*/React__default.createElement(material.CardContent, null, /*#__PURE__*/React__default.createElement(Entry, {
     chat: chat,
     onTyping: props.onTyping,
@@ -3938,7 +4009,8 @@ const ChatPage = _ref => {
     onVideoEnd: onVideoEnd,
     onConferencePause: onConferencePause,
     onOperatorAdd: onOperatorAdd,
-    onLeaveGroup: onLeaveGroup
+    onLeaveGroup: onLeaveGroup,
+    inModale: inModale
   });
   const GetRoomList = () => /*#__PURE__*/React.createElement(RoomList, {
     apiUrl: apiUrl,
