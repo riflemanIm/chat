@@ -268,7 +268,7 @@ const RoomMessageList: React.FC<RoomMessageListProps> = (
         }
       }
     }
-  }, [messageCount, getChatId(chat)]);
+  }, [messages, getChatId(chat)]);
 
   const scrollDown = () => {
     if (scrollableRootRef.current) {
