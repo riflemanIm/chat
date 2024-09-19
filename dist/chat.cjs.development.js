@@ -2175,7 +2175,6 @@ const useStyles$9 = /*#__PURE__*/styles.makeStyles(theme => styles.createStyles(
   }
 }));
 const RoomMessageList = props => {
-  var _lastMessage$ref, _lastMessage$ref2;
   const {
     apiUrl,
     user,
@@ -2186,7 +2185,8 @@ const RoomMessageList = props => {
     setMenuState,
     initialMenuState,
     inModale,
-    isConference
+    isConference,
+    onEnterRoom
   } = props;
   const classes = useStyles$9();
   const isMobile = material.useMediaQuery(theme => theme.breakpoints.down('sm'));
@@ -2255,11 +2255,12 @@ const RoomMessageList = props => {
       lastScrollDistanceToBottomRef.current = scrollDistanceToBottom;
       const isShowScrollButton = hasNextPage && scrollDistanceToBottom > DEF;
       setScrollDownButton(isShowScrollButton);
-      if (!isShowScrollButton) {
+      if (!isShowScrollButton && chat && onEnterRoom) {
         dispatch({
           type: 'MARK_PRIVATE_MESSAGES_READ',
           payload: user.userId
         });
+        onEnterRoom(chat);
       }
       for (let i = 0; i < messageCount; i++) {
         var _mess$ref;
@@ -2283,7 +2284,7 @@ const RoomMessageList = props => {
         }
       }
     }
-  }, [messageCount, getChatId(chat)]);
+  }, [messages, getChatId(chat)]);
   const scrollDown = () => {
     if (scrollableRootRef.current) {
       scrollableRootRef.current.scrollTop = scrollableRootRef.current.scrollHeight;
@@ -2506,7 +2507,8 @@ const Room = props => {
     onMeesageDelete: props.onMeesageDelete,
     setMenuState: setMenuState,
     inModale: inModale,
-    isConference: !!(conference != null && conference.id)
+    isConference: !!(conference != null && conference.id),
+    onEnterRoom: props.onEnterRoom
   }), /*#__PURE__*/React__default.createElement(material.Divider, null), /*#__PURE__*/React__default.createElement(material.CardContent, null, /*#__PURE__*/React__default.createElement(Entry, {
     chat: chat,
     onTyping: props.onTyping,

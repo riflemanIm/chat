@@ -20,6 +20,7 @@ declare type RoomMessageListProps = {
     setMenuState: React.Dispatch<React.SetStateAction<InitialMenuState>>;
     inModale?: boolean;
     isConference: boolean;
+    onEnterRoom?: (chat: ChatRoom) => void;
 };
 declare const RoomMessageList: React.FC<RoomMessageListProps>;
 export default RoomMessageList;
