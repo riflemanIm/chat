@@ -131,6 +131,8 @@ const RoomMessageList: React.FC<RoomMessageListProps> = (
   );
   const DEF = 900;
 
+  const chatId = getChatId(chat);
+
   const [viewerData, setViewerData] = React.useState<{
     visible: boolean;
     src: string;
@@ -190,11 +192,11 @@ const RoomMessageList: React.FC<RoomMessageListProps> = (
   });
 
   React.useEffect(() => {
-    if (scrollableRootRef.current && messageCount) {
+    if (chatId && scrollableRootRef.current && messageCount) {
       setIsVisible(messages[messageCount - 1].cdate);
       scrollDown();
     }
-  }, [getChatId(chat)]);
+  }, [chatId]);
 
   useInterval(
     () => {
@@ -238,12 +240,12 @@ const RoomMessageList: React.FC<RoomMessageListProps> = (
         hasNextPage && scrollDistanceToBottom > DEF;
       setScrollDownButton(isShowScrollButton);
 
-      if (!isShowScrollButton && chat && onEnterRoom) {
+      if (!isShowScrollButton && chatId && chat && onEnterRoom) {
+        onEnterRoom(chat);
         dispatch({
           type: 'MARK_PRIVATE_MESSAGES_READ',
-          payload: user.userId,
+          payload: chat,
         });
-        onEnterRoom(chat);
       }
 
       for (let i = 0; i < messageCount; i++) {
@@ -271,7 +273,7 @@ const RoomMessageList: React.FC<RoomMessageListProps> = (
         }
       }
     }
-  }, [messages, getChatId(chat)]);
+  }, [messages, chatId]);
 
   const scrollDown = () => {
     if (scrollableRootRef.current) {
@@ -311,6 +313,8 @@ const RoomMessageList: React.FC<RoomMessageListProps> = (
       canDelete,
     });
   };
+
+  if (chatId == null) return;
 
   return (
     <>

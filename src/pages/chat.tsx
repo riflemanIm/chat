@@ -183,12 +183,6 @@ export const ChatPage: React.FC<ChatPageProps> = ({
 
   const onVideoCall = React.useCallback(
     (chat: ChatRoom, visitId?: number, recreate?: boolean) => {
-      // console.log('-----------', {
-      //   groupId: (chat as Group).groupId,
-      //   contactId: chat.userId,
-      //   visitId,
-      //   recreate: visitId ? true : false,
-      // });
       socket?.emit('startConference', {
         groupId: (chat as Group).groupId,
         contactId: chat.userId,
@@ -276,7 +270,7 @@ export const ChatPage: React.FC<ChatPageProps> = ({
       };
       changeChatByMmkId();
     }
-  }, [allMessCount(state.contactGather)]);
+  }, [activeChatUserId != null && allMessCount(state.contactGather)]);
 
   React.useEffect(() => {
     if (activeGroupId != null && !isEmpty(state.groupGather)) {
@@ -288,7 +282,7 @@ export const ChatPage: React.FC<ChatPageProps> = ({
         onChangeChat(onlyChat);
       }
     }
-  }, [allMessCount(state.groupGather)]);
+  }, [activeGroupId != null && allMessCount(state.groupGather)]);
 
   // Отключили проигрыш звука
   // React.useEffect(() => {
@@ -301,7 +295,7 @@ export const ChatPage: React.FC<ChatPageProps> = ({
   //   else ringAudio.pause();
   // }, [state.conference.data?.id, state.conference.ringPlayed]);
 
-  // console.log('state--', state);
+  //console.log('state--', state);
   const renderRoom = state.activeRoom != null && (
     <Room
       apiUrl={apiUrl}

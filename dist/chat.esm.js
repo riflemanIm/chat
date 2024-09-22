@@ -2188,6 +2188,7 @@ const RoomMessageList = props => {
   const classes = useStyles$9();
   const isMobile = useMediaQuery(theme => theme.breakpoints.down('sm'));
   const DEF = 900;
+  const chatId = getChatId(chat);
   const [viewerData, setViewerData] = React__default.useState({
     visible: false,
     src: ''
@@ -2220,11 +2221,11 @@ const RoomMessageList = props => {
     disabled: false
   });
   React__default.useEffect(() => {
-    if (scrollableRootRef.current && messageCount) {
+    if (chatId && scrollableRootRef.current && messageCount) {
       setIsVisible(messages[messageCount - 1].cdate);
       scrollDown();
     }
-  }, [getChatId(chat)]);
+  }, [chatId]);
   useInterval(() => {
     setIsVisible('');
   }, isVisible, 3700);
@@ -2252,12 +2253,12 @@ const RoomMessageList = props => {
       lastScrollDistanceToBottomRef.current = scrollDistanceToBottom;
       const isShowScrollButton = hasNextPage && scrollDistanceToBottom > DEF;
       setScrollDownButton(isShowScrollButton);
-      if (!isShowScrollButton && chat && onEnterRoom) {
+      if (!isShowScrollButton && chatId && chat && onEnterRoom) {
+        onEnterRoom(chat);
         dispatch({
           type: 'MARK_PRIVATE_MESSAGES_READ',
-          payload: user.userId
+          payload: chat
         });
-        onEnterRoom(chat);
       }
       for (let i = 0; i < messageCount; i++) {
         var _mess$ref;
@@ -2281,7 +2282,7 @@ const RoomMessageList = props => {
         }
       }
     }
-  }, [messages, getChatId(chat)]);
+  }, [messages, chatId]);
   const scrollDown = () => {
     if (scrollableRootRef.current) {
       scrollableRootRef.current.scrollTop = scrollableRootRef.current.scrollHeight;
@@ -2307,6 +2308,7 @@ const RoomMessageList = props => {
       canDelete
     });
   };
+  if (chatId == null) return;
   return /*#__PURE__*/React__default.createElement(React__default.Fragment, null, /*#__PURE__*/React__default.createElement(Fade, {
     in: !!isVisible,
     style: isVisible ? {
@@ -2726,6 +2728,7 @@ const sortChats = (userId, groups, contacts) => {
   return roomArr;
 };
 const RoomList = props => {
+  var _props$activeRoom;
   const classes = useStyles$c();
   const {
     t
@@ -2744,7 +2747,7 @@ const RoomList = props => {
     active: chat === props.activeRoom,
     typing: props.typing,
     onClick: () => props.onChangeChat != null && props.onChangeChat(chat)
-  })), [props.activeRoom, props.typing]);
+  })), [(_props$activeRoom = props.activeRoom) == null ? void 0 : _props$activeRoom.userId, props.typing]);
   return /*#__PURE__*/React__default.createElement(Card, {
     elevation: 1,
     className: classes.root
@@ -3904,12 +3907,6 @@ const ChatPage = _ref => {
     }
   }, [socket == null ? void 0 : socket.id]);
   const onVideoCall = useCallback((chat, visitId, recreate) => {
-    // console.log('-----------', {
-    //   groupId: (chat as Group).groupId,
-    //   contactId: chat.userId,
-    //   visitId,
-    //   recreate: visitId ? true : false,
-    // });
     socket == null || socket.emit('startConference', {
       groupId: chat.groupId,
       contactId: chat.userId,
@@ -3966,7 +3963,7 @@ const ChatPage = _ref => {
       };
       changeChatByMmkId();
     }
-  }, [allMessCount(state.contactGather)]);
+  }, [activeChatUserId != null && allMessCount(state.contactGather)]);
   useEffect(() => {
     if (activeGroupId != null && !isEmpty(state.groupGather)) {
       const onlyChat = Object.values(state.groupGather).find(item => item.groupId === activeGroupId);
@@ -3974,7 +3971,7 @@ const ChatPage = _ref => {
         onChangeChat(onlyChat);
       }
     }
-  }, [allMessCount(state.groupGather)]);
+  }, [activeGroupId != null && allMessCount(state.groupGather)]);
   // Отключили проигрыш звука
   // React.useEffect(() => {
   //   if (
@@ -3985,7 +3982,7 @@ const ChatPage = _ref => {
   //     ringAudio.play();
   //   else ringAudio.pause();
   // }, [state.conference.data?.id, state.conference.ringPlayed]);
-  // console.log('state--', state);
+  //console.log('state--', state);
   const renderRoom = state.activeRoom != null && /*#__PURE__*/createElement(Room, {
     apiUrl: apiUrl,
     user: state.user,

@@ -124,7 +124,7 @@ const RoomList: React.FC<RoomListProps> = (props: RoomListProps) => {
           }
         />
       )),
-    [props.activeRoom, props.typing],
+    [props.activeRoom?.userId, props.typing],
   );
   return (
     <Card elevation={1} className={classes.root}>
