@@ -244,7 +244,7 @@ const RoomMessageList: React.FC<RoomMessageListProps> = (
         onEnterRoom(chat);
         dispatch({
           type: 'MARK_PRIVATE_MESSAGES_READ',
-          payload: chat,
+          payload: chat.userId,
         });
       }
 
