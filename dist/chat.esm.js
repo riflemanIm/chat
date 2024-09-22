@@ -3963,7 +3963,7 @@ const ChatPage = _ref => {
       };
       changeChatByMmkId();
     }
-  }, [activeChatUserId != null && allMessCount(state.contactGather)]);
+  }, [state.user.userId]);
   useEffect(() => {
     if (activeGroupId != null && !isEmpty(state.groupGather)) {
       const onlyChat = Object.values(state.groupGather).find(item => item.groupId === activeGroupId);
@@ -3971,7 +3971,7 @@ const ChatPage = _ref => {
         onChangeChat(onlyChat);
       }
     }
-  }, [activeGroupId != null && allMessCount(state.groupGather)]);
+  }, [state.user.userId]);
   // Отключили проигрыш звука
   // React.useEffect(() => {
   //   if (
@@ -3982,7 +3982,7 @@ const ChatPage = _ref => {
   //     ringAudio.play();
   //   else ringAudio.pause();
   // }, [state.conference.data?.id, state.conference.ringPlayed]);
-  //console.log('state--', state);
+  console.log('--state--', state);
   const renderRoom = state.activeRoom != null && /*#__PURE__*/createElement(Room, {
     apiUrl: apiUrl,
     user: state.user,

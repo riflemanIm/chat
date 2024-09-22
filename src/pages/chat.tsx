@@ -270,7 +270,7 @@ export const ChatPage: React.FC<ChatPageProps> = ({
       };
       changeChatByMmkId();
     }
-  }, [activeChatUserId != null && allMessCount(state.contactGather)]);
+  }, [state.user.userId]);
 
   React.useEffect(() => {
     if (activeGroupId != null && !isEmpty(state.groupGather)) {
@@ -282,7 +282,7 @@ export const ChatPage: React.FC<ChatPageProps> = ({
         onChangeChat(onlyChat);
       }
     }
-  }, [activeGroupId != null && allMessCount(state.groupGather)]);
+  }, [state.user.userId]);
 
   // Отключили проигрыш звука
   // React.useEffect(() => {
@@ -295,7 +295,7 @@ export const ChatPage: React.FC<ChatPageProps> = ({
   //   else ringAudio.pause();
   // }, [state.conference.data?.id, state.conference.ringPlayed]);
 
-  //console.log('state--', state);
+  console.log('--state--', state);
   const renderRoom = state.activeRoom != null && (
     <Room
       apiUrl={apiUrl}
