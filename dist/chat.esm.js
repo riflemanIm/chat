@@ -2257,7 +2257,7 @@ const RoomMessageList = props => {
         onEnterRoom(chat);
         dispatch({
           type: 'MARK_PRIVATE_MESSAGES_READ',
-          payload: chat
+          payload: chat.userId
         });
       }
       for (let i = 0; i < messageCount; i++) {
