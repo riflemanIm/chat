@@ -1,5 +1,5 @@
-import React from "react";
-import { Contact } from "../types";
+import React from 'react';
+import { Contact } from '../types';
 declare type ContactListProps = {
     apiUrl: string;
     contacts: Contact[];

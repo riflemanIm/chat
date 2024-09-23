@@ -1,5 +1,5 @@
 import React__default, { createElement, useState, useRef, useEffect, useMemo, Fragment, forwardRef, memo, useCallback, createContext, useContext, useReducer } from 'react';
-import { Box, Typography, TextField, InputAdornment, IconButton, SvgIcon, Popover, List, ListItem, ListItemAvatar, Avatar, ListItemText, Dialog, DialogTitle, DialogContent, Alert, DialogActions, Button, Slide, CardHeader, Link, useMediaQuery, Fade, CardContent, CircularProgress, Fab, Backdrop, Card, Tooltip, Divider, Menu as Menu$1, MenuItem as MenuItem$1, ListItemIcon, Chip, Badge, Paper, Snackbar, Container, Grid } from '@mui/material';
+import { Box, Typography, TextField, InputAdornment, IconButton, SvgIcon, Popover, List, ListItemButton, ListItemAvatar, Avatar, ListItemText, Dialog, DialogTitle, DialogContent, Alert, DialogActions, Button, Slide, CardHeader, ListItem, Link, useMediaQuery, Fade, CardContent, CircularProgress, Fab, Backdrop, Card, Tooltip, Divider, Menu as Menu$1, MenuItem as MenuItem$1, ListItemIcon, Chip, Badge, Paper, Snackbar, Container, Grid } from '@mui/material';
 import { makeStyles, createStyles, withStyles } from '@mui/styles';
 import FileCopyIcon from '@mui/icons-material/FileCopy';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -609,8 +609,8 @@ const combineURLs = (baseURL, relativeURL, queryParams) => {
 
 const useStyles$3 = /*#__PURE__*/makeStyles(() => ({
   star: {
-    fontSize: "0.85rem",
-    verticalAlign: "middle"
+    fontSize: '0.85rem',
+    verticalAlign: 'middle'
   }
 }));
 const ContactList = props => {
@@ -622,15 +622,14 @@ const ContactList = props => {
   } = props;
   return /*#__PURE__*/React__default.createElement(List, {
     "aria-label": "contacts"
-  }, contacts.map(contact => /*#__PURE__*/React__default.createElement(ListItem, {
-    button: true,
+  }, contacts.map(contact => /*#__PURE__*/React__default.createElement(ListItemButton, {
     key: contact.userId,
     onClick: () => props.onClick && props.onClick(contact)
   }, /*#__PURE__*/React__default.createElement(ListItemAvatar, null, /*#__PURE__*/React__default.createElement(Avatar, {
     alt: contact.username,
-    src: contact.avatar ? combineURLs(apiUrl, contact.avatar) : ""
+    src: contact.avatar ? combineURLs(apiUrl, contact.avatar) : ''
   })), /*#__PURE__*/React__default.createElement(ListItemText, {
-    primary: /*#__PURE__*/React__default.createElement("span", null, contact.username, " ", owner === contact.userId && /*#__PURE__*/React__default.createElement(StarIcon, {
+    primary: /*#__PURE__*/React__default.createElement("span", null, contact.username, ' ', owner === contact.userId && /*#__PURE__*/React__default.createElement(StarIcon, {
       className: classes.star,
       color: "primary"
     })),
@@ -2657,8 +2656,7 @@ const RoomListItem = props => {
   const lastMessage = chat.messages && chat.messages.length > 0 ? chat.messages[chat.messages.length - 1] : null;
   const roomText = getMessageText(lastMessage, t);
   const roomTime = lastMessage == null ? void 0 : lastMessage.cdate;
-  const listItem = useMemo(() => /*#__PURE__*/React__default.createElement(ListItem, {
-    button: true,
+  const listItem = useMemo(() => /*#__PURE__*/React__default.createElement(ListItemButton, {
     selected: props.active,
     onClick: props.onClick
   }, /*#__PURE__*/React__default.createElement(ListItemAvatar, null, avatar), /*#__PURE__*/React__default.createElement(ListItemText, {

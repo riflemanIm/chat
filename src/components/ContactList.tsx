@@ -1,21 +1,21 @@
-import React from "react";
+import React from 'react';
 import {
   Avatar,
   List,
-  ListItem,
   ListItemAvatar,
+  ListItemButton,
   ListItemText,
-} from "@mui/material";
-import StarIcon from "@mui/icons-material/Star";
-import ContactStatus from "./ContactStatus";
-import { makeStyles } from "@mui/styles";
-import { Contact } from "../types";
-import { combineURLs } from "../utils/common";
+} from '@mui/material';
+import StarIcon from '@mui/icons-material/Star';
+import ContactStatus from './ContactStatus';
+import { makeStyles } from '@mui/styles';
+import { Contact } from '../types';
+import { combineURLs } from '../utils/common';
 
 const useStyles = makeStyles(() => ({
   star: {
-    fontSize: "0.85rem",
-    verticalAlign: "middle",
+    fontSize: '0.85rem',
+    verticalAlign: 'middle',
   },
 }));
 
@@ -26,33 +26,46 @@ type ContactListProps = {
   onClick?: (contact: Contact) => void;
 };
 
-const ContactList: React.FC<ContactListProps> = (props: ContactListProps) => {
+const ContactList: React.FC<ContactListProps> = (
+  props: ContactListProps,
+) => {
   const classes = useStyles();
   const { apiUrl, contacts, owner } = props;
 
   return (
     <List aria-label="contacts">
-      {contacts.map((contact) => (
-        <ListItem
-          button
+      {contacts.map(contact => (
+        <ListItemButton
           key={contact.userId}
           onClick={() => props.onClick && props.onClick(contact)}
         >
           <ListItemAvatar>
-            <Avatar alt={contact.username} src={contact.avatar ? combineURLs(apiUrl, contact.avatar) : ""} />
+            <Avatar
+              alt={contact.username}
+              src={
+                contact.avatar
+                  ? combineURLs(apiUrl, contact.avatar)
+                  : ''
+              }
+            />
           </ListItemAvatar>
           <ListItemText
             primary={
               <span>
-                {contact.username}{" "}
+                {contact.username}{' '}
                 {owner === contact.userId && (
-                  <StarIcon className={classes.star} color="primary" />
+                  <StarIcon
+                    className={classes.star}
+                    color="primary"
+                  />
                 )}
               </span>
             }
-            secondary={<ContactStatus contact={contact} isTyping={false} />}
+            secondary={
+              <ContactStatus contact={contact} isTyping={false} />
+            }
           />
-        </ListItem>
+        </ListItemButton>
       ))}
     </List>
   );

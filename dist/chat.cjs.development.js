@@ -612,8 +612,8 @@ const combineURLs = (baseURL, relativeURL, queryParams) => {
 
 const useStyles$3 = /*#__PURE__*/styles.makeStyles(() => ({
   star: {
-    fontSize: "0.85rem",
-    verticalAlign: "middle"
+    fontSize: '0.85rem',
+    verticalAlign: 'middle'
   }
 }));
 const ContactList = props => {
@@ -625,15 +625,14 @@ const ContactList = props => {
   } = props;
   return /*#__PURE__*/React__default.createElement(material.List, {
     "aria-label": "contacts"
-  }, contacts.map(contact => /*#__PURE__*/React__default.createElement(material.ListItem, {
-    button: true,
+  }, contacts.map(contact => /*#__PURE__*/React__default.createElement(material.ListItemButton, {
     key: contact.userId,
     onClick: () => props.onClick && props.onClick(contact)
   }, /*#__PURE__*/React__default.createElement(material.ListItemAvatar, null, /*#__PURE__*/React__default.createElement(material.Avatar, {
     alt: contact.username,
-    src: contact.avatar ? combineURLs(apiUrl, contact.avatar) : ""
+    src: contact.avatar ? combineURLs(apiUrl, contact.avatar) : ''
   })), /*#__PURE__*/React__default.createElement(material.ListItemText, {
-    primary: /*#__PURE__*/React__default.createElement("span", null, contact.username, " ", owner === contact.userId && /*#__PURE__*/React__default.createElement(StarIcon, {
+    primary: /*#__PURE__*/React__default.createElement("span", null, contact.username, ' ', owner === contact.userId && /*#__PURE__*/React__default.createElement(StarIcon, {
       className: classes.star,
       color: "primary"
     })),
@@ -2660,8 +2659,7 @@ const RoomListItem = props => {
   const lastMessage = chat.messages && chat.messages.length > 0 ? chat.messages[chat.messages.length - 1] : null;
   const roomText = getMessageText(lastMessage, t);
   const roomTime = lastMessage == null ? void 0 : lastMessage.cdate;
-  const listItem = React.useMemo(() => /*#__PURE__*/React__default.createElement(material.ListItem, {
-    button: true,
+  const listItem = React.useMemo(() => /*#__PURE__*/React__default.createElement(material.ListItemButton, {
     selected: props.active,
     onClick: props.onClick
   }, /*#__PURE__*/React__default.createElement(material.ListItemAvatar, null, avatar), /*#__PURE__*/React__default.createElement(material.ListItemText, {

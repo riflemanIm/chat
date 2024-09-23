@@ -4,8 +4,8 @@ import {
   Badge,
   Box,
   Chip,
-  ListItem,
   ListItemAvatar,
+  ListItemButton,
   ListItemText,
 } from '@mui/material';
 import { Theme } from '@mui/material/styles';
@@ -190,11 +190,7 @@ const RoomListItem: React.FC<RoomListItemProps> = (
 
   const listItem = useMemo(
     () => (
-      <ListItem
-        button
-        selected={props.active}
-        onClick={props.onClick}
-      >
+      <ListItemButton selected={props.active} onClick={props.onClick}>
         <ListItemAvatar>{avatar}</ListItemAvatar>
         <ListItemText
           secondaryTypographyProps={{ component: 'span' }}
@@ -221,7 +217,7 @@ const RoomListItem: React.FC<RoomListItemProps> = (
             </Box>
           }
         />
-      </ListItem>
+      </ListItemButton>
     ),
     [chat.messages?.length],
   );
