@@ -31,14 +31,14 @@ const ContactList: React.FC<ListProps & ContactListProps> = (
   props: ListProps & ContactListProps
 ) => {
   const classes = useStyles();
-  const { apiUrl, contacts, owner } = props;
+  const { apiUrl, contacts, owner, onContactClick, ...listProps } = props;
 
   return (
-    <List {...props} aria-label="contacts">
+    <List {...listProps} aria-label="contacts">
       {contacts.map(contact => (
         <ListItemButton
           key={contact.userId}
-          onClick={() => props.onContactClick && props.onContactClick(contact)}
+          onClick={() => onContactClick && onContactClick(contact)}
         >
           <ListItemAvatar>
             <Avatar
