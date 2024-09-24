@@ -1440,7 +1440,7 @@ var useStyles$8 = /*#__PURE__*/makeStyles(function (theme) {
       padding: 1,
       paddingLeft: theme.spacing(2),
       "& span": {
-        "float": "right",
+        float: "right",
         color: theme.palette.text.secondary,
         fontSize: "0.8rem"
       },
@@ -1466,7 +1466,7 @@ var useStyles$8 = /*#__PURE__*/makeStyles(function (theme) {
       paddingRight: theme.spacing(2),
       justifyContent: "flex-end",
       "& span": {
-        "float": "right",
+        float: "right",
         color: "#D9DEEC",
         fontSize: "0.8rem"
       },
@@ -1489,7 +1489,7 @@ var useStyles$8 = /*#__PURE__*/makeStyles(function (theme) {
     rootNotify: {
       justifyContent: "center",
       "& span": {
-        "float": "right",
+        float: "right",
         color: theme.palette.text.secondary,
         fontSize: "0.8rem"
       },
@@ -1618,541 +1618,6 @@ var Message = /*#__PURE__*/memo(/*#__PURE__*/forwardRef(function (props, ref) {
 }));
 Message.displayName = 'Message';
 
-var emptyUser = {
-  userId: 0,
-  username: '',
-  password: '',
-  avatar: '',
-  langCode: ''
-};
-var emptyChatState = {
-  user: emptyUser,
-  token: '',
-  refreshToken: '',
-  activeRoom: null,
-  chatOld: null,
-  groupGather: {},
-  userGather: {},
-  contactGather: {},
-  operators: [],
-  initialContactId: null,
-  conference: {
-    data: null,
-    joined: false,
-    ringPlayed: false
-  },
-  typing: null,
-  loading: false,
-  error: undefined,
-  success: undefined,
-  visitData: []
-};
-var getFreshActiveRoom = function getFreshActiveRoom(state) {
-  if (state.activeRoom) return state.groupGather[state.activeRoom.groupId] || state.contactGather[state.activeRoom.userId];
-  return null;
-};
-var getActiveRoom = function getActiveRoom(state) {
-  var activeRoom = state.activeRoom,
-    initialContactId = state.initialContactId,
-    contactGather = state.contactGather;
-  var newActiveRoom = null;
-  if (initialContactId) {
-    newActiveRoom = contactGather[initialContactId];
-  } else if (activeRoom) {
-    newActiveRoom = getFreshActiveRoom(state);
-  } else {
-    // ищем комнату с самым свежим сообщением
-    var rooms = [].concat(Object.values(state.contactGather), Object.values(state.groupGather)).sort(chatRoomComparer);
-    if (rooms.length > 0) newActiveRoom = rooms[0];
-  }
-  return newActiveRoom;
-};
-var setUserOnline = function setUserOnline(state, userId, online) {
-  var newState = _extends({}, state);
-  // Обновить статусы приватных чатов
-  if (state.contactGather[userId]) newState.contactGather[userId] = _extends({}, newState.contactGather[userId], {
-    online: online
-  });
-  // Обновить статус участника в группах
-  for (var _i = 0, _Object$values = Object.values(state.groupGather); _i < _Object$values.length; _i++) {
-    var group = _Object$values[_i];
-    if (!group.members) continue;
-    var member = group.members.find(function (m) {
-      return m.userId === userId;
-    });
-    if (member) {
-      var index = group.members.indexOf(member);
-      group.members[index] = _extends({}, member, {
-        online: online
-      });
-    }
-  }
-  // Обновить статус операторов
-  var idx = newState.operators.findIndex(function (it) {
-    return it.userId === userId;
-  });
-  if (idx !== -1) newState.operators[idx] = _extends({}, newState.operators[idx], {
-    online: online
-  });
-  // обновляем активный чат
-  newState.activeRoom = getFreshActiveRoom(newState);
-  return newState;
-};
-var addGroupMessage = function addGroupMessage(state, payload) {
-  var newState = _extends({}, state);
-  var groupId = payload.groupId;
-  if (newState.groupGather[groupId]) {
-    if (newState.groupGather[groupId].messages) {
-      newState.groupGather[groupId].messages = [].concat(newState.groupGather[groupId].messages, [payload]);
-    } else {
-      newState.groupGather[groupId] = _extends({}, state.groupGather[groupId], {
-        messages: [payload]
-      });
-    }
-  }
-  // увеличиваем счетчик новых сообщений, если это не активная комната и сообщение не от нас
-  var activeRoom = newState.activeRoom;
-  if (activeRoom && activeRoom.groupId !== groupId && payload.userId !== state.user.userId) {
-    return groupUnreadGather(newState, groupId, function (x) {
-      return (x || 0) + 1;
-    });
-  }
-  // обновляем активный чат
-  newState.activeRoom = getFreshActiveRoom(newState);
-  return newState;
-};
-var addPrivateMessage = function addPrivateMessage(state, payload) {
-  var _newState$activeRoom;
-  var newState = _extends({}, state);
-  var contactId = payload.contactId === state.user.userId ? payload.userId : payload.contactId;
-  // 1 добавляем сообщение
-  if (newState.contactGather[contactId].messages) {
-    newState.contactGather[contactId].messages = [].concat(newState.contactGather[contactId].messages, [payload]);
-  } else {
-    newState.contactGather[contactId] = _extends({}, newState.contactGather[contactId], {
-      messages: [payload]
-    });
-  }
-  // 2 если это сообщение в неактивной комнате и источник не мы (в соседней вкладке), то увеличиваем счетчик непрочитанных
-  if (((_newState$activeRoom = newState.activeRoom) == null ? void 0 : _newState$activeRoom.userId) !== contactId && payload.userId !== state.user.userId) {
-    return contactUnreadGather(newState, contactId, function (x) {
-      return (x || 0) + 1;
-    });
-  }
-  // обновляем активный чат
-  newState.activeRoom = getFreshActiveRoom(newState);
-  return newState;
-};
-var contactUnreadGather = function contactUnreadGather(state, userId, predicate) {
-  var newState = _extends({}, state);
-  if (newState.contactGather[userId]) {
-    newState.contactGather[userId] = _extends({}, newState.contactGather[userId], {
-      unreadCount: predicate(newState.contactGather[userId].unreadCount)
-    });
-  }
-  // обновляем активный чат
-  newState.activeRoom = getFreshActiveRoom(newState);
-  return newState;
-};
-var groupUnreadGather = function groupUnreadGather(state, groupId, predicate) {
-  var newState = _extends({}, state);
-  if (newState.groupGather[groupId]) {
-    newState.groupGather[groupId] = _extends({}, newState.groupGather[groupId], {
-      unreadCount: predicate(newState.groupGather[groupId].unreadCount)
-    });
-  }
-  // обновляем активный чат
-  newState.activeRoom = getFreshActiveRoom(newState);
-  return newState;
-};
-var revokeMessage = function revokeMessage(state, payload) {
-  var userId = state.user.userId;
-  var newState = _extends({}, state);
-  var userName = payload.username || newState.userGather[payload.userId].username;
-  if (payload.groupId) {
-    var messages = newState.groupGather[payload.groupId].messages;
-    // задаем isRevoke
-    if (messages) {
-      var msg = messages.find(function (message) {
-        return message._id === payload._id;
-      });
-      if (msg) {
-        var index = messages.indexOf(msg);
-        messages[index] = _extends({}, msg, {
-          isRevoke: true,
-          revokeUserName: userName
-        });
-      }
-    }
-  } else {
-    var _messages = newState.contactGather[payload.contactId === userId ? payload.userId : payload.contactId].messages;
-    // задаем isRevoke
-    if (_messages) {
-      var _msg = _messages.find(function (message) {
-        return message._id === payload._id;
-      });
-      if (_msg) {
-        var _index = _messages.indexOf(_msg);
-        _messages[_index] = _extends({}, _msg, {
-          isRevoke: true,
-          revokeUserName: userName
-        });
-      }
-    }
-  }
-  // обновляем активный чат
-  newState.activeRoom = getFreshActiveRoom(newState);
-  return newState;
-};
-var delContact = function delContact(state, userId) {
-  var newState = _extends({}, state);
-  var updateActiveRoom = newState.activeRoom === newState.contactGather[userId];
-  delete newState.contactGather[userId];
-  if (updateActiveRoom) newState.activeRoom = getActiveRoom(newState);
-  return newState;
-};
-var delGroup = function delGroup(state, groupId) {
-  var newState = _extends({}, state);
-  var updateActiveRoom = newState.activeRoom === newState.groupGather[groupId];
-  delete newState.groupGather[groupId];
-  if (updateActiveRoom) newState.activeRoom = getActiveRoom(newState);
-  return newState;
-};
-var delGroupMember = function delGroupMember(state, data) {
-  var newState = _extends({}, state);
-  var group = newState.groupGather[data.groupId];
-  if (group) {
-    var _group$members;
-    group.members = (_group$members = group.members) == null ? void 0 : _group$members.filter(function (it) {
-      return it.userId !== data.userId;
-    });
-  }
-  return newState;
-};
-var updateGroupInfo = function updateGroupInfo(state, group) {
-  var newState = _extends({}, state);
-  var groupId = group.groupId,
-    name = group.name,
-    notice = group.notice;
-  var info = newState.groupGather[groupId];
-  if (info) {
-    newState.groupGather[groupId] = _extends({}, info, {
-      name: name,
-      notice: notice
-    });
-  }
-  // обновляем активный чат
-  newState.activeRoom = getFreshActiveRoom(newState);
-  return newState;
-};
-var updateUserInfo = function updateUserInfo(state, user) {
-  var newState = _extends({}, state);
-  var userId = user.userId,
-    username = user.username,
-    avatar = user.avatar;
-  if (newState.userGather[userId]) {
-    newState.userGather[userId] = _extends({}, newState.userGather[userId], {
-      username: username,
-      avatar: avatar
-    });
-  }
-  if (newState.contactGather[userId]) {
-    newState.contactGather[userId] = _extends({}, newState.contactGather[userId], {
-      username: username,
-      avatar: avatar
-    });
-  }
-  // обновляем активный чат
-  newState.activeRoom = getFreshActiveRoom(newState);
-  return newState;
-};
-var addGroupMember = function addGroupMember(state, payload) {
-  var members = payload.members.map(function (member) {
-    return _extends({}, member, {
-      isManager: 0
-    });
-  });
-  var newState = _extends({}, state);
-  if (newState.groupGather[payload.groupId].members && members) {
-    newState.groupGather[payload.groupId].members = [].concat(state.groupGather[payload.groupId].members, members);
-  } else {
-    newState.groupGather[payload.groupId] = _extends({}, newState.groupGather[payload.groupId], {
-      members: members
-    });
-  }
-  // обновляем активный чат
-  newState.activeRoom = getFreshActiveRoom(newState);
-  return newState;
-};
-var markPrivateMessagesRead = function markPrivateMessagesRead(state, userId) {
-  var newState = _extends({}, state);
-  if (newState.contactGather[userId]) {
-    var updatedValue = _extends({}, newState.contactGather[userId]);
-    if (updatedValue.messages) {
-      for (var i = 0; i < updatedValue.messages.length; i++) {
-        updatedValue.messages[i] = _extends({}, updatedValue.messages[i], {
-          status: 1
-        });
-      }
-    }
-    newState.contactGather[userId] = updatedValue;
-  }
-  // обновляем активный чат
-  newState.activeRoom = getFreshActiveRoom(newState);
-  // помечаем все не прочитанные как прочитанные
-  if (newState.activeRoom != null && newState.activeRoom.messages) {
-    for (var _i2 = 0; _i2 < newState.activeRoom.messages.length; _i2++) {
-      newState.activeRoom.messages[_i2] = _extends({}, newState.activeRoom.messages[_i2], {
-        status: 1
-      });
-    }
-  }
-  return newState;
-};
-var addPrivateMessages = function addPrivateMessages(state, data) {
-  var newState = _extends({}, state);
-  var messages = data.messages,
-    contactId = data.contactId;
-  if (newState.contactGather[contactId]) {
-    newState.contactGather[contactId] = _extends({}, newState.contactGather[contactId], {
-      messages: [].concat(messages || [], newState.contactGather[contactId].messages || []),
-      noMoreData: messages != null && messages.length ? (messages == null ? void 0 : messages.length) < data.pageSize : true
-    });
-  }
-  // обновляем активный чат
-  newState.activeRoom = getFreshActiveRoom(newState);
-  return newState;
-};
-var addGroupMessages = function addGroupMessages(state, data) {
-  var newState = _extends({}, state);
-  var groupId = data.groupId,
-    messages = data.messages,
-    users = data.userArr;
-  if (newState.groupGather[groupId]) {
-    newState.groupGather[groupId] = _extends({}, newState.groupGather[groupId], {
-      messages: [].concat(messages || [], newState.groupGather[groupId].messages || []),
-      noMoreData: messages != null && messages.length ? (messages == null ? void 0 : messages.length) < data.pageSize : true
-    });
-  }
-  newState.userGather = _extends({}, newState.userGather);
-  for (var _iterator = _createForOfIteratorHelperLoose(users), _step; !(_step = _iterator()).done;) {
-    var user = _step.value;
-    if (!newState.userGather[user.userId]) {
-      newState.userGather[user.userId] = user;
-    }
-  }
-  // обновляем активный чат
-  newState.activeRoom = getFreshActiveRoom(newState);
-  return newState;
-};
-var setActiveRoom = function setActiveRoom(state, data) {
-  //if (state.activeRoom && data.ifNotExists) return state;
-  return _extends({}, state, {
-    chatOld: state.activeRoom != null ? _extends({}, state.activeRoom) : null,
-    activeRoom: data.groupId ? state.groupGather[data.groupId] : data.contactId ? state.contactGather[data.contactId] : null
-  });
-};
-var setToken = function setToken(state, token) {
-  return _extends({}, state, {
-    token: token
-  });
-};
-var clearUser = function clearUser(state) {
-  return _extends({}, state, {
-    token: '',
-    user: emptyUser
-  });
-};
-var setConference = function setConference(state, conference) {
-  return _extends({}, state, {
-    conference: {
-      data: _extends({}, conference),
-      joined: (conference == null ? void 0 : conference.userId) === state.user.userId,
-      ringPlayed: (conference == null ? void 0 : conference.userId) !== state.user.userId
-    }
-  });
-};
-var pauseConference = function pauseConference(state, conference) {
-  var _state$conference$dat;
-  if (((_state$conference$dat = state.conference.data) == null ? void 0 : _state$conference$dat.id) !== (conference == null ? void 0 : conference.id)) return state;
-  return _extends({}, state, {
-    conference: {
-      data: _extends({}, state.conference.data),
-      joined: false,
-      ringPlayed: false
-    }
-  });
-};
-var stopConference = function stopConference(state, conference) {
-  var _state$conference$dat2;
-  if (((_state$conference$dat2 = state.conference.data) == null ? void 0 : _state$conference$dat2.id) !== (conference == null ? void 0 : conference.id)) return state;
-  return _extends({}, state, {
-    conference: {
-      data: null,
-      joined: false,
-      ringPlayed: false
-    }
-  });
-};
-function chatReducer(state, action) {
-  var _extends2, _extends3, _extends4;
-  switch (action.type) {
-    case 'SET_GROUP_GATHER':
-      return _extends({}, state, {
-        groupGather: _extends({}, state.groupGather, (_extends2 = {}, _extends2[action.payload.groupId] = action.payload, _extends2))
-      });
-    case 'SET_CONTACT_GATHER':
-      return _extends({}, state, {
-        contactGather: _extends({}, state.contactGather, (_extends3 = {}, _extends3[action.payload.userId] = action.payload, _extends3))
-      });
-    case 'DEL_GROUP':
-      return delGroup(state, action.payload);
-    case 'DEL_GROUP_MEMBER':
-      return delGroupMember(state, action.payload);
-    case 'DEL_CONTACT':
-      return delContact(state, action.payload.userId);
-    case 'SET_USER_GATHER':
-      return _extends({}, state, {
-        userGather: _extends({}, state.userGather, (_extends4 = {}, _extends4[action.payload.userId] = action.payload, _extends4))
-      });
-    case 'UPDATE_ACTIVE_ROOM':
-      return _extends({}, state, {
-        activeRoom: getActiveRoom(state)
-      });
-    case 'SET_ACTIVE_ROOM':
-      return setActiveRoom(state, action.payload);
-    case 'USER_ONLINE':
-      return setUserOnline(state, action.payload, 1);
-    case 'USER_OFFLINE':
-      return setUserOnline(state, action.payload, 0);
-    case 'ADD_GROUP_MESSAGE':
-      return addGroupMessage(state, action.payload);
-    case 'ADD_PRIVATE_MESSAGE':
-      return addPrivateMessage(state, action.payload);
-    case 'ADD_GROUP_UNREAD_GATHER':
-      return groupUnreadGather(state, action.payload, function (x) {
-        return (x || 0) + 1;
-      });
-    case 'ADD_CONTACT_UNREAD_GATHER':
-      return contactUnreadGather(state, action.payload, function (x) {
-        return (x || 0) + 1;
-      });
-    case 'SET_TYPING':
-      return _extends({}, state, {
-        typing: action.payload
-      });
-    case 'LOSE_GROUP_UNREAD_GATHER':
-      return groupUnreadGather(state, action.payload, function () {
-        return 0;
-      });
-    case 'LOSE_CONTACT_UNREAD_GATHER':
-      return contactUnreadGather(state, action.payload, function () {
-        return 0;
-      });
-    case 'REVOKE_MESSAGE':
-      return revokeMessage(state, action.payload);
-    case 'UPDATE_GROUP_INFO':
-      return updateGroupInfo(state, action.payload);
-    case 'UPDATE_USER_INFO':
-      return updateUserInfo(state, action.payload);
-    case 'ADD_GROUP_MEMBER':
-      return addGroupMember(state, action.payload);
-    case 'SET_CONFERENCE':
-      return setConference(state, action.payload);
-    case 'JOIN_CONFERENCE':
-      return _extends({}, state, {
-        conference: {
-          data: _extends({}, action.payload),
-          joined: true,
-          ringPlayed: false
-        }
-      });
-    case 'PAUSE_CONFERENCE':
-      return pauseConference(state, action.payload);
-    case 'STOP_CONFERENCE':
-      return stopConference(state, action.payload);
-    case 'MARK_PRIVATE_MESSAGES_READ':
-      return markPrivateMessagesRead(state, action.payload);
-    case 'ADD_PRIVATE_MESSAGES':
-      return addPrivateMessages(state, action.payload);
-    case 'ADD_GROUP_MESSAGES':
-      return addGroupMessages(state, action.payload);
-    case 'SET_LOADING':
-      return _extends({}, state, {
-        loading: action.payload,
-        error: ''
-      });
-    case 'SET_ERROR':
-      return _extends({}, state, {
-        error: action.payload,
-        success: undefined
-      });
-    case 'SET_SUCCES':
-      return _extends({}, state, {
-        success: action.payload,
-        error: undefined
-      });
-    case 'SET_TOKEN':
-      return setToken(state, action.payload);
-    case 'SET_USER':
-      return _extends({}, state, {
-        user: action.payload
-      });
-    case 'CLEAR_USER':
-      return clearUser(state);
-    case 'CLEAR_CHAT_DATA':
-      return _extends({}, state, {
-        activeRoom: null,
-        groupGather: {},
-        userGather: {},
-        contactGather: {},
-        conference: {
-          data: null,
-          joined: false,
-          ringPlayed: false
-        },
-        typing: null
-      });
-    case 'SET_OPERATORS':
-      return _extends({}, state, {
-        operators: action.payload
-      });
-    case 'SET_VISIT_DATA':
-      return _extends({}, state, {
-        visitData: action.payload
-      });
-  }
-  return state;
-}
-var emptyDispatch = function emptyDispatch() {
-  return null;
-};
-var ChatContext = /*#__PURE__*/React__default.createContext({
-  state: emptyChatState,
-  dispatch: emptyDispatch
-});
-var ChatProvider = function ChatProvider(props) {
-  emptyUser.langCode = props.defLang;
-  var token = props.token;
-  var refreshToken = props.token;
-  var chatState = _extends({}, emptyChatState, {
-    token: token,
-    refreshToken: refreshToken
-  });
-  var _React$useReducer = React__default.useReducer(chatReducer, chatState),
-    state = _React$useReducer[0],
-    dispatch = _React$useReducer[1];
-  var value = useMemo(function () {
-    return {
-      state: state,
-      dispatch: dispatch
-    };
-  }, [state]);
-  return /*#__PURE__*/React__default.createElement(ChatContext.Provider, {
-    value: value
-  }, props.children);
-};
-
 function useInterval(callback, state, delay) {
   var savedCallback = useRef();
 
@@ -2246,8 +1711,6 @@ var RoomMessageList = function RoomMessageList(props) {
     }),
     viewerData = _React$useState[0],
     setViewerData = _React$useState[1];
-  var _React$useContext = React__default.useContext(ChatContext),
-    dispatch = _React$useContext.dispatch;
   var _React$useState2 = React__default.useState(false),
     scrollDownButton = _React$useState2[0],
     setScrollDownButton = _React$useState2[1];
@@ -2317,10 +1780,6 @@ var RoomMessageList = function RoomMessageList(props) {
       setScrollDownButton(isShowScrollButton);
       if (!isShowScrollButton && chatId && chat && onEnterRoom) {
         onEnterRoom(chat);
-        dispatch({
-          type: 'MARK_PRIVATE_MESSAGES_READ',
-          payload: chat.userId
-        });
       }
       for (var i = 0; i < messageCount; i++) {
         var _mess$ref;
@@ -2372,7 +1831,7 @@ var RoomMessageList = function RoomMessageList(props) {
   };
   if (chatId == null) return;
   return /*#__PURE__*/React__default.createElement(React__default.Fragment, null, /*#__PURE__*/React__default.createElement(Fade, {
-    "in": !!isVisible,
+    in: !!isVisible,
     style: isVisible ? {
       display: 'block',
       position: 'relative',
@@ -2449,7 +1908,7 @@ var RoomMessageList = function RoomMessageList(props) {
     variant: "body2",
     sx: function sx(theme) {
       return {
-        color: theme.palette.background["default"]
+        color: theme.palette.background.default
       };
     }
   }, messageCountUnreaded.length))), viewerData.visible && /*#__PURE__*/React__default.createElement(Backdrop, {
@@ -3766,6 +3225,541 @@ try {
 }
 });
 
+var emptyUser = {
+  userId: 0,
+  username: '',
+  password: '',
+  avatar: '',
+  langCode: ''
+};
+var emptyChatState = {
+  user: emptyUser,
+  token: '',
+  refreshToken: '',
+  activeRoom: null,
+  chatOld: null,
+  groupGather: {},
+  userGather: {},
+  contactGather: {},
+  operators: [],
+  initialContactId: null,
+  conference: {
+    data: null,
+    joined: false,
+    ringPlayed: false
+  },
+  typing: null,
+  loading: false,
+  error: undefined,
+  success: undefined,
+  visitData: []
+};
+var getFreshActiveRoom = function getFreshActiveRoom(state) {
+  if (state.activeRoom) return state.groupGather[state.activeRoom.groupId] || state.contactGather[state.activeRoom.userId];
+  return null;
+};
+var getActiveRoom = function getActiveRoom(state) {
+  var activeRoom = state.activeRoom,
+    initialContactId = state.initialContactId,
+    contactGather = state.contactGather;
+  var newActiveRoom = null;
+  if (initialContactId) {
+    newActiveRoom = contactGather[initialContactId];
+  } else if (activeRoom) {
+    newActiveRoom = getFreshActiveRoom(state);
+  } else {
+    // ищем комнату с самым свежим сообщением
+    var rooms = [].concat(Object.values(state.contactGather), Object.values(state.groupGather)).sort(chatRoomComparer);
+    if (rooms.length > 0) newActiveRoom = rooms[0];
+  }
+  return newActiveRoom;
+};
+var setUserOnline = function setUserOnline(state, userId, online) {
+  var newState = _extends({}, state);
+  // Обновить статусы приватных чатов
+  if (state.contactGather[userId]) newState.contactGather[userId] = _extends({}, newState.contactGather[userId], {
+    online: online
+  });
+  // Обновить статус участника в группах
+  for (var _i = 0, _Object$values = Object.values(state.groupGather); _i < _Object$values.length; _i++) {
+    var group = _Object$values[_i];
+    if (!group.members) continue;
+    var member = group.members.find(function (m) {
+      return m.userId === userId;
+    });
+    if (member) {
+      var index = group.members.indexOf(member);
+      group.members[index] = _extends({}, member, {
+        online: online
+      });
+    }
+  }
+  // Обновить статус операторов
+  var idx = newState.operators.findIndex(function (it) {
+    return it.userId === userId;
+  });
+  if (idx !== -1) newState.operators[idx] = _extends({}, newState.operators[idx], {
+    online: online
+  });
+  // обновляем активный чат
+  newState.activeRoom = getFreshActiveRoom(newState);
+  return newState;
+};
+var addGroupMessage = function addGroupMessage(state, payload) {
+  var newState = _extends({}, state);
+  var groupId = payload.groupId;
+  if (newState.groupGather[groupId]) {
+    if (newState.groupGather[groupId].messages) {
+      newState.groupGather[groupId].messages = [].concat(newState.groupGather[groupId].messages, [payload]);
+    } else {
+      newState.groupGather[groupId] = _extends({}, state.groupGather[groupId], {
+        messages: [payload]
+      });
+    }
+  }
+  // увеличиваем счетчик новых сообщений, если это не активная комната и сообщение не от нас
+  var activeRoom = newState.activeRoom;
+  if (activeRoom && activeRoom.groupId !== groupId && payload.userId !== state.user.userId) {
+    return groupUnreadGather(newState, groupId, function (x) {
+      return (x || 0) + 1;
+    });
+  }
+  // обновляем активный чат
+  newState.activeRoom = getFreshActiveRoom(newState);
+  return newState;
+};
+var addPrivateMessage = function addPrivateMessage(state, payload) {
+  var _newState$activeRoom;
+  var newState = _extends({}, state);
+  var contactId = payload.contactId === state.user.userId ? payload.userId : payload.contactId;
+  // 1 добавляем сообщение
+  if (newState.contactGather[contactId].messages) {
+    newState.contactGather[contactId].messages = [].concat(newState.contactGather[contactId].messages, [payload]);
+  } else {
+    newState.contactGather[contactId] = _extends({}, newState.contactGather[contactId], {
+      messages: [payload]
+    });
+  }
+  // 2 если это сообщение в неактивной комнате и источник не мы (в соседней вкладке), то увеличиваем счетчик непрочитанных
+  if (((_newState$activeRoom = newState.activeRoom) == null ? void 0 : _newState$activeRoom.userId) !== contactId && payload.userId !== state.user.userId) {
+    return contactUnreadGather(newState, contactId, function (x) {
+      return (x || 0) + 1;
+    });
+  }
+  // обновляем активный чат
+  newState.activeRoom = getFreshActiveRoom(newState);
+  return newState;
+};
+var contactUnreadGather = function contactUnreadGather(state, userId, predicate) {
+  var newState = _extends({}, state);
+  if (newState.contactGather[userId]) {
+    newState.contactGather[userId] = _extends({}, newState.contactGather[userId], {
+      unreadCount: predicate(newState.contactGather[userId].unreadCount)
+    });
+  }
+  // обновляем активный чат
+  newState.activeRoom = getFreshActiveRoom(newState);
+  return newState;
+};
+var groupUnreadGather = function groupUnreadGather(state, groupId, predicate) {
+  var newState = _extends({}, state);
+  if (newState.groupGather[groupId]) {
+    newState.groupGather[groupId] = _extends({}, newState.groupGather[groupId], {
+      unreadCount: predicate(newState.groupGather[groupId].unreadCount)
+    });
+  }
+  // обновляем активный чат
+  newState.activeRoom = getFreshActiveRoom(newState);
+  return newState;
+};
+var revokeMessage = function revokeMessage(state, payload) {
+  var userId = state.user.userId;
+  var newState = _extends({}, state);
+  var userName = payload.username || newState.userGather[payload.userId].username;
+  if (payload.groupId) {
+    var messages = newState.groupGather[payload.groupId].messages;
+    // задаем isRevoke
+    if (messages) {
+      var msg = messages.find(function (message) {
+        return message._id === payload._id;
+      });
+      if (msg) {
+        var index = messages.indexOf(msg);
+        messages[index] = _extends({}, msg, {
+          isRevoke: true,
+          revokeUserName: userName
+        });
+      }
+    }
+  } else {
+    var _messages = newState.contactGather[payload.contactId === userId ? payload.userId : payload.contactId].messages;
+    // задаем isRevoke
+    if (_messages) {
+      var _msg = _messages.find(function (message) {
+        return message._id === payload._id;
+      });
+      if (_msg) {
+        var _index = _messages.indexOf(_msg);
+        _messages[_index] = _extends({}, _msg, {
+          isRevoke: true,
+          revokeUserName: userName
+        });
+      }
+    }
+  }
+  // обновляем активный чат
+  newState.activeRoom = getFreshActiveRoom(newState);
+  return newState;
+};
+var delContact = function delContact(state, userId) {
+  var newState = _extends({}, state);
+  var updateActiveRoom = newState.activeRoom === newState.contactGather[userId];
+  delete newState.contactGather[userId];
+  if (updateActiveRoom) newState.activeRoom = getActiveRoom(newState);
+  return newState;
+};
+var delGroup = function delGroup(state, groupId) {
+  var newState = _extends({}, state);
+  var updateActiveRoom = newState.activeRoom === newState.groupGather[groupId];
+  delete newState.groupGather[groupId];
+  if (updateActiveRoom) newState.activeRoom = getActiveRoom(newState);
+  return newState;
+};
+var delGroupMember = function delGroupMember(state, data) {
+  var newState = _extends({}, state);
+  var group = newState.groupGather[data.groupId];
+  if (group) {
+    var _group$members;
+    group.members = (_group$members = group.members) == null ? void 0 : _group$members.filter(function (it) {
+      return it.userId !== data.userId;
+    });
+  }
+  return newState;
+};
+var updateGroupInfo = function updateGroupInfo(state, group) {
+  var newState = _extends({}, state);
+  var groupId = group.groupId,
+    name = group.name,
+    notice = group.notice;
+  var info = newState.groupGather[groupId];
+  if (info) {
+    newState.groupGather[groupId] = _extends({}, info, {
+      name: name,
+      notice: notice
+    });
+  }
+  // обновляем активный чат
+  newState.activeRoom = getFreshActiveRoom(newState);
+  return newState;
+};
+var updateUserInfo = function updateUserInfo(state, user) {
+  var newState = _extends({}, state);
+  var userId = user.userId,
+    username = user.username,
+    avatar = user.avatar;
+  if (newState.userGather[userId]) {
+    newState.userGather[userId] = _extends({}, newState.userGather[userId], {
+      username: username,
+      avatar: avatar
+    });
+  }
+  if (newState.contactGather[userId]) {
+    newState.contactGather[userId] = _extends({}, newState.contactGather[userId], {
+      username: username,
+      avatar: avatar
+    });
+  }
+  // обновляем активный чат
+  newState.activeRoom = getFreshActiveRoom(newState);
+  return newState;
+};
+var addGroupMember = function addGroupMember(state, payload) {
+  var members = payload.members.map(function (member) {
+    return _extends({}, member, {
+      isManager: 0
+    });
+  });
+  var newState = _extends({}, state);
+  if (newState.groupGather[payload.groupId].members && members) {
+    newState.groupGather[payload.groupId].members = [].concat(state.groupGather[payload.groupId].members, members);
+  } else {
+    newState.groupGather[payload.groupId] = _extends({}, newState.groupGather[payload.groupId], {
+      members: members
+    });
+  }
+  // обновляем активный чат
+  newState.activeRoom = getFreshActiveRoom(newState);
+  return newState;
+};
+var markPrivateMessagesRead = function markPrivateMessagesRead(state, userId) {
+  var newState = _extends({}, state);
+  if (newState.contactGather[userId]) {
+    var updatedValue = _extends({}, newState.contactGather[userId]);
+    if (updatedValue.messages) {
+      for (var i = 0; i < updatedValue.messages.length; i++) {
+        updatedValue.messages[i] = _extends({}, updatedValue.messages[i], {
+          status: 1
+        });
+      }
+    }
+    newState.contactGather[userId] = updatedValue;
+  }
+  // обновляем активный чат
+  newState.activeRoom = getFreshActiveRoom(newState);
+  // помечаем все не прочитанные как прочитанные
+  if (newState.activeRoom != null && newState.activeRoom.messages) {
+    for (var _i2 = 0; _i2 < newState.activeRoom.messages.length; _i2++) {
+      newState.activeRoom.messages[_i2] = _extends({}, newState.activeRoom.messages[_i2], {
+        status: 1
+      });
+    }
+  }
+  return newState;
+};
+var addPrivateMessages = function addPrivateMessages(state, data) {
+  var newState = _extends({}, state);
+  var messages = data.messages,
+    contactId = data.contactId;
+  if (newState.contactGather[contactId]) {
+    newState.contactGather[contactId] = _extends({}, newState.contactGather[contactId], {
+      messages: [].concat(messages || [], newState.contactGather[contactId].messages || []),
+      noMoreData: messages != null && messages.length ? (messages == null ? void 0 : messages.length) < data.pageSize : true
+    });
+  }
+  // обновляем активный чат
+  newState.activeRoom = getFreshActiveRoom(newState);
+  return newState;
+};
+var addGroupMessages = function addGroupMessages(state, data) {
+  var newState = _extends({}, state);
+  var groupId = data.groupId,
+    messages = data.messages,
+    users = data.userArr;
+  if (newState.groupGather[groupId]) {
+    newState.groupGather[groupId] = _extends({}, newState.groupGather[groupId], {
+      messages: [].concat(messages || [], newState.groupGather[groupId].messages || []),
+      noMoreData: messages != null && messages.length ? (messages == null ? void 0 : messages.length) < data.pageSize : true
+    });
+  }
+  newState.userGather = _extends({}, newState.userGather);
+  for (var _iterator = _createForOfIteratorHelperLoose(users), _step; !(_step = _iterator()).done;) {
+    var user = _step.value;
+    if (!newState.userGather[user.userId]) {
+      newState.userGather[user.userId] = user;
+    }
+  }
+  // обновляем активный чат
+  newState.activeRoom = getFreshActiveRoom(newState);
+  return newState;
+};
+var setActiveRoom = function setActiveRoom(state, data) {
+  //if (state.activeRoom && data.ifNotExists) return state;
+  return _extends({}, state, {
+    chatOld: state.activeRoom != null ? _extends({}, state.activeRoom) : null,
+    activeRoom: data.groupId ? state.groupGather[data.groupId] : data.contactId ? state.contactGather[data.contactId] : null
+  });
+};
+var setToken = function setToken(state, token) {
+  return _extends({}, state, {
+    token: token
+  });
+};
+var clearUser = function clearUser(state) {
+  return _extends({}, state, {
+    token: '',
+    user: emptyUser
+  });
+};
+var setConference = function setConference(state, conference) {
+  return _extends({}, state, {
+    conference: {
+      data: _extends({}, conference),
+      joined: (conference == null ? void 0 : conference.userId) === state.user.userId,
+      ringPlayed: (conference == null ? void 0 : conference.userId) !== state.user.userId
+    }
+  });
+};
+var pauseConference = function pauseConference(state, conference) {
+  var _state$conference$dat;
+  if (((_state$conference$dat = state.conference.data) == null ? void 0 : _state$conference$dat.id) !== (conference == null ? void 0 : conference.id)) return state;
+  return _extends({}, state, {
+    conference: {
+      data: _extends({}, state.conference.data),
+      joined: false,
+      ringPlayed: false
+    }
+  });
+};
+var stopConference = function stopConference(state, conference) {
+  var _state$conference$dat2;
+  if (((_state$conference$dat2 = state.conference.data) == null ? void 0 : _state$conference$dat2.id) !== (conference == null ? void 0 : conference.id)) return state;
+  return _extends({}, state, {
+    conference: {
+      data: null,
+      joined: false,
+      ringPlayed: false
+    }
+  });
+};
+function chatReducer(state, action) {
+  var _extends2, _extends3, _extends4;
+  switch (action.type) {
+    case 'SET_GROUP_GATHER':
+      return _extends({}, state, {
+        groupGather: _extends({}, state.groupGather, (_extends2 = {}, _extends2[action.payload.groupId] = action.payload, _extends2))
+      });
+    case 'SET_CONTACT_GATHER':
+      return _extends({}, state, {
+        contactGather: _extends({}, state.contactGather, (_extends3 = {}, _extends3[action.payload.userId] = action.payload, _extends3))
+      });
+    case 'DEL_GROUP':
+      return delGroup(state, action.payload);
+    case 'DEL_GROUP_MEMBER':
+      return delGroupMember(state, action.payload);
+    case 'DEL_CONTACT':
+      return delContact(state, action.payload.userId);
+    case 'SET_USER_GATHER':
+      return _extends({}, state, {
+        userGather: _extends({}, state.userGather, (_extends4 = {}, _extends4[action.payload.userId] = action.payload, _extends4))
+      });
+    case 'UPDATE_ACTIVE_ROOM':
+      return _extends({}, state, {
+        activeRoom: getActiveRoom(state)
+      });
+    case 'SET_ACTIVE_ROOM':
+      return setActiveRoom(state, action.payload);
+    case 'USER_ONLINE':
+      return setUserOnline(state, action.payload, 1);
+    case 'USER_OFFLINE':
+      return setUserOnline(state, action.payload, 0);
+    case 'ADD_GROUP_MESSAGE':
+      return addGroupMessage(state, action.payload);
+    case 'ADD_PRIVATE_MESSAGE':
+      return addPrivateMessage(state, action.payload);
+    case 'ADD_GROUP_UNREAD_GATHER':
+      return groupUnreadGather(state, action.payload, function (x) {
+        return (x || 0) + 1;
+      });
+    case 'ADD_CONTACT_UNREAD_GATHER':
+      return contactUnreadGather(state, action.payload, function (x) {
+        return (x || 0) + 1;
+      });
+    case 'SET_TYPING':
+      return _extends({}, state, {
+        typing: action.payload
+      });
+    case 'LOSE_GROUP_UNREAD_GATHER':
+      return groupUnreadGather(state, action.payload, function () {
+        return 0;
+      });
+    case 'LOSE_CONTACT_UNREAD_GATHER':
+      return contactUnreadGather(state, action.payload, function () {
+        return 0;
+      });
+    case 'REVOKE_MESSAGE':
+      return revokeMessage(state, action.payload);
+    case 'UPDATE_GROUP_INFO':
+      return updateGroupInfo(state, action.payload);
+    case 'UPDATE_USER_INFO':
+      return updateUserInfo(state, action.payload);
+    case 'ADD_GROUP_MEMBER':
+      return addGroupMember(state, action.payload);
+    case 'SET_CONFERENCE':
+      return setConference(state, action.payload);
+    case 'JOIN_CONFERENCE':
+      return _extends({}, state, {
+        conference: {
+          data: _extends({}, action.payload),
+          joined: true,
+          ringPlayed: false
+        }
+      });
+    case 'PAUSE_CONFERENCE':
+      return pauseConference(state, action.payload);
+    case 'STOP_CONFERENCE':
+      return stopConference(state, action.payload);
+    case 'MARK_PRIVATE_MESSAGES_READ':
+      return markPrivateMessagesRead(state, action.payload);
+    case 'ADD_PRIVATE_MESSAGES':
+      return addPrivateMessages(state, action.payload);
+    case 'ADD_GROUP_MESSAGES':
+      return addGroupMessages(state, action.payload);
+    case 'SET_LOADING':
+      return _extends({}, state, {
+        loading: action.payload,
+        error: ''
+      });
+    case 'SET_ERROR':
+      return _extends({}, state, {
+        error: action.payload,
+        success: undefined
+      });
+    case 'SET_SUCCES':
+      return _extends({}, state, {
+        success: action.payload,
+        error: undefined
+      });
+    case 'SET_TOKEN':
+      return setToken(state, action.payload);
+    case 'SET_USER':
+      return _extends({}, state, {
+        user: action.payload
+      });
+    case 'CLEAR_USER':
+      return clearUser(state);
+    case 'CLEAR_CHAT_DATA':
+      return _extends({}, state, {
+        activeRoom: null,
+        groupGather: {},
+        userGather: {},
+        contactGather: {},
+        conference: {
+          data: null,
+          joined: false,
+          ringPlayed: false
+        },
+        typing: null
+      });
+    case 'SET_OPERATORS':
+      return _extends({}, state, {
+        operators: action.payload
+      });
+    case 'SET_VISIT_DATA':
+      return _extends({}, state, {
+        visitData: action.payload
+      });
+  }
+  return state;
+}
+var emptyDispatch = function emptyDispatch() {
+  return null;
+};
+var ChatContext = /*#__PURE__*/React__default.createContext({
+  state: emptyChatState,
+  dispatch: emptyDispatch
+});
+var ChatProvider = function ChatProvider(props) {
+  emptyUser.langCode = props.defLang;
+  var token = props.token;
+  var refreshToken = props.token;
+  var chatState = _extends({}, emptyChatState, {
+    token: token,
+    refreshToken: refreshToken
+  });
+  var _React$useReducer = React__default.useReducer(chatReducer, chatState),
+    state = _React$useReducer[0],
+    dispatch = _React$useReducer[1];
+  var value = useMemo(function () {
+    return {
+      state: state,
+      dispatch: dispatch
+    };
+  }, [state]);
+  return /*#__PURE__*/React__default.createElement(ChatContext.Provider, {
+    value: value
+  }, props.children);
+};
+
 var initialContext = {};
 var RestContext = /*#__PURE__*/createContext(initialContext);
 function clearLocalStorage() {
@@ -4714,7 +4708,7 @@ var CheckAudiVideoPerm = function CheckAudiVideoPerm(_ref) {
         type: 'SET_SUCCES',
         payload: t('CHAT.CONFERENCE.ALLOK')
       });
-    })["catch"](function (err) {
+    }).catch(function (err) {
       var payload = t('CHAT.CONFERENCE.ErrorAny');
       if (err.name === 'NotFoundError') {
         payload = t('CHAT.CONFERENCE.NotFoundError');
@@ -4924,6 +4918,10 @@ var ChatPage = function ChatPage(_ref) {
         _id: chat.messages[chat.messages.length - 1]._id
       });
     } else {
+      dispatch({
+        type: 'MARK_PRIVATE_MESSAGES_READ',
+        payload: chat.userId
+      });
       socket == null ? void 0 : socket.emit('markAsRead', {
         contactId: chat.userId,
         _id: chat.messages[chat.messages.length - 1]._id
@@ -5116,7 +5114,7 @@ var ChatPage = function ChatPage(_ref) {
     return ((_state$conference$dat = state.conference.data) == null ? void 0 : _state$conference$dat.id) != null ? /*#__PURE__*/createElement(Gonf, null) : /*#__PURE__*/createElement(GetRoomList, null);
   }, ((_state$conference$dat2 = state.conference.data) == null ? void 0 : _state$conference$dat2.id) != null ? [state.conference.joined, (_state$conference$dat3 = state.conference.data) == null ? void 0 : _state$conference$dat3.id] : [(_state$activeRoom = state.activeRoom) == null ? void 0 : _state$activeRoom.groupId, (_state$activeRoom2 = state.activeRoom) == null ? void 0 : _state$activeRoom2.userId, allMessCount(state.contactGather), allMessCount(state.groupGather)]);
   return /*#__PURE__*/createElement(Container, {
-    maxWidth: fullWidth ? false : "lg",
+    maxWidth: fullWidth ? false : 'lg',
     className: classes.root,
     sx: function sx(theme) {
       return {

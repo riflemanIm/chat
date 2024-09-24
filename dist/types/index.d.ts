@@ -1,4 +1,3 @@
-/// <reference types="react" />
 export interface ChatPageProps {
     activeGroupId?: number;
     activeChatUserId?: number;
