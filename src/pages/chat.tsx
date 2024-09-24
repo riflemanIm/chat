@@ -435,7 +435,8 @@ export const ChatPage: React.FC<ChatPageProps> = ({
             <Grid
               item
               sm={state.conference.data?.id != null ? 6 : 4}
-              xl={state.conference.data?.id != null ? 6 : 3}
+              lg={state.conference.data?.id != null ? 6 : 4} // на малой ширине нужна пропорция 1/3
+              xl={state.conference.data?.id != null ? 6 : 3} // на большой ширине нужна пропорция 1/4
               className={classes.innerGrid}
             >
               {contacts}
@@ -443,15 +444,19 @@ export const ChatPage: React.FC<ChatPageProps> = ({
           )}
           <Grid
             item
-            sm={
-              state.conference.data?.id != null
+            sm={state.conference.data?.id != null
                 ? 6
                 : hideRooms
                 ? 12
                 : 8
             }
-            xl={
-              state.conference.data?.id != null
+            lg={state.conference.data?.id != null
+              ? 6
+              : hideRooms
+              ? 12
+              : 8
+            }
+            xl={state.conference.data?.id != null
                 ? 6
                 : hideRooms
                 ? 12
