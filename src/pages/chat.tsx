@@ -435,6 +435,7 @@ export const ChatPage: React.FC<ChatPageProps> = ({
             <Grid
               item
               sm={state.conference.data?.id != null ? 6 : 4}
+              xl={state.conference.data?.id != null ? 6 : 3}
               className={classes.innerGrid}
             >
               {contacts}
@@ -448,6 +449,13 @@ export const ChatPage: React.FC<ChatPageProps> = ({
                 : hideRooms
                 ? 12
                 : 8
+            }
+            xl={
+              state.conference.data?.id != null
+                ? 6
+                : hideRooms
+                ? 12
+                : 9
             }
             className={classes.innerGrid}
           >
