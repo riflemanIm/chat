@@ -32,9 +32,6 @@ import ConferenceButton from './ConferenceButton';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
-    popover: {
-      pointerEvents: 'none',
-    },
     paper: {
       padding: theme.spacing(1),
     },
@@ -64,6 +61,7 @@ type RoomHeaderProps = {
   onConferencePause?: (conference: ConferenceData) => void;
   onOperatorAdd?: (chat: Group, operator: Contact) => void;
   onLeaveGroup?: (chat: Group) => void;
+  onContactClick?: (contact: Contact) => void;
 };
 
 const getGroupStatus = (group: Group, t: (key: string) => string) => {
@@ -75,15 +73,6 @@ const getGroupStatus = (group: Group, t: (key: string) => string) => {
   if (onlineCount)
     status.push(`${onlineCount} ${t('CHAT.STATUS.ONLINE')}`);
   return status.join(', ');
-};
-
-const getVisitMessage = (visit: VisitData) => {
-  const visitDate = new Date(visit.visitDate);
-
-  return `${formatTime(visitDate, 'HH:mm')} - ${formatTime(
-    new Date(visitDate.getTime() + visit.duration * 60_000),
-    'HH:mm',
-  )} ${visit.conferenceStatus}`;
 };
 
 const RoomHeader: React.FC<RoomHeaderProps> = ({
@@ -101,6 +90,7 @@ const RoomHeader: React.FC<RoomHeaderProps> = ({
   onConferencePause,
   onOperatorAdd,
   onLeaveGroup,
+  onContactClick,
 }: RoomHeaderProps) => {
   const classes = useStyles();
   const { t } = useTranslation();
@@ -119,14 +109,33 @@ const RoomHeader: React.FC<RoomHeaderProps> = ({
       />
     );
 
-  const handlePopoverOpen = (
-    event: React.MouseEvent<HTMLElement, MouseEvent>,
+  let closeTimer: NodeJS.Timeout | null = null;
+  const handlePopoverIn = (
+    event: React.MouseEvent<HTMLElement, MouseEvent>
   ) => {
-    setAnchorEl(event.currentTarget);
+    if (!anchorEl) {
+      setAnchorEl(event.currentTarget);
+    }
+    if (closeTimer) {
+      clearTimeout(closeTimer);
+      closeTimer = null;
+    }
   };
 
   const handlePopoverClose = () => {
     setAnchorEl(null);
+    if (closeTimer) {
+      clearTimeout(closeTimer);
+      closeTimer = null;
+    }
+  };
+
+  const handlePopoverOut = () => {
+    if (!closeTimer) {
+      closeTimer = setTimeout(() => {
+        handlePopoverClose();
+      }, 1000);
+    }
   };
 
   const handleAddOperatorOpen = () => {
@@ -153,19 +162,20 @@ const RoomHeader: React.FC<RoomHeaderProps> = ({
         subheader={
           <React.Fragment>
             <span
-              aria-owns={anchorEl ? 'mouse-over-popover' : undefined}
+              id="mouse-over-span"
+              aria-owns={anchorEl ? "mouse-over-popover" : undefined}
               aria-haspopup="true"
-              onMouseEnter={handlePopoverOpen}
-              onMouseLeave={handlePopoverClose}
+              onMouseEnter={handlePopoverIn}
+              onMouseLeave={handlePopoverOut}
             >
               {getGroupStatus(group, t)}
             </span>
             <Popover
               id="mouse-over-popover"
-              className={classes.popover}
               classes={{
                 paper: classes.paper,
               }}
+              sx={{ pointerEvents: "none" }}
               open={!!anchorEl}
               anchorEl={anchorEl}
               anchorOrigin={{
@@ -182,7 +192,11 @@ const RoomHeader: React.FC<RoomHeaderProps> = ({
               <ContactList
                 apiUrl={apiUrl}
                 contacts={group.members as Contact[]}
+                onContactClick={onContactClick}
                 owner={group.userId}
+                onMouseEnter={handlePopoverIn}
+                onMouseLeave={handlePopoverOut}
+                sx={{ pointerEvents: "all" }}
               />
             </Popover>
           </React.Fragment>

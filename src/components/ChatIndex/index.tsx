@@ -8,16 +8,13 @@ import { SocketProvider } from '../../context/SocketContext';
 import { ChatPage } from '../../pages/chat';
 
 export const ChatIndex: React.FC<ChatProps> = ({
-  activeGroupId,
-  activeChatUserId,
-  hideRooms = false,
   lang,
   chatBaseURLApi,
   chatWsUrl,
   chatWsPath,
   token,
-  inModale = false,
   refreshToken,
+  ...props
 }: ChatProps) => {
   return (
     <AppLanguageProvider>
@@ -28,12 +25,7 @@ export const ChatIndex: React.FC<ChatProps> = ({
       >
         <RestProvider baseURLApi={chatBaseURLApi} pageSize={25}>
           <SocketProvider wsUrl={chatWsUrl} wsPath={chatWsPath}>
-            <ChatPage
-              activeGroupId={activeGroupId}
-              activeChatUserId={activeChatUserId}
-              hideRooms={hideRooms}
-              inModale={inModale}
-            />
+            <ChatPage {...props} />
           </SocketProvider>
         </RestProvider>
       </ChatProvider>

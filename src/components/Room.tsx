@@ -76,6 +76,7 @@ type RoomProps = {
   loading: boolean;
   pageSize: number;
   operators: Contact[];
+  inModale?: boolean;
   onExitRoom?: (chat: ChatRoom) => void;
   onEnterRoom?: (chat: ChatRoom) => void;
   onNeedMoreMessages: (chat: ChatRoom) => Promise<void>;
@@ -91,7 +92,7 @@ type RoomProps = {
   onConferencePause?: (conference: ConferenceData) => void;
   onOperatorAdd?: (chat: Group, operator: Contact) => void;
   onLeaveGroup?: (chat: Group) => void;
-  inModale?: boolean;
+  onContactClick?: (contact: Contact) => void;
 };
 
 const Room: React.FC<RoomProps> = (props: RoomProps) => {
@@ -174,6 +175,7 @@ const Room: React.FC<RoomProps> = (props: RoomProps) => {
           onConferencePause={props.onConferencePause}
           onOperatorAdd={props.onOperatorAdd}
           onLeaveGroup={props.onLeaveGroup}
+          onContactClick={props.onContactClick}
         />
       </Box>
       <Divider />

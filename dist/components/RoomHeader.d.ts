@@ -15,6 +15,7 @@ declare type RoomHeaderProps = {
     onConferencePause?: (conference: ConferenceData) => void;
     onOperatorAdd?: (chat: Group, operator: Contact) => void;
     onLeaveGroup?: (chat: Group) => void;
+    onContactClick?: (contact: Contact) => void;
 };
 declare const RoomHeader: React.FC<RoomHeaderProps>;
 export default RoomHeader;

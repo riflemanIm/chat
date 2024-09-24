@@ -64,8 +64,10 @@ const useStyles = makeStyles((theme: Theme) => ({
 export const ChatPage: React.FC<ChatPageProps> = ({
   activeGroupId,
   activeChatUserId,
-  inModale = true,
+  inModale = false,
   hideRooms = false,
+  fullWidth = false,
+  ...props
 }: ChatPageProps) => {
   const classes = useStyles();
   const isMobile = useMediaQuery((theme: Theme) =>
@@ -94,8 +96,7 @@ export const ChatPage: React.FC<ChatPageProps> = ({
 
   const onNeedMoreMessages = React.useCallback(
     async (chat: ChatRoom) => {
-      if ((chat as Group).groupId)
-        await getGroupMessages(chat as Group);
+      if ((chat as Group).groupId) await getGroupMessages(chat as Group);
       else await getPrivateMessages(chat as Contact);
     },
     [getPrivateMessages, getGroupMessages],
@@ -295,7 +296,7 @@ export const ChatPage: React.FC<ChatPageProps> = ({
   //   else ringAudio.pause();
   // }, [state.conference.data?.id, state.conference.ringPlayed]);
 
-  console.log('--state--', state);
+  // console.log('--state--', state);
   const renderRoom = state.activeRoom != null && (
     <Room
       apiUrl={apiUrl}
@@ -321,6 +322,7 @@ export const ChatPage: React.FC<ChatPageProps> = ({
       onOperatorAdd={onOperatorAdd}
       onLeaveGroup={onLeaveGroup}
       inModale={inModale}
+      onContactClick={props.onContactInfoClick}
     />
   );
 
@@ -414,7 +416,7 @@ export const ChatPage: React.FC<ChatPageProps> = ({
 
   return (
     <Container
-      maxWidth="lg"
+      maxWidth={fullWidth ? false : "lg"}
       className={classes.root}
       sx={theme => ({
         width: inModale

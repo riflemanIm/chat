@@ -61,19 +61,21 @@ var LanguageDetector = _interopDefault(require('i18next-browser-languagedetector
   ContextMenuType["DELETE"] = "DELETE";
 })(exports.ContextMenuType || (exports.ContextMenuType = {}));
 
-const useStyles = /*#__PURE__*/styles.makeStyles(() => styles.createStyles({
-  item: {
-    cursor: "pointer"
-  }
-}));
-const Emoji = props => {
-  const classes = useStyles();
-  const emojiClick = e => {
+var useStyles = /*#__PURE__*/styles.makeStyles(function () {
+  return styles.createStyles({
+    item: {
+      cursor: "pointer"
+    }
+  });
+});
+var Emoji = function Emoji(props) {
+  var classes = useStyles();
+  var emojiClick = function emojiClick(e) {
     if (props.onSelect) {
       props.onSelect(e.target.innerText);
     }
   };
-  const Item = itemProps => {
+  var Item = function Item(itemProps) {
     return /*#__PURE__*/React.createElement(material.Box, {
       m: 0.5,
       component: "span",
@@ -252,44 +254,46 @@ const Emoji = props => {
   })));
 };
 
-const useStyles$1 = /*#__PURE__*/styles.makeStyles(theme => styles.createStyles({
-  typingText: {
-    paddingLeft: theme.spacing(0.5)
-  },
-  typingDot: {
-    display: "inline-block",
-    verticalAlign: "middle",
-    width: 4,
-    height: 4,
-    margin: "0px 2px",
-    background: theme.palette.primary.main,
-    borderRadius: "50%",
-    opacity: "0",
-    animation: "$loadingFade 1s infinite",
-    "&:nth-child(1)": {
-      animationDelay: "0s"
+var useStyles$1 = /*#__PURE__*/styles.makeStyles(function (theme) {
+  return styles.createStyles({
+    typingText: {
+      paddingLeft: theme.spacing(0.5)
     },
-    "&:nth-child(2)": {
-      animationDelay: "0.2s"
+    typingDot: {
+      display: "inline-block",
+      verticalAlign: "middle",
+      width: 4,
+      height: 4,
+      margin: "0px 2px",
+      background: theme.palette.primary.main,
+      borderRadius: "50%",
+      opacity: "0",
+      animation: "$loadingFade 1s infinite",
+      "&:nth-child(1)": {
+        animationDelay: "0s"
+      },
+      "&:nth-child(2)": {
+        animationDelay: "0.2s"
+      },
+      "&:nth-child(3)": {
+        animationDelay: "0.4s"
+      }
     },
-    "&:nth-child(3)": {
-      animationDelay: "0.4s"
+    "@keyframes loadingFade": {
+      "0%": {
+        opacity: 0
+      },
+      "50%": {
+        opacity: 0.8
+      },
+      "100%": {
+        opacity: 0
+      }
     }
-  },
-  "@keyframes loadingFade": {
-    "0%": {
-      opacity: 0
-    },
-    "50%": {
-      opacity: 0.8
-    },
-    "100%": {
-      opacity: 0
-    }
-  }
-}));
-const Typing = props => {
-  const classes = useStyles$1();
+  });
+});
+var Typing = function Typing(props) {
+  var classes = useStyles$1();
   return /*#__PURE__*/React__default.createElement(material.Typography, {
     color: "primary",
     variant: "body2",
@@ -305,26 +309,26 @@ const Typing = props => {
   }, props.message));
 };
 
-const useStyles$2 = /*#__PURE__*/styles.makeStyles(() => ({
-  input: {
-    flex: "auto"
-  },
-  inputUpload: {
-    display: "none"
-  },
-  attachmentIcon: {
-    fill: "none",
-    stroke: "currentColor"
-  }
-}));
+var useStyles$2 = /*#__PURE__*/styles.makeStyles(function () {
+  return {
+    input: {
+      flex: "auto"
+    },
+    inputUpload: {
+      display: "none"
+    },
+    attachmentIcon: {
+      fill: "none",
+      stroke: "currentColor"
+    }
+  };
+});
 /**
  * Рассчитать пропорции изображения
  */
-const getImageSize = data => {
-  let {
-    width,
-    height
-  } = data;
+var getImageSize = function getImageSize(data) {
+  var width = data.width,
+    height = data.height;
   if (width > 335 || height > 335) {
     if (width > height) {
       height = 335 * (height / width);
@@ -335,51 +339,52 @@ const getImageSize = data => {
     }
   }
   return {
-    width,
-    height
+    width: width,
+    height: height
   };
 };
-const Entry = props => {
-  const classes = useStyles$2();
-  const {
-    chat
-  } = props;
-  const {
-    t
-  } = reactI18next.useTranslation();
-  const [empjiEl, setEmojiEl] = React__default.useState(null);
-  const [text, setText] = React__default.useState("");
-  const [lastTyping, setLastTyping] = React__default.useState({
-    chat,
-    time: 0
-  });
-  const handleEmojiClick = event => {
+var Entry = function Entry(props) {
+  var classes = useStyles$2();
+  var chat = props.chat;
+  var _useTranslation = reactI18next.useTranslation(),
+    t = _useTranslation.t;
+  var _React$useState = React__default.useState(null),
+    empjiEl = _React$useState[0],
+    setEmojiEl = _React$useState[1];
+  var _React$useState2 = React__default.useState(""),
+    text = _React$useState2[0],
+    setText = _React$useState2[1];
+  var _React$useState3 = React__default.useState({
+      chat: chat,
+      time: 0
+    }),
+    lastTyping = _React$useState3[0],
+    setLastTyping = _React$useState3[1];
+  var handleEmojiClick = function handleEmojiClick(event) {
     setEmojiEl(event.currentTarget);
   };
-  const handleEmojiClose = () => {
+  var handleEmojiClose = function handleEmojiClose() {
     setEmojiEl(null);
   };
-  const emojiSelect = emoji => {
+  var emojiSelect = function emojiSelect(emoji) {
     setText("" + text + emoji);
     handleEmojiClose();
   };
-  const onChange = _ref => {
-    let {
-      target
-    } = _ref;
+  var onChange = function onChange(_ref) {
+    var target = _ref.target;
     setText(target.value);
     if (chat && props.onTyping && (lastTyping.chat !== chat || Date.now() - lastTyping.time >= 500)) {
       setLastTyping({
-        chat,
+        chat: chat,
         time: Date.now()
       });
       props.onTyping(chat);
     }
   };
-  const sendMessage = data => {
+  var sendMessage = function sendMessage(data) {
     if (chat && props.onSendMessage) props.onSendMessage(chat, data);
   };
-  const submit = () => {
+  var submit = function submit() {
     if (text.trim().length === 0) {
       return;
     }
@@ -389,20 +394,20 @@ const Entry = props => {
     });
     setText("");
   };
-  const onSubmitClick = event => {
+  var onSubmitClick = function onSubmitClick(event) {
     event.preventDefault();
     submit();
   };
-  const onKeyPress = event => {
+  var onKeyPress = function onKeyPress(event) {
     if (event.key === "Enter") {
       event.preventDefault();
       submit();
     }
   };
-  const onSubmitFile = event => {
+  var onSubmitFile = function onSubmitFile(event) {
     if (!event.currentTarget.files) return;
-    const file = event.currentTarget.files[0];
-    let messageType;
+    var file = event.currentTarget.files[0];
+    var messageType;
     if (file.type.includes("image")) {
       messageType = "image";
     } else if (file.type.includes("video")) {
@@ -411,11 +416,11 @@ const Entry = props => {
       messageType = "file";
     }
     if (messageType === "image") {
-      const image = new Image();
-      const url = window.URL || window.webkitURL;
+      var image = new Image();
+      var url = window.URL || window.webkitURL;
       image.src = url.createObjectURL(file);
-      image.onload = () => {
-        const imageSize = getImageSize({
+      image.onload = function () {
+        var imageSize = getImageSize({
           width: image.width,
           height: image.height
         });
@@ -423,20 +428,20 @@ const Entry = props => {
           message: file,
           width: imageSize.width,
           height: imageSize.height,
-          messageType
+          messageType: messageType
         });
       };
     } else {
       sendMessage({
         message: file,
-        messageType,
+        messageType: messageType,
         fileName: file.name,
         size: file.size
       });
     }
   };
-  const emojiOpen = Boolean(empjiEl);
-  const enojiId = emojiOpen ? "simple-popover" : undefined;
+  var emojiOpen = Boolean(empjiEl);
+  var enojiId = emojiOpen ? "simple-popover" : undefined;
   return /*#__PURE__*/React__default.createElement(material.Box, {
     display: "flex",
     flexDirection: "row"
@@ -504,10 +509,9 @@ const Entry = props => {
   })));
 };
 
-const ContactStatus = props => {
-  const {
-    t
-  } = reactI18next.useTranslation();
+var ContactStatus = function ContactStatus(props) {
+  var _useTranslation = reactI18next.useTranslation(),
+    t = _useTranslation.t;
   if (props.isTyping) return /*#__PURE__*/React__default.createElement(Typing, {
     message: t('CHAT.STATUS.TYPING')
   });
@@ -522,6 +526,94 @@ const ContactStatus = props => {
     component: "span"
   }, t('CHAT.STATUS.OFFLINE'));
 };
+
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) {
+  try {
+    var info = gen[key](arg);
+    var value = info.value;
+  } catch (error) {
+    reject(error);
+    return;
+  }
+  if (info.done) {
+    resolve(value);
+  } else {
+    Promise.resolve(value).then(_next, _throw);
+  }
+}
+function _asyncToGenerator(fn) {
+  return function () {
+    var self = this,
+      args = arguments;
+    return new Promise(function (resolve, reject) {
+      var gen = fn.apply(self, args);
+      function _next(value) {
+        asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value);
+      }
+      function _throw(err) {
+        asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err);
+      }
+      _next(undefined);
+    });
+  };
+}
+function _extends() {
+  _extends = Object.assign || function (target) {
+    for (var i = 1; i < arguments.length; i++) {
+      var source = arguments[i];
+      for (var key in source) {
+        if (Object.prototype.hasOwnProperty.call(source, key)) {
+          target[key] = source[key];
+        }
+      }
+    }
+    return target;
+  };
+  return _extends.apply(this, arguments);
+}
+function _objectWithoutPropertiesLoose(source, excluded) {
+  if (source == null) return {};
+  var target = {};
+  var sourceKeys = Object.keys(source);
+  var key, i;
+  for (i = 0; i < sourceKeys.length; i++) {
+    key = sourceKeys[i];
+    if (excluded.indexOf(key) >= 0) continue;
+    target[key] = source[key];
+  }
+  return target;
+}
+function _unsupportedIterableToArray(o, minLen) {
+  if (!o) return;
+  if (typeof o === "string") return _arrayLikeToArray(o, minLen);
+  var n = Object.prototype.toString.call(o).slice(8, -1);
+  if (n === "Object" && o.constructor) n = o.constructor.name;
+  if (n === "Map" || n === "Set") return Array.from(o);
+  if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen);
+}
+function _arrayLikeToArray(arr, len) {
+  if (len == null || len > arr.length) len = arr.length;
+  for (var i = 0, arr2 = new Array(len); i < len; i++) arr2[i] = arr[i];
+  return arr2;
+}
+function _createForOfIteratorHelperLoose(o, allowArrayLike) {
+  var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"];
+  if (it) return (it = it.call(o)).next.bind(it);
+  if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") {
+    if (it) o = it;
+    var i = 0;
+    return function () {
+      if (i >= o.length) return {
+        done: true
+      };
+      return {
+        done: false,
+        value: o[i++]
+      };
+    };
+  }
+  throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
+}
 
 function isEmpty(value) {
   return value == null || typeof value === 'object' && Object.keys(value).length === 0 || typeof value === 'string' && value.trim().length === 0;
@@ -553,19 +645,22 @@ function formatTime(time, format) {
 function getFileMeta(content) {
   // Формат  [date]$[userId]$[size]$[fileName]
   // Например fileName = 1606980397047$1a01e20f-3780-4227-84b5-5c69ca766ee5$15.41KB$123.docx
-  const meta = content.split('$');
-  const [date, userId, size, name] = meta;
+  var meta = content.split('$');
+  var date = meta[0],
+    userId = meta[1],
+    size = meta[2],
+    name = meta[3];
   return {
-    date,
-    userId,
-    size,
-    name
+    date: date,
+    userId: userId,
+    size: size,
+    name: name
   };
 }
 function splitFileName(name) {
-  const idx = name.lastIndexOf('.');
+  var idx = name.lastIndexOf('.');
   if (idx === -1) return {
-    name,
+    name: name,
     ext: ''
   };
   return {
@@ -573,24 +668,28 @@ function splitFileName(name) {
     ext: name.slice(idx + 1)
   };
 }
-const getChatId = chat => {
+var getChatId = function getChatId(chat) {
   if (!chat) return null;
   return chat.groupId ? "group:" + chat.groupId : "user:" + chat.userId;
 };
-const getChatName = chat => {
+var getChatName = function getChatName(chat) {
   return chat.groupId ? chat.name : chat.username;
 };
-const allMessCount = chats => {
-  return Object.values(chats).map(it => (it == null ? void 0 : it.messages) != null ? it == null ? void 0 : it.messages.length : 0).reduce((a, b) => a + b, 0);
+var allMessCount = function allMessCount(chats) {
+  return Object.values(chats).map(function (it) {
+    return (it == null ? void 0 : it.messages) != null ? it == null ? void 0 : it.messages.length : 0;
+  }).reduce(function (a, b) {
+    return a + b;
+  }, 0);
 };
-const chatRoomComparer = (a, b) => {
-  const hasMessagesA = Array.isArray(a.messages) && a.messages.length > 0;
-  const hasMessagesB = Array.isArray(b.messages) && b.messages.length > 0;
+var chatRoomComparer = function chatRoomComparer(a, b) {
+  var hasMessagesA = Array.isArray(a.messages) && a.messages.length > 0;
+  var hasMessagesB = Array.isArray(b.messages) && b.messages.length > 0;
   if (hasMessagesA && hasMessagesB && b.messages != null && a.messages != null) {
     // !!! if cdate === undefined !!!
-    const bb = b.messages[b.messages.length - 1].cdate != null ? new Date(b.messages[b.messages.length - 1].cdate).getTime() : new Date().getTime();
-    const aa = a.messages[a.messages.length - 1].cdate != null ? new Date(a.messages[a.messages.length - 1].cdate).getTime() : new Date().getTime() - 1;
-    const res = bb - aa;
+    var bb = b.messages[b.messages.length - 1].cdate != null ? new Date(b.messages[b.messages.length - 1].cdate).getTime() : new Date().getTime();
+    var aa = a.messages[a.messages.length - 1].cdate != null ? new Date(a.messages[a.messages.length - 1].cdate).getTime() : new Date().getTime() - 1;
+    var res = bb - aa;
     //console.log('res', res);
     return res;
   }
@@ -599,64 +698,65 @@ const chatRoomComparer = (a, b) => {
   }
   return 1;
 };
-const getParam = param => {
-  const QueryString = window.location.search;
-  const urlParams = new URLSearchParams(QueryString);
+var getParam = function getParam(param) {
+  var QueryString = window.location.search;
+  var urlParams = new URLSearchParams(QueryString);
   return urlParams.get(param);
 };
-const combineURLs = (baseURL, relativeURL, queryParams) => {
-  const url = relativeURL ? baseURL.replace(/\/?\/$/, '') + '/' + relativeURL.replace(/^\/+/, '') : baseURL;
+var combineURLs = function combineURLs(baseURL, relativeURL, queryParams) {
+  var url = relativeURL ? baseURL.replace(/\/?\/$/, '') + '/' + relativeURL.replace(/^\/+/, '') : baseURL;
   if (!queryParams) return url;
   return url + (url.includes('?') ? '&' : '?') + new URLSearchParams(queryParams).toString();
 };
 
-const useStyles$3 = /*#__PURE__*/styles.makeStyles(() => ({
-  star: {
-    fontSize: '0.85rem',
-    verticalAlign: 'middle'
-  }
-}));
-const ContactList = props => {
-  const classes = useStyles$3();
-  const {
-    apiUrl,
-    contacts,
-    owner
-  } = props;
-  return /*#__PURE__*/React__default.createElement(material.List, {
+var useStyles$3 = /*#__PURE__*/styles.makeStyles(function () {
+  return {
+    star: {
+      fontSize: '0.85rem',
+      verticalAlign: 'middle'
+    }
+  };
+});
+var ContactList = function ContactList(props) {
+  var classes = useStyles$3();
+  var apiUrl = props.apiUrl,
+    contacts = props.contacts,
+    owner = props.owner;
+  return /*#__PURE__*/React__default.createElement(material.List, _extends({}, props, {
     "aria-label": "contacts"
-  }, contacts.map(contact => /*#__PURE__*/React__default.createElement(material.ListItemButton, {
-    key: contact.userId,
-    onClick: () => props.onClick && props.onClick(contact)
-  }, /*#__PURE__*/React__default.createElement(material.ListItemAvatar, null, /*#__PURE__*/React__default.createElement(material.Avatar, {
-    alt: contact.username,
-    src: contact.avatar ? combineURLs(apiUrl, contact.avatar) : ''
-  })), /*#__PURE__*/React__default.createElement(material.ListItemText, {
-    primary: /*#__PURE__*/React__default.createElement("span", null, contact.username, ' ', owner === contact.userId && /*#__PURE__*/React__default.createElement(StarIcon, {
-      className: classes.star,
-      color: "primary"
-    })),
-    secondary: /*#__PURE__*/React__default.createElement(ContactStatus, {
-      contact: contact,
-      isTyping: false
-    })
-  }))));
+  }), contacts.map(function (contact) {
+    return /*#__PURE__*/React__default.createElement(material.ListItemButton, {
+      key: contact.userId,
+      onClick: function onClick() {
+        return props.onContactClick && props.onContactClick(contact);
+      }
+    }, /*#__PURE__*/React__default.createElement(material.ListItemAvatar, null, /*#__PURE__*/React__default.createElement(material.Avatar, {
+      alt: contact.username,
+      src: contact.avatar ? combineURLs(apiUrl, contact.avatar) : ''
+    })), /*#__PURE__*/React__default.createElement(material.ListItemText, {
+      primary: /*#__PURE__*/React__default.createElement("span", null, contact.username, ' ', owner === contact.userId && /*#__PURE__*/React__default.createElement(StarIcon, {
+        className: classes.star,
+        color: "primary"
+      })),
+      secondary: /*#__PURE__*/React__default.createElement(ContactStatus, {
+        contact: contact,
+        isTyping: false
+      })
+    }));
+  }));
 };
 
-const AddContact = props => {
-  const {
-    onClose,
-    open,
-    apiUrl,
-    contacts
-  } = props;
-  const {
-    t
-  } = reactI18next.useTranslation();
-  const handleClose = () => {
+var AddContact = function AddContact(props) {
+  var onClose = props.onClose,
+    open = props.open,
+    apiUrl = props.apiUrl,
+    contacts = props.contacts;
+  var _useTranslation = reactI18next.useTranslation(),
+    t = _useTranslation.t;
+  var handleClose = function handleClose() {
     onClose();
   };
-  const handleListItemClick = contact => {
+  var handleListItemClick = function handleListItemClick(contact) {
     onClose(contact);
   };
   return /*#__PURE__*/React__default.createElement(material.Dialog, {
@@ -676,56 +776,45 @@ function useCounter(max) {
   if (max === void 0) {
     max = 30000;
   }
-  const [counter, setCounter] = React.useState(max);
-  const counterRef = React.useRef(null);
-  const handlerRefresh = () => {
+  var _useState = React.useState(max),
+    counter = _useState[0],
+    setCounter = _useState[1];
+  var counterRef = React.useRef(null);
+  var handlerRefresh = function handlerRefresh() {
     setCounter(max);
   };
   // Counter
-  React.useEffect(() => {
-    if (counter > 0) counterRef.current = setInterval(() => setCounter(prev => prev - 1), 1000);
-    return () => {
+  React.useEffect(function () {
+    if (counter > 0) counterRef.current = setInterval(function () {
+      return setCounter(function (prev) {
+        return prev - 1;
+      });
+    }, 1000);
+    return function () {
       if (counterRef.current) clearInterval(counterRef.current);
     };
   }, [counter]);
   return {
-    counter,
-    handlerRefresh
+    counter: counter,
+    handlerRefresh: handlerRefresh
   };
 }
 
-function _extends() {
-  _extends = Object.assign ? Object.assign.bind() : function (target) {
-    for (var i = 1; i < arguments.length; i++) {
-      var source = arguments[i];
-      for (var key in source) {
-        if (Object.prototype.hasOwnProperty.call(source, key)) {
-          target[key] = source[key];
-        }
-      }
-    }
-    return target;
-  };
-  return _extends.apply(this, arguments);
-}
-
-const Transition = /*#__PURE__*/React__default.forwardRef(function Transition(props, ref) {
+var Transition = /*#__PURE__*/React__default.forwardRef(function Transition(props, ref) {
   return /*#__PURE__*/React__default.createElement(material.Slide, _extends({
     direction: "up",
     ref: ref
   }, props));
 });
 function AlertDialog(_ref) {
-  let {
-    children,
-    open,
-    setOpen,
-    severity = 'warning'
-  } = _ref;
-  const {
-    t
-  } = reactI18next.useTranslation();
-  const handleClose = () => {
+  var children = _ref.children,
+    open = _ref.open,
+    setOpen = _ref.setOpen,
+    _ref$severity = _ref.severity,
+    severity = _ref$severity === void 0 ? 'warning' : _ref$severity;
+  var _useTranslation = reactI18next.useTranslation(),
+    t = _useTranslation.t;
+  var handleClose = function handleClose() {
     setOpen(false);
   };
   return /*#__PURE__*/React__default.createElement(material.Dialog, {
@@ -746,74 +835,70 @@ function AlertDialog(_ref) {
 }
 
 //import { useTranslation } from "react-i18next";
-const hhMmSs = totalSeconds => {
-  const hours = Math.floor(totalSeconds / 3600);
-  const strHours = hours < 10 ? "0" + hours : hours;
+var hhMmSs = function hhMmSs(totalSeconds) {
+  var hours = Math.floor(totalSeconds / 3600);
+  var strHours = hours < 10 ? "0" + hours : hours;
   totalSeconds %= 3600;
-  const minutes = Math.floor(totalSeconds / 60);
-  const strMinutes = minutes < 10 ? "0" + minutes : minutes;
-  const seconds = totalSeconds % 60;
-  const strSeconds = seconds < 10 ? "0" + seconds : seconds;
-  const strTime = strHours + ":" + strMinutes + ":" + strSeconds;
+  var minutes = Math.floor(totalSeconds / 60);
+  var strMinutes = minutes < 10 ? "0" + minutes : minutes;
+  var seconds = totalSeconds % 60;
+  var strSeconds = seconds < 10 ? "0" + seconds : seconds;
+  var strTime = strHours + ":" + strMinutes + ":" + strSeconds;
   return {
-    hours,
-    minutes,
-    seconds,
-    strTime
+    hours: hours,
+    minutes: minutes,
+    seconds: seconds,
+    strTime: strTime
   };
 };
-const AlertModale = _ref => {
-  let {
-    modaleInfo,
-    setModaleInfo,
-    strTime
-  } = _ref;
-  const {
-    t
-  } = reactI18next.useTranslation();
-  return React.useMemo(() => /*#__PURE__*/React__default.createElement(AlertDialog, {
-    open: modaleInfo,
-    setOpen: setModaleInfo,
-    severity: "info"
-  }, /*#__PURE__*/React__default.createElement(material.Typography, {
-    variant: "body1",
-    textAlign: "center"
-  }, t("CHAT.CONFERENCE.UntillTheEnd"), ":"), /*#__PURE__*/React__default.createElement(material.Typography, {
-    variant: "h6",
-    textAlign: "center"
-  }, strTime)),
+var AlertModale = function AlertModale(_ref) {
+  var modaleInfo = _ref.modaleInfo,
+    setModaleInfo = _ref.setModaleInfo,
+    strTime = _ref.strTime;
+  var _useTranslation = reactI18next.useTranslation(),
+    t = _useTranslation.t;
+  return React.useMemo(function () {
+    return /*#__PURE__*/React__default.createElement(AlertDialog, {
+      open: modaleInfo,
+      setOpen: setModaleInfo,
+      severity: "info"
+    }, /*#__PURE__*/React__default.createElement(material.Typography, {
+      variant: "body1",
+      textAlign: "center"
+    }, t("CHAT.CONFERENCE.UntillTheEnd"), ":"), /*#__PURE__*/React__default.createElement(material.Typography, {
+      variant: "h6",
+      textAlign: "center"
+    }, strTime));
+  },
   // eslint-disable-next-line react-hooks/exhaustive-deps
   [modaleInfo]);
 };
-const ConferenceTime = _ref2 => {
-  let {
-    finishDate
-  } = _ref2;
-  const {
-    t
-  } = reactI18next.useTranslation();
-  const [modaleInfo, setModaleInfo] = React.useState(false);
-  const currTime = Date.now();
+var ConferenceTime = function ConferenceTime(_ref2) {
+  var finishDate = _ref2.finishDate;
+  var _useTranslation2 = reactI18next.useTranslation(),
+    t = _useTranslation2.t;
+  var _useState = React.useState(false),
+    modaleInfo = _useState[0],
+    setModaleInfo = _useState[1];
+  var currTime = Date.now();
   // console.log("currentDate server", currentDate);
   // console.log("currTime client", currTime);
-  const finTime = new Date(finishDate).getTime();
+  var finTime = new Date(finishDate).getTime();
   //const diffTimeMin = Math.round((finTime - currTime) / (1000 * 60));
-  const diffTimeSec = Math.round((finTime - currTime) / 1000);
-  const {
-    counter
-  } = useCounter(diffTimeSec);
-  React.useEffect(() => {
+  var diffTimeSec = Math.round((finTime - currTime) / 1000);
+  var _useCounter = useCounter(diffTimeSec),
+    counter = _useCounter.counter;
+  React.useEffect(function () {
     if (minutes != null && minutes === 3 && seconds != null && seconds === 0) {
       setModaleInfo(true);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [counter]);
   if (diffTimeSec < 1) return null;
-  const {
-    minutes,
-    seconds,
-    strTime
-  } = hhMmSs(diffTimeSec);
+  var _hhMmSs = hhMmSs(diffTimeSec),
+    minutes = _hhMmSs.minutes,
+    seconds = _hhMmSs.seconds,
+    strTime = _hhMmSs.strTime;
   return /*#__PURE__*/React__default.createElement(material.Box, {
     textAlign: "center"
   }, /*#__PURE__*/React__default.createElement(material.Typography, {
@@ -829,26 +914,23 @@ const ConferenceTime = _ref2 => {
   }));
 };
 
-const Transition$1 = /*#__PURE__*/React.forwardRef(function Transition(props, ref) {
+var Transition$1 = /*#__PURE__*/React.forwardRef(function Transition(props, ref) {
   return /*#__PURE__*/React.createElement(Slide, _extends({
     direction: "up",
     ref: ref
   }, props));
 });
 function ConfirmDialogSlide(_ref) {
-  let {
-    open,
-    setOpen,
-    contentText,
-    callback
-  } = _ref;
-  const {
-    t
-  } = reactI18next.useTranslation();
-  const handleClose = () => {
+  var open = _ref.open,
+    setOpen = _ref.setOpen,
+    contentText = _ref.contentText,
+    callback = _ref.callback;
+  var _useTranslation = reactI18next.useTranslation(),
+    t = _useTranslation.t;
+  var handleClose = function handleClose() {
     setOpen(false);
   };
-  const handleCloseOk = () => {
+  var handleCloseOk = function handleCloseOk() {
     setOpen(false);
     callback();
   };
@@ -869,20 +951,20 @@ function ConfirmDialogSlide(_ref) {
   }, t('CHAT.BUT_CONFIRM')))));
 }
 
-const StyledMenu = /*#__PURE__*/styles$1.styled(props => /*#__PURE__*/React.createElement(Menu, _extends({
-  elevation: 0,
-  anchorOrigin: {
-    vertical: 'bottom',
-    horizontal: 'right'
-  },
-  transformOrigin: {
-    vertical: 'top',
-    horizontal: 'right'
-  }
-}, props)))(_ref => {
-  let {
-    theme
-  } = _ref;
+var StyledMenu = /*#__PURE__*/styles$1.styled(function (props) {
+  return /*#__PURE__*/React.createElement(Menu, _extends({
+    elevation: 0,
+    anchorOrigin: {
+      vertical: 'bottom',
+      horizontal: 'right'
+    },
+    transformOrigin: {
+      vertical: 'top',
+      horizontal: 'right'
+    }
+  }, props));
+})(function (_ref) {
+  var theme = _ref.theme;
   return {
     '& .MuiPaper-root': {
       borderRadius: 6,
@@ -906,25 +988,30 @@ const StyledMenu = /*#__PURE__*/styles$1.styled(props => /*#__PURE__*/React.crea
     }
   };
 });
-const getVisitMessage = visit => {
-  const visitDate = new Date(visit.visitDate);
+var getVisitMessage = function getVisitMessage(visit) {
+  var visitDate = new Date(visit.visitDate);
   return visit.plExamName + " (" + formatTime(visitDate, 'HH:mm') + " - " + formatTime(new Date(visitDate.getTime() + visit.duration * 60000), 'HH:mm') + ")";
 };
 function ConferenceButton(props) {
-  const {
-    t
-  } = reactI18next.useTranslation();
-  const [anchorEl, setAnchorEl] = React.useState(null);
-  const [visitId, setVisitId] = React.useState(null);
-  const [confirmReCreateVisit, setConfirmReCreateVisit] = React.useState(false);
-  const open = Boolean(anchorEl);
-  const handleClick = event => {
+  var _useTranslation = reactI18next.useTranslation(),
+    t = _useTranslation.t;
+  var _React$useState = React.useState(null),
+    anchorEl = _React$useState[0],
+    setAnchorEl = _React$useState[1];
+  var _React$useState2 = React.useState(null),
+    visitId = _React$useState2[0],
+    setVisitId = _React$useState2[1];
+  var _React$useState3 = React.useState(false),
+    confirmReCreateVisit = _React$useState3[0],
+    setConfirmReCreateVisit = _React$useState3[1];
+  var open = Boolean(anchorEl);
+  var handleClick = function handleClick(event) {
     setAnchorEl(event.currentTarget);
   };
-  const handleClose = () => {
+  var handleClose = function handleClose() {
     setAnchorEl(null);
   };
-  const handleStart = item => {
+  var handleStart = function handleStart(item) {
     setAnchorEl(null);
     setVisitId(item.visitId);
     if (item.conferenceStatus === 'finished') {
@@ -933,8 +1020,10 @@ function ConferenceButton(props) {
       props.onVideoCall(props.chat, item.visitId);
     }
   };
-  const visitData = React.useMemo(() => {
-    return props.visitData.filter(it => it.contactId === props.chat.userId);
+  var visitData = React.useMemo(function () {
+    return props.visitData.filter(function (it) {
+      return it.contactId === props.chat.userId;
+    });
   }, [props.visitData, props.chat]);
   /**
    * <Button
@@ -981,7 +1070,7 @@ function ConferenceButton(props) {
     open: confirmReCreateVisit,
     setOpen: setConfirmReCreateVisit,
     contentText: t('CHAT.CONFERENCE.CONFIRM_RECREATE_CONF'),
-    callback: () => {
+    callback: function callback() {
       if (visitId && confirmReCreateVisit) {
         props.onVideoCall(props.chat, visitId, true);
       }
@@ -994,9 +1083,11 @@ function ConferenceButton(props) {
     anchorEl: anchorEl,
     open: open,
     onClose: handleClose
-  }, visitData.map(item => {
+  }, visitData.map(function (item) {
     return /*#__PURE__*/React.createElement(MenuItem, {
-      onClick: () => handleStart(item),
+      onClick: function onClick() {
+        return handleStart(item);
+      },
       key: item.visitId,
       value: item.visitId,
       disableRipple: true
@@ -1004,69 +1095,92 @@ function ConferenceButton(props) {
   })));
 }
 
-const useStyles$4 = /*#__PURE__*/styles.makeStyles(theme => styles.createStyles({
-  popover: {
-    pointerEvents: 'none'
-  },
-  paper: {
-    padding: theme.spacing(1)
-  },
-  avatarGroup: {
-    backgroundColor: '#28B7C6',
-    color: '#fff'
-  }
-}));
-const getGroupStatus = (group, t) => {
+var useStyles$4 = /*#__PURE__*/styles.makeStyles(function (theme) {
+  return styles.createStyles({
+    paper: {
+      padding: theme.spacing(1)
+    },
+    avatarGroup: {
+      backgroundColor: '#28B7C6',
+      color: '#fff'
+    }
+  });
+});
+var getGroupStatus = function getGroupStatus(group, t) {
   var _group$members;
-  const status = [((_group$members = group.members) == null ? void 0 : _group$members.length) + " " + t('CHAT.MEMBERS')];
-  const onlineCount = (group.members || []).reduce((sum, contact) => contact.online ? sum + 1 : sum, 0);
+  var status = [((_group$members = group.members) == null ? void 0 : _group$members.length) + " " + t('CHAT.MEMBERS')];
+  var onlineCount = (group.members || []).reduce(function (sum, contact) {
+    return contact.online ? sum + 1 : sum;
+  }, 0);
   if (onlineCount) status.push(onlineCount + " " + t('CHAT.STATUS.ONLINE'));
   return status.join(', ');
 };
-const RoomHeader = _ref => {
-  let {
-    apiUrl,
-    user,
-    chat,
-    typing,
-    conference,
-    visitData,
-    conferenceJoined,
-    className,
-    operators,
-    onVideoCall,
-    onVideoEnd,
-    onConferencePause,
-    onOperatorAdd,
-    onLeaveGroup
-  } = _ref;
-  const classes = useStyles$4();
-  const {
-    t
-  } = reactI18next.useTranslation();
-  const [anchorEl, setAnchorEl] = React.useState(null);
-  const [addOperatorOpen, setAddOperatorOpen] = React.useState(false);
-  const [confirmFinishConf, setConfirmFinishConf] = React__default.useState(false);
+var RoomHeader = function RoomHeader(_ref) {
+  var apiUrl = _ref.apiUrl,
+    user = _ref.user,
+    chat = _ref.chat,
+    typing = _ref.typing,
+    conference = _ref.conference,
+    visitData = _ref.visitData,
+    conferenceJoined = _ref.conferenceJoined,
+    className = _ref.className,
+    operators = _ref.operators,
+    onVideoCall = _ref.onVideoCall,
+    onVideoEnd = _ref.onVideoEnd,
+    onConferencePause = _ref.onConferencePause,
+    onOperatorAdd = _ref.onOperatorAdd,
+    onLeaveGroup = _ref.onLeaveGroup,
+    onContactClick = _ref.onContactClick;
+  var classes = useStyles$4();
+  var _useTranslation = reactI18next.useTranslation(),
+    t = _useTranslation.t;
+  var _useState = React.useState(null),
+    anchorEl = _useState[0],
+    setAnchorEl = _useState[1];
+  var _useState2 = React.useState(false),
+    addOperatorOpen = _useState2[0],
+    setAddOperatorOpen = _useState2[1];
+  var _React$useState = React__default.useState(false),
+    confirmFinishConf = _React$useState[0],
+    setConfirmFinishConf = _React$useState[1];
   if (!chat) return /*#__PURE__*/React__default.createElement(material.CardHeader, {
     avatar: /*#__PURE__*/React__default.createElement(material.Avatar, null),
     title: "",
     subheader: "",
     className: className
   });
-  const handlePopoverOpen = event => {
-    setAnchorEl(event.currentTarget);
+  var closeTimer = null;
+  var handlePopoverIn = function handlePopoverIn(event) {
+    if (!anchorEl) {
+      setAnchorEl(event.currentTarget);
+    }
+    if (closeTimer) {
+      clearTimeout(closeTimer);
+      closeTimer = null;
+    }
   };
-  const handlePopoverClose = () => {
+  var handlePopoverClose = function handlePopoverClose() {
     setAnchorEl(null);
+    if (closeTimer) {
+      clearTimeout(closeTimer);
+      closeTimer = null;
+    }
   };
-  const handleAddOperatorOpen = () => {
+  var handlePopoverOut = function handlePopoverOut() {
+    if (!closeTimer) {
+      closeTimer = setTimeout(function () {
+        handlePopoverClose();
+      }, 1000);
+    }
+  };
+  var handleAddOperatorOpen = function handleAddOperatorOpen() {
     setAddOperatorOpen(true);
   };
-  const handleAddOperatorClose = operator => {
+  var handleAddOperatorClose = function handleAddOperatorClose(operator) {
     setAddOperatorOpen(false);
     if (onOperatorAdd && operator && chat) onOperatorAdd(chat, operator);
   };
-  const group = chat;
+  var group = chat;
   if (group.groupId) {
     var _group$members2;
     // группа
@@ -1077,15 +1191,18 @@ const RoomHeader = _ref => {
       }, /*#__PURE__*/React__default.createElement(GroupIcon, null)),
       title: group.name,
       subheader: /*#__PURE__*/React__default.createElement(React__default.Fragment, null, /*#__PURE__*/React__default.createElement("span", {
-        "aria-owns": anchorEl ? 'mouse-over-popover' : undefined,
+        id: "mouse-over-span",
+        "aria-owns": anchorEl ? "mouse-over-popover" : undefined,
         "aria-haspopup": "true",
-        onMouseEnter: handlePopoverOpen,
-        onMouseLeave: handlePopoverClose
+        onMouseEnter: handlePopoverIn,
+        onMouseLeave: handlePopoverOut
       }, getGroupStatus(group, t)), /*#__PURE__*/React__default.createElement(material.Popover, {
         id: "mouse-over-popover",
-        className: classes.popover,
         classes: {
           paper: classes.paper
+        },
+        sx: {
+          pointerEvents: "none"
         },
         open: !!anchorEl,
         anchorEl: anchorEl,
@@ -1102,7 +1219,13 @@ const RoomHeader = _ref => {
       }, /*#__PURE__*/React__default.createElement(ContactList, {
         apiUrl: apiUrl,
         contacts: group.members,
-        owner: group.userId
+        onContactClick: onContactClick,
+        owner: group.userId,
+        onMouseEnter: handlePopoverIn,
+        onMouseLeave: handlePopoverOut,
+        sx: {
+          pointerEvents: "all"
+        }
       }))),
       className: className,
       action: /*#__PURE__*/React__default.createElement(React__default.Fragment, null, user.role === 4 && /*#__PURE__*/React__default.createElement(React__default.Fragment, null, /*#__PURE__*/React__default.createElement(material.IconButton, {
@@ -1113,14 +1236,18 @@ const RoomHeader = _ref => {
         open: addOperatorOpen,
         contacts: operators,
         onClose: handleAddOperatorClose
-      })), user.role === 4 && ((_group$members2 = group.members) == null ? void 0 : _group$members2.find(it => it.userId !== user.userId && it.role === 4)) && onLeaveGroup && /*#__PURE__*/React__default.createElement(material.IconButton, {
+      })), user.role === 4 && ((_group$members2 = group.members) == null ? void 0 : _group$members2.find(function (it) {
+        return it.userId !== user.userId && it.role === 4;
+      })) && onLeaveGroup && /*#__PURE__*/React__default.createElement(material.IconButton, {
         "aria-label": "leave group",
-        onClick: () => onLeaveGroup(group)
+        onClick: function onClick() {
+          return onLeaveGroup(group);
+        }
       }, /*#__PURE__*/React__default.createElement(DeleteIcon, null)))
     });
   }
-  const contact = chat;
-  const isTyping = !!(typing != null && typing.contactId) && (typing == null ? void 0 : typing.userId) === contact.userId;
+  var contact = chat;
+  var isTyping = !!(typing != null && typing.contactId) && (typing == null ? void 0 : typing.userId) === contact.userId;
   return /*#__PURE__*/React__default.createElement(material.CardHeader, {
     avatar: /*#__PURE__*/React__default.createElement(material.Avatar, {
       alt: contact.username,
@@ -1140,7 +1267,9 @@ const RoomHeader = _ref => {
       startIcon: /*#__PURE__*/React__default.createElement(CallEndIcon, {
         color: "error"
       }),
-      onClick: () => onConferencePause(conference)
+      onClick: function onClick() {
+        return onConferencePause(conference);
+      }
     }, t('CHAT.CONFERENCE.PAUSE')), conference && !isEmpty(conference) && onVideoEnd != null && user.role != null && [3, 4].includes(user.role) && /*#__PURE__*/React__default.createElement(React__default.Fragment, null, /*#__PURE__*/React__default.createElement(material.Button, {
       "aria-label": "cancel call",
       variant: "contained",
@@ -1149,7 +1278,9 @@ const RoomHeader = _ref => {
       startIcon: /*#__PURE__*/React__default.createElement(CallEndIcon, {
         color: "error"
       }),
-      onClick: () => setConfirmFinishConf(true),
+      onClick: function onClick() {
+        return setConfirmFinishConf(true);
+      },
       style: {
         marginLeft: 8
       }
@@ -1157,7 +1288,7 @@ const RoomHeader = _ref => {
       open: confirmFinishConf,
       setOpen: setConfirmFinishConf,
       contentText: t('CHAT.CONFERENCE.CONFIRM_FINISH_CONF'),
-      callback: () => {
+      callback: function callback() {
         onVideoEnd(conference);
       }
     })), isEmpty(conference) && onVideoCall != null && user.role && [3, 4].includes(user.role) && /*#__PURE__*/React__default.createElement(ConferenceButton, {
@@ -1170,24 +1301,23 @@ const RoomHeader = _ref => {
   });
 };
 
-const useStyles$5 = /*#__PURE__*/styles.makeStyles(theme => styles.createStyles({
-  fileIcon: {
-    fontSize: "0.75rem"
-  },
-  fileBody: {
-    paddingLeft: theme.spacing(1.2)
-  }
-}));
-const File = _ref => {
-  let {
-    message
-  } = _ref;
-  const classes = useStyles$5();
-  const meta = getFileMeta(message.content);
-  const {
-    name,
-    ext
-  } = splitFileName(meta.name);
+var useStyles$5 = /*#__PURE__*/styles.makeStyles(function (theme) {
+  return styles.createStyles({
+    fileIcon: {
+      fontSize: "0.75rem"
+    },
+    fileBody: {
+      paddingLeft: theme.spacing(1.2)
+    }
+  });
+});
+var File = function File(_ref) {
+  var message = _ref.message;
+  var classes = useStyles$5();
+  var meta = getFileMeta(message.content);
+  var _splitFileName = splitFileName(meta.name),
+    name = _splitFileName.name,
+    ext = _splitFileName.ext;
   return /*#__PURE__*/React__default.createElement(material.Box, {
     display: "flex",
     flexDirection: "row"
@@ -1200,28 +1330,28 @@ const File = _ref => {
   }, name, /*#__PURE__*/React__default.createElement("span", null, ext + " " + meta.size)));
 };
 
-const useStyles$6 = /*#__PURE__*/styles.makeStyles(theme => ({
-  mediaContent: {
-    backgroundColor: theme.palette.secondary.main,
-    borderRadius: theme.spacing(1.2),
-    maxWidth: 284,
-    height: 190,
-    [theme.breakpoints.down('sm')]: {
+var useStyles$6 = /*#__PURE__*/styles.makeStyles(function (theme) {
+  var _mediaContent;
+  return {
+    mediaContent: (_mediaContent = {
+      backgroundColor: theme.palette.secondary.main,
+      borderRadius: theme.spacing(1.2),
+      maxWidth: 284,
+      height: 190
+    }, _mediaContent[theme.breakpoints.down('sm')] = {
       maxWidth: 250,
       height: 170
-    }
-  }
-}));
-const Video = _ref => {
-  let {
-    apiUrl,
-    message,
-    isConference
-  } = _ref;
-  const classes = useStyles$6();
-  let src = '';
+    }, _mediaContent)
+  };
+});
+var Video = function Video(_ref) {
+  var apiUrl = _ref.apiUrl,
+    message = _ref.message,
+    isConference = _ref.isConference;
+  var classes = useStyles$6();
+  var src = '';
   if (isConference) {
-    const meta = JSON.parse(message.content);
+    var meta = JSON.parse(message.content);
     src = combineURLs(apiUrl, "/static/conf/" + meta.visitId + "/" + meta.name);
   } else src = combineURLs(apiUrl, "/static/file/" + message.content);
   return /*#__PURE__*/React__default.createElement("video", {
@@ -1233,40 +1363,39 @@ const Video = _ref => {
   }, "\u0412\u0430\u0448 \u0431\u0440\u0430\u0443\u0437\u0435\u0440 \u043D\u0435 \u043F\u043E\u0434\u0434\u0435\u0440\u0436\u0438\u0432\u0430\u0435\u0442 \u0442\u0435\u0433 video.");
 };
 
-const useStyles$7 = /*#__PURE__*/styles.makeStyles(theme => styles.createStyles({
-  img: {
-    cursor: 'pointer',
-    borderRadius: theme.spacing(1.2),
-    maxWidth: 284,
-    maxHeight: 190,
-    [theme.breakpoints.down('sm')]: {
+var useStyles$7 = /*#__PURE__*/styles.makeStyles(function (theme) {
+  var _img, _aspect;
+  return styles.createStyles({
+    img: (_img = {
+      cursor: 'pointer',
+      borderRadius: theme.spacing(1.2),
+      maxWidth: 284,
+      maxHeight: 190
+    }, _img[theme.breakpoints.down('sm')] = {
       maxWidth: 250,
       maxHeight: 170
-    }
-  },
-  aspect: {
-    maxWidth: 284,
-    height: 190,
-    [theme.breakpoints.down('sm')]: {
+    }, _img),
+    aspect: (_aspect = {
+      maxWidth: 284,
+      height: 190
+    }, _aspect[theme.breakpoints.down('sm')] = {
       maxWidth: 250,
       height: 170
-    }
-  }
-}));
-const Image$1 = _ref => {
-  let {
-    apiUrl,
-    message,
-    setViewerData
-  } = _ref;
-  const classes = useStyles$7();
+    }, _aspect)
+  });
+});
+var Image$1 = function Image(_ref) {
+  var apiUrl = _ref.apiUrl,
+    message = _ref.message,
+    setViewerData = _ref.setViewerData;
+  var classes = useStyles$7();
   //const meta = getImageMeta(message.content);
   return /*#__PURE__*/React__default.createElement(reactAspectRatio.AspectRatio, {
     ratio: "3/4",
     className: classes.aspect
   }, /*#__PURE__*/React__default.createElement("img", {
     src: combineURLs(apiUrl, "/static/image/" + message.content),
-    onClick: () => {
+    onClick: function onClick() {
       setViewerData({
         visible: true,
         src: combineURLs(apiUrl, "/static/image/" + message.content)
@@ -1277,12 +1406,10 @@ const Image$1 = _ref => {
   }));
 };
 
-const MessageContent = _ref => {
-  let {
-    apiUrl,
-    message,
-    setViewerData
-  } = _ref;
+var MessageContent = function MessageContent(_ref) {
+  var apiUrl = _ref.apiUrl,
+    message = _ref.message,
+    setViewerData = _ref.setViewerData;
   switch (message.messageType) {
     case 'text':
       return /*#__PURE__*/React__default.createElement(React__default.Fragment, null, message.content);
@@ -1307,120 +1434,115 @@ const MessageContent = _ref => {
   return null;
 };
 
-var useStyles$8 = /*#__PURE__*/styles.makeStyles(theme => styles.createStyles({
-  rootContact: {
-    padding: 1,
-    paddingLeft: theme.spacing(2),
-    "& span": {
-      float: "right",
-      color: theme.palette.text.secondary,
-      fontSize: "0.8rem"
+var useStyles$8 = /*#__PURE__*/styles.makeStyles(function (theme) {
+  var _message;
+  return styles.createStyles({
+    rootContact: {
+      padding: 1,
+      paddingLeft: theme.spacing(2),
+      "& span": {
+        "float": "right",
+        color: theme.palette.text.secondary,
+        fontSize: "0.8rem"
+      },
+      "& $message": {
+        backgroundColor: theme.palette.grey[200],
+        color: theme.palette.text.primary,
+        borderTopRightRadius: theme.spacing(3),
+        borderBottomRightRadius: theme.spacing(3)
+      },
+      "& $firstMessage": {
+        borderTopLeftRadius: theme.spacing(3),
+        marginTop: 10
+      },
+      "& $lastMessage": {
+        borderTopRightRadius: theme.spacing(3),
+        borderBottomLeftRadius: 0,
+        borderBottomRightRadius: theme.spacing(3),
+        marginBottom: 10
+      }
     },
-    "& $message": {
-      backgroundColor: theme.palette.grey[200],
-      color: theme.palette.text.primary,
-      borderTopRightRadius: theme.spacing(3),
-      borderBottomRightRadius: theme.spacing(3)
+    rootUser: {
+      padding: 1,
+      paddingRight: theme.spacing(2),
+      justifyContent: "flex-end",
+      "& span": {
+        "float": "right",
+        color: "#D9DEEC",
+        fontSize: "0.8rem"
+      },
+      "& $message": {
+        backgroundColor: theme.palette.primary.main,
+        color: theme.palette.primary.contrastText,
+        borderTopLeftRadius: theme.spacing(3),
+        borderBottomLeftRadius: theme.spacing(3)
+      },
+      "& $firstMessage": {
+        borderTopRightRadius: theme.spacing(3),
+        marginTop: 10
+      },
+      "& $lastMessage": {
+        borderTopLeftRadius: theme.spacing(3),
+        borderBottomRightRadius: 0,
+        marginBottom: 10
+      }
     },
-    "& $firstMessage": {
-      borderTopLeftRadius: theme.spacing(3),
-      marginTop: 10
+    rootNotify: {
+      justifyContent: "center",
+      "& span": {
+        "float": "right",
+        color: theme.palette.text.secondary,
+        fontSize: "0.8rem"
+      },
+      "& > *": {
+        //padding: `0px ${theme.spacing(1)}`,
+        borderRadius: theme.spacing(3),
+        fontWeight: 500
+      }
     },
-    "& $lastMessage": {
-      borderTopRightRadius: theme.spacing(3),
-      borderBottomLeftRadius: 0,
-      borderBottomRightRadius: theme.spacing(3),
-      marginBottom: 10
-    }
-  },
-  rootUser: {
-    padding: 1,
-    paddingRight: theme.spacing(2),
-    justifyContent: "flex-end",
-    "& span": {
-      float: "right",
-      color: "#D9DEEC",
-      fontSize: "0.8rem"
-    },
-    "& $message": {
-      backgroundColor: theme.palette.primary.main,
-      color: theme.palette.primary.contrastText,
-      borderTopLeftRadius: theme.spacing(3),
-      borderBottomLeftRadius: theme.spacing(3)
-    },
-    "& $firstMessage": {
-      borderTopRightRadius: theme.spacing(3),
-      marginTop: 10
-    },
-    "& $lastMessage": {
-      borderTopLeftRadius: theme.spacing(3),
-      borderBottomRightRadius: 0,
-      marginBottom: 10
-    }
-  },
-  rootNotify: {
-    justifyContent: "center",
-    "& span": {
-      float: "right",
-      color: theme.palette.text.secondary,
-      fontSize: "0.8rem"
-    },
-    "& > *": {
-      //padding: `0px ${theme.spacing(1)}`,
-      borderRadius: theme.spacing(3),
-      fontWeight: 500
-    }
-  },
-  message: {
-    //maxWidth: "55%",
-    //minWidth: "50%",
-    maxWidth: "65%",
-    [theme.breakpoints.down("md")]: {
+    message: (_message = {
+      //maxWidth: "55%",
+      //minWidth: "50%",
+      maxWidth: "65%"
+    }, _message[theme.breakpoints.down("md")] = {
       maxWidth: "95%"
-    },
-    [theme.breakpoints.down("sm")]: {
+    }, _message[theme.breakpoints.down("sm")] = {
       maxWidth: "85%"
+    }, _message.borderRadius = theme.spacing(0.6), _message.padding = theme.spacing(0.9), _message.paddingLeft = theme.spacing(1.8), _message.paddingRight = theme.spacing(1.8), _message),
+    firstMessage: {},
+    lastMessage: {},
+    file: {
+      display: "flex",
+      flexDirection: "row",
+      flexWrap: "wrap",
+      cursor: "pointer"
     },
-    borderRadius: theme.spacing(0.6),
-    padding: theme.spacing(0.9),
-    paddingLeft: theme.spacing(1.8),
-    paddingRight: theme.spacing(1.8)
-  },
-  firstMessage: {},
-  lastMessage: {},
-  file: {
-    display: "flex",
-    flexDirection: "row",
-    flexWrap: "wrap",
-    cursor: "pointer"
-  },
-  header: {
-    flex: "0 0 100%",
-    overflow: "hidden",
-    fontWeight: "bold"
-  },
-  body: {
-    flex: "1 1 auto",
-    wordBreak: "break-word",
-    overflow: "hidden"
-  },
-  status: {
-    paddingLeft: theme.spacing(1),
-    flex: "1 1 auto",
-    alignSelf: "flex-end"
-  },
-  statusImage: {
-    fontSize: "1rem",
-    marginRight: theme.spacing(0.5),
-    verticalAlign: "middle"
-  }
-}));
+    header: {
+      flex: "0 0 100%",
+      overflow: "hidden",
+      fontWeight: "bold"
+    },
+    body: {
+      flex: "1 1 auto",
+      wordBreak: "break-word",
+      overflow: "hidden"
+    },
+    status: {
+      paddingLeft: theme.spacing(1),
+      flex: "1 1 auto",
+      alignSelf: "flex-end"
+    },
+    statusImage: {
+      fontSize: "1rem",
+      marginRight: theme.spacing(0.5),
+      verticalAlign: "middle"
+    }
+  });
+});
 
-const wrapMessage = (apiUrl, message, classes, isUserFirst, isUserLast, onContextMenu, child) => {
-  const {
-    messageType
-  } = message;
-  const className = isUserFirst && isUserLast ? classes.message + " " + classes.firstMessage + " " + classes.lastMessage : isUserFirst ? classes.message + " " + classes.firstMessage : isUserLast ? classes.message + " " + classes.lastMessage : classes.message;
+var wrapMessage = function wrapMessage(apiUrl, message, classes, isUserFirst, isUserLast, onContextMenu, child) {
+  var messageType = message.messageType;
+  var className = isUserFirst && isUserLast ? classes.message + " " + classes.firstMessage + " " + classes.lastMessage : isUserFirst ? classes.message + " " + classes.firstMessage : isUserLast ? classes.message + " " + classes.lastMessage : classes.message;
   if (messageType === 'file') {
     return /*#__PURE__*/React__default.createElement(material.Link, {
       className: className + " " + classes.file,
@@ -1431,7 +1553,7 @@ const wrapMessage = (apiUrl, message, classes, isUserFirst, isUserLast, onContex
       onContextMenu: onContextMenu
     }, child);
   }
-  const isMedia = messageType === 'image' || messageType === 'video' || messageType === 'video_conference';
+  var isMedia = messageType === 'image' || messageType === 'video' || messageType === 'video_conference';
   return /*#__PURE__*/React__default.createElement(material.Box, {
     display: "flex",
     flexDirection: isMedia ? 'column' : 'row',
@@ -1440,25 +1562,22 @@ const wrapMessage = (apiUrl, message, classes, isUserFirst, isUserLast, onContex
     onContextMenu: onContextMenu
   }, child);
 };
-const Message = /*#__PURE__*/React.memo( /*#__PURE__*/React.forwardRef((props, ref) => {
-  const classes = useStyles$8();
-  const {
-    t
-  } = reactI18next.useTranslation();
-  const {
-    apiUrl,
-    message,
-    owner,
-    user,
-    isGroupMessage,
-    isUserFirst,
-    isUserLast,
-    setViewerData
-  } = props;
+var Message = /*#__PURE__*/React.memo(/*#__PURE__*/React.forwardRef(function (props, ref) {
+  var classes = useStyles$8();
+  var _useTranslation = reactI18next.useTranslation(),
+    t = _useTranslation.t;
+  var apiUrl = props.apiUrl,
+    message = props.message,
+    owner = props.owner,
+    user = props.user,
+    isGroupMessage = props.isGroupMessage,
+    isUserFirst = props.isUserFirst,
+    isUserLast = props.isUserLast,
+    setViewerData = props.setViewerData;
   //console.log('message', message);
   if (message.messageType === 'notify') {
     // Уведомление - особый случай
-    const content = message.content[0] === '{' ? JSON.parse(message.content) : message.content;
+    var content = message.content[0] === '{' ? JSON.parse(message.content) : message.content;
     return /*#__PURE__*/React__default.createElement(material.ListItem, {
       className: classes.rootNotify,
       ref: ref
@@ -1478,7 +1597,7 @@ const Message = /*#__PURE__*/React.memo( /*#__PURE__*/React.forwardRef((props, r
       align: "center"
     }, message.userId === user.userId ? t('CHAT.MESSAGE.REVOKED.YOU') : message.revokeUserName + " " + t('CHAT.MESSAGE.REVOKED.CONTACT')));
   }
-  const isMine = user.userId === message.userId;
+  var isMine = user.userId === message.userId;
   return /*#__PURE__*/React__default.createElement(material.ListItem, {
     ref: ref,
     className: message.messageType === 'video_conference' ? classes.rootNotify : isMine ? classes.rootUser : classes.rootContact
@@ -1500,14 +1619,14 @@ const Message = /*#__PURE__*/React.memo( /*#__PURE__*/React.forwardRef((props, r
 }));
 Message.displayName = 'Message';
 
-const emptyUser = {
+var emptyUser = {
   userId: 0,
   username: '',
   password: '',
   avatar: '',
   langCode: ''
 };
-const emptyChatState = {
+var emptyChatState = {
   user: emptyUser,
   token: '',
   refreshToken: '',
@@ -1529,176 +1648,156 @@ const emptyChatState = {
   success: undefined,
   visitData: []
 };
-const getFreshActiveRoom = state => {
+var getFreshActiveRoom = function getFreshActiveRoom(state) {
   if (state.activeRoom) return state.groupGather[state.activeRoom.groupId] || state.contactGather[state.activeRoom.userId];
   return null;
 };
-const getActiveRoom = state => {
-  const {
-    activeRoom,
-    initialContactId,
-    contactGather
-  } = state;
-  let newActiveRoom = null;
+var getActiveRoom = function getActiveRoom(state) {
+  var activeRoom = state.activeRoom,
+    initialContactId = state.initialContactId,
+    contactGather = state.contactGather;
+  var newActiveRoom = null;
   if (initialContactId) {
     newActiveRoom = contactGather[initialContactId];
   } else if (activeRoom) {
     newActiveRoom = getFreshActiveRoom(state);
   } else {
     // ищем комнату с самым свежим сообщением
-    const rooms = [...Object.values(state.contactGather), ...Object.values(state.groupGather)].sort(chatRoomComparer);
+    var rooms = [].concat(Object.values(state.contactGather), Object.values(state.groupGather)).sort(chatRoomComparer);
     if (rooms.length > 0) newActiveRoom = rooms[0];
   }
   return newActiveRoom;
 };
-const setUserOnline = (state, userId, online) => {
-  const newState = {
-    ...state
-  };
+var setUserOnline = function setUserOnline(state, userId, online) {
+  var newState = _extends({}, state);
   // Обновить статусы приватных чатов
-  if (state.contactGather[userId]) newState.contactGather[userId] = {
-    ...newState.contactGather[userId],
-    online
-  };
+  if (state.contactGather[userId]) newState.contactGather[userId] = _extends({}, newState.contactGather[userId], {
+    online: online
+  });
   // Обновить статус участника в группах
-  for (const group of Object.values(state.groupGather)) {
+  for (var _i = 0, _Object$values = Object.values(state.groupGather); _i < _Object$values.length; _i++) {
+    var group = _Object$values[_i];
     if (!group.members) continue;
-    const member = group.members.find(m => m.userId === userId);
+    var member = group.members.find(function (m) {
+      return m.userId === userId;
+    });
     if (member) {
-      const index = group.members.indexOf(member);
-      group.members[index] = {
-        ...member,
-        online
-      };
+      var index = group.members.indexOf(member);
+      group.members[index] = _extends({}, member, {
+        online: online
+      });
     }
   }
   // Обновить статус операторов
-  const idx = newState.operators.findIndex(it => it.userId === userId);
-  if (idx !== -1) newState.operators[idx] = {
-    ...newState.operators[idx],
-    online
-  };
+  var idx = newState.operators.findIndex(function (it) {
+    return it.userId === userId;
+  });
+  if (idx !== -1) newState.operators[idx] = _extends({}, newState.operators[idx], {
+    online: online
+  });
   // обновляем активный чат
   newState.activeRoom = getFreshActiveRoom(newState);
   return newState;
 };
-const addGroupMessage = (state, payload) => {
-  const newState = {
-    ...state
-  };
-  const {
-    groupId
-  } = payload;
+var addGroupMessage = function addGroupMessage(state, payload) {
+  var newState = _extends({}, state);
+  var groupId = payload.groupId;
   if (newState.groupGather[groupId]) {
     if (newState.groupGather[groupId].messages) {
-      newState.groupGather[groupId].messages = [...newState.groupGather[groupId].messages, payload];
+      newState.groupGather[groupId].messages = [].concat(newState.groupGather[groupId].messages, [payload]);
     } else {
-      newState.groupGather[groupId] = {
-        ...state.groupGather[groupId],
+      newState.groupGather[groupId] = _extends({}, state.groupGather[groupId], {
         messages: [payload]
-      };
+      });
     }
   }
   // увеличиваем счетчик новых сообщений, если это не активная комната и сообщение не от нас
-  const {
-    activeRoom
-  } = newState;
+  var activeRoom = newState.activeRoom;
   if (activeRoom && activeRoom.groupId !== groupId && payload.userId !== state.user.userId) {
-    return groupUnreadGather(newState, groupId, x => (x || 0) + 1);
+    return groupUnreadGather(newState, groupId, function (x) {
+      return (x || 0) + 1;
+    });
   }
   // обновляем активный чат
   newState.activeRoom = getFreshActiveRoom(newState);
   return newState;
 };
-const addPrivateMessage = (state, payload) => {
+var addPrivateMessage = function addPrivateMessage(state, payload) {
   var _newState$activeRoom;
-  const newState = {
-    ...state
-  };
-  const contactId = payload.contactId === state.user.userId ? payload.userId : payload.contactId;
+  var newState = _extends({}, state);
+  var contactId = payload.contactId === state.user.userId ? payload.userId : payload.contactId;
   // 1 добавляем сообщение
   if (newState.contactGather[contactId].messages) {
-    newState.contactGather[contactId].messages = [...newState.contactGather[contactId].messages, payload];
+    newState.contactGather[contactId].messages = [].concat(newState.contactGather[contactId].messages, [payload]);
   } else {
-    newState.contactGather[contactId] = {
-      ...newState.contactGather[contactId],
+    newState.contactGather[contactId] = _extends({}, newState.contactGather[contactId], {
       messages: [payload]
-    };
+    });
   }
   // 2 если это сообщение в неактивной комнате и источник не мы (в соседней вкладке), то увеличиваем счетчик непрочитанных
   if (((_newState$activeRoom = newState.activeRoom) == null ? void 0 : _newState$activeRoom.userId) !== contactId && payload.userId !== state.user.userId) {
-    return contactUnreadGather(newState, contactId, x => (x || 0) + 1);
+    return contactUnreadGather(newState, contactId, function (x) {
+      return (x || 0) + 1;
+    });
   }
   // обновляем активный чат
   newState.activeRoom = getFreshActiveRoom(newState);
   return newState;
 };
-const contactUnreadGather = (state, userId, predicate) => {
-  const newState = {
-    ...state
-  };
+var contactUnreadGather = function contactUnreadGather(state, userId, predicate) {
+  var newState = _extends({}, state);
   if (newState.contactGather[userId]) {
-    newState.contactGather[userId] = {
-      ...newState.contactGather[userId],
+    newState.contactGather[userId] = _extends({}, newState.contactGather[userId], {
       unreadCount: predicate(newState.contactGather[userId].unreadCount)
-    };
+    });
   }
   // обновляем активный чат
   newState.activeRoom = getFreshActiveRoom(newState);
   return newState;
 };
-const groupUnreadGather = (state, groupId, predicate) => {
-  const newState = {
-    ...state
-  };
+var groupUnreadGather = function groupUnreadGather(state, groupId, predicate) {
+  var newState = _extends({}, state);
   if (newState.groupGather[groupId]) {
-    newState.groupGather[groupId] = {
-      ...newState.groupGather[groupId],
+    newState.groupGather[groupId] = _extends({}, newState.groupGather[groupId], {
       unreadCount: predicate(newState.groupGather[groupId].unreadCount)
-    };
+    });
   }
   // обновляем активный чат
   newState.activeRoom = getFreshActiveRoom(newState);
   return newState;
 };
-const revokeMessage = (state, payload) => {
-  const {
-    userId
-  } = state.user;
-  const newState = {
-    ...state
-  };
-  const userName = payload.username || newState.userGather[payload.userId].username;
+var revokeMessage = function revokeMessage(state, payload) {
+  var userId = state.user.userId;
+  var newState = _extends({}, state);
+  var userName = payload.username || newState.userGather[payload.userId].username;
   if (payload.groupId) {
-    const {
-      messages
-    } = newState.groupGather[payload.groupId];
+    var messages = newState.groupGather[payload.groupId].messages;
     // задаем isRevoke
     if (messages) {
-      const msg = messages.find(message => message._id === payload._id);
+      var msg = messages.find(function (message) {
+        return message._id === payload._id;
+      });
       if (msg) {
-        const index = messages.indexOf(msg);
-        messages[index] = {
-          ...msg,
+        var index = messages.indexOf(msg);
+        messages[index] = _extends({}, msg, {
           isRevoke: true,
           revokeUserName: userName
-        };
+        });
       }
     }
   } else {
-    const {
-      messages
-    } = newState.contactGather[payload.contactId === userId ? payload.userId : payload.contactId];
+    var _messages = newState.contactGather[payload.contactId === userId ? payload.userId : payload.contactId].messages;
     // задаем isRevoke
-    if (messages) {
-      const msg = messages.find(message => message._id === payload._id);
-      if (msg) {
-        const index = messages.indexOf(msg);
-        messages[index] = {
-          ...msg,
+    if (_messages) {
+      var _msg = _messages.find(function (message) {
+        return message._id === payload._id;
+      });
+      if (_msg) {
+        var _index = _messages.indexOf(_msg);
+        _messages[_index] = _extends({}, _msg, {
           isRevoke: true,
           revokeUserName: userName
-        };
+        });
       }
     }
   }
@@ -1706,116 +1805,96 @@ const revokeMessage = (state, payload) => {
   newState.activeRoom = getFreshActiveRoom(newState);
   return newState;
 };
-const delContact = (state, userId) => {
-  const newState = {
-    ...state
-  };
-  const updateActiveRoom = newState.activeRoom === newState.contactGather[userId];
+var delContact = function delContact(state, userId) {
+  var newState = _extends({}, state);
+  var updateActiveRoom = newState.activeRoom === newState.contactGather[userId];
   delete newState.contactGather[userId];
   if (updateActiveRoom) newState.activeRoom = getActiveRoom(newState);
   return newState;
 };
-const delGroup = (state, groupId) => {
-  const newState = {
-    ...state
-  };
-  const updateActiveRoom = newState.activeRoom === newState.groupGather[groupId];
+var delGroup = function delGroup(state, groupId) {
+  var newState = _extends({}, state);
+  var updateActiveRoom = newState.activeRoom === newState.groupGather[groupId];
   delete newState.groupGather[groupId];
   if (updateActiveRoom) newState.activeRoom = getActiveRoom(newState);
   return newState;
 };
-const delGroupMember = (state, data) => {
-  const newState = {
-    ...state
-  };
-  const group = newState.groupGather[data.groupId];
+var delGroupMember = function delGroupMember(state, data) {
+  var newState = _extends({}, state);
+  var group = newState.groupGather[data.groupId];
   if (group) {
     var _group$members;
-    group.members = (_group$members = group.members) == null ? void 0 : _group$members.filter(it => it.userId !== data.userId);
+    group.members = (_group$members = group.members) == null ? void 0 : _group$members.filter(function (it) {
+      return it.userId !== data.userId;
+    });
   }
   return newState;
 };
-const updateGroupInfo = (state, group) => {
-  const newState = {
-    ...state
-  };
-  const {
-    groupId,
-    name,
-    notice
-  } = group;
-  const info = newState.groupGather[groupId];
+var updateGroupInfo = function updateGroupInfo(state, group) {
+  var newState = _extends({}, state);
+  var groupId = group.groupId,
+    name = group.name,
+    notice = group.notice;
+  var info = newState.groupGather[groupId];
   if (info) {
-    newState.groupGather[groupId] = {
-      ...info,
-      name,
-      notice
-    };
+    newState.groupGather[groupId] = _extends({}, info, {
+      name: name,
+      notice: notice
+    });
   }
   // обновляем активный чат
   newState.activeRoom = getFreshActiveRoom(newState);
   return newState;
 };
-const updateUserInfo = (state, user) => {
-  const newState = {
-    ...state
-  };
-  const {
-    userId,
-    username,
-    avatar
-  } = user;
+var updateUserInfo = function updateUserInfo(state, user) {
+  var newState = _extends({}, state);
+  var userId = user.userId,
+    username = user.username,
+    avatar = user.avatar;
   if (newState.userGather[userId]) {
-    newState.userGather[userId] = {
-      ...newState.userGather[userId],
-      username,
-      avatar
-    };
+    newState.userGather[userId] = _extends({}, newState.userGather[userId], {
+      username: username,
+      avatar: avatar
+    });
   }
   if (newState.contactGather[userId]) {
-    newState.contactGather[userId] = {
-      ...newState.contactGather[userId],
-      username,
-      avatar
-    };
+    newState.contactGather[userId] = _extends({}, newState.contactGather[userId], {
+      username: username,
+      avatar: avatar
+    });
   }
   // обновляем активный чат
   newState.activeRoom = getFreshActiveRoom(newState);
   return newState;
 };
-const addGroupMember = (state, payload) => {
-  const members = payload.members.map(member => ({
-    ...member,
-    isManager: 0
-  }));
-  const newState = {
-    ...state
-  };
+var addGroupMember = function addGroupMember(state, payload) {
+  var members = payload.members.map(function (member) {
+    return _extends({}, member, {
+      isManager: 0
+    });
+  });
+  var newState = _extends({}, state);
   if (newState.groupGather[payload.groupId].members && members) {
-    newState.groupGather[payload.groupId].members = [...state.groupGather[payload.groupId].members, ...members];
+    newState.groupGather[payload.groupId].members = [].concat(state.groupGather[payload.groupId].members, members);
   } else {
-    newState.groupGather[payload.groupId] = {
-      ...newState.groupGather[payload.groupId],
-      members
-    };
+    newState.groupGather[payload.groupId] = _extends({}, newState.groupGather[payload.groupId], {
+      members: members
+    });
   }
   // обновляем активный чат
   newState.activeRoom = getFreshActiveRoom(newState);
   return newState;
 };
-const markPrivateMessagesRead = (state, userId) => {
-  const newState = {
-    ...state
-  };
+var markPrivateMessagesRead = function markPrivateMessagesRead(state, userId) {
+  var newState = _extends({}, state);
   if (newState.contactGather[userId]) {
-    const updatedValue = {
-      ...newState.contactGather[userId]
-    };
+    var updatedValue = _extends({}, newState.contactGather[userId]);
     if (updatedValue.messages) {
-      for (let i = 0; i < updatedValue.messages.length; i++) updatedValue.messages[i] = {
-        ...updatedValue.messages[i],
-        status: 1
-      };
+      for (var i = 0; i < updatedValue.messages.length; i++) {
+        updatedValue.messages[i] = _extends({}, updatedValue.messages[i], {
+          status: 1
+        });
+      }
     }
     newState.contactGather[userId] = updatedValue;
   }
@@ -1823,52 +1902,42 @@ const markPrivateMessagesRead = (state, userId) => {
   newState.activeRoom = getFreshActiveRoom(newState);
   // помечаем все не прочитанные как прочитанные
   if (newState.activeRoom != null && newState.activeRoom.messages) {
-    for (let i = 0; i < newState.activeRoom.messages.length; i++) newState.activeRoom.messages[i] = {
-      ...newState.activeRoom.messages[i],
-      status: 1
-    };
+    for (var _i2 = 0; _i2 < newState.activeRoom.messages.length; _i2++) {
+      newState.activeRoom.messages[_i2] = _extends({}, newState.activeRoom.messages[_i2], {
+        status: 1
+      });
+    }
   }
   return newState;
 };
-const addPrivateMessages = (state, data) => {
-  const newState = {
-    ...state
-  };
-  const {
-    messages,
-    contactId
-  } = data;
+var addPrivateMessages = function addPrivateMessages(state, data) {
+  var newState = _extends({}, state);
+  var messages = data.messages,
+    contactId = data.contactId;
   if (newState.contactGather[contactId]) {
-    newState.contactGather[contactId] = {
-      ...newState.contactGather[contactId],
-      messages: [...(messages || []), ...(newState.contactGather[contactId].messages || [])],
+    newState.contactGather[contactId] = _extends({}, newState.contactGather[contactId], {
+      messages: [].concat(messages || [], newState.contactGather[contactId].messages || []),
       noMoreData: messages != null && messages.length ? (messages == null ? void 0 : messages.length) < data.pageSize : true
-    };
+    });
   }
   // обновляем активный чат
   newState.activeRoom = getFreshActiveRoom(newState);
   return newState;
 };
-const addGroupMessages = (state, data) => {
-  const newState = {
-    ...state
-  };
-  const {
-    groupId,
-    messages,
-    userArr: users
-  } = data;
+var addGroupMessages = function addGroupMessages(state, data) {
+  var newState = _extends({}, state);
+  var groupId = data.groupId,
+    messages = data.messages,
+    users = data.userArr;
   if (newState.groupGather[groupId]) {
-    newState.groupGather[groupId] = {
-      ...newState.groupGather[groupId],
-      messages: [...(messages || []), ...(newState.groupGather[groupId].messages || [])],
+    newState.groupGather[groupId] = _extends({}, newState.groupGather[groupId], {
+      messages: [].concat(messages || [], newState.groupGather[groupId].messages || []),
       noMoreData: messages != null && messages.length ? (messages == null ? void 0 : messages.length) < data.pageSize : true
-    };
+    });
   }
-  newState.userGather = {
-    ...newState.userGather
-  };
-  for (const user of users) {
+  newState.userGather = _extends({}, newState.userGather);
+  for (var _iterator = _createForOfIteratorHelperLoose(users), _step; !(_step = _iterator()).done;) {
+    var user = _step.value;
     if (!newState.userGather[user.userId]) {
       newState.userGather[user.userId] = user;
     }
@@ -1877,85 +1946,66 @@ const addGroupMessages = (state, data) => {
   newState.activeRoom = getFreshActiveRoom(newState);
   return newState;
 };
-const setActiveRoom = (state, data) => {
+var setActiveRoom = function setActiveRoom(state, data) {
   //if (state.activeRoom && data.ifNotExists) return state;
-  return {
-    ...state,
-    chatOld: state.activeRoom != null ? {
-      ...state.activeRoom
-    } : null,
+  return _extends({}, state, {
+    chatOld: state.activeRoom != null ? _extends({}, state.activeRoom) : null,
     activeRoom: data.groupId ? state.groupGather[data.groupId] : data.contactId ? state.contactGather[data.contactId] : null
-  };
+  });
 };
-const setToken = (state, token) => {
-  return {
-    ...state,
-    token
-  };
+var setToken = function setToken(state, token) {
+  return _extends({}, state, {
+    token: token
+  });
 };
-const clearUser = state => {
-  return {
-    ...state,
+var clearUser = function clearUser(state) {
+  return _extends({}, state, {
     token: '',
     user: emptyUser
-  };
+  });
 };
-const setConference = (state, conference) => {
-  return {
-    ...state,
+var setConference = function setConference(state, conference) {
+  return _extends({}, state, {
     conference: {
-      data: {
-        ...conference
-      },
+      data: _extends({}, conference),
       joined: (conference == null ? void 0 : conference.userId) === state.user.userId,
       ringPlayed: (conference == null ? void 0 : conference.userId) !== state.user.userId
     }
-  };
+  });
 };
-const pauseConference = (state, conference) => {
+var pauseConference = function pauseConference(state, conference) {
   var _state$conference$dat;
   if (((_state$conference$dat = state.conference.data) == null ? void 0 : _state$conference$dat.id) !== (conference == null ? void 0 : conference.id)) return state;
-  return {
-    ...state,
+  return _extends({}, state, {
     conference: {
-      data: {
-        ...state.conference.data
-      },
+      data: _extends({}, state.conference.data),
       joined: false,
       ringPlayed: false
     }
-  };
+  });
 };
-const stopConference = (state, conference) => {
+var stopConference = function stopConference(state, conference) {
   var _state$conference$dat2;
   if (((_state$conference$dat2 = state.conference.data) == null ? void 0 : _state$conference$dat2.id) !== (conference == null ? void 0 : conference.id)) return state;
-  return {
-    ...state,
+  return _extends({}, state, {
     conference: {
       data: null,
       joined: false,
       ringPlayed: false
     }
-  };
+  });
 };
 function chatReducer(state, action) {
+  var _extends2, _extends3, _extends4;
   switch (action.type) {
     case 'SET_GROUP_GATHER':
-      return {
-        ...state,
-        groupGather: {
-          ...state.groupGather,
-          [action.payload.groupId]: action.payload
-        }
-      };
+      return _extends({}, state, {
+        groupGather: _extends({}, state.groupGather, (_extends2 = {}, _extends2[action.payload.groupId] = action.payload, _extends2))
+      });
     case 'SET_CONTACT_GATHER':
-      return {
-        ...state,
-        contactGather: {
-          ...state.contactGather,
-          [action.payload.userId]: action.payload
-        }
-      };
+      return _extends({}, state, {
+        contactGather: _extends({}, state.contactGather, (_extends3 = {}, _extends3[action.payload.userId] = action.payload, _extends3))
+      });
     case 'DEL_GROUP':
       return delGroup(state, action.payload);
     case 'DEL_GROUP_MEMBER':
@@ -1963,18 +2013,13 @@ function chatReducer(state, action) {
     case 'DEL_CONTACT':
       return delContact(state, action.payload.userId);
     case 'SET_USER_GATHER':
-      return {
-        ...state,
-        userGather: {
-          ...state.userGather,
-          [action.payload.userId]: action.payload
-        }
-      };
+      return _extends({}, state, {
+        userGather: _extends({}, state.userGather, (_extends4 = {}, _extends4[action.payload.userId] = action.payload, _extends4))
+      });
     case 'UPDATE_ACTIVE_ROOM':
-      return {
-        ...state,
+      return _extends({}, state, {
         activeRoom: getActiveRoom(state)
-      };
+      });
     case 'SET_ACTIVE_ROOM':
       return setActiveRoom(state, action.payload);
     case 'USER_ONLINE':
@@ -1986,18 +2031,25 @@ function chatReducer(state, action) {
     case 'ADD_PRIVATE_MESSAGE':
       return addPrivateMessage(state, action.payload);
     case 'ADD_GROUP_UNREAD_GATHER':
-      return groupUnreadGather(state, action.payload, x => (x || 0) + 1);
+      return groupUnreadGather(state, action.payload, function (x) {
+        return (x || 0) + 1;
+      });
     case 'ADD_CONTACT_UNREAD_GATHER':
-      return contactUnreadGather(state, action.payload, x => (x || 0) + 1);
+      return contactUnreadGather(state, action.payload, function (x) {
+        return (x || 0) + 1;
+      });
     case 'SET_TYPING':
-      return {
-        ...state,
+      return _extends({}, state, {
         typing: action.payload
-      };
+      });
     case 'LOSE_GROUP_UNREAD_GATHER':
-      return groupUnreadGather(state, action.payload, () => 0);
+      return groupUnreadGather(state, action.payload, function () {
+        return 0;
+      });
     case 'LOSE_CONTACT_UNREAD_GATHER':
-      return contactUnreadGather(state, action.payload, () => 0);
+      return contactUnreadGather(state, action.payload, function () {
+        return 0;
+      });
     case 'REVOKE_MESSAGE':
       return revokeMessage(state, action.payload);
     case 'UPDATE_GROUP_INFO':
@@ -2009,16 +2061,13 @@ function chatReducer(state, action) {
     case 'SET_CONFERENCE':
       return setConference(state, action.payload);
     case 'JOIN_CONFERENCE':
-      return {
-        ...state,
+      return _extends({}, state, {
         conference: {
-          data: {
-            ...action.payload
-          },
+          data: _extends({}, action.payload),
           joined: true,
           ringPlayed: false
         }
-      };
+      });
     case 'PAUSE_CONFERENCE':
       return pauseConference(state, action.payload);
     case 'STOP_CONFERENCE':
@@ -2030,35 +2079,30 @@ function chatReducer(state, action) {
     case 'ADD_GROUP_MESSAGES':
       return addGroupMessages(state, action.payload);
     case 'SET_LOADING':
-      return {
-        ...state,
+      return _extends({}, state, {
         loading: action.payload,
         error: ''
-      };
+      });
     case 'SET_ERROR':
-      return {
-        ...state,
+      return _extends({}, state, {
         error: action.payload,
         success: undefined
-      };
+      });
     case 'SET_SUCCES':
-      return {
-        ...state,
+      return _extends({}, state, {
         success: action.payload,
         error: undefined
-      };
+      });
     case 'SET_TOKEN':
       return setToken(state, action.payload);
     case 'SET_USER':
-      return {
-        ...state,
+      return _extends({}, state, {
         user: action.payload
-      };
+      });
     case 'CLEAR_USER':
       return clearUser(state);
     case 'CLEAR_CHAT_DATA':
-      return {
-        ...state,
+      return _extends({}, state, {
         activeRoom: null,
         groupGather: {},
         userGather: {},
@@ -2069,66 +2113,71 @@ function chatReducer(state, action) {
           ringPlayed: false
         },
         typing: null
-      };
+      });
     case 'SET_OPERATORS':
-      return {
-        ...state,
+      return _extends({}, state, {
         operators: action.payload
-      };
+      });
     case 'SET_VISIT_DATA':
-      return {
-        ...state,
+      return _extends({}, state, {
         visitData: action.payload
-      };
+      });
   }
   return state;
 }
-const emptyDispatch = () => null;
-const ChatContext = /*#__PURE__*/React__default.createContext({
+var emptyDispatch = function emptyDispatch() {
+  return null;
+};
+var ChatContext = /*#__PURE__*/React__default.createContext({
   state: emptyChatState,
   dispatch: emptyDispatch
 });
-const ChatProvider = props => {
+var ChatProvider = function ChatProvider(props) {
   emptyUser.langCode = props.defLang;
-  const token = props.token;
-  const refreshToken = props.token;
-  const chatState = {
-    ...emptyChatState,
-    token,
-    refreshToken
-  };
-  const [state, dispatch] = React__default.useReducer(chatReducer, chatState);
-  const value = React.useMemo(() => ({
-    state,
-    dispatch
-  }), [state]);
+  var token = props.token;
+  var refreshToken = props.token;
+  var chatState = _extends({}, emptyChatState, {
+    token: token,
+    refreshToken: refreshToken
+  });
+  var _React$useReducer = React__default.useReducer(chatReducer, chatState),
+    state = _React$useReducer[0],
+    dispatch = _React$useReducer[1];
+  var value = React.useMemo(function () {
+    return {
+      state: state,
+      dispatch: dispatch
+    };
+  }, [state]);
   return /*#__PURE__*/React__default.createElement(ChatContext.Provider, {
     value: value
   }, props.children);
 };
 
 function useInterval(callback, state, delay) {
-  const savedCallback = React.useRef();
+  var savedCallback = React.useRef();
 
   // Remember the latest callback.
-  React.useEffect(() => {
+  React.useEffect(function () {
     savedCallback.current = callback;
   }, [callback]);
 
   // Set up the interval.
-  React.useEffect(() => {
+  React.useEffect(function () {
     function tick() {
       savedCallback.current();
     }
     if (state) {
-      let id = setInterval(tick, delay);
-      return () => clearInterval(id);
+      var id = setInterval(tick, delay);
+      return function () {
+        return clearInterval(id);
+      };
     }
   }, [state]);
 }
 
 function isVisibleInViewport(element, root) {
-  const rect = element.getBoundingClientRect();
+  var rect = element.getBoundingClientRect();
   // console.log(
   //   'rect.top',
   //   rect.top,
@@ -2138,104 +2187,114 @@ function isVisibleInViewport(element, root) {
   // );
   return rect.top >= 50 && rect.bottom <= root.clientHeight;
 }
-const useStyles$9 = /*#__PURE__*/styles.makeStyles(theme => styles.createStyles({
-  messageListOuter: {
-    flex: 1,
-    overflowY: 'auto',
-    margin: 0,
-    padding: 0,
-    height: '100%',
-    scrollbarWidth: 'thin',
-    scrollbarColor: theme.palette.primary.light + " #fff"
-  },
-  messageList: {},
-  img: {
-    cursor: 'pointer',
-    borderRadius: theme.spacing(1.2),
-    maxWidth: 'auto',
-    maxHeight: '95%',
-    [theme.breakpoints.down('sm')]: {
+var useStyles$9 = /*#__PURE__*/styles.makeStyles(function (theme) {
+  var _img, _arrowDown;
+  return styles.createStyles({
+    messageListOuter: {
+      flex: 1,
+      overflowY: 'auto',
+      margin: 0,
+      padding: 0,
+      height: '100%',
+      scrollbarWidth: 'thin',
+      scrollbarColor: theme.palette.primary.light + " #fff"
+    },
+    messageList: {},
+    img: (_img = {
+      cursor: 'pointer',
+      borderRadius: theme.spacing(1.2),
       maxWidth: 'auto',
       maxHeight: '95%'
-    }
-  },
-  arrowDown: {
-    position: 'absolute',
-    left: '94.5%',
-    bottom: 105,
-    [theme.breakpoints.down('md')]: {
+    }, _img[theme.breakpoints.down('sm')] = {
+      maxWidth: 'auto',
+      maxHeight: '95%'
+    }, _img),
+    arrowDown: (_arrowDown = {
+      position: 'absolute',
+      left: '94.5%',
+      bottom: 105
+    }, _arrowDown[theme.breakpoints.down('md')] = {
       left: '91.5%',
       bottom: 95
-    },
-    [theme.breakpoints.down('sm')]: {
+    }, _arrowDown[theme.breakpoints.down('sm')] = {
       left: '84%',
       bottom: 95
-    }
-  }
-}));
-const RoomMessageList = props => {
-  const {
-    apiUrl,
-    user,
-    users,
-    chat,
-    loading,
-    pageSize,
-    setMenuState,
-    initialMenuState,
-    inModale,
-    isConference,
-    onEnterRoom
-  } = props;
-  const classes = useStyles$9();
-  const isMobile = material.useMediaQuery(theme => theme.breakpoints.down('sm'));
-  const DEF = 900;
-  const chatId = getChatId(chat);
-  const [viewerData, setViewerData] = React__default.useState({
-    visible: false,
-    src: ''
+    }, _arrowDown)
   });
-  const {
-    dispatch
-  } = React__default.useContext(ChatContext);
-  const [scrollDownButton, setScrollDownButton] = React__default.useState(false);
-  const scrollableRootRef = React__default.useRef(null);
-  const lastScrollDistanceToBottomRef = React__default.useRef();
-  const lastMessageCount = React__default.useRef();
-  const hasNextPage = chat == null || (chat == null ? void 0 : chat.noMoreData) == null ? true : !chat.noMoreData;
-  const messages = React__default.useMemo(() => chat != null && chat.messages ? chat.messages.map(it => ({
-    ...it,
-    ref: /*#__PURE__*/React__default.createRef()
-  })) : [], [chat == null ? void 0 : chat.messages]);
-  const messageCount = (messages == null ? void 0 : messages.length) || 0;
-  const lastMessage = messageCount && messages[messageCount - 1];
-  const messageCountUnreaded = messages.filter(it => (it == null ? void 0 : it.status) != null && it.status === 0);
-  const [isVisible, setIsVisible] = React__default.useState(messages[messageCount - 1].cdate);
-  const loadMore = () => {
+});
+var RoomMessageList = function RoomMessageList(props) {
+  var apiUrl = props.apiUrl,
+    user = props.user,
+    users = props.users,
+    chat = props.chat,
+    loading = props.loading,
+    pageSize = props.pageSize,
+    setMenuState = props.setMenuState,
+    initialMenuState = props.initialMenuState,
+    inModale = props.inModale,
+    isConference = props.isConference,
+    onEnterRoom = props.onEnterRoom;
+  var classes = useStyles$9();
+  var isMobile = material.useMediaQuery(function (theme) {
+    return theme.breakpoints.down('sm');
+  });
+  var DEF = 900;
+  var chatId = getChatId(chat);
+  var _React$useState = React__default.useState({
+      visible: false,
+      src: ''
+    }),
+    viewerData = _React$useState[0],
+    setViewerData = _React$useState[1];
+  var _React$useContext = React__default.useContext(ChatContext),
+    dispatch = _React$useContext.dispatch;
+  var _React$useState2 = React__default.useState(false),
+    scrollDownButton = _React$useState2[0],
+    setScrollDownButton = _React$useState2[1];
+  var scrollableRootRef = React__default.useRef(null);
+  var lastScrollDistanceToBottomRef = React__default.useRef();
+  var lastMessageCount = React__default.useRef();
+  var hasNextPage = chat == null || (chat == null ? void 0 : chat.noMoreData) == null ? true : !chat.noMoreData;
+  var messages = React__default.useMemo(function () {
+    return chat != null && chat.messages ? chat.messages.map(function (it) {
+      return _extends({}, it, {
+        ref: /*#__PURE__*/React__default.createRef()
+      });
+    }) : [];
+  }, [chat == null ? void 0 : chat.messages]);
+  var messageCount = (messages == null ? void 0 : messages.length) || 0;
+  var lastMessage = messageCount && messages[messageCount - 1];
+  var messageCountUnreaded = messages.filter(function (it) {
+    return (it == null ? void 0 : it.status) != null && it.status === 0;
+  });
+  var _React$useState3 = React__default.useState(messages[messageCount - 1].cdate),
+    isVisible = _React$useState3[0],
+    setIsVisible = _React$useState3[1];
+  var loadMore = function loadMore() {
     chat && props.onNeedMoreMessages(chat);
   };
-  const [infiniteRef, {
-    rootRef
-  }] = useInfiniteScroll({
-    loading,
-    hasNextPage,
-    onLoadMore: loadMore,
-    disabled: false
-  });
-  React__default.useEffect(() => {
+  var _useInfiniteScroll = useInfiniteScroll({
+      loading: loading,
+      hasNextPage: hasNextPage,
+      onLoadMore: loadMore,
+      disabled: false
+    }),
+    infiniteRef = _useInfiniteScroll[0],
+    rootRef = _useInfiniteScroll[1].rootRef;
+  React__default.useEffect(function () {
     if (chatId && scrollableRootRef.current && messageCount) {
       setIsVisible(messages[messageCount - 1].cdate);
       scrollDown();
     }
   }, [chatId]);
-  useInterval(() => {
+  useInterval(function () {
     setIsVisible('');
   }, isVisible, 3700);
   // ------ keep the scroll position and lastMessageCount when messageCount changed ----------
-  React__default.useEffect(() => {
+  React__default.useEffect(function () {
     var _lastScrollDistanceTo;
-    const scrollableRoot = scrollableRootRef.current;
-    const lastScrollDistanceToBottom = (_lastScrollDistanceTo = lastScrollDistanceToBottomRef.current) != null ? _lastScrollDistanceTo : 0;
+    var scrollableRoot = scrollableRootRef.current;
+    var lastScrollDistanceToBottom = (_lastScrollDistanceTo = lastScrollDistanceToBottomRef.current) != null ? _lastScrollDistanceTo : 0;
     if (scrollableRoot && lastMessage && chat) {
       // -----  scroll to prev lastScrollDistanceToBottom -----------
       if (lastMessageCount.current === messageCount - pageSize) {
@@ -2248,12 +2307,12 @@ const RoomMessageList = props => {
     }
     lastMessageCount.current = messageCount;
   }, [messageCount]);
-  const handleRootScroll = React__default.useCallback(() => {
-    const rootNode = scrollableRootRef.current;
+  var handleRootScroll = React__default.useCallback(function () {
+    var rootNode = scrollableRootRef.current;
     if (rootNode) {
-      const scrollDistanceToBottom = rootNode.scrollHeight - rootNode.scrollTop;
+      var scrollDistanceToBottom = rootNode.scrollHeight - rootNode.scrollTop;
       lastScrollDistanceToBottomRef.current = scrollDistanceToBottom;
-      const isShowScrollButton = hasNextPage && scrollDistanceToBottom > DEF;
+      var isShowScrollButton = hasNextPage && scrollDistanceToBottom > DEF;
       setScrollDownButton(isShowScrollButton);
       if (!isShowScrollButton && chatId && chat && onEnterRoom) {
         onEnterRoom(chat);
@@ -2262,15 +2321,15 @@ const RoomMessageList = props => {
           payload: chat.userId
         });
       }
-      for (let i = 0; i < messageCount; i++) {
+      for (var i = 0; i < messageCount; i++) {
         var _mess$ref;
-        const mess = messages[i];
+        var mess = messages[i];
         // console.log(
         //   '------------loop------------',
         //   //mess?.ref?.current,
         // );
         if (mess != null && (_mess$ref = mess.ref) != null && _mess$ref.current) {
-          const isVisibleMess = isVisibleInViewport(mess.ref.current, rootNode);
+          var isVisibleMess = isVisibleInViewport(mess.ref.current, rootNode);
           if (isVisibleMess) {
             // console.log(
             //   'visible',
@@ -2285,34 +2344,34 @@ const RoomMessageList = props => {
       }
     }
   }, [messages, chatId]);
-  const scrollDown = () => {
+  var scrollDown = function scrollDown() {
     if (scrollableRootRef.current) {
       scrollableRootRef.current.scrollTop = scrollableRootRef.current.scrollHeight;
     }
   };
-  const rootRefSetter = React__default.useCallback(node => {
+  var rootRefSetter = React__default.useCallback(function (node) {
     rootRef(node);
     scrollableRootRef.current = node;
   }, [rootRef]);
-  const handleMenuPopup = (message, event) => {
-    const canCopy = message.messageType === 'text';
-    const canDelete = user.userId === message.userId && !!props.onMeesageDelete && new Date().getTime() - new Date(message.cdate).getTime() <= 1000 * 60 * 2;
+  var handleMenuPopup = function handleMenuPopup(message, event) {
+    var canCopy = message.messageType === 'text';
+    var canDelete = user.userId === message.userId && !!props.onMeesageDelete && new Date().getTime() - new Date(message.cdate).getTime() <= 1000 * 60 * 2;
     if (!canCopy && !canDelete) {
       setMenuState(initialMenuState);
       return;
     }
     event.preventDefault();
     setMenuState({
-      message,
+      message: message,
       mouseX: event.clientX - 2,
       mouseY: event.clientY - 4,
-      canCopy,
-      canDelete
+      canCopy: canCopy,
+      canDelete: canDelete
     });
   };
   if (chatId == null) return;
   return /*#__PURE__*/React__default.createElement(React__default.Fragment, null, /*#__PURE__*/React__default.createElement(material.Fade, {
-    in: !!isVisible,
+    "in": !!isVisible,
     style: isVisible ? {
       display: 'block',
       position: 'relative',
@@ -2345,7 +2404,7 @@ const RoomMessageList = props => {
     sx: {
       justifyContent: 'center'
     }
-  }, /*#__PURE__*/React__default.createElement(material.CircularProgress, null)), messages.map((message, inx) => {
+  }, /*#__PURE__*/React__default.createElement(material.CircularProgress, null)), messages.map(function (message, inx) {
     return /*#__PURE__*/React__default.createElement(Message, {
       ref: message.ref,
       key: inx,
@@ -2356,7 +2415,9 @@ const RoomMessageList = props => {
       isGroupMessage: !!(chat != null && chat.groupId),
       isUserFirst: inx === 0 || messages[inx - 1].messageType === 'notify' || messages[inx - 1].userId !== messages[inx].userId,
       isUserLast: inx === messages.length - 1 || messages[inx + 1].messageType === 'notify' || messages[inx + 1].userId !== messages[inx].userId,
-      onContextMenu: event => handleMenuPopup(message, event)
+      onContextMenu: function onContextMenu(event) {
+        return handleMenuPopup(message, event);
+      }
       //refOnMess={defineRefOnMess(inx)}
       ,
       setViewerData: setViewerData
@@ -2368,7 +2429,9 @@ const RoomMessageList = props => {
     color: "info",
     "aria-label": "add",
     size: "medium",
-    onClick: () => scrollDown()
+    onClick: function onClick() {
+      return scrollDown();
+    }
   }, /*#__PURE__*/React__default.createElement(KeyboardArrowDownIcon, null)), messageCountUnreaded != null && messageCountUnreaded.length > 0 && /*#__PURE__*/React__default.createElement(material.Fab, {
     color: "warning",
     "aria-label": "add",
@@ -2383,16 +2446,20 @@ const RoomMessageList = props => {
     }
   }, /*#__PURE__*/React__default.createElement(material.Typography, {
     variant: "body2",
-    sx: theme => ({
-      color: theme.palette.background.default
-    })
+    sx: function sx(theme) {
+      return {
+        color: theme.palette.background["default"]
+      };
+    }
   }, messageCountUnreaded.length))), viewerData.visible && /*#__PURE__*/React__default.createElement(material.Backdrop, {
     sx: {
       color: '#fff',
-      zIndex: theme => theme.zIndex.drawer + 1
+      zIndex: function zIndex(theme) {
+        return theme.zIndex.drawer + 1;
+      }
     },
     open: viewerData.visible,
-    onClick: () => {
+    onClick: function onClick() {
       setViewerData({
         visible: false,
         src: ''
@@ -2405,67 +2472,66 @@ const RoomMessageList = props => {
   }))));
 };
 
-const useStyles$a = /*#__PURE__*/styles.makeStyles(theme => styles.createStyles({
-  root: {
-    width: '100%',
-    minWidth: 360,
-    height: '100%',
-    display: 'flex',
-    flexDirection: 'column'
-  },
-  roomHeader: {
-    flex: 1
-  },
-  flexAll: {
-    flex: '1 1 auto'
-  },
-  flexEnd: {
-    justifyContent: 'flex-end'
-  }
-}));
-const initialMenuState = {
+var useStyles$a = /*#__PURE__*/styles.makeStyles(function (theme) {
+  return styles.createStyles({
+    root: {
+      width: '100%',
+      minWidth: 360,
+      height: '100%',
+      display: 'flex',
+      flexDirection: 'column'
+    },
+    roomHeader: {
+      flex: 1
+    },
+    flexAll: {
+      flex: '1 1 auto'
+    },
+    flexEnd: {
+      justifyContent: 'flex-end'
+    }
+  });
+});
+var initialMenuState = {
   message: null,
   mouseX: null,
   mouseY: null,
   canCopy: false,
   canDelete: false
 };
-const Room = props => {
-  const {
-    apiUrl,
-    user,
-    users,
-    chat,
-    typing,
-    conference,
-    visitData,
-    conferenceJoined,
-    loading,
-    pageSize,
-    inModale
-  } = props;
-  const classes = useStyles$a();
-  const {
-    t
-  } = reactI18next.useTranslation();
-  const isMobile = material.useMediaQuery(theme => theme.breakpoints.down('sm'));
-  const [menuState, setMenuState] = React__default.useState(initialMenuState);
-  const handleMenuClose = () => {
+var Room = function Room(props) {
+  var apiUrl = props.apiUrl,
+    user = props.user,
+    users = props.users,
+    chat = props.chat,
+    typing = props.typing,
+    conference = props.conference,
+    visitData = props.visitData,
+    conferenceJoined = props.conferenceJoined,
+    loading = props.loading,
+    pageSize = props.pageSize,
+    inModale = props.inModale;
+  var classes = useStyles$a();
+  var _useTranslation = reactI18next.useTranslation(),
+    t = _useTranslation.t;
+  var isMobile = material.useMediaQuery(function (theme) {
+    return theme.breakpoints.down('sm');
+  });
+  var _React$useState = React__default.useState(initialMenuState),
+    menuState = _React$useState[0],
+    setMenuState = _React$useState[1];
+  var handleMenuClose = function handleMenuClose() {
     setMenuState(initialMenuState);
   };
-  const handleCopy = React.useCallback(() => {
-    const {
-      message
-    } = menuState;
+  var handleCopy = React.useCallback(function () {
+    var message = menuState.message;
     setMenuState(initialMenuState);
     if (!message) return;
     navigator.clipboard.writeText(message.content);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [menuState.message]);
-  const handleDelete = React.useCallback(() => {
-    const {
-      message
-    } = menuState;
+  var handleDelete = React.useCallback(function () {
+    var message = menuState.message;
     setMenuState(initialMenuState);
     if (props.onMeesageDelete && chat && message) props.onMeesageDelete(chat, message);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -2480,7 +2546,9 @@ const Room = props => {
     title: "\u0412\u0435\u0440\u043D\u0443\u0442\u044C\u0441\u044F \u0432 \u043A\u043E\u043D\u0444\u0435\u0440\u0435\u043D\u0446\u0438\u044E"
   }, /*#__PURE__*/React__default.createElement(material.IconButton, {
     "aria-label": "exit room",
-    onClick: () => props.onExitRoom && props.onExitRoom(chat)
+    onClick: function onClick() {
+      return props.onExitRoom && props.onExitRoom(chat);
+    }
   }, /*#__PURE__*/React__default.createElement(ArrowBackIcon, null))), /*#__PURE__*/React__default.createElement(RoomHeader, {
     apiUrl: apiUrl,
     user: user,
@@ -2495,7 +2563,8 @@ const Room = props => {
     onVideoEnd: props.onVideoEnd,
     onConferencePause: props.onConferencePause,
     onOperatorAdd: props.onOperatorAdd,
-    onLeaveGroup: props.onLeaveGroup
+    onLeaveGroup: props.onLeaveGroup,
+    onContactClick: props.onContactClick
   })), /*#__PURE__*/React__default.createElement(material.Divider, null), /*#__PURE__*/React__default.createElement(RoomMessageList, {
     apiUrl: apiUrl,
     user: user,
@@ -2544,28 +2613,30 @@ const Room = props => {
   })))));
 };
 
-const useStyles$b = /*#__PURE__*/styles.makeStyles(theme => styles.createStyles({
-  main: {
-    flex: '1 1 auto',
-    whiteSpace: 'nowrap',
-    overflow: 'hidden',
-    textOverflow: 'ellipsis'
-  },
-  time: {
-    paddingLeft: theme.spacing(1),
-    justifyContent: 'flex-end',
-    whiteSpace: 'nowrap'
-  },
-  unread: {
-    justifyContent: 'flex-end',
-    maxHeight: 20
-  },
-  avatarGroup: {
-    backgroundColor: '#28B7C6',
-    color: '#fff'
-  }
-}));
-const getMessageText = (message, t) => {
+var useStyles$b = /*#__PURE__*/styles.makeStyles(function (theme) {
+  return styles.createStyles({
+    main: {
+      flex: '1 1 auto',
+      whiteSpace: 'nowrap',
+      overflow: 'hidden',
+      textOverflow: 'ellipsis'
+    },
+    time: {
+      paddingLeft: theme.spacing(1),
+      justifyContent: 'flex-end',
+      whiteSpace: 'nowrap'
+    },
+    unread: {
+      justifyContent: 'flex-end',
+      maxHeight: 20
+    },
+    avatarGroup: {
+      backgroundColor: '#28B7C6',
+      color: '#fff'
+    }
+  });
+});
+var getMessageText = function getMessageText(message, t) {
   if (!message) return null;
   switch (message.messageType) {
     case 'text':
@@ -2582,46 +2653,50 @@ const getMessageText = (message, t) => {
       return null;
   }
 };
-const TypingBadge = /*#__PURE__*/styles.withStyles(theme => styles.createStyles({
-  badge: {
-    backgroundColor: '#44b700',
-    color: '#44b700',
-    boxShadow: "0 0 0 2px " + theme.palette.background.paper,
-    '&::after': {
-      position: 'absolute',
-      top: 0,
-      left: 0,
-      width: '100%',
-      height: '100%',
-      borderRadius: '50%',
-      animation: '$ripple 1.2s infinite ease-in-out',
-      border: '1px solid currentColor',
-      content: '""'
-    }
-  },
-  '@keyframes ripple': {
-    '0%': {
-      transform: 'scale(.8)',
-      opacity: 1
+var TypingBadge = /*#__PURE__*/styles.withStyles(function (theme) {
+  return styles.createStyles({
+    badge: {
+      backgroundColor: '#44b700',
+      color: '#44b700',
+      boxShadow: "0 0 0 2px " + theme.palette.background.paper,
+      '&::after': {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        width: '100%',
+        height: '100%',
+        borderRadius: '50%',
+        animation: '$ripple 1.2s infinite ease-in-out',
+        border: '1px solid currentColor',
+        content: '""'
+      }
     },
-    '100%': {
-      transform: 'scale(2.4)',
-      opacity: 0
+    '@keyframes ripple': {
+      '0%': {
+        transform: 'scale(.8)',
+        opacity: 1
+      },
+      '100%': {
+        transform: 'scale(2.4)',
+        opacity: 0
+      }
     }
-  }
-}))(material.Badge);
-const OnlineBadge = /*#__PURE__*/styles.withStyles(theme => styles.createStyles({
-  badge: {
-    backgroundColor: theme.palette.primary.main,
-    boxShadow: "0 0 0 2px " + theme.palette.background.paper
-  }
-}))(material.Badge);
-const contactAvatar = (apiUrl, contact, typing) => {
-  const avatar = /*#__PURE__*/React__default.createElement(material.Avatar, {
+  });
+})(material.Badge);
+var OnlineBadge = /*#__PURE__*/styles.withStyles(function (theme) {
+  return styles.createStyles({
+    badge: {
+      backgroundColor: theme.palette.primary.main,
+      boxShadow: "0 0 0 2px " + theme.palette.background.paper
+    }
+  });
+})(material.Badge);
+var contactAvatar = function contactAvatar(apiUrl, contact, typing) {
+  var avatar = /*#__PURE__*/React__default.createElement(material.Avatar, {
     alt: contact.username,
     src: contact.avatar ? combineURLs(apiUrl, contact.avatar) : ''
   });
-  const isTyping = !!(typing != null && typing.contactId) && (typing == null ? void 0 : typing.userId) === contact.userId;
+  var isTyping = !!(typing != null && typing.contactId) && (typing == null ? void 0 : typing.userId) === contact.userId;
   if (isTyping) return /*#__PURE__*/React__default.createElement(TypingBadge, {
     overlap: "circular",
     anchorOrigin: {
@@ -2640,115 +2715,129 @@ const contactAvatar = (apiUrl, contact, typing) => {
   }, avatar);
   return avatar;
 };
-const RoomListItem = props => {
+var RoomListItem = function RoomListItem(props) {
   var _chat$messages;
-  const classes = useStyles$b();
-  const {
-    t
-  } = reactI18next.useTranslation();
-  const {
-    apiUrl,
-    chat,
-    typing
-  } = props;
-  const roomName = getChatName(chat);
-  const avatar = chat.groupId ? /*#__PURE__*/React__default.createElement(material.Avatar, {
+  var classes = useStyles$b();
+  var _useTranslation = reactI18next.useTranslation(),
+    t = _useTranslation.t;
+  var apiUrl = props.apiUrl,
+    chat = props.chat,
+    typing = props.typing;
+  var roomName = getChatName(chat);
+  var avatar = chat.groupId ? /*#__PURE__*/React__default.createElement(material.Avatar, {
     alt: roomName,
     className: classes.avatarGroup
   }, /*#__PURE__*/React__default.createElement(GroupIcon, null), ' ') : contactAvatar(apiUrl, chat, typing);
-  const lastMessage = chat.messages && chat.messages.length > 0 ? chat.messages[chat.messages.length - 1] : null;
-  const roomText = getMessageText(lastMessage, t);
-  const roomTime = lastMessage == null ? void 0 : lastMessage.cdate;
-  const listItem = React.useMemo(() => /*#__PURE__*/React__default.createElement(material.ListItemButton, {
-    selected: props.active,
-    onClick: props.onClick
-  }, /*#__PURE__*/React__default.createElement(material.ListItemAvatar, null, avatar), /*#__PURE__*/React__default.createElement(material.ListItemText, {
-    secondaryTypographyProps: {
-      component: 'span'
-    },
-    primary: /*#__PURE__*/React__default.createElement(material.Box, {
-      display: "flex",
-      flexDirection: "row"
-    }, /*#__PURE__*/React__default.createElement("span", {
-      className: classes.main
-    }, roomName), /*#__PURE__*/React__default.createElement("span", {
-      className: classes.time
-    }, formatTime(roomTime))),
-    secondary: /*#__PURE__*/React__default.createElement(material.Box, {
-      display: "flex",
-      flexDirection: "row"
-    }, /*#__PURE__*/React__default.createElement("span", {
-      className: classes.main
-    }, roomText), chat.unreadCount ? /*#__PURE__*/React__default.createElement(material.Chip, {
-      className: classes.unread,
-      component: "span",
-      size: "small",
-      color: "primary",
-      label: chat.unreadCount
-    }) : null)
-  })), [(_chat$messages = chat.messages) == null ? void 0 : _chat$messages.length]);
+  var lastMessage = chat.messages && chat.messages.length > 0 ? chat.messages[chat.messages.length - 1] : null;
+  var roomText = getMessageText(lastMessage, t);
+  var roomTime = lastMessage == null ? void 0 : lastMessage.cdate;
+  var listItem = React.useMemo(function () {
+    return /*#__PURE__*/React__default.createElement(material.ListItemButton, {
+      selected: props.active,
+      onClick: props.onClick
+    }, /*#__PURE__*/React__default.createElement(material.ListItemAvatar, null, avatar), /*#__PURE__*/React__default.createElement(material.ListItemText, {
+      secondaryTypographyProps: {
+        component: 'span'
+      },
+      primary: /*#__PURE__*/React__default.createElement(material.Box, {
+        display: "flex",
+        flexDirection: "row"
+      }, /*#__PURE__*/React__default.createElement("span", {
+        className: classes.main
+      }, roomName), /*#__PURE__*/React__default.createElement("span", {
+        className: classes.time
+      }, formatTime(roomTime))),
+      secondary: /*#__PURE__*/React__default.createElement(material.Box, {
+        display: "flex",
+        flexDirection: "row"
+      }, /*#__PURE__*/React__default.createElement("span", {
+        className: classes.main
+      }, roomText), chat.unreadCount ? /*#__PURE__*/React__default.createElement(material.Chip, {
+        className: classes.unread,
+        component: "span",
+        size: "small",
+        color: "primary",
+        label: chat.unreadCount
+      }) : null)
+    }));
+  }, [(_chat$messages = chat.messages) == null ? void 0 : _chat$messages.length]);
   return listItem;
 };
 
-const useStyles$c = /*#__PURE__*/styles.makeStyles(theme => ({
-  root: {
-    width: '100%',
-    height: '100%'
-  },
-  searchField: {
-    width: '100%'
-  },
-  listStyle: {
-    height: '89.5%',
-    overflowY: 'auto',
-    scrollbarWidth: 'thin',
-    scrollbarColor: theme.palette.primary.light + " #fff"
-  }
-}));
-const filterChats = (chats, filter) => {
+var useStyles$c = /*#__PURE__*/styles.makeStyles(function (theme) {
+  return {
+    root: {
+      width: '100%',
+      height: '100%'
+    },
+    searchField: {
+      width: '100%'
+    },
+    listStyle: {
+      height: '89.5%',
+      overflowY: 'auto',
+      scrollbarWidth: 'thin',
+      scrollbarColor: theme.palette.primary.light + " #fff"
+    }
+  };
+});
+var filterChats = function filterChats(chats, filter) {
   if (filter === null) return chats;
-  const lowerFilter = filter.toLowerCase();
-  return chats.filter(chat => getChatName(chat).toLowerCase().indexOf(lowerFilter.toLowerCase()) !== -1);
+  var lowerFilter = filter.toLowerCase();
+  return chats.filter(function (chat) {
+    return getChatName(chat).toLowerCase().indexOf(lowerFilter.toLowerCase()) !== -1;
+  });
 };
-const sortChats = (userId, groups, contacts) => {
-  let roomArr = [...groups, ...contacts];
+var sortChats = function sortChats(userId, groups, contacts) {
+  var roomArr = [].concat(groups, contacts);
   //console.log('groups', groups, 'contacts', contacts);
   // Сортировать окно чата (по времени последних сообщений)
   roomArr = roomArr.sort(chatRoomComparer);
   // Проверяем, есть ли список, который нужно закрепить
-  const topChatId = localStorage.getItem(userId + "-topChatId");
+  var topChatId = localStorage.getItem(userId + "-topChatId");
   if (topChatId) {
-    const chat = roomArr.find(c => getChatId(c) === topChatId);
+    var chat = roomArr.find(function (c) {
+      return getChatId(c) === topChatId;
+    });
     if (chat) {
       // На первое место
-      roomArr = roomArr.filter(k => getChatId(k) !== topChatId);
+      roomArr = roomArr.filter(function (k) {
+        return getChatId(k) !== topChatId;
+      });
       chat.isTop = true;
       roomArr.unshift(chat);
     }
   }
   return roomArr;
 };
-const RoomList = props => {
+var RoomList = function RoomList(props) {
   var _props$activeRoom;
-  const classes = useStyles$c();
-  const {
-    t
-  } = reactI18next.useTranslation();
-  const [chats, setChats] = React__default.useState(sortChats(props.user.userId, filterChats(props.groups, null), filterChats(props.contacts, null)));
-  const onSearchChange = e => {
+  var classes = useStyles$c();
+  var _useTranslation = reactI18next.useTranslation(),
+    t = _useTranslation.t;
+  var _React$useState = React__default.useState(sortChats(props.user.userId, filterChats(props.groups, null), filterChats(props.contacts, null))),
+    chats = _React$useState[0],
+    setChats = _React$useState[1];
+  var onSearchChange = function onSearchChange(e) {
     //console.log("e.target.value", e.target.value);
     setChats(sortChats(props.user.userId, filterChats(props.groups, e.target.value), filterChats(props.contacts, e.target.value)));
   };
   //const activeItem = (id: number) => id === props.activeRoom?.userId;
   //console.log("chats", chats);
-  const roomList = React__default.useMemo(() => chats.map(chat => /*#__PURE__*/React__default.createElement(RoomListItem, {
-    key: getChatId(chat),
-    apiUrl: props.apiUrl,
-    chat: chat,
-    active: chat === props.activeRoom,
-    typing: props.typing,
-    onClick: () => props.onChangeChat != null && props.onChangeChat(chat)
-  })), [(_props$activeRoom = props.activeRoom) == null ? void 0 : _props$activeRoom.userId, props.typing]);
+  var roomList = React__default.useMemo(function () {
+    return chats.map(function (chat) {
+      return /*#__PURE__*/React__default.createElement(RoomListItem, {
+        key: getChatId(chat),
+        apiUrl: props.apiUrl,
+        chat: chat,
+        active: chat === props.activeRoom,
+        typing: props.typing,
+        onClick: function onClick() {
+          return props.onChangeChat != null && props.onChangeChat(chat);
+        }
+      });
+    });
+  }, [(_props$activeRoom = props.activeRoom) == null ? void 0 : _props$activeRoom.userId, props.typing]);
   return /*#__PURE__*/React__default.createElement(material.Card, {
     elevation: 1,
     className: classes.root
@@ -2768,37 +2857,36 @@ const RoomList = props => {
 };
 
 function updateUrlParameter(url, param, value) {
-  const regex = new RegExp("(" + param + "=)[^&]+");
+  var regex = new RegExp("(" + param + "=)[^&]+");
   return url.replace(regex, "$1" + value);
 }
-const transLang = lang => lang === "ru" ? "rus" : lang === "fr" ? "fra" : lang === "en" ? "eng" : "";
-const useStyles$d = /*#__PURE__*/styles.makeStyles(() => ({
-  root: {
-    width: "100%",
-    height: "100%",
-    borderRadius: 4
-  }
-}));
-const Conference = _ref => {
-  let {
-    conference,
-    onClose,
-    langCode = "en"
-  } = _ref;
-  const classes = useStyles$d();
-  const ref = React__default.useRef(null);
-  const confUrl = conference != null && conference.url && langCode ? updateUrlParameter(conference == null ? void 0 : conference.url, "lang", transLang(langCode)) : "";
-  React.useEffect(() => {
-    const listener = _ref2 => {
+var transLang = function transLang(lang) {
+  return lang === "ru" ? "rus" : lang === "fr" ? "fra" : lang === "en" ? "eng" : "";
+};
+var useStyles$d = /*#__PURE__*/styles.makeStyles(function () {
+  return {
+    root: {
+      width: "100%",
+      height: "100%",
+      borderRadius: 4
+    }
+  };
+});
+var Conference = function Conference(_ref) {
+  var conference = _ref.conference,
+    onClose = _ref.onClose,
+    _ref$langCode = _ref.langCode,
+    langCode = _ref$langCode === void 0 ? "en" : _ref$langCode;
+  var classes = useStyles$d();
+  var ref = React__default.useRef(null);
+  var confUrl = conference != null && conference.url && langCode ? updateUrlParameter(conference == null ? void 0 : conference.url, "lang", transLang(langCode)) : "";
+  React.useEffect(function () {
+    var listener = function listener(_ref2) {
       var _ref$current;
-      let {
-        source,
-        data
-      } = _ref2;
+      var source = _ref2.source,
+        data = _ref2.data;
       if (source === ((_ref$current = ref.current) == null ? void 0 : _ref$current.contentWindow)) {
-        const {
-          type
-        } = data;
+        var type = data.type;
         if (["notSupported", "connectionFail",
         // "loginFail",
         "callFail", "hangUp", "remoteHangUp"
@@ -2807,7 +2895,7 @@ const Conference = _ref => {
       }
     };
     window.addEventListener("message", listener);
-    return () => {
+    return function () {
       window.removeEventListener("message", listener);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -2822,81 +2910,80 @@ const Conference = _ref => {
   });
 };
 
-const useStyles$e = /*#__PURE__*/styles.makeStyles(() => ({
-  root: {
-    width: "100%",
-    height: "100%",
-    borderRadius: 8,
-    display: "flex",
-    flexDirection: "column",
-    justifyContent: "center",
-    alignItems: "center"
-  },
-  pulse: {
-    height: 100,
-    width: 100,
-    borderRadius: "50%",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    position: "relative",
-    "&::before": {
-      content: "''",
-      position: "absolute",
-      border: "1px solid green",
-      width: "calc(100% + 40px)",
-      height: "calc(100% + 40px)",
+var useStyles$e = /*#__PURE__*/styles.makeStyles(function () {
+  return {
+    root: {
+      width: "100%",
+      height: "100%",
+      borderRadius: 8,
+      display: "flex",
+      flexDirection: "column",
+      justifyContent: "center",
+      alignItems: "center"
+    },
+    pulse: {
+      height: 100,
+      width: 100,
       borderRadius: "50%",
-      animation: "$pulse 1s linear infinite"
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      position: "relative",
+      "&::before": {
+        content: "''",
+        position: "absolute",
+        border: "1px solid green",
+        width: "calc(100% + 40px)",
+        height: "calc(100% + 40px)",
+        borderRadius: "50%",
+        animation: "$pulse 1s linear infinite"
+      },
+      "&::after": {
+        content: "''",
+        position: "absolute",
+        border: "1px solid green",
+        width: "calc(100% + 40px)",
+        height: "calc(100% + 40px)",
+        borderRadius: "50%",
+        animation: "$pulse 1s linear infinite",
+        animationDelay: "0.3s"
+      }
     },
-    "&::after": {
-      content: "''",
-      position: "absolute",
-      border: "1px solid green",
-      width: "calc(100% + 40px)",
-      height: "calc(100% + 40px)",
-      borderRadius: "50%",
-      animation: "$pulse 1s linear infinite",
-      animationDelay: "0.3s"
+    avatar: {
+      width: "80%",
+      height: "80%"
+    },
+    footer: {
+      width: "100%",
+      alignSelf: "flex-end",
+      paddingTop: 64,
+      display: "flex",
+      justifyContent: "center"
+    },
+    "@keyframes pulse": {
+      "0%": {
+        transform: "scale(0.5)",
+        opacity: 0
+      },
+      "50%": {
+        transform: "scale(1)",
+        opacity: 1
+      },
+      "100%": {
+        transform: "scale(1.3)",
+        opacity: 0
+      }
     }
-  },
-  avatar: {
-    width: "80%",
-    height: "80%"
-  },
-  footer: {
-    width: "100%",
-    alignSelf: "flex-end",
-    paddingTop: 64,
-    display: "flex",
-    justifyContent: "center"
-  },
-  "@keyframes pulse": {
-    "0%": {
-      transform: "scale(0.5)",
-      opacity: 0
-    },
-    "50%": {
-      transform: "scale(1)",
-      opacity: 1
-    },
-    "100%": {
-      transform: "scale(1.3)",
-      opacity: 0
-    }
-  }
-}));
-const ConferenceCall = _ref => {
-  let {
-    conference,
-    contact,
-    apiUrl,
-    onAccept
-  } = _ref;
-  const classes = useStyles$e();
-  const {
-    t
-  } = reactI18next.useTranslation();
+  };
+});
+var ConferenceCall = function ConferenceCall(_ref) {
+  var conference = _ref.conference,
+    contact = _ref.contact,
+    apiUrl = _ref.apiUrl,
+    onAccept = _ref.onAccept;
+  var classes = useStyles$e();
+  var _useTranslation = reactI18next.useTranslation(),
+    t = _useTranslation.t;
   return /*#__PURE__*/React__default.createElement(material.Paper, {
     className: classes.root
   }, /*#__PURE__*/React__default.createElement("div", {
@@ -2912,12 +2999,774 @@ const ConferenceCall = _ref => {
   }, /*#__PURE__*/React__default.createElement(material.Button, {
     variant: "contained",
     color: "primary",
-    onClick: () => onAccept(conference)
+    onClick: function onClick() {
+      return onAccept(conference);
+    }
   }, t("CHAT.CONFERENCE.JOIN"))));
 };
 
-const initialContext = {};
-const RestContext = /*#__PURE__*/React.createContext(initialContext);
+function createCommonjsModule(fn, module) {
+	return module = { exports: {} }, fn(module, module.exports), module.exports;
+}
+
+var runtime_1 = createCommonjsModule(function (module) {
+/**
+ * Copyright (c) 2014-present, Facebook, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+var runtime = (function (exports) {
+
+  var Op = Object.prototype;
+  var hasOwn = Op.hasOwnProperty;
+  var undefined$1; // More compressible than void 0.
+  var $Symbol = typeof Symbol === "function" ? Symbol : {};
+  var iteratorSymbol = $Symbol.iterator || "@@iterator";
+  var asyncIteratorSymbol = $Symbol.asyncIterator || "@@asyncIterator";
+  var toStringTagSymbol = $Symbol.toStringTag || "@@toStringTag";
+
+  function define(obj, key, value) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+    return obj[key];
+  }
+  try {
+    // IE 8 has a broken Object.defineProperty that only works on DOM objects.
+    define({}, "");
+  } catch (err) {
+    define = function(obj, key, value) {
+      return obj[key] = value;
+    };
+  }
+
+  function wrap(innerFn, outerFn, self, tryLocsList) {
+    // If outerFn provided and outerFn.prototype is a Generator, then outerFn.prototype instanceof Generator.
+    var protoGenerator = outerFn && outerFn.prototype instanceof Generator ? outerFn : Generator;
+    var generator = Object.create(protoGenerator.prototype);
+    var context = new Context(tryLocsList || []);
+
+    // The ._invoke method unifies the implementations of the .next,
+    // .throw, and .return methods.
+    generator._invoke = makeInvokeMethod(innerFn, self, context);
+
+    return generator;
+  }
+  exports.wrap = wrap;
+
+  // Try/catch helper to minimize deoptimizations. Returns a completion
+  // record like context.tryEntries[i].completion. This interface could
+  // have been (and was previously) designed to take a closure to be
+  // invoked without arguments, but in all the cases we care about we
+  // already have an existing method we want to call, so there's no need
+  // to create a new function object. We can even get away with assuming
+  // the method takes exactly one argument, since that happens to be true
+  // in every case, so we don't have to touch the arguments object. The
+  // only additional allocation required is the completion record, which
+  // has a stable shape and so hopefully should be cheap to allocate.
+  function tryCatch(fn, obj, arg) {
+    try {
+      return { type: "normal", arg: fn.call(obj, arg) };
+    } catch (err) {
+      return { type: "throw", arg: err };
+    }
+  }
+
+  var GenStateSuspendedStart = "suspendedStart";
+  var GenStateSuspendedYield = "suspendedYield";
+  var GenStateExecuting = "executing";
+  var GenStateCompleted = "completed";
+
+  // Returning this object from the innerFn has the same effect as
+  // breaking out of the dispatch switch statement.
+  var ContinueSentinel = {};
+
+  // Dummy constructor functions that we use as the .constructor and
+  // .constructor.prototype properties for functions that return Generator
+  // objects. For full spec compliance, you may wish to configure your
+  // minifier not to mangle the names of these two functions.
+  function Generator() {}
+  function GeneratorFunction() {}
+  function GeneratorFunctionPrototype() {}
+
+  // This is a polyfill for %IteratorPrototype% for environments that
+  // don't natively support it.
+  var IteratorPrototype = {};
+  define(IteratorPrototype, iteratorSymbol, function () {
+    return this;
+  });
+
+  var getProto = Object.getPrototypeOf;
+  var NativeIteratorPrototype = getProto && getProto(getProto(values([])));
+  if (NativeIteratorPrototype &&
+      NativeIteratorPrototype !== Op &&
+      hasOwn.call(NativeIteratorPrototype, iteratorSymbol)) {
+    // This environment has a native %IteratorPrototype%; use it instead
+    // of the polyfill.
+    IteratorPrototype = NativeIteratorPrototype;
+  }
+
+  var Gp = GeneratorFunctionPrototype.prototype =
+    Generator.prototype = Object.create(IteratorPrototype);
+  GeneratorFunction.prototype = GeneratorFunctionPrototype;
+  define(Gp, "constructor", GeneratorFunctionPrototype);
+  define(GeneratorFunctionPrototype, "constructor", GeneratorFunction);
+  GeneratorFunction.displayName = define(
+    GeneratorFunctionPrototype,
+    toStringTagSymbol,
+    "GeneratorFunction"
+  );
+
+  // Helper for defining the .next, .throw, and .return methods of the
+  // Iterator interface in terms of a single ._invoke method.
+  function defineIteratorMethods(prototype) {
+    ["next", "throw", "return"].forEach(function(method) {
+      define(prototype, method, function(arg) {
+        return this._invoke(method, arg);
+      });
+    });
+  }
+
+  exports.isGeneratorFunction = function(genFun) {
+    var ctor = typeof genFun === "function" && genFun.constructor;
+    return ctor
+      ? ctor === GeneratorFunction ||
+        // For the native GeneratorFunction constructor, the best we can
+        // do is to check its .name property.
+        (ctor.displayName || ctor.name) === "GeneratorFunction"
+      : false;
+  };
+
+  exports.mark = function(genFun) {
+    if (Object.setPrototypeOf) {
+      Object.setPrototypeOf(genFun, GeneratorFunctionPrototype);
+    } else {
+      genFun.__proto__ = GeneratorFunctionPrototype;
+      define(genFun, toStringTagSymbol, "GeneratorFunction");
+    }
+    genFun.prototype = Object.create(Gp);
+    return genFun;
+  };
+
+  // Within the body of any async function, `await x` is transformed to
+  // `yield regeneratorRuntime.awrap(x)`, so that the runtime can test
+  // `hasOwn.call(value, "__await")` to determine if the yielded value is
+  // meant to be awaited.
+  exports.awrap = function(arg) {
+    return { __await: arg };
+  };
+
+  function AsyncIterator(generator, PromiseImpl) {
+    function invoke(method, arg, resolve, reject) {
+      var record = tryCatch(generator[method], generator, arg);
+      if (record.type === "throw") {
+        reject(record.arg);
+      } else {
+        var result = record.arg;
+        var value = result.value;
+        if (value &&
+            typeof value === "object" &&
+            hasOwn.call(value, "__await")) {
+          return PromiseImpl.resolve(value.__await).then(function(value) {
+            invoke("next", value, resolve, reject);
+          }, function(err) {
+            invoke("throw", err, resolve, reject);
+          });
+        }
+
+        return PromiseImpl.resolve(value).then(function(unwrapped) {
+          // When a yielded Promise is resolved, its final value becomes
+          // the .value of the Promise<{value,done}> result for the
+          // current iteration.
+          result.value = unwrapped;
+          resolve(result);
+        }, function(error) {
+          // If a rejected Promise was yielded, throw the rejection back
+          // into the async generator function so it can be handled there.
+          return invoke("throw", error, resolve, reject);
+        });
+      }
+    }
+
+    var previousPromise;
+
+    function enqueue(method, arg) {
+      function callInvokeWithMethodAndArg() {
+        return new PromiseImpl(function(resolve, reject) {
+          invoke(method, arg, resolve, reject);
+        });
+      }
+
+      return previousPromise =
+        // If enqueue has been called before, then we want to wait until
+        // all previous Promises have been resolved before calling invoke,
+        // so that results are always delivered in the correct order. If
+        // enqueue has not been called before, then it is important to
+        // call invoke immediately, without waiting on a callback to fire,
+        // so that the async generator function has the opportunity to do
+        // any necessary setup in a predictable way. This predictability
+        // is why the Promise constructor synchronously invokes its
+        // executor callback, and why async functions synchronously
+        // execute code before the first await. Since we implement simple
+        // async functions in terms of async generators, it is especially
+        // important to get this right, even though it requires care.
+        previousPromise ? previousPromise.then(
+          callInvokeWithMethodAndArg,
+          // Avoid propagating failures to Promises returned by later
+          // invocations of the iterator.
+          callInvokeWithMethodAndArg
+        ) : callInvokeWithMethodAndArg();
+    }
+
+    // Define the unified helper method that is used to implement .next,
+    // .throw, and .return (see defineIteratorMethods).
+    this._invoke = enqueue;
+  }
+
+  defineIteratorMethods(AsyncIterator.prototype);
+  define(AsyncIterator.prototype, asyncIteratorSymbol, function () {
+    return this;
+  });
+  exports.AsyncIterator = AsyncIterator;
+
+  // Note that simple async functions are implemented on top of
+  // AsyncIterator objects; they just return a Promise for the value of
+  // the final result produced by the iterator.
+  exports.async = function(innerFn, outerFn, self, tryLocsList, PromiseImpl) {
+    if (PromiseImpl === void 0) PromiseImpl = Promise;
+
+    var iter = new AsyncIterator(
+      wrap(innerFn, outerFn, self, tryLocsList),
+      PromiseImpl
+    );
+
+    return exports.isGeneratorFunction(outerFn)
+      ? iter // If outerFn is a generator, return the full iterator.
+      : iter.next().then(function(result) {
+          return result.done ? result.value : iter.next();
+        });
+  };
+
+  function makeInvokeMethod(innerFn, self, context) {
+    var state = GenStateSuspendedStart;
+
+    return function invoke(method, arg) {
+      if (state === GenStateExecuting) {
+        throw new Error("Generator is already running");
+      }
+
+      if (state === GenStateCompleted) {
+        if (method === "throw") {
+          throw arg;
+        }
+
+        // Be forgiving, per 25.3.3.3.3 of the spec:
+        // https://people.mozilla.org/~jorendorff/es6-draft.html#sec-generatorresume
+        return doneResult();
+      }
+
+      context.method = method;
+      context.arg = arg;
+
+      while (true) {
+        var delegate = context.delegate;
+        if (delegate) {
+          var delegateResult = maybeInvokeDelegate(delegate, context);
+          if (delegateResult) {
+            if (delegateResult === ContinueSentinel) continue;
+            return delegateResult;
+          }
+        }
+
+        if (context.method === "next") {
+          // Setting context._sent for legacy support of Babel's
+          // function.sent implementation.
+          context.sent = context._sent = context.arg;
+
+        } else if (context.method === "throw") {
+          if (state === GenStateSuspendedStart) {
+            state = GenStateCompleted;
+            throw context.arg;
+          }
+
+          context.dispatchException(context.arg);
+
+        } else if (context.method === "return") {
+          context.abrupt("return", context.arg);
+        }
+
+        state = GenStateExecuting;
+
+        var record = tryCatch(innerFn, self, context);
+        if (record.type === "normal") {
+          // If an exception is thrown from innerFn, we leave state ===
+          // GenStateExecuting and loop back for another invocation.
+          state = context.done
+            ? GenStateCompleted
+            : GenStateSuspendedYield;
+
+          if (record.arg === ContinueSentinel) {
+            continue;
+          }
+
+          return {
+            value: record.arg,
+            done: context.done
+          };
+
+        } else if (record.type === "throw") {
+          state = GenStateCompleted;
+          // Dispatch the exception by looping back around to the
+          // context.dispatchException(context.arg) call above.
+          context.method = "throw";
+          context.arg = record.arg;
+        }
+      }
+    };
+  }
+
+  // Call delegate.iterator[context.method](context.arg) and handle the
+  // result, either by returning a { value, done } result from the
+  // delegate iterator, or by modifying context.method and context.arg,
+  // setting context.delegate to null, and returning the ContinueSentinel.
+  function maybeInvokeDelegate(delegate, context) {
+    var method = delegate.iterator[context.method];
+    if (method === undefined$1) {
+      // A .throw or .return when the delegate iterator has no .throw
+      // method always terminates the yield* loop.
+      context.delegate = null;
+
+      if (context.method === "throw") {
+        // Note: ["return"] must be used for ES3 parsing compatibility.
+        if (delegate.iterator["return"]) {
+          // If the delegate iterator has a return method, give it a
+          // chance to clean up.
+          context.method = "return";
+          context.arg = undefined$1;
+          maybeInvokeDelegate(delegate, context);
+
+          if (context.method === "throw") {
+            // If maybeInvokeDelegate(context) changed context.method from
+            // "return" to "throw", let that override the TypeError below.
+            return ContinueSentinel;
+          }
+        }
+
+        context.method = "throw";
+        context.arg = new TypeError(
+          "The iterator does not provide a 'throw' method");
+      }
+
+      return ContinueSentinel;
+    }
+
+    var record = tryCatch(method, delegate.iterator, context.arg);
+
+    if (record.type === "throw") {
+      context.method = "throw";
+      context.arg = record.arg;
+      context.delegate = null;
+      return ContinueSentinel;
+    }
+
+    var info = record.arg;
+
+    if (! info) {
+      context.method = "throw";
+      context.arg = new TypeError("iterator result is not an object");
+      context.delegate = null;
+      return ContinueSentinel;
+    }
+
+    if (info.done) {
+      // Assign the result of the finished delegate to the temporary
+      // variable specified by delegate.resultName (see delegateYield).
+      context[delegate.resultName] = info.value;
+
+      // Resume execution at the desired location (see delegateYield).
+      context.next = delegate.nextLoc;
+
+      // If context.method was "throw" but the delegate handled the
+      // exception, let the outer generator proceed normally. If
+      // context.method was "next", forget context.arg since it has been
+      // "consumed" by the delegate iterator. If context.method was
+      // "return", allow the original .return call to continue in the
+      // outer generator.
+      if (context.method !== "return") {
+        context.method = "next";
+        context.arg = undefined$1;
+      }
+
+    } else {
+      // Re-yield the result returned by the delegate method.
+      return info;
+    }
+
+    // The delegate iterator is finished, so forget it and continue with
+    // the outer generator.
+    context.delegate = null;
+    return ContinueSentinel;
+  }
+
+  // Define Generator.prototype.{next,throw,return} in terms of the
+  // unified ._invoke helper method.
+  defineIteratorMethods(Gp);
+
+  define(Gp, toStringTagSymbol, "Generator");
+
+  // A Generator should always return itself as the iterator object when the
+  // @@iterator function is called on it. Some browsers' implementations of the
+  // iterator prototype chain incorrectly implement this, causing the Generator
+  // object to not be returned from this call. This ensures that doesn't happen.
+  // See https://github.com/facebook/regenerator/issues/274 for more details.
+  define(Gp, iteratorSymbol, function() {
+    return this;
+  });
+
+  define(Gp, "toString", function() {
+    return "[object Generator]";
+  });
+
+  function pushTryEntry(locs) {
+    var entry = { tryLoc: locs[0] };
+
+    if (1 in locs) {
+      entry.catchLoc = locs[1];
+    }
+
+    if (2 in locs) {
+      entry.finallyLoc = locs[2];
+      entry.afterLoc = locs[3];
+    }
+
+    this.tryEntries.push(entry);
+  }
+
+  function resetTryEntry(entry) {
+    var record = entry.completion || {};
+    record.type = "normal";
+    delete record.arg;
+    entry.completion = record;
+  }
+
+  function Context(tryLocsList) {
+    // The root entry object (effectively a try statement without a catch
+    // or a finally block) gives us a place to store values thrown from
+    // locations where there is no enclosing try statement.
+    this.tryEntries = [{ tryLoc: "root" }];
+    tryLocsList.forEach(pushTryEntry, this);
+    this.reset(true);
+  }
+
+  exports.keys = function(object) {
+    var keys = [];
+    for (var key in object) {
+      keys.push(key);
+    }
+    keys.reverse();
+
+    // Rather than returning an object with a next method, we keep
+    // things simple and return the next function itself.
+    return function next() {
+      while (keys.length) {
+        var key = keys.pop();
+        if (key in object) {
+          next.value = key;
+          next.done = false;
+          return next;
+        }
+      }
+
+      // To avoid creating an additional object, we just hang the .value
+      // and .done properties off the next function object itself. This
+      // also ensures that the minifier will not anonymize the function.
+      next.done = true;
+      return next;
+    };
+  };
+
+  function values(iterable) {
+    if (iterable) {
+      var iteratorMethod = iterable[iteratorSymbol];
+      if (iteratorMethod) {
+        return iteratorMethod.call(iterable);
+      }
+
+      if (typeof iterable.next === "function") {
+        return iterable;
+      }
+
+      if (!isNaN(iterable.length)) {
+        var i = -1, next = function next() {
+          while (++i < iterable.length) {
+            if (hasOwn.call(iterable, i)) {
+              next.value = iterable[i];
+              next.done = false;
+              return next;
+            }
+          }
+
+          next.value = undefined$1;
+          next.done = true;
+
+          return next;
+        };
+
+        return next.next = next;
+      }
+    }
+
+    // Return an iterator with no values.
+    return { next: doneResult };
+  }
+  exports.values = values;
+
+  function doneResult() {
+    return { value: undefined$1, done: true };
+  }
+
+  Context.prototype = {
+    constructor: Context,
+
+    reset: function(skipTempReset) {
+      this.prev = 0;
+      this.next = 0;
+      // Resetting context._sent for legacy support of Babel's
+      // function.sent implementation.
+      this.sent = this._sent = undefined$1;
+      this.done = false;
+      this.delegate = null;
+
+      this.method = "next";
+      this.arg = undefined$1;
+
+      this.tryEntries.forEach(resetTryEntry);
+
+      if (!skipTempReset) {
+        for (var name in this) {
+          // Not sure about the optimal order of these conditions:
+          if (name.charAt(0) === "t" &&
+              hasOwn.call(this, name) &&
+              !isNaN(+name.slice(1))) {
+            this[name] = undefined$1;
+          }
+        }
+      }
+    },
+
+    stop: function() {
+      this.done = true;
+
+      var rootEntry = this.tryEntries[0];
+      var rootRecord = rootEntry.completion;
+      if (rootRecord.type === "throw") {
+        throw rootRecord.arg;
+      }
+
+      return this.rval;
+    },
+
+    dispatchException: function(exception) {
+      if (this.done) {
+        throw exception;
+      }
+
+      var context = this;
+      function handle(loc, caught) {
+        record.type = "throw";
+        record.arg = exception;
+        context.next = loc;
+
+        if (caught) {
+          // If the dispatched exception was caught by a catch block,
+          // then let that catch block handle the exception normally.
+          context.method = "next";
+          context.arg = undefined$1;
+        }
+
+        return !! caught;
+      }
+
+      for (var i = this.tryEntries.length - 1; i >= 0; --i) {
+        var entry = this.tryEntries[i];
+        var record = entry.completion;
+
+        if (entry.tryLoc === "root") {
+          // Exception thrown outside of any try block that could handle
+          // it, so set the completion value of the entire function to
+          // throw the exception.
+          return handle("end");
+        }
+
+        if (entry.tryLoc <= this.prev) {
+          var hasCatch = hasOwn.call(entry, "catchLoc");
+          var hasFinally = hasOwn.call(entry, "finallyLoc");
+
+          if (hasCatch && hasFinally) {
+            if (this.prev < entry.catchLoc) {
+              return handle(entry.catchLoc, true);
+            } else if (this.prev < entry.finallyLoc) {
+              return handle(entry.finallyLoc);
+            }
+
+          } else if (hasCatch) {
+            if (this.prev < entry.catchLoc) {
+              return handle(entry.catchLoc, true);
+            }
+
+          } else if (hasFinally) {
+            if (this.prev < entry.finallyLoc) {
+              return handle(entry.finallyLoc);
+            }
+
+          } else {
+            throw new Error("try statement without catch or finally");
+          }
+        }
+      }
+    },
+
+    abrupt: function(type, arg) {
+      for (var i = this.tryEntries.length - 1; i >= 0; --i) {
+        var entry = this.tryEntries[i];
+        if (entry.tryLoc <= this.prev &&
+            hasOwn.call(entry, "finallyLoc") &&
+            this.prev < entry.finallyLoc) {
+          var finallyEntry = entry;
+          break;
+        }
+      }
+
+      if (finallyEntry &&
+          (type === "break" ||
+           type === "continue") &&
+          finallyEntry.tryLoc <= arg &&
+          arg <= finallyEntry.finallyLoc) {
+        // Ignore the finally entry if control is not jumping to a
+        // location outside the try/catch block.
+        finallyEntry = null;
+      }
+
+      var record = finallyEntry ? finallyEntry.completion : {};
+      record.type = type;
+      record.arg = arg;
+
+      if (finallyEntry) {
+        this.method = "next";
+        this.next = finallyEntry.finallyLoc;
+        return ContinueSentinel;
+      }
+
+      return this.complete(record);
+    },
+
+    complete: function(record, afterLoc) {
+      if (record.type === "throw") {
+        throw record.arg;
+      }
+
+      if (record.type === "break" ||
+          record.type === "continue") {
+        this.next = record.arg;
+      } else if (record.type === "return") {
+        this.rval = this.arg = record.arg;
+        this.method = "return";
+        this.next = "end";
+      } else if (record.type === "normal" && afterLoc) {
+        this.next = afterLoc;
+      }
+
+      return ContinueSentinel;
+    },
+
+    finish: function(finallyLoc) {
+      for (var i = this.tryEntries.length - 1; i >= 0; --i) {
+        var entry = this.tryEntries[i];
+        if (entry.finallyLoc === finallyLoc) {
+          this.complete(entry.completion, entry.afterLoc);
+          resetTryEntry(entry);
+          return ContinueSentinel;
+        }
+      }
+    },
+
+    "catch": function(tryLoc) {
+      for (var i = this.tryEntries.length - 1; i >= 0; --i) {
+        var entry = this.tryEntries[i];
+        if (entry.tryLoc === tryLoc) {
+          var record = entry.completion;
+          if (record.type === "throw") {
+            var thrown = record.arg;
+            resetTryEntry(entry);
+          }
+          return thrown;
+        }
+      }
+
+      // The context.catch method must only be called with a location
+      // argument that corresponds to a known catch block.
+      throw new Error("illegal catch attempt");
+    },
+
+    delegateYield: function(iterable, resultName, nextLoc) {
+      this.delegate = {
+        iterator: values(iterable),
+        resultName: resultName,
+        nextLoc: nextLoc
+      };
+
+      if (this.method === "next") {
+        // Deliberately forget the last sent value so that we don't
+        // accidentally pass it on to the delegate.
+        this.arg = undefined$1;
+      }
+
+      return ContinueSentinel;
+    }
+  };
+
+  // Regardless of whether this script is executing as a CommonJS module
+  // or not, return the runtime object so that we can declare the variable
+  // regeneratorRuntime in the outer scope, which allows this module to be
+  // injected easily by `bin/regenerator --include-runtime script.js`.
+  return exports;
+
+}(
+  // If this script is executing as a CommonJS module, use module.exports
+  // as the regeneratorRuntime namespace. Otherwise create a new empty
+  // object. Either way, the resulting object will be used to initialize
+  // the regeneratorRuntime variable at the top of this file.
+   module.exports 
+));
+
+try {
+  regeneratorRuntime = runtime;
+} catch (accidentalStrictMode) {
+  // This module should not be running in strict mode, so the above
+  // assignment should always work unless something is misconfigured. Just
+  // in case runtime.js accidentally runs in strict mode, in modern engines
+  // we can explicitly access globalThis. In older engines we can escape
+  // strict mode using a global Function call. This could conceivably fail
+  // if a Content Security Policy forbids using Function, but in that case
+  // the proper solution is to fix the accidental strict mode problem. If
+  // you've misconfigured your bundler to force strict mode and applied a
+  // CSP to forbid Function, and you're not willing to fix either of those
+  // problems, please detail your unique predicament in a GitHub issue.
+  if (typeof globalThis === "object") {
+    globalThis.regeneratorRuntime = runtime;
+  } else {
+    Function("r", "regeneratorRuntime = r")(runtime);
+  }
+}
+});
+
+var initialContext = {};
+var RestContext = /*#__PURE__*/React.createContext(initialContext);
 function clearLocalStorage() {
   localStorage.removeItem('authToken');
   localStorage.removeItem('refreshToken');
@@ -2925,50 +3774,89 @@ function clearLocalStorage() {
   localStorage.removeItem('doctor');
   localStorage.removeItem('chatUser');
 }
-const signOut = async () => {
-  try {
-    await axios.post('auth/logout');
-  } catch (error) {
-    console.log('ERROR Logout', error);
-  }
-  clearLocalStorage();
-  window.location.href = '/';
-};
-const getRefreshToken = async (authToken, refreshToken, dispatch) => {
-  try {
-    const {
-      data
-    } = await axios.post('auth/refreshToken', {
-      authToken,
-      refreshToken
-    });
-    localStorage.setItem('authToken', data == null ? void 0 : data.authToken);
-    localStorage.setItem('refreshToken', data == null ? void 0 : data.refreshToken);
-    window.location.href = '/';
-  } catch (error) {
-    console.log('ERROR RefreshToken', error);
-    dispatch({
-      type: 'CLEAR_USER'
-    });
-    signOut();
-  }
-};
-const RestProvider = _ref => {
-  let {
-    baseURLApi,
-    pageSize,
-    children
-  } = _ref;
-  const {
-    state,
-    dispatch
-  } = React.useContext(ChatContext);
-  const errorInterceptor = error => {
+var signOut = /*#__PURE__*/function () {
+  var _ref = /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/runtime_1.mark(function _callee() {
+    return runtime_1.wrap(function _callee$(_context) {
+      while (1) {
+        switch (_context.prev = _context.next) {
+          case 0:
+            _context.prev = 0;
+            _context.next = 3;
+            return axios.post('auth/logout');
+          case 3:
+            _context.next = 8;
+            break;
+          case 5:
+            _context.prev = 5;
+            _context.t0 = _context["catch"](0);
+            console.log('ERROR Logout', _context.t0);
+          case 8:
+            clearLocalStorage();
+            window.location.href = '/';
+          case 10:
+          case "end":
+            return _context.stop();
+        }
+      }
+    }, _callee, null, [[0, 5]]);
+  }));
+  return function signOut() {
+    return _ref.apply(this, arguments);
+  };
+}();
+var getRefreshToken = /*#__PURE__*/function () {
+  var _ref2 = /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/runtime_1.mark(function _callee2(authToken, refreshToken, dispatch) {
+    var _yield$axios$post, data;
+    return runtime_1.wrap(function _callee2$(_context2) {
+      while (1) {
+        switch (_context2.prev = _context2.next) {
+          case 0:
+            _context2.prev = 0;
+            _context2.next = 3;
+            return axios.post('auth/refreshToken', {
+              authToken: authToken,
+              refreshToken: refreshToken
+            });
+          case 3:
+            _yield$axios$post = _context2.sent;
+            data = _yield$axios$post.data;
+            localStorage.setItem('authToken', data == null ? void 0 : data.authToken);
+            localStorage.setItem('refreshToken', data == null ? void 0 : data.refreshToken);
+            window.location.href = '/';
+            _context2.next = 15;
+            break;
+          case 10:
+            _context2.prev = 10;
+            _context2.t0 = _context2["catch"](0);
+            console.log('ERROR RefreshToken', _context2.t0);
+            dispatch({
+              type: 'CLEAR_USER'
+            });
+            signOut();
+          case 15:
+          case "end":
+            return _context2.stop();
+        }
+      }
+    }, _callee2, null, [[0, 10]]);
+  }));
+  return function getRefreshToken(_x, _x2, _x3) {
+    return _ref2.apply(this, arguments);
+  };
+}();
+var RestProvider = function RestProvider(_ref3) {
+  var baseURLApi = _ref3.baseURLApi,
+    pageSize = _ref3.pageSize,
+    children = _ref3.children;
+  var _useContext = React.useContext(ChatContext),
+    state = _useContext.state,
+    dispatch = _useContext.dispatch;
+  var errorInterceptor = function errorInterceptor(error) {
     if (error.response != null && error.response.status === 401) {
       getRefreshToken(state.token, state.refreshToken, dispatch);
     }
   };
-  const fetch = axios.create({
+  var fetch = axios.create({
     timeout: 60000,
     baseURL: baseURLApi,
     headers: {
@@ -2978,136 +3866,207 @@ const RestProvider = _ref => {
     },
     withCredentials: false
   });
-  fetch.interceptors.response.use(response => {
+  fetch.interceptors.response.use(function (response) {
     return response;
-  }, error => {
+  }, function (error) {
     console.log('ERROR AxiosError');
     errorInterceptor(error);
     return Promise.reject(error);
   });
-  const getPrivateMessages = React.useCallback(async (chat, callback) => {
-    var _chat$messages;
-    const contactId = chat.userId;
-    const current = (_chat$messages = chat.messages) == null ? void 0 : _chat$messages.length;
-    try {
-      dispatch({
-        type: 'SET_LOADING',
-        payload: true
-      });
-      const {
-        data
-      } = await fetch.get('/contact/messages', {
-        params: {
-          contactId,
-          current,
-          pageSize
-        }
-      });
-      if (data) {
-        dispatch({
-          type: 'ADD_PRIVATE_MESSAGES',
-          payload: {
-            pageSize,
-            contactId,
-            messages: data
+  var getPrivateMessages = React.useCallback(/*#__PURE__*/function () {
+    var _ref4 = _asyncToGenerator(/*#__PURE__*/runtime_1.mark(function _callee3(chat, callback) {
+      var _chat$messages;
+      var contactId, current, _yield$fetch$get, data, err;
+      return runtime_1.wrap(function _callee3$(_context3) {
+        while (1) {
+          switch (_context3.prev = _context3.next) {
+            case 0:
+              contactId = chat.userId;
+              current = (_chat$messages = chat.messages) == null ? void 0 : _chat$messages.length;
+              _context3.prev = 2;
+              dispatch({
+                type: 'SET_LOADING',
+                payload: true
+              });
+              _context3.next = 6;
+              return fetch.get('/contact/messages', {
+                params: {
+                  contactId: contactId,
+                  current: current,
+                  pageSize: pageSize
+                }
+              });
+            case 6:
+              _yield$fetch$get = _context3.sent;
+              data = _yield$fetch$get.data;
+              if (data) {
+                dispatch({
+                  type: 'ADD_PRIVATE_MESSAGES',
+                  payload: {
+                    pageSize: pageSize,
+                    contactId: contactId,
+                    messages: data
+                  }
+                });
+                if (callback) {
+                  callback();
+                }
+              }
+              _context3.next = 15;
+              break;
+            case 11:
+              _context3.prev = 11;
+              _context3.t0 = _context3["catch"](2);
+              err = _context3.t0;
+              dispatch({
+                type: 'SET_ERROR',
+                payload: err.message
+              });
+            case 15:
+              _context3.prev = 15;
+              dispatch({
+                type: 'SET_LOADING',
+                payload: false
+              });
+              return _context3.finish(15);
+            case 18:
+            case "end":
+              return _context3.stop();
           }
-        });
-        if (callback) {
-          callback();
         }
-      }
-    } catch (error) {
-      const err = error;
-      dispatch({
-        type: 'SET_ERROR',
-        payload: err.message
-      });
-    } finally {
-      dispatch({
-        type: 'SET_LOADING',
-        payload: false
-      });
-    }
-  }, [dispatch]);
-  const getGroupMessages = React.useCallback(async chat => {
-    var _chat$messages2;
-    const {
-      groupId
-    } = chat;
-    const current = (_chat$messages2 = chat.messages) == null ? void 0 : _chat$messages2.length;
-    try {
-      dispatch({
-        type: 'SET_LOADING',
-        payload: true
-      });
-      const {
-        data
-      } = await fetch.get('/group/messages', {
-        params: {
-          groupId,
-          current,
-          pageSize
-        }
-      });
-      if (data) {
-        dispatch({
-          type: 'ADD_GROUP_MESSAGES',
-          payload: {
-            pageSize,
-            groupId,
-            ...data
+      }, _callee3, null, [[2, 11, 15, 18]]);
+    }));
+    return function (_x4, _x5) {
+      return _ref4.apply(this, arguments);
+    };
+  }(), [dispatch]);
+  var getGroupMessages = React.useCallback(/*#__PURE__*/function () {
+    var _ref5 = _asyncToGenerator(/*#__PURE__*/runtime_1.mark(function _callee4(chat) {
+      var _chat$messages2;
+      var groupId, current, _yield$fetch$get2, data, err;
+      return runtime_1.wrap(function _callee4$(_context4) {
+        while (1) {
+          switch (_context4.prev = _context4.next) {
+            case 0:
+              groupId = chat.groupId;
+              current = (_chat$messages2 = chat.messages) == null ? void 0 : _chat$messages2.length;
+              _context4.prev = 2;
+              dispatch({
+                type: 'SET_LOADING',
+                payload: true
+              });
+              _context4.next = 6;
+              return fetch.get('/group/messages', {
+                params: {
+                  groupId: groupId,
+                  current: current,
+                  pageSize: pageSize
+                }
+              });
+            case 6:
+              _yield$fetch$get2 = _context4.sent;
+              data = _yield$fetch$get2.data;
+              if (data) {
+                dispatch({
+                  type: 'ADD_GROUP_MESSAGES',
+                  payload: _extends({
+                    pageSize: pageSize,
+                    groupId: groupId
+                  }, data)
+                });
+              }
+              _context4.next = 15;
+              break;
+            case 11:
+              _context4.prev = 11;
+              _context4.t0 = _context4["catch"](2);
+              err = _context4.t0;
+              dispatch({
+                type: 'SET_ERROR',
+                payload: err.message
+              });
+            case 15:
+              _context4.prev = 15;
+              dispatch({
+                type: 'SET_LOADING',
+                payload: false
+              });
+              return _context4.finish(15);
+            case 18:
+            case "end":
+              return _context4.stop();
           }
-        });
-      }
-    } catch (error) {
-      const err = error;
-      dispatch({
-        type: 'SET_ERROR',
-        payload: err.message
-      });
-    } finally {
-      dispatch({
-        type: 'SET_LOADING',
-        payload: false
-      });
-    }
-  }, [dispatch]);
-  const getUserByMmk = async (mmkId, guid) => {
-    try {
-      const {
-        data
-      } = await fetch.get('/contact/find', {
-        params: {
-          mmkId,
-          guid
         }
-      });
-      if (data != null) {
-        return data;
-      }
-    } catch (error) {
-      console.log('err getUserByMmk', error);
-    }
-  };
-  const value = React.useMemo(() => ({
-    apiUrl: baseURLApi,
-    pageSize,
-    fetch,
-    getPrivateMessages,
-    getGroupMessages,
-    getUserByMmk
-  }), [baseURLApi, pageSize]);
+      }, _callee4, null, [[2, 11, 15, 18]]);
+    }));
+    return function (_x6) {
+      return _ref5.apply(this, arguments);
+    };
+  }(), [dispatch]);
+  var getUserByMmk = /*#__PURE__*/function () {
+    var _ref6 = _asyncToGenerator(/*#__PURE__*/runtime_1.mark(function _callee5(mmkId, guid) {
+      var _yield$fetch$get3, data;
+      return runtime_1.wrap(function _callee5$(_context5) {
+        while (1) {
+          switch (_context5.prev = _context5.next) {
+            case 0:
+              _context5.prev = 0;
+              _context5.next = 3;
+              return fetch.get('/contact/find', {
+                params: {
+                  mmkId: mmkId,
+                  guid: guid
+                }
+              });
+            case 3:
+              _yield$fetch$get3 = _context5.sent;
+              data = _yield$fetch$get3.data;
+              if (!(data != null)) {
+                _context5.next = 7;
+                break;
+              }
+              return _context5.abrupt("return", data);
+            case 7:
+              _context5.next = 12;
+              break;
+            case 9:
+              _context5.prev = 9;
+              _context5.t0 = _context5["catch"](0);
+              console.log('err getUserByMmk', _context5.t0);
+            case 12:
+            case "end":
+              return _context5.stop();
+          }
+        }
+      }, _callee5, null, [[0, 9]]);
+    }));
+    return function getUserByMmk(_x7, _x8) {
+      return _ref6.apply(this, arguments);
+    };
+  }();
+  var value = React.useMemo(function () {
+    return {
+      apiUrl: baseURLApi,
+      pageSize: pageSize,
+      fetch: fetch,
+      getPrivateMessages: getPrivateMessages,
+      getGroupMessages: getGroupMessages,
+      getUserByMmk: getUserByMmk
+    };
+  }, [baseURLApi, pageSize]);
   return /*#__PURE__*/React__default.createElement(RestContext.Provider, {
     value: value
   }, children);
 };
 
-const useSocket = (url, path, accessToken) => {
-  const [socket, setSocket] = React.useState(null);
-  const connectSocket = React.useCallback(() => {
+var useSocket = function useSocket(url, path, accessToken) {
+  var _useState = React.useState(null),
+    socket = _useState[0],
+    setSocket = _useState[1];
+  var connectSocket = React.useCallback(function () {
     // console.log("do connect");
-    const socketTemp = io(url, {
-      path,
+    var socketTemp = io(url, {
+      path: path,
       reconnection: true,
       extraHeaders: {
         Authorization: "Bearer " + accessToken
@@ -3115,75 +4074,73 @@ const useSocket = (url, path, accessToken) => {
     });
     setSocket(socketTemp);
   }, [url, path, accessToken]);
-  const disconnectSocket = React.useCallback(() => {
+  var disconnectSocket = React.useCallback(function () {
     // console.log("do disconnect");
-    socket == null || socket.disconnect();
+    socket == null ? void 0 : socket.disconnect();
     setSocket(null);
   }, [socket]);
-  const [online, setOnline] = React.useState(false);
-  React.useEffect(() => {
+  var _useState2 = React.useState(false),
+    online = _useState2[0],
+    setOnline = _useState2[1];
+  React.useEffect(function () {
     setOnline(socket != null && socket.connected ? true : false);
   }, [socket]);
-  React.useEffect(() => {
-    socket == null || socket.on("connect", () => {
+  React.useEffect(function () {
+    socket == null ? void 0 : socket.on("connect", function () {
       // console.log("connected");
       setOnline(true);
       socket.emit("chatData");
     });
   }, [socket]);
-  React.useEffect(() => {
-    socket == null || socket.on("disconnect", () => {
+  React.useEffect(function () {
+    socket == null ? void 0 : socket.on("disconnect", function () {
       // console.log("disconnected");
       setOnline(false);
     });
   }, [socket]);
   return {
-    socket,
-    online,
-    disconnectSocket,
-    connectSocket
+    socket: socket,
+    online: online,
+    disconnectSocket: disconnectSocket,
+    connectSocket: connectSocket
   };
 };
 
-const initialContext$1 = {
+var initialContext$1 = {
   online: false
 };
-const SocketContext = /*#__PURE__*/React.createContext(initialContext$1);
-const SocketProvider = _ref => {
+var SocketContext = /*#__PURE__*/React.createContext(initialContext$1);
+var SocketProvider = function SocketProvider(_ref) {
   var _state$activeRoom2, _state$activeRoom3;
-  let {
-    wsUrl,
-    wsPath,
-    children
-  } = _ref;
-  const {
-    state,
-    dispatch
-  } = React.useContext(ChatContext);
-  const {
-    socket,
-    online,
-    disconnectSocket,
-    connectSocket
-  } = useSocket(wsUrl, wsPath, state.token);
-  React.useEffect(() => {
+  var wsUrl = _ref.wsUrl,
+    wsPath = _ref.wsPath,
+    children = _ref.children;
+  var _useContext = React.useContext(ChatContext),
+    state = _useContext.state,
+    dispatch = _useContext.dispatch;
+  var _useSocket = useSocket(wsUrl, wsPath, state.token),
+    socket = _useSocket.socket,
+    online = _useSocket.online,
+    disconnectSocket = _useSocket.disconnectSocket,
+    connectSocket = _useSocket.connectSocket;
+  React.useEffect(function () {
     if (state.token) {
       connectSocket();
     }
     if (!state.token) disconnectSocket();
-    return () => {
+    return function () {
       disconnectSocket();
     };
   }, [state.token]);
-  React.useEffect(() => {
+  React.useEffect(function () {
     // listen unauthorized event
-    const listener = msg => {
+    var listener = function listener(msg) {
       console.log('unauthorized msg', msg);
       getRefreshToken(state.token, state.refreshToken, dispatch);
     };
-    socket == null || socket.on('unauthorized', listener);
+    socket == null ? void 0 : socket.on('unauthorized', listener);
     // listen chatData event
-    const listener1 = res => {
+    var listener1 = function listener1(res) {
       if (res.code) {
         dispatch({
           type: 'SET_ERROR',
@@ -3191,10 +4148,10 @@ const SocketProvider = _ref => {
         });
         return;
       }
-      const payload = res.data;
-      const groupArr = payload.groupData;
-      const contactArr = payload.contactData;
-      const userArr = payload.userData;
+      var payload = res.data;
+      var groupArr = payload.groupData;
+      var contactArr = payload.contactData;
+      var userArr = payload.userData;
       dispatch({
         type: 'CLEAR_CHAT_DATA'
       });
@@ -3203,8 +4160,9 @@ const SocketProvider = _ref => {
         payload: payload.user
       });
       if (groupArr.length) {
-        for (const group of groupArr) {
-          socket == null || socket.emit('joinGroupSocket', {
+        for (var _iterator = _createForOfIteratorHelperLoose(groupArr), _step; !(_step = _iterator()).done;) {
+          var group = _step.value;
+          socket == null ? void 0 : socket.emit('joinGroupSocket', {
             groupId: group.groupId
           });
           dispatch({
@@ -3214,8 +4172,9 @@ const SocketProvider = _ref => {
         }
       }
       if (contactArr.length) {
-        for (const contact of contactArr) {
-          socket == null || socket.emit('joinPrivateSocket', {
+        for (var _iterator2 = _createForOfIteratorHelperLoose(contactArr), _step2; !(_step2 = _iterator2()).done;) {
+          var contact = _step2.value;
+          socket == null ? void 0 : socket.emit('joinPrivateSocket', {
             contactId: contact.userId
           });
           dispatch({
@@ -3229,7 +4188,8 @@ const SocketProvider = _ref => {
         payload: payload.operatorData
       });
       if (userArr.length) {
-        for (const user_ of userArr) {
+        for (var _iterator3 = _createForOfIteratorHelperLoose(userArr), _step3; !(_step3 = _iterator3()).done;) {
+          var user_ = _step3.value;
           dispatch({
             type: 'SET_USER_GATHER',
             payload: user_
@@ -3248,25 +4208,25 @@ const SocketProvider = _ref => {
         payload: payload.visitData
       });
     };
-    socket == null || socket.on('chatData', listener1);
+    socket == null ? void 0 : socket.on('chatData', listener1);
     // listen user online
-    const listener2 = res => {
+    var listener2 = function listener2(res) {
       dispatch({
         type: 'USER_ONLINE',
         payload: res.data
       });
     };
-    socket == null || socket.on('userOnline', listener2);
+    socket == null ? void 0 : socket.on('userOnline', listener2);
     // listen user offline
-    const listener3 = res => {
+    var listener3 = function listener3(res) {
       dispatch({
         type: 'USER_OFFLINE',
         payload: res.data
       });
     };
-    socket == null || socket.on('userOffline', listener3);
+    socket == null ? void 0 : socket.on('userOffline', listener3);
     // listen private socket join
-    const listener4 = res => {
+    var listener4 = function listener4(res) {
       if (res.code) {
         dispatch({
           type: 'SET_ERROR',
@@ -3276,10 +4236,10 @@ const SocketProvider = _ref => {
       }
       console.log('Успешно вошел в приватный чат');
     };
-    socket == null || socket.on('joinPrivateSocket', listener4);
+    socket == null ? void 0 : socket.on('joinPrivateSocket', listener4);
     // typing
-    let timer;
-    const listener5 = res => {
+    var timer;
+    var listener5 = function listener5(res) {
       if (res.code) {
         dispatch({
           type: 'SET_ERROR',
@@ -3292,16 +4252,16 @@ const SocketProvider = _ref => {
         type: 'SET_TYPING',
         payload: res.data
       });
-      timer = setTimeout(() => {
+      timer = setTimeout(function () {
         dispatch({
           type: 'SET_TYPING',
           payload: null
         });
       }, 1000);
     };
-    socket == null || socket.on('typing', listener5);
+    socket == null ? void 0 : socket.on('typing', listener5);
     // revoke
-    const listener6 = res => {
+    var listener6 = function listener6(res) {
       if (res.code) {
         dispatch({
           type: 'SET_ERROR',
@@ -3309,15 +4269,15 @@ const SocketProvider = _ref => {
         });
         return;
       }
-      const data = res.data;
+      var data = res.data;
       dispatch({
         type: 'REVOKE_MESSAGE',
         payload: data
       });
     };
-    socket == null || socket.on('revokeMessage', listener6);
+    socket == null ? void 0 : socket.on('revokeMessage', listener6);
     // set group gather
-    const listener7 = res => {
+    var listener7 = function listener7(res) {
       if (res.code) {
         dispatch({
           type: 'SET_ERROR',
@@ -3330,9 +4290,9 @@ const SocketProvider = _ref => {
         payload: res.data
       });
     };
-    socket == null || socket.on('addGroup', listener7);
+    socket == null ? void 0 : socket.on('addGroup', listener7);
     // set contact gather, user gather
-    const listener8 = res => {
+    var listener8 = function listener8(res) {
       if (res.code) {
         dispatch({
           type: 'SET_ERROR',
@@ -3340,7 +4300,7 @@ const SocketProvider = _ref => {
         });
         return;
       }
-      const data = res.data;
+      var data = res.data;
       dispatch({
         type: 'SET_CONTACT_GATHER',
         payload: data
@@ -3349,13 +4309,13 @@ const SocketProvider = _ref => {
         type: 'SET_USER_GATHER',
         payload: data
       });
-      socket == null || socket.emit('joinPrivateSocket', {
+      socket == null ? void 0 : socket.emit('joinPrivateSocket', {
         contactId: data.userId
       });
     };
-    socket == null || socket.on('addContact', listener8);
+    socket == null ? void 0 : socket.on('addContact', listener8);
     // delete contact
-    const listener10 = res => {
+    var listener10 = function listener10(res) {
       if (res.code) {
         dispatch({
           type: 'SET_ERROR',
@@ -3363,15 +4323,15 @@ const SocketProvider = _ref => {
         });
         return;
       }
-      const data = res.data;
+      var data = res.data;
       dispatch({
         type: 'DEL_CONTACT',
         payload: data
       });
     };
-    socket == null || socket.on('deleteContact', listener10);
+    socket == null ? void 0 : socket.on('deleteContact', listener10);
     // update GroupInfo
-    const listener11 = res => {
+    var listener11 = function listener11(res) {
       if (res.code) {
         dispatch({
           type: 'SET_ERROR',
@@ -3379,15 +4339,15 @@ const SocketProvider = _ref => {
         });
         return;
       }
-      const data = res.data;
+      var data = res.data;
       dispatch({
         type: 'UPDATE_GROUP_INFO',
         payload: data
       });
     };
-    socket == null || socket.on('updateGroupInfo', listener11);
+    socket == null ? void 0 : socket.on('updateGroupInfo', listener11);
     // update UserInfo
-    const listener12 = res => {
+    var listener12 = function listener12(res) {
       if (res.code) {
         dispatch({
           type: 'SET_ERROR',
@@ -3395,15 +4355,15 @@ const SocketProvider = _ref => {
         });
         return;
       }
-      const data = res.data;
+      var data = res.data;
       dispatch({
         type: 'UPDATE_USER_INFO',
         payload: data
       });
     };
-    socket == null || socket.on('updateUserInfo', listener12);
+    socket == null ? void 0 : socket.on('updateUserInfo', listener12);
     // start Conference
-    const listener13 = res => {
+    var listener13 = function listener13(res) {
       if (res.code) {
         dispatch({
           type: 'SET_ERROR',
@@ -3416,9 +4376,9 @@ const SocketProvider = _ref => {
         payload: res.data
       });
     };
-    socket == null || socket.on('startConference', listener13);
+    socket == null ? void 0 : socket.on('startConference', listener13);
     // pause Conference
-    const listener14 = res => {
+    var listener14 = function listener14(res) {
       if (res.code) {
         dispatch({
           type: 'SET_ERROR',
@@ -3431,9 +4391,9 @@ const SocketProvider = _ref => {
         payload: res.data
       });
     };
-    socket == null || socket.on('pauseConference', listener14);
+    socket == null ? void 0 : socket.on('pauseConference', listener14);
     // stop Conference
-    const listener15 = res => {
+    var listener15 = function listener15(res) {
       if (res.code) {
         dispatch({
           type: 'SET_ERROR',
@@ -3446,9 +4406,9 @@ const SocketProvider = _ref => {
         payload: res.data
       });
     };
-    socket == null || socket.on('stopConference', listener15);
+    socket == null ? void 0 : socket.on('stopConference', listener15);
     // add Operator
-    const listener16 = res => {
+    var listener16 = function listener16(res) {
       if (res.code) {
         dispatch({
           type: 'SET_ERROR',
@@ -3457,9 +4417,9 @@ const SocketProvider = _ref => {
         return;
       }
     };
-    socket == null || socket.on('addOperator', listener16);
+    socket == null ? void 0 : socket.on('addOperator', listener16);
     // set ActiveRoom
-    const listener17 = res => {
+    var listener17 = function listener17(res) {
       if (res.code) {
         dispatch({
           type: 'SET_ERROR',
@@ -3472,9 +4432,9 @@ const SocketProvider = _ref => {
         payload: res.data
       });
     };
-    socket == null || socket.on('setActiveRoom', listener17);
+    socket == null ? void 0 : socket.on('setActiveRoom', listener17);
     // visit Data
-    const listener18 = res => {
+    var listener18 = function listener18(res) {
       if (res.code) {
         dispatch({
           type: 'SET_ERROR',
@@ -3482,96 +4442,131 @@ const SocketProvider = _ref => {
         });
         return;
       }
-      const payload = res.data;
+      var payload = res.data;
       dispatch({
         type: 'SET_VISIT_DATA',
         payload: payload.visitData
       });
     };
-    socket == null || socket.on('visitData', listener18);
-    return () => {
+    socket == null ? void 0 : socket.on('visitData', listener18);
+    return function () {
       // detatch
-      socket == null || socket.off('unauthorized', listener);
-      socket == null || socket.off('chatData', listener1);
-      socket == null || socket.off('userOnline', listener2);
-      socket == null || socket.off('userOffline', listener3);
-      socket == null || socket.off('joinPrivateSocket', listener4);
+      socket == null ? void 0 : socket.off('unauthorized', listener);
+      socket == null ? void 0 : socket.off('chatData', listener1);
+      socket == null ? void 0 : socket.off('userOnline', listener2);
+      socket == null ? void 0 : socket.off('userOffline', listener3);
+      socket == null ? void 0 : socket.off('joinPrivateSocket', listener4);
       if (timer) clearTimeout(timer);
-      socket == null || socket.off('typing', listener5);
-      socket == null || socket.off('revokeMessage', listener6);
-      socket == null || socket.off('addGroup', listener7);
-      socket == null || socket.off('addContact', listener8);
-      socket == null || socket.off('deleteContact', listener10);
-      socket == null || socket.off('updateGroupInfo', listener11);
-      socket == null || socket.off('updateUserInfo', listener12);
-      socket == null || socket.off('startConference', listener13);
-      socket == null || socket.off('pauseConference', listener14);
-      socket == null || socket.off('stopConference', listener15);
-      socket == null || socket.off('addOperator', listener16);
-      socket == null || socket.off('setActiveRoom', listener17);
-      socket == null || socket.off('visitData', listener18);
+      socket == null ? void 0 : socket.off('typing', listener5);
+      socket == null ? void 0 : socket.off('revokeMessage', listener6);
+      socket == null ? void 0 : socket.off('addGroup', listener7);
+      socket == null ? void 0 : socket.off('addContact', listener8);
+      socket == null ? void 0 : socket.off('deleteContact', listener10);
+      socket == null ? void 0 : socket.off('updateGroupInfo', listener11);
+      socket == null ? void 0 : socket.off('updateUserInfo', listener12);
+      socket == null ? void 0 : socket.off('startConference', listener13);
+      socket == null ? void 0 : socket.off('pauseConference', listener14);
+      socket == null ? void 0 : socket.off('stopConference', listener15);
+      socket == null ? void 0 : socket.off('addOperator', listener16);
+      socket == null ? void 0 : socket.off('setActiveRoom', listener17);
+      socket == null ? void 0 : socket.off('visitData', listener18);
     };
   }, [socket == null ? void 0 : socket.id]);
-  React.useEffect(() => {
+  React.useEffect(function () {
     // group Message
-    const listener = async res => {
-      if (res.code) {
-        dispatch({
-          type: 'SET_ERROR',
-          payload: res.msg
-        });
-        return;
-      }
-      const data = res.data;
-      dispatch({
-        type: 'ADD_GROUP_MESSAGE',
-        payload: data
-      });
-      const {
-        activeRoom
-      } = state;
-      if (activeRoom && activeRoom.groupId === data.groupId && data.userId !== state.user.userId) {
-        socket == null || socket.emit('markAsRead', {
-          groupId: data.groupId,
-          _id: data._id
-        });
-      }
-    };
-    socket == null || socket.on('groupMessage', listener);
+    var listener = /*#__PURE__*/function () {
+      var _ref2 = _asyncToGenerator(/*#__PURE__*/runtime_1.mark(function _callee(res) {
+        var data, activeRoom;
+        return runtime_1.wrap(function _callee$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                if (!res.code) {
+                  _context.next = 3;
+                  break;
+                }
+                dispatch({
+                  type: 'SET_ERROR',
+                  payload: res.msg
+                });
+                return _context.abrupt("return");
+              case 3:
+                data = res.data;
+                dispatch({
+                  type: 'ADD_GROUP_MESSAGE',
+                  payload: data
+                });
+                activeRoom = state.activeRoom;
+                if (activeRoom && activeRoom.groupId === data.groupId && data.userId !== state.user.userId) {
+                  socket == null ? void 0 : socket.emit('markAsRead', {
+                    groupId: data.groupId,
+                    _id: data._id
+                  });
+                }
+              case 7:
+              case "end":
+                return _context.stop();
+            }
+          }
+        }, _callee);
+      }));
+      return function listener(_x) {
+        return _ref2.apply(this, arguments);
+      };
+    }();
+    socket == null ? void 0 : socket.on('groupMessage', listener);
     // private Message
-    const listener1 = async res => {
-      if (res.code) {
-        dispatch({
-          type: 'SET_ERROR',
-          payload: res.msg
-        });
-        return;
-      }
-      const data = res.data;
-      if (data.contactId === state.user.userId || data.userId === state.user.userId) {
-        var _state$activeRoom;
-        dispatch({
-          type: 'ADD_PRIVATE_MESSAGE',
-          payload: data
-        });
-        // если есть активная комната и это приватная комната (!groupId && userId) с отправителем сообщения (userId)
-        if (state.activeRoom && !state.activeRoom.groupId && ((_state$activeRoom = state.activeRoom) == null ? void 0 : _state$activeRoom.userId) === data.userId) {
-          socket == null || socket.emit('markAsRead', {
-            contactId: data.userId,
-            _id: data._id
-          });
-        }
-      }
-    };
-    socket == null || socket.on('privateMessage', listener1);
-    return () => {
-      socket == null || socket.off('groupMessage', listener);
-      socket == null || socket.off('privateMessage', listener1);
+    var listener1 = /*#__PURE__*/function () {
+      var _ref3 = _asyncToGenerator(/*#__PURE__*/runtime_1.mark(function _callee2(res) {
+        var data, _state$activeRoom;
+        return runtime_1.wrap(function _callee2$(_context2) {
+          while (1) {
+            switch (_context2.prev = _context2.next) {
+              case 0:
+                if (!res.code) {
+                  _context2.next = 3;
+                  break;
+                }
+                dispatch({
+                  type: 'SET_ERROR',
+                  payload: res.msg
+                });
+                return _context2.abrupt("return");
+              case 3:
+                data = res.data;
+                if (data.contactId === state.user.userId || data.userId === state.user.userId) {
+                  dispatch({
+                    type: 'ADD_PRIVATE_MESSAGE',
+                    payload: data
+                  });
+                  // если есть активная комната и это приватная комната (!groupId && userId) с отправителем сообщения (userId)
+                  if (state.activeRoom && !state.activeRoom.groupId && ((_state$activeRoom = state.activeRoom) == null ? void 0 : _state$activeRoom.userId) === data.userId) {
+                    socket == null ? void 0 : socket.emit('markAsRead', {
+                      contactId: data.userId,
+                      _id: data._id
+                    });
+                  }
+                }
+              case 5:
+              case "end":
+                return _context2.stop();
+            }
+          }
+        }, _callee2);
+      }));
+      return function listener1(_x2) {
+        return _ref3.apply(this, arguments);
+      };
+    }();
+    socket == null ? void 0 : socket.on('privateMessage', listener1);
+    return function () {
+      socket == null ? void 0 : socket.off('groupMessage', listener);
+      socket == null ? void 0 : socket.off('privateMessage', listener1);
     };
   }, [socket == null ? void 0 : socket.id, (_state$activeRoom2 = state.activeRoom) == null ? void 0 : _state$activeRoom2.userId, (_state$activeRoom3 = state.activeRoom) == null ? void 0 : _state$activeRoom3.groupId]);
-  React.useEffect(() => {
+  React.useEffect(function () {
     // mark As Read
-    const listener = res => {
+    var listener = function listener(res) {
       if (res.code) {
         dispatch({
           type: 'SET_ERROR',
@@ -3579,7 +4574,7 @@ const SocketProvider = _ref => {
         });
         return;
       }
-      const data = res.data;
+      var data = res.data;
       if (data.userId === state.user.userId) {
         if (data.groupId) {
           dispatch({
@@ -3599,9 +4594,9 @@ const SocketProvider = _ref => {
         });
       }
     };
-    socket == null || socket.on('markAsRead', listener);
+    socket == null ? void 0 : socket.on('markAsRead', listener);
     // delete Group
-    const listener1 = res => {
+    var listener1 = function listener1(res) {
       if (res.code) {
         dispatch({
           type: 'SET_ERROR',
@@ -3609,7 +4604,7 @@ const SocketProvider = _ref => {
         });
         return;
       }
-      const data = res.data;
+      var data = res.data;
       if (data.userId === state.user.userId) {
         // если удаляем себя из группы
         dispatch({
@@ -3623,8 +4618,8 @@ const SocketProvider = _ref => {
         });
       }
     };
-    socket == null || socket.on('deleteGroup', listener1);
-    const listener2 = res => {
+    socket == null ? void 0 : socket.on('deleteGroup', listener1);
+    var listener2 = function listener2(res) {
       if (res.code) {
         dispatch({
           type: 'SET_ERROR',
@@ -3632,14 +4627,13 @@ const SocketProvider = _ref => {
         });
         return;
       }
-      const {
-        group,
-        user: newUser
-      } = res.data;
+      var _res$data = res.data,
+        group = _res$data.group,
+        newUser = _res$data.user;
       if (!state.groupGather[group.groupId]) {
         console.log('joined to a new group');
         // Если группы еще у нас нет, то получаем информацию о пользователях в группе
-        socket == null || socket.emit('chatData');
+        socket == null ? void 0 : socket.emit('chatData');
       } else if (newUser.userId !== state.user.userId) {
         // Новые пользователи присоединяются к группе
         dispatch({
@@ -3651,9 +4645,9 @@ const SocketProvider = _ref => {
         });
       }
     };
-    socket == null || socket.on('joinGroup', listener2);
+    socket == null ? void 0 : socket.on('joinGroup', listener2);
     // listen group socket join
-    const listener4 = res => {
+    var listener4 = function listener4(res) {
       var _groupObj$members;
       if (res.code) {
         dispatch({
@@ -3662,18 +4656,18 @@ const SocketProvider = _ref => {
         });
         return;
       }
-      const data = res.data;
-      const newUser = data.user;
+      var data = res.data;
+      var newUser = data.user;
       newUser.online = 1;
-      const {
-        group
-      } = data;
-      const groupObj = state.groupGather[group.groupId];
+      var group = data.group;
+      var groupObj = state.groupGather[group.groupId];
       // Информация о присоединении к группе новых пользователей
-      if (groupObj && !((_groupObj$members = groupObj.members) != null && _groupObj$members.find(member => member.userId === newUser.userId))) {
+      if (groupObj && !((_groupObj$members = groupObj.members) != null && _groupObj$members.find(function (member) {
+        return member.userId === newUser.userId;
+      }))) {
         var _groupObj$members2;
         newUser.isManager = 0;
-        (_groupObj$members2 = groupObj.members) == null || _groupObj$members2.push(newUser);
+        (_groupObj$members2 = groupObj.members) == null ? void 0 : _groupObj$members2.push(newUser);
         // Vue.prototype.$message.info(res.msg);
       }
       dispatch({
@@ -3681,48 +4675,46 @@ const SocketProvider = _ref => {
         payload: newUser
       });
     };
-    socket == null || socket.on('joinGroupSocket', listener4);
-    return () => {
-      socket == null || socket.off('markAsRead', listener);
-      socket == null || socket.off('deleteGroup', listener1);
-      socket == null || socket.off('joinGroup', listener2);
-      socket == null || socket.off('joinGroupSocket', listener4);
+    socket == null ? void 0 : socket.on('joinGroupSocket', listener4);
+    return function () {
+      socket == null ? void 0 : socket.off('markAsRead', listener);
+      socket == null ? void 0 : socket.off('deleteGroup', listener1);
+      socket == null ? void 0 : socket.off('joinGroup', listener2);
+      socket == null ? void 0 : socket.off('joinGroupSocket', listener4);
     };
   }, [socket == null ? void 0 : socket.id, state.user.userId, allMessCount(state.groupGather)]);
-  const value = React.useMemo(() => ({
-    socket,
-    online
-  }), [socket, online]);
+  var value = React.useMemo(function () {
+    return {
+      socket: socket,
+      online: online
+    };
+  }, [socket, online]);
   return /*#__PURE__*/React__default.createElement(SocketContext.Provider, {
     value: value
   }, children);
 };
 
-const CheckAudiVideoPerm = _ref => {
-  let {
-    audio,
-    video
-  } = _ref;
-  const {
-    t
-  } = reactI18next.useTranslation();
+var CheckAudiVideoPerm = function CheckAudiVideoPerm(_ref) {
+  var audio = _ref.audio,
+    video = _ref.video;
+  var _useTranslation = reactI18next.useTranslation(),
+    t = _useTranslation.t;
   //const [havePermissions, setHavePermissions] = useState(false);
-  const {
-    dispatch
-  } = React__default.useContext(ChatContext);
-  const checkPermissions = () => {
-    const permissions = navigator.mediaDevices.getUserMedia({
-      audio,
-      video
+  var _React$useContext = React__default.useContext(ChatContext),
+    dispatch = _React$useContext.dispatch;
+  var checkPermissions = function checkPermissions() {
+    var permissions = navigator.mediaDevices.getUserMedia({
+      audio: audio,
+      video: video
     });
-    permissions.then(data => {
+    permissions.then(function (data) {
       console.log('permissions', data);
       dispatch({
         type: 'SET_SUCCES',
         payload: t('CHAT.CONFERENCE.ALLOK')
       });
-    }).catch(err => {
-      let payload = t('CHAT.CONFERENCE.ErrorAny');
+    })["catch"](function (err) {
+      var payload = t('CHAT.CONFERENCE.ErrorAny');
       if (err.name === 'NotFoundError') {
         payload = t('CHAT.CONFERENCE.NotFoundError');
       }
@@ -3731,33 +4723,33 @@ const CheckAudiVideoPerm = _ref => {
       }
       dispatch({
         type: 'SET_ERROR',
-        payload
+        payload: payload
       });
       //setHavePermissions(false);
       console.log('err', err.name + " : " + err.message);
     });
   };
-  const title = audio && video ? t('CHAT.CONFERENCE.CheckCamMic') : audio ? t('CHAT.CONFERENCE.CheckMic') : t('CHAT.CONFERENCE.CheckCam');
+  var title = audio && video ? t('CHAT.CONFERENCE.CheckCamMic') : audio ? t('CHAT.CONFERENCE.CheckMic') : t('CHAT.CONFERENCE.CheckCam');
   return /*#__PURE__*/React__default.createElement(material.Tooltip, {
     title: title
   }, /*#__PURE__*/React__default.createElement(material.IconButton, {
     "aria-label": "check",
-    onClick: () => checkPermissions(),
+    onClick: function onClick() {
+      return checkPermissions();
+    },
     size: "large"
   }, audio && video ? /*#__PURE__*/React__default.createElement(SettingsSuggestIcon, null) : audio ? /*#__PURE__*/React__default.createElement(SettingsVoiceIcon, null) : /*#__PURE__*/React__default.createElement(VideoSettingsIcon, null)));
 };
 
-const ChatAlert = () => {
+var ChatAlert = function ChatAlert() {
   // const { t } = useTranslation();
   //const [havePermissions, setHavePermissions] = useState(false);
-  const {
-    state: {
-      error,
-      success
-    },
-    dispatch
-  } = React__default.useContext(ChatContext);
-  const handleClose = () => {
+  var _React$useContext = React__default.useContext(ChatContext),
+    _React$useContext$sta = _React$useContext.state,
+    error = _React$useContext$sta.error,
+    success = _React$useContext$sta.success,
+    dispatch = _React$useContext.dispatch;
+  var handleClose = function handleClose() {
     dispatch({
       type: "SET_ERROR",
       payload: undefined
@@ -3781,6 +4773,7 @@ const ChatAlert = () => {
   }, error ? error : success));
 };
 
+var _excluded = ["activeGroupId", "activeChatUserId", "inModale", "hideRooms", "fullWidth"];
 // Отключили проигрыш звука
 // const getRingAudio = (): HTMLAudioElement => {
 //   const audio = new Audio(
@@ -3789,80 +4782,109 @@ const ChatAlert = () => {
 //   audio.loop = true;
 //   return audio;
 // };
-const useStyles$f = /*#__PURE__*/styles.makeStyles(theme => ({
-  root: {
-    height: '100%',
-    overflow: 'hidden',
-    padding: 0,
-    [theme.breakpoints.down('sm')]: {
+var useStyles$f = /*#__PURE__*/styles.makeStyles(function (theme) {
+  var _root;
+  return {
+    root: (_root = {
+      height: '100%',
+      overflow: 'hidden',
+      padding: 0
+    }, _root[theme.breakpoints.down('sm')] = {
       width: '100%'
+    }, _root),
+    innerGrid: {
+      height: '100%',
+      width: '100%'
+    },
+    conAbsOnConf: {
+      position: 'absolute',
+      top: 42,
+      left: 25,
+      zIndex: 1000,
+      margin: theme.spacing(3)
     }
-  },
-  innerGrid: {
-    height: '100%',
-    width: '100%'
-  },
-  conAbsOnConf: {
-    position: 'absolute',
-    top: 42,
-    left: 25,
-    zIndex: 1000,
-    margin: theme.spacing(3)
-  }
-}));
-const ChatPage = _ref => {
+  };
+});
+var ChatPage = function ChatPage(_ref) {
   var _state$conference$dat2, _state$conference$dat3, _state$activeRoom, _state$activeRoom2, _state$conference$dat4, _state$conference$dat5, _state$conference$dat6;
-  let {
-    activeGroupId,
-    activeChatUserId,
-    inModale = true,
-    hideRooms = false
-  } = _ref;
-  const classes = useStyles$f();
-  const isMobile = material.useMediaQuery(theme => theme.breakpoints.down('sm'));
-  const {
-    t
-  } = reactI18next.useTranslation();
-  const {
-    state,
-    dispatch
-  } = React.useContext(ChatContext);
-  const {
-    socket
-  } = React.useContext(SocketContext);
-  const {
-    apiUrl,
-    pageSize,
-    getPrivateMessages,
-    getGroupMessages,
-    getUserByMmk
-  } = React.useContext(RestContext);
+  var activeGroupId = _ref.activeGroupId,
+    activeChatUserId = _ref.activeChatUserId,
+    _ref$inModale = _ref.inModale,
+    inModale = _ref$inModale === void 0 ? false : _ref$inModale,
+    _ref$hideRooms = _ref.hideRooms,
+    hideRooms = _ref$hideRooms === void 0 ? false : _ref$hideRooms,
+    _ref$fullWidth = _ref.fullWidth,
+    fullWidth = _ref$fullWidth === void 0 ? false : _ref$fullWidth,
+    props = _objectWithoutPropertiesLoose(_ref, _excluded);
+  var classes = useStyles$f();
+  var isMobile = material.useMediaQuery(function (theme) {
+    return theme.breakpoints.down('sm');
+  });
+  var _useTranslation = reactI18next.useTranslation(),
+    t = _useTranslation.t;
+  var _React$useContext = React.useContext(ChatContext),
+    state = _React$useContext.state,
+    dispatch = _React$useContext.dispatch;
+  var _React$useContext2 = React.useContext(SocketContext),
+    socket = _React$useContext2.socket;
+  var _React$useContext3 = React.useContext(RestContext),
+    apiUrl = _React$useContext3.apiUrl,
+    pageSize = _React$useContext3.pageSize,
+    getPrivateMessages = _React$useContext3.getPrivateMessages,
+    getGroupMessages = _React$useContext3.getGroupMessages,
+    getUserByMmk = _React$useContext3.getUserByMmk;
   // const [ringAudio] = React.useState(getRingAudio());
-  const onExitActiveRoom = React.useCallback(() => {
+  var onExitActiveRoom = React.useCallback(function () {
     dispatch({
       type: 'SET_ACTIVE_ROOM',
       payload: {}
     });
   }, [dispatch]);
-  const onNeedMoreMessages = React.useCallback(async chat => {
-    if (chat.groupId) await getGroupMessages(chat);else await getPrivateMessages(chat);
-  }, [getPrivateMessages, getGroupMessages]);
-  const onMessageDelete = React.useCallback((chat, message) => {
-    socket == null || socket.emit('revokeMessage', {
+  var onNeedMoreMessages = React.useCallback(/*#__PURE__*/function () {
+    var _ref2 = _asyncToGenerator(/*#__PURE__*/runtime_1.mark(function _callee(chat) {
+      return runtime_1.wrap(function _callee$(_context) {
+        while (1) {
+          switch (_context.prev = _context.next) {
+            case 0:
+              if (!chat.groupId) {
+                _context.next = 5;
+                break;
+              }
+              _context.next = 3;
+              return getGroupMessages(chat);
+            case 3:
+              _context.next = 7;
+              break;
+            case 5:
+              _context.next = 7;
+              return getPrivateMessages(chat);
+            case 7:
+            case "end":
+              return _context.stop();
+          }
+        }
+      }, _callee);
+    }));
+    return function (_x) {
+      return _ref2.apply(this, arguments);
+    };
+  }(), [getPrivateMessages, getGroupMessages]);
+  var onMessageDelete = React.useCallback(function (chat, message) {
+    socket == null ? void 0 : socket.emit('revokeMessage', {
       groupId: chat.groupId,
       contactId: chat.userId,
       _id: message._id
     });
   }, [socket == null ? void 0 : socket.id]);
-  const onTyping = React.useCallback(chat => {
-    socket == null || socket.emit('typing', {
+  var onTyping = React.useCallback(function (chat) {
+    socket == null ? void 0 : socket.emit('typing', {
       groupId: chat == null ? void 0 : chat.groupId,
       contactId: chat == null ? void 0 : chat.userId
     });
   }, [socket == null ? void 0 : socket.id]);
-  const onSendMessage = React.useCallback((chat, data) => {
+  var onSendMessage = React.useCallback(function (chat, data) {
     if (chat.groupId) {
-      socket == null || socket.emit('groupMessage', {
+      socket == null ? void 0 : socket.emit('groupMessage', {
         groupId: chat == null ? void 0 : chat.groupId,
         content: data.message,
         width: data.width,
@@ -3872,7 +4894,7 @@ const ChatPage = _ref => {
         size: data.size
       });
     } else {
-      socket == null || socket.emit('privateMessage', {
+      socket == null ? void 0 : socket.emit('privateMessage', {
         contactId: chat == null ? void 0 : chat.userId,
         content: data.message,
         width: data.width,
@@ -3883,7 +4905,7 @@ const ChatPage = _ref => {
       });
     }
   }, [socket == null ? void 0 : socket.id]);
-  const onChangeChat = React.useCallback(chat => {
+  var onChangeChat = React.useCallback(function (chat) {
     dispatch({
       type: 'SET_ACTIVE_ROOM',
       payload: {
@@ -3893,41 +4915,41 @@ const ChatPage = _ref => {
     });
     onEnterRoom(chat);
   }, [socket == null ? void 0 : socket.id, dispatch]);
-  const onEnterRoom = React.useCallback(chat => {
+  var onEnterRoom = React.useCallback(function (chat) {
     if (!chat.messages || chat.messages.length === 0) return;
     if (chat.groupId) {
-      socket == null || socket.emit('markAsRead', {
+      socket == null ? void 0 : socket.emit('markAsRead', {
         groupId: chat.groupId,
         _id: chat.messages[chat.messages.length - 1]._id
       });
     } else {
-      socket == null || socket.emit('markAsRead', {
+      socket == null ? void 0 : socket.emit('markAsRead', {
         contactId: chat.userId,
         _id: chat.messages[chat.messages.length - 1]._id
       });
     }
   }, [socket == null ? void 0 : socket.id]);
-  const onVideoCall = React.useCallback((chat, visitId, recreate) => {
-    socket == null || socket.emit('startConference', {
+  var onVideoCall = React.useCallback(function (chat, visitId, recreate) {
+    socket == null ? void 0 : socket.emit('startConference', {
       groupId: chat.groupId,
       contactId: chat.userId,
-      visitId,
-      recreate
+      visitId: visitId,
+      recreate: recreate
     });
   }, [socket == null ? void 0 : socket.id]);
-  const onVideoEnd = React.useCallback(conference => {
-    if ((conference == null ? void 0 : conference.id) != null) socket == null || socket.emit('stopConference', {
+  var onVideoEnd = React.useCallback(function (conference) {
+    if ((conference == null ? void 0 : conference.id) != null) socket == null ? void 0 : socket.emit('stopConference', {
       id: conference == null ? void 0 : conference.id
     });
   }, [socket == null ? void 0 : socket.id]);
-  const onConferencePause = React.useCallback(conference => {
-    if ((conference == null ? void 0 : conference.id) != null) socket == null || socket.emit('pauseConference', {
+  var onConferencePause = React.useCallback(function (conference) {
+    if ((conference == null ? void 0 : conference.id) != null) socket == null ? void 0 : socket.emit('pauseConference', {
       id: conference.id
     });
   }, [socket == null ? void 0 : socket.id]);
-  const onConferenceCallAccept = React.useCallback(conference => {
+  var onConferenceCallAccept = React.useCallback(function (conference) {
     // отправляем resumeConference чтобы возобновить запись
-    if ((conference == null ? void 0 : conference.id) != null) socket == null || socket.emit('resumeConference', {
+    if ((conference == null ? void 0 : conference.id) != null) socket == null ? void 0 : socket.emit('resumeConference', {
       id: conference.id
     });
     dispatch({
@@ -3935,39 +4957,64 @@ const ChatPage = _ref => {
       payload: conference
     });
   }, [socket == null ? void 0 : socket.id, dispatch]);
-  const onOperatorAdd = React.useCallback((group, operator) => {
-    socket == null || socket.emit('addOperator', {
+  var onOperatorAdd = React.useCallback(function (group, operator) {
+    socket == null ? void 0 : socket.emit('addOperator', {
       groupId: group.groupId,
       operatorId: operator.userId
     });
   }, [socket == null ? void 0 : socket.id]);
-  const onLeaveGroup = React.useCallback(group => {
-    socket == null || socket.emit('deleteGroup', {
+  var onLeaveGroup = React.useCallback(function (group) {
+    socket == null ? void 0 : socket.emit('deleteGroup', {
       groupId: group.groupId
     });
   }, [socket == null ? void 0 : socket.id]);
-  React.useEffect(() => {
+  React.useEffect(function () {
     if (activeChatUserId != null && !isEmpty(state.contactGather)) {
-      const Chat = Object.values(state.contactGather).find(item => item.userId === activeChatUserId);
+      var Chat = Object.values(state.contactGather).find(function (item) {
+        return item.userId === activeChatUserId;
+      });
       onChangeChat(Chat);
     }
-    const mmkId = getParam('mmk');
-    const guid = getParam('guid');
+    var mmkId = getParam('mmk');
+    var guid = getParam('guid');
     if ((mmkId != null || guid != null) && !isEmpty(state.contactGather)) {
       //console.log("mmkId", mmkId);
-      const changeChatByMmkId = async () => {
-        const userId = await getUserByMmk(mmkId, guid);
-        if (userId != null) {
-          const Chat = Object.values(state.contactGather).find(item => item.userId === userId);
-          onChangeChat(Chat);
-        }
-      };
+      var changeChatByMmkId = /*#__PURE__*/function () {
+        var _ref3 = _asyncToGenerator(/*#__PURE__*/runtime_1.mark(function _callee2() {
+          var userId, _Chat;
+          return runtime_1.wrap(function _callee2$(_context2) {
+            while (1) {
+              switch (_context2.prev = _context2.next) {
+                case 0:
+                  _context2.next = 2;
+                  return getUserByMmk(mmkId, guid);
+                case 2:
+                  userId = _context2.sent;
+                  if (userId != null) {
+                    _Chat = Object.values(state.contactGather).find(function (item) {
+                      return item.userId === userId;
+                    });
+                    onChangeChat(_Chat);
+                  }
+                case 4:
+                case "end":
+                  return _context2.stop();
+              }
+            }
+          }, _callee2);
+        }));
+        return function changeChatByMmkId() {
+          return _ref3.apply(this, arguments);
+        };
+      }();
       changeChatByMmkId();
     }
   }, [state.user.userId]);
-  React.useEffect(() => {
+  React.useEffect(function () {
     if (activeGroupId != null && !isEmpty(state.groupGather)) {
-      const onlyChat = Object.values(state.groupGather).find(item => item.groupId === activeGroupId);
+      var onlyChat = Object.values(state.groupGather).find(function (item) {
+        return item.groupId === activeGroupId;
+      });
       if (!isEmpty(onlyChat)) {
         onChangeChat(onlyChat);
       }
@@ -3983,8 +5030,8 @@ const ChatPage = _ref => {
   //     ringAudio.play();
   //   else ringAudio.pause();
   // }, [state.conference.data?.id, state.conference.ringPlayed]);
-  console.log('--state--', state);
-  const renderRoom = state.activeRoom != null && /*#__PURE__*/React.createElement(Room, {
+  // console.log('--state--', state);
+  var renderRoom = state.activeRoom != null && /*#__PURE__*/React.createElement(Room, {
     apiUrl: apiUrl,
     user: state.user,
     users: state.userGather,
@@ -4007,61 +5054,74 @@ const ChatPage = _ref => {
     onConferencePause: onConferencePause,
     onOperatorAdd: onOperatorAdd,
     onLeaveGroup: onLeaveGroup,
-    inModale: inModale
+    inModale: inModale,
+    onContactClick: props.onContactInfoClick
   });
-  const GetRoomList = () => /*#__PURE__*/React.createElement(RoomList, {
-    apiUrl: apiUrl,
-    user: state.user,
-    activeRoom: state.activeRoom,
-    groups: Object.values(state.groupGather),
-    contacts: Object.values(state.contactGather),
-    typing: state.typing,
-    onChangeChat: onChangeChat
-  });
-  const GetConferenceCall = () => state.conference.data && /*#__PURE__*/React.createElement(ConferenceCall, {
-    apiUrl: apiUrl,
-    contact: state.contactGather[state.user.userId === state.conference.data.userId ? state.conference.data.contactId : state.conference.data.userId],
-    conference: state.conference.data,
-    onAccept: onConferenceCallAccept
-  });
-  const GetConference = () => /*#__PURE__*/React.createElement(Conference, {
-    conference: state.conference.data,
-    onClose: onConferencePause,
-    langCode: state.user.langCode
-  });
-  const Gonf = () => state.conference.joined ? /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement(GetConference, null), /*#__PURE__*/React.createElement(material.Box, {
-    className: classes.conAbsOnConf
-  }, /*#__PURE__*/React.createElement(material.Paper, {
-    style: {
-      borderRadius: 8
-    }
-  }, /*#__PURE__*/React.createElement(material.Box, {
-    display: "flex",
-    flexDirection: "row",
-    my: 3
-  }, (isEmpty(state.activeRoom) && isMobile || !isEmpty(state.activeRoom) && !isMobile) && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement(CheckAudiVideoPerm, {
-    audio: true,
-    video: false
-  }), /*#__PURE__*/React.createElement(CheckAudiVideoPerm, {
-    audio: false,
-    video: true
-  })), isEmpty(state.activeRoom) && state.chatOld != null && isMobile && /*#__PURE__*/React.createElement(material.Tooltip, {
-    title: t('CHAT.CONFERENCE.BACK')
-  }, /*#__PURE__*/React.createElement(material.IconButton, {
-    "aria-label": "check",
-    onClick: () => state.chatOld != null && onChangeChat(state.chatOld),
-    size: "large"
-  }, /*#__PURE__*/React.createElement(iconsMaterial.ArrowForward, null))))))) : /*#__PURE__*/React.createElement(GetConferenceCall, null);
-  const contacts = React.useMemo(() => {
+  var GetRoomList = function GetRoomList() {
+    return /*#__PURE__*/React.createElement(RoomList, {
+      apiUrl: apiUrl,
+      user: state.user,
+      activeRoom: state.activeRoom,
+      groups: Object.values(state.groupGather),
+      contacts: Object.values(state.contactGather),
+      typing: state.typing,
+      onChangeChat: onChangeChat
+    });
+  };
+  var GetConferenceCall = function GetConferenceCall() {
+    return state.conference.data && /*#__PURE__*/React.createElement(ConferenceCall, {
+      apiUrl: apiUrl,
+      contact: state.contactGather[state.user.userId === state.conference.data.userId ? state.conference.data.contactId : state.conference.data.userId],
+      conference: state.conference.data,
+      onAccept: onConferenceCallAccept
+    });
+  };
+  var GetConference = function GetConference() {
+    return /*#__PURE__*/React.createElement(Conference, {
+      conference: state.conference.data,
+      onClose: onConferencePause,
+      langCode: state.user.langCode
+    });
+  };
+  var Gonf = function Gonf() {
+    return state.conference.joined ? /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement(GetConference, null), /*#__PURE__*/React.createElement(material.Box, {
+      className: classes.conAbsOnConf
+    }, /*#__PURE__*/React.createElement(material.Paper, {
+      style: {
+        borderRadius: 8
+      }
+    }, /*#__PURE__*/React.createElement(material.Box, {
+      display: "flex",
+      flexDirection: "row",
+      my: 3
+    }, (isEmpty(state.activeRoom) && isMobile || !isEmpty(state.activeRoom) && !isMobile) && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement(CheckAudiVideoPerm, {
+      audio: true,
+      video: false
+    }), /*#__PURE__*/React.createElement(CheckAudiVideoPerm, {
+      audio: false,
+      video: true
+    })), isEmpty(state.activeRoom) && state.chatOld != null && isMobile && /*#__PURE__*/React.createElement(material.Tooltip, {
+      title: t('CHAT.CONFERENCE.BACK')
+    }, /*#__PURE__*/React.createElement(material.IconButton, {
+      "aria-label": "check",
+      onClick: function onClick() {
+        return state.chatOld != null && onChangeChat(state.chatOld);
+      },
+      size: "large"
+    }, /*#__PURE__*/React.createElement(iconsMaterial.ArrowForward, null))))))) : /*#__PURE__*/React.createElement(GetConferenceCall, null);
+  };
+  var contacts = React.useMemo(function () {
     var _state$conference$dat;
     return ((_state$conference$dat = state.conference.data) == null ? void 0 : _state$conference$dat.id) != null ? /*#__PURE__*/React.createElement(Gonf, null) : /*#__PURE__*/React.createElement(GetRoomList, null);
   }, ((_state$conference$dat2 = state.conference.data) == null ? void 0 : _state$conference$dat2.id) != null ? [state.conference.joined, (_state$conference$dat3 = state.conference.data) == null ? void 0 : _state$conference$dat3.id] : [(_state$activeRoom = state.activeRoom) == null ? void 0 : _state$activeRoom.groupId, (_state$activeRoom2 = state.activeRoom) == null ? void 0 : _state$activeRoom2.userId, allMessCount(state.contactGather), allMessCount(state.groupGather)]);
   return /*#__PURE__*/React.createElement(material.Container, {
-    maxWidth: "lg",
+    maxWidth: fullWidth ? false : "lg",
     className: classes.root,
-    sx: theme => ({
-      width: inModale ? "calc(100vw - " + theme.spacing(8) + ")" : '100%'
-    })
+    sx: function sx(theme) {
+      return {
+        width: inModale ? "calc(100vw - " + theme.spacing(8) + ")" : '100%'
+      };
+    }
   }, isMobile ? /*#__PURE__*/React.createElement(React.Fragment, null, contacts, renderRoom) : /*#__PURE__*/React.createElement(material.Grid, {
     container: true,
     spacing: 1,
@@ -4233,15 +5293,15 @@ var ru = {
 	CHAT: CHAT$2
 };
 
-const getLang = () => {
-  const str = localStorage.getItem('user');
+var getLang = function getLang() {
+  var str = localStorage.getItem('user');
   if (str) {
-    const user = JSON.parse(str);
+    var user = JSON.parse(str);
     return user == null ? void 0 : user.lang;
   }
   return 'ru';
 };
-const lang = /*#__PURE__*/getLang();
+var lang = /*#__PURE__*/getLang();
 i18n.use(LanguageDetector).use(reactI18next.initReactI18next).init({
   resources: {
     ru: {
@@ -4264,20 +5324,20 @@ i18n.use(LanguageDetector).use(reactI18next.initReactI18next).init({
   lowerCaseLng: true
 });
 
-const languageWithoutCountry = () => {
+var languageWithoutCountry = function languageWithoutCountry() {
   return i18n.language.substring(0, 2);
 };
-const LANGUAGES = {
+var LANGUAGES = {
   RU: 'ru',
   FR: 'fr',
   EN: 'en'
 };
-const LANGUAGES_ACTIONS = {
+var LANGUAGES_ACTIONS = {
   SET_RUSSIAN: 'SET_RUSSIAN',
   SET_ENGLISH: 'SET_ENGLISH',
   SET_FRENCH: 'SET_FRENCH'
 };
-const reducer = (state, action) => {
+var reducer = function reducer(state, action) {
   switch (action.type) {
     case LANGUAGES_ACTIONS.SET_ENGLISH:
       i18n.changeLanguage('en');
@@ -4298,18 +5358,20 @@ const reducer = (state, action) => {
       return state;
   }
 };
-const LanguageContext = /*#__PURE__*/React.createContext({});
-const AppLanguageProvider = _ref => {
-  let {
-    children
-  } = _ref;
-  const [languageState, dispatchLanguage] = React.useReducer(reducer, {
-    language: languageWithoutCountry()
-  });
-  const value = React.useMemo(() => ({
-    languageState,
-    dispatchLanguage
-  }), [languageState]);
+var LanguageContext = /*#__PURE__*/React.createContext({});
+var AppLanguageProvider = function AppLanguageProvider(_ref) {
+  var children = _ref.children;
+  var _useReducer = React.useReducer(reducer, {
+      language: languageWithoutCountry()
+    }),
+    languageState = _useReducer[0],
+    dispatchLanguage = _useReducer[1];
+  var value = React.useMemo(function () {
+    return {
+      languageState: languageState,
+      dispatchLanguage: dispatchLanguage
+    };
+  }, [languageState]);
   return /*#__PURE__*/React__default.createElement(LanguageContext.Provider, {
     value: value
   }, /*#__PURE__*/React__default.createElement(reactI18next.I18nextProvider, {
@@ -4317,19 +5379,15 @@ const AppLanguageProvider = _ref => {
   }, children));
 };
 
-const ChatIndex = _ref => {
-  let {
-    activeGroupId,
-    activeChatUserId,
-    hideRooms = false,
-    lang,
-    chatBaseURLApi,
-    chatWsUrl,
-    chatWsPath,
-    token,
-    inModale = false,
-    refreshToken
-  } = _ref;
+var _excluded$1 = ["lang", "chatBaseURLApi", "chatWsUrl", "chatWsPath", "token", "refreshToken"];
+var ChatIndex = function ChatIndex(_ref) {
+  var lang = _ref.lang,
+    chatBaseURLApi = _ref.chatBaseURLApi,
+    chatWsUrl = _ref.chatWsUrl,
+    chatWsPath = _ref.chatWsPath,
+    token = _ref.token,
+    refreshToken = _ref.refreshToken,
+    props = _objectWithoutPropertiesLoose(_ref, _excluded$1);
   return /*#__PURE__*/React__default.createElement(AppLanguageProvider, null, /*#__PURE__*/React__default.createElement(ChatProvider, {
     defLang: lang,
     token: token,
@@ -4340,12 +5398,7 @@ const ChatIndex = _ref => {
   }, /*#__PURE__*/React__default.createElement(SocketProvider, {
     wsUrl: chatWsUrl,
     wsPath: chatWsPath
-  }, /*#__PURE__*/React__default.createElement(ChatPage, {
-    activeGroupId: activeGroupId,
-    activeChatUserId: activeChatUserId,
-    hideRooms: hideRooms,
-    inModale: inModale
-  })))));
+  }, /*#__PURE__*/React__default.createElement(ChatPage, props)))));
 };
 
 exports.AddContact = AddContact;

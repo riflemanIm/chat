@@ -1,21 +1,19 @@
 /// <reference types="react" />
-export interface ChatProps {
-    activeGroupId?: number;
-    activeChatUserId?: number;
-    hideRooms?: boolean;
-    lang: 'ru' | 'en' | 'fr';
-    chatBaseURLApi: string;
-    chatWsUrl: string;
-    chatWsPath: string;
-    inModale?: boolean;
-    token: string;
-    refreshToken: string;
-}
 export interface ChatPageProps {
     activeGroupId?: number;
     activeChatUserId?: number;
     inModale?: boolean;
     hideRooms?: boolean;
+    fullWidth?: boolean;
+    onContactInfoClick?: (contact: Contact) => void;
+}
+export interface ChatProps extends ChatPageProps {
+    lang: 'ru' | 'en' | 'fr';
+    chatBaseURLApi: string;
+    chatWsUrl: string;
+    chatWsPath: string;
+    token: string;
+    refreshToken: string;
 }
 export declare type MessageType = 'text' | 'image' | 'file' | 'video' | 'notify' | 'video_conference';
 export declare enum MessageStatus {

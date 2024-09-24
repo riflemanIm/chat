@@ -5,6 +5,7 @@ import {
   ListItemAvatar,
   ListItemButton,
   ListItemText,
+  ListProps,
 } from '@mui/material';
 import StarIcon from '@mui/icons-material/Star';
 import ContactStatus from './ContactStatus';
@@ -23,21 +24,21 @@ type ContactListProps = {
   apiUrl: string;
   contacts: Contact[];
   owner?: number;
-  onClick?: (contact: Contact) => void;
+  onContactClick?: (contact: Contact) => void;
 };
 
-const ContactList: React.FC<ContactListProps> = (
-  props: ContactListProps,
+const ContactList: React.FC<ListProps & ContactListProps> = (
+  props: ListProps & ContactListProps
 ) => {
   const classes = useStyles();
   const { apiUrl, contacts, owner } = props;
 
   return (
-    <List aria-label="contacts">
+    <List {...props} aria-label="contacts">
       {contacts.map(contact => (
         <ListItemButton
           key={contact.userId}
-          onClick={() => props.onClick && props.onClick(contact)}
+          onClick={() => props.onContactClick && props.onContactClick(contact)}
         >
           <ListItemAvatar>
             <Avatar
