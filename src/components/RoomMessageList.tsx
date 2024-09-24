@@ -177,7 +177,7 @@ const RoomMessageList: React.FC<RoomMessageListProps> = (
   );
 
   const [isVisible, setIsVisible] = React.useState<string>(
-    messages[messageCount - 1].cdate,
+    messages[messageCount - 1]?.cdate ?? '',
   );
 
   const loadMore = () => {
@@ -193,7 +193,7 @@ const RoomMessageList: React.FC<RoomMessageListProps> = (
 
   React.useEffect(() => {
     if (chatId && scrollableRootRef.current && messageCount) {
-      setIsVisible(messages[messageCount - 1].cdate);
+      setIsVisible(messages[messageCount - 1]?.cdate?? '');
       scrollDown();
     }
   }, [chatId]);
