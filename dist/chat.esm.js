@@ -5,7 +5,7 @@ import FileCopyIcon from '@mui/icons-material/FileCopy';
 import DeleteIcon from '@mui/icons-material/Delete';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { InsertEmoticon, Send, Done, DoneAll, ArrowForward } from '@mui/icons-material';
-import { useTranslation, initReactI18next, I18nextProvider } from 'react-i18next';
+import { useTranslation, I18nextProvider } from 'react-i18next';
 import GroupIcon from '@mui/icons-material/Group';
 import CallEndIcon from '@mui/icons-material/CallEnd';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
@@ -32,7 +32,6 @@ import SettingsSuggestIcon from '@mui/icons-material/SettingsSuggest';
 import SettingsVoiceIcon from '@mui/icons-material/SettingsVoice';
 import VideoSettingsIcon from '@mui/icons-material/VideoSettings';
 import i18n from 'i18next';
-import LanguageDetector from 'i18next-browser-languagedetector';
 
 var MessageStatus;
 (function (MessageStatus) {
@@ -706,6 +705,7 @@ var combineURLs = function combineURLs(baseURL, relativeURL, queryParams) {
   return url + (url.includes('?') ? '&' : '?') + new URLSearchParams(queryParams).toString();
 };
 
+var _excluded = ["apiUrl", "contacts", "owner", "onContactClick"];
 var useStyles$3 = /*#__PURE__*/makeStyles(function () {
   return {
     star: {
@@ -718,14 +718,16 @@ var ContactList = function ContactList(props) {
   var classes = useStyles$3();
   var apiUrl = props.apiUrl,
     contacts = props.contacts,
-    owner = props.owner;
-  return /*#__PURE__*/React__default.createElement(List, _extends({}, props, {
+    owner = props.owner,
+    onContactClick = props.onContactClick,
+    listProps = _objectWithoutPropertiesLoose(props, _excluded);
+  return /*#__PURE__*/React__default.createElement(List, _extends({}, listProps, {
     "aria-label": "contacts"
   }), contacts.map(function (contact) {
     return /*#__PURE__*/React__default.createElement(ListItemButton, {
       key: contact.userId,
       onClick: function onClick() {
-        return props.onContactClick && props.onContactClick(contact);
+        return onContactClick && onContactClick(contact);
       }
     }, /*#__PURE__*/React__default.createElement(ListItemAvatar, null, /*#__PURE__*/React__default.createElement(Avatar, {
       alt: contact.username,
@@ -765,7 +767,7 @@ var AddContact = function AddContact(props) {
   }, t("CHAT.ADD_CONTACT")), /*#__PURE__*/React__default.createElement(ContactList, {
     apiUrl: apiUrl,
     contacts: contacts,
-    onClick: handleListItemClick
+    onContactClick: handleListItemClick
   }));
 };
 
@@ -4770,7 +4772,7 @@ var ChatAlert = function ChatAlert() {
   }, error ? error : success));
 };
 
-var _excluded = ["activeGroupId", "activeChatUserId", "inModale", "hideRooms", "fullWidth"];
+var _excluded$1 = ["activeGroupId", "activeChatUserId", "inModale", "hideRooms", "fullWidth"];
 // Отключили проигрыш звука
 // const getRingAudio = (): HTMLAudioElement => {
 //   const audio = new Audio(
@@ -4812,7 +4814,7 @@ var ChatPage = function ChatPage(_ref) {
     hideRooms = _ref$hideRooms === void 0 ? false : _ref$hideRooms,
     _ref$fullWidth = _ref.fullWidth,
     fullWidth = _ref$fullWidth === void 0 ? false : _ref$fullWidth,
-    props = _objectWithoutPropertiesLoose(_ref, _excluded);
+    props = _objectWithoutPropertiesLoose(_ref, _excluded$1);
   var classes = useStyles$f();
   var isMobile = useMediaQuery(function (theme) {
     return theme.breakpoints.down('sm');
@@ -5290,36 +5292,9 @@ var ru = {
 	CHAT: CHAT$2
 };
 
-var getLang = function getLang() {
-  var str = localStorage.getItem('user');
-  if (str) {
-    var user = JSON.parse(str);
-    return user == null ? void 0 : user.lang;
-  }
-  return 'ru';
-};
-var lang = /*#__PURE__*/getLang();
-i18n.use(LanguageDetector).use(initReactI18next).init({
-  resources: {
-    ru: {
-      translations: ru
-    },
-    en: {
-      translations: en
-    },
-    fr: {
-      translations: fr
-    }
-  },
-  lng: lang,
-  load: 'languageOnly',
-  fallbackLng: lang,
-  debug: true,
-  // have a common namespace used around the full app
-  ns: ['translations'],
-  defaultNS: 'translations',
-  lowerCaseLng: true
-});
+i18n.addResourceBundle('ru', 'translations', ru);
+i18n.addResourceBundle('en', 'translations', en);
+i18n.addResourceBundle('fr', 'translations', fr);
 
 var languageWithoutCountry = function languageWithoutCountry() {
   return i18n.language.substring(0, 2);
@@ -5376,7 +5351,7 @@ var AppLanguageProvider = function AppLanguageProvider(_ref) {
   }, children));
 };
 
-var _excluded$1 = ["lang", "chatBaseURLApi", "chatWsUrl", "chatWsPath", "token", "refreshToken"];
+var _excluded$2 = ["lang", "chatBaseURLApi", "chatWsUrl", "chatWsPath", "token", "refreshToken"];
 var ChatIndex = function ChatIndex(_ref) {
   var lang = _ref.lang,
     chatBaseURLApi = _ref.chatBaseURLApi,
@@ -5384,7 +5359,7 @@ var ChatIndex = function ChatIndex(_ref) {
     chatWsPath = _ref.chatWsPath,
     token = _ref.token,
     refreshToken = _ref.refreshToken,
-    props = _objectWithoutPropertiesLoose(_ref, _excluded$1);
+    props = _objectWithoutPropertiesLoose(_ref, _excluded$2);
   return /*#__PURE__*/React__default.createElement(AppLanguageProvider, null, /*#__PURE__*/React__default.createElement(ChatProvider, {
     defLang: lang,
     token: token,

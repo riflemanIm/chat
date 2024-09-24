@@ -37,7 +37,7 @@ const AddContact: React.FC<AddContactProps> = (
       <ContactList
         apiUrl={apiUrl}
         contacts={contacts}
-        onClick={handleListItemClick}
+        onContactClick={handleListItemClick}
       />
     </Dialog>
   );
