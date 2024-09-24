@@ -20,7 +20,6 @@ import Message from './Message';
 
 import { getChatId } from '../utils/common';
 import { ChatMessage, ChatRoom, User, ContactGather } from '../types';
-import { ChatContext } from '../context/ChatContext';
 import useInfiniteScroll from 'react-infinite-scroll-hook';
 import dayjs from 'dayjs';
 import useInterval from '../hooks/useInterval';
@@ -141,7 +140,6 @@ const RoomMessageList: React.FC<RoomMessageListProps> = (
     src: '',
   });
 
-  const { dispatch } = React.useContext(ChatContext);
   const [scrollDownButton, setScrollDownButton] = React.useState(
     false,
   );
@@ -193,7 +191,7 @@ const RoomMessageList: React.FC<RoomMessageListProps> = (
 
   React.useEffect(() => {
     if (chatId && scrollableRootRef.current && messageCount) {
-      setIsVisible(messages[messageCount - 1]?.cdate?? '');
+      setIsVisible(messages[messageCount - 1]?.cdate ?? '');
       scrollDown();
     }
   }, [chatId]);
@@ -242,10 +240,6 @@ const RoomMessageList: React.FC<RoomMessageListProps> = (
 
       if (!isShowScrollButton && chatId && chat && onEnterRoom) {
         onEnterRoom(chat);
-        dispatch({
-          type: 'MARK_PRIVATE_MESSAGES_READ',
-          payload: chat.userId,
-        });
       }
 
       for (let i = 0; i < messageCount; i++) {

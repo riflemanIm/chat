@@ -96,7 +96,8 @@ export const ChatPage: React.FC<ChatPageProps> = ({
 
   const onNeedMoreMessages = React.useCallback(
     async (chat: ChatRoom) => {
-      if ((chat as Group).groupId) await getGroupMessages(chat as Group);
+      if ((chat as Group).groupId)
+        await getGroupMessages(chat as Group);
       else await getPrivateMessages(chat as Contact);
     },
     [getPrivateMessages, getGroupMessages],
@@ -173,6 +174,10 @@ export const ChatPage: React.FC<ChatPageProps> = ({
           _id: chat.messages[chat.messages.length - 1]._id,
         });
       } else {
+        dispatch({
+          type: 'MARK_PRIVATE_MESSAGES_READ',
+          payload: chat.userId,
+        });
         socket?.emit('markAsRead', {
           contactId: chat.userId,
           _id: chat.messages[chat.messages.length - 1]._id,
@@ -416,7 +421,7 @@ export const ChatPage: React.FC<ChatPageProps> = ({
 
   return (
     <Container
-      maxWidth={fullWidth ? false : "lg"}
+      maxWidth={fullWidth ? false : 'lg'}
       className={classes.root}
       sx={theme => ({
         width: inModale
@@ -444,19 +449,22 @@ export const ChatPage: React.FC<ChatPageProps> = ({
           )}
           <Grid
             item
-            sm={state.conference.data?.id != null
+            sm={
+              state.conference.data?.id != null
                 ? 6
                 : hideRooms
                 ? 12
                 : 8
             }
-            lg={state.conference.data?.id != null
-              ? 6
-              : hideRooms
-              ? 12
-              : 8
+            lg={
+              state.conference.data?.id != null
+                ? 6
+                : hideRooms
+                ? 12
+                : 8
             }
-            xl={state.conference.data?.id != null
+            xl={
+              state.conference.data?.id != null
                 ? 6
                 : hideRooms
                 ? 12
