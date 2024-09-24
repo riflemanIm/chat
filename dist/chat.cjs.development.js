@@ -2225,6 +2225,7 @@ var useStyles$9 = /*#__PURE__*/styles.makeStyles(function (theme) {
   });
 });
 var RoomMessageList = function RoomMessageList(props) {
+  var _messages$cdate, _messages;
   var apiUrl = props.apiUrl,
     user = props.user,
     users = props.users,
@@ -2269,7 +2270,7 @@ var RoomMessageList = function RoomMessageList(props) {
   var messageCountUnreaded = messages.filter(function (it) {
     return (it == null ? void 0 : it.status) != null && it.status === 0;
   });
-  var _React$useState3 = React__default.useState(messages[messageCount - 1].cdate),
+  var _React$useState3 = React__default.useState((_messages$cdate = (_messages = messages[messageCount - 1]) == null ? void 0 : _messages.cdate) != null ? _messages$cdate : ''),
     isVisible = _React$useState3[0],
     setIsVisible = _React$useState3[1];
   var loadMore = function loadMore() {
@@ -2285,7 +2286,8 @@ var RoomMessageList = function RoomMessageList(props) {
     rootRef = _useInfiniteScroll[1].rootRef;
   React__default.useEffect(function () {
     if (chatId && scrollableRootRef.current && messageCount) {
-      setIsVisible(messages[messageCount - 1].cdate);
+      var _messages$cdate2, _messages2;
+      setIsVisible((_messages$cdate2 = (_messages2 = messages[messageCount - 1]) == null ? void 0 : _messages2.cdate) != null ? _messages$cdate2 : '');
       scrollDown();
     }
   }, [chatId]);
