@@ -104,7 +104,6 @@ type RoomMessageListProps = {
   >;
   inModale?: boolean;
   isConference: boolean;
-  onEnterRoom?: (chat: ChatRoom) => void;
 };
 
 const RoomMessageList: React.FC<RoomMessageListProps> = (
@@ -121,7 +120,6 @@ const RoomMessageList: React.FC<RoomMessageListProps> = (
     initialMenuState,
     inModale,
     isConference,
-    onEnterRoom,
   } = props;
 
   const classes = useStyles();
@@ -237,10 +235,6 @@ const RoomMessageList: React.FC<RoomMessageListProps> = (
       const isShowScrollButton =
         hasNextPage && scrollDistanceToBottom > DEF;
       setScrollDownButton(isShowScrollButton);
-
-      if (!isShowScrollButton && chatId && chat && onEnterRoom) {
-        onEnterRoom(chat);
-      }
 
       for (let i = 0; i < messageCount; i++) {
         const mess = messages[i];

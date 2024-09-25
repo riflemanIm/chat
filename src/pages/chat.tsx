@@ -167,7 +167,8 @@ export const ChatPage: React.FC<ChatPageProps> = ({
 
   const onEnterRoom = React.useCallback(
     (chat: ChatRoom) => {
-      if (!chat.messages || chat.messages.length === 0) return;
+      if (!chat || !chat.messages || chat.messages.length === 0)
+        return;
       if ((chat as Group).groupId) {
         socket?.emit('markAsRead', {
           groupId: (chat as Group).groupId,
