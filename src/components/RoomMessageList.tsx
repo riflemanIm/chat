@@ -104,6 +104,7 @@ type RoomMessageListProps = {
   >;
   inModale?: boolean;
   isConference: boolean;
+  onEnterRoom?: (chat: ChatRoom) => void;
 };
 
 const RoomMessageList: React.FC<RoomMessageListProps> = (
@@ -120,6 +121,7 @@ const RoomMessageList: React.FC<RoomMessageListProps> = (
     initialMenuState,
     inModale,
     isConference,
+    onEnterRoom,
   } = props;
 
   const classes = useStyles();
@@ -263,12 +265,15 @@ const RoomMessageList: React.FC<RoomMessageListProps> = (
     }
   }, [messages, chatId]);
 
-  const scrollDown = () => {
+  const scrollDown = React.useCallback(() => {
     if (scrollableRootRef.current) {
       scrollableRootRef.current.scrollTop =
         scrollableRootRef.current.scrollHeight;
+      if (onEnterRoom && chat) {
+        onEnterRoom(chat);
+      }
     }
-  };
+  }, [chat, onEnterRoom]);
 
   const rootRefSetter = React.useCallback(
     (node: HTMLDivElement) => {

@@ -1781,9 +1781,6 @@ var RoomMessageList = function RoomMessageList(props) {
       lastScrollDistanceToBottomRef.current = scrollDistanceToBottom;
       var isShowScrollButton = hasNextPage && scrollDistanceToBottom > DEF;
       setScrollDownButton(isShowScrollButton);
-      if (!isShowScrollButton && chatId && chat && onEnterRoom) {
-        onEnterRoom(chat);
-      }
       for (var i = 0; i < messageCount; i++) {
         var _mess$ref;
         var mess = messages[i];
@@ -1807,11 +1804,14 @@ var RoomMessageList = function RoomMessageList(props) {
       }
     }
   }, [messages, chatId]);
-  var scrollDown = function scrollDown() {
+  var scrollDown = React__default.useCallback(function () {
     if (scrollableRootRef.current) {
       scrollableRootRef.current.scrollTop = scrollableRootRef.current.scrollHeight;
+      if (onEnterRoom && chat) {
+        onEnterRoom(chat);
+      }
     }
-  };
+  }, [chat, onEnterRoom]);
   var rootRefSetter = React__default.useCallback(function (node) {
     rootRef(node);
     scrollableRootRef.current = node;
@@ -4914,7 +4914,7 @@ var ChatPage = function ChatPage(_ref) {
     onEnterRoom(chat);
   }, [socket == null ? void 0 : socket.id, dispatch]);
   var onEnterRoom = React.useCallback(function (chat) {
-    if (!chat.messages || chat.messages.length === 0) return;
+    if (!chat || !chat.messages || chat.messages.length === 0) return;
     if (chat.groupId) {
       socket == null ? void 0 : socket.emit('markAsRead', {
         groupId: chat.groupId,

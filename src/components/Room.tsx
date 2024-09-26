@@ -192,6 +192,7 @@ const Room: React.FC<RoomProps> = (props: RoomProps) => {
         setMenuState={setMenuState}
         inModale={inModale}
         isConference={!!conference?.id}
+        onEnterRoom={props.onEnterRoom}
       />
       <Divider />
       <CardContent>
