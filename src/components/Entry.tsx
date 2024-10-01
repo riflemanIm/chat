@@ -165,7 +165,9 @@ const Entry: React.FC<EntryProps> = (props: EntryProps) => {
         placeholder={t("CHAT.INPUT_MESSAGE") || ""}
         autoFocus={true}
         variant="standard"
-        InputProps={{
+        slotProps={{          
+          input: {
+            autoComplete: "off",
           disableUnderline: true,
           startAdornment: (
             <InputAdornment position={"start"}>
@@ -213,6 +215,7 @@ const Entry: React.FC<EntryProps> = (props: EntryProps) => {
               <Send />
             </IconButton>
           )
+        }
         }}
         value={text}
         onChange={onChange}
