@@ -44,13 +44,10 @@ const filterChats = (
   chats: ChatRoom[],
   filter: string | null,
 ): ChatRoom[] => {
-  if (filter === null) return chats;
+  if (!filter) return chats;
   const lowerFilter = filter.toLowerCase();
   return chats.filter(
-    chat =>
-      getChatName(chat)
-        .toLowerCase()
-        .indexOf(lowerFilter.toLowerCase()) !== -1,
+    chat => getChatName(chat).toLowerCase().includes(lowerFilter),
   );
 };
 
