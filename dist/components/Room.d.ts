@@ -25,6 +25,7 @@ declare type RoomProps = {
     onOperatorAdd?: (chat: Group, operator: Contact) => void;
     onLeaveGroup?: (chat: Group) => void;
     onContactClick?: (contact: Contact) => void;
+    hideRooms: boolean;
 };
 declare const Room: React.FC<RoomProps>;
 export default Room;

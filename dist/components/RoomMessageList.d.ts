@@ -18,9 +18,8 @@ declare type RoomMessageListProps = {
     onNeedMoreMessages: (chat: ChatRoom) => Promise<void>;
     onMeesageDelete?: (chat: ChatRoom, message: ChatMessage) => void;
     setMenuState: React.Dispatch<React.SetStateAction<InitialMenuState>>;
-    inModale?: boolean;
-    isConference: boolean;
     onEnterRoom?: (chat: ChatRoom) => void;
+    hideRooms: boolean;
 };
 declare const RoomMessageList: React.FC<RoomMessageListProps>;
 export default RoomMessageList;

@@ -329,6 +329,7 @@ export const ChatPage: React.FC<ChatPageProps> = ({
       onLeaveGroup={onLeaveGroup}
       inModale={inModale}
       onContactClick={props.onContactInfoClick}
+      hideRooms={hideRooms}
     />
   );
 

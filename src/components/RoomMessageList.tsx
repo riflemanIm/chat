@@ -36,7 +36,7 @@ function isVisibleInViewport(
   //   rect.bottom,
   //   root.clientHeight,
   // );
-  return rect.top >= 50 && rect.bottom <= root.clientHeight;
+  return rect.top >= 150 && rect.bottom <= root.clientHeight;
 }
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -102,9 +102,9 @@ type RoomMessageListProps = {
   setMenuState: React.Dispatch<
     React.SetStateAction<InitialMenuState>
   >;
-  inModale?: boolean;
-  isConference: boolean;
+
   onEnterRoom?: (chat: ChatRoom) => void;
+  hideRooms: boolean;
 };
 
 const RoomMessageList: React.FC<RoomMessageListProps> = (
@@ -119,9 +119,9 @@ const RoomMessageList: React.FC<RoomMessageListProps> = (
     pageSize,
     setMenuState,
     initialMenuState,
-    inModale,
-    isConference,
+
     onEnterRoom,
+    hideRooms,
   } = props;
 
   const classes = useStyles();
@@ -201,7 +201,7 @@ const RoomMessageList: React.FC<RoomMessageListProps> = (
       setIsVisible('');
     },
     isVisible,
-    3700,
+    4700,
   );
 
   // ------ keep the scroll position and lastMessageCount when messageCount changed ----------
@@ -317,29 +317,41 @@ const RoomMessageList: React.FC<RoomMessageListProps> = (
           isVisible
             ? {
                 display: 'block',
-                position: 'relative',
-                width: 'auto',
+                position: 'absolute',
+                left: `calc(50% - 70px${
+                  !hideRooms && !isMobile ? ' + 160px' : ''
+                })`,
+                width: 150,
               }
             : { display: 'none' }
         }
         timeout={2000}
       >
-        <Alert
-          severity="warning"
-          icon={false}
-          style={{
-            width: 'auto',
-            position: 'absolute',
-            left: isMobile ? '50%' : isConference ? '69%' : '60%',
-
-            top: inModale ? 105 : 50,
+        <Box
+          sx={{
+            width: '100%',
+            position: 'relative',
+            display: 'flex',
             zIndex: 10,
+            justifyContent: 'center',
+            top: 106,
+            left: '-50%',
           }}
         >
-          <Typography variant="h6" textAlign="center">
-            {dayjs(isVisible).format('DD.MM.YYYY')}
-          </Typography>
-        </Alert>
+          <Alert
+            severity="warning"
+            icon={false}
+            sx={theme => ({
+              width: 150,
+              mx: 'auto',
+              justifyContent: 'center',
+            })}
+          >
+            <Typography variant="h6" textAlign="center">
+              {dayjs(isVisible).format('DD.MM.YYYY')}
+            </Typography>
+          </Alert>
+        </Box>
       </Fade>
 
       <CardContent

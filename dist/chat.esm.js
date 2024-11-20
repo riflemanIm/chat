@@ -446,43 +446,46 @@ var Entry = function Entry(props) {
     placeholder: t("CHAT.INPUT_MESSAGE") || "",
     autoFocus: true,
     variant: "standard",
-    InputProps: {
-      disableUnderline: true,
-      startAdornment: /*#__PURE__*/React__default.createElement(InputAdornment, {
-        position: "start"
-      }, /*#__PURE__*/React__default.createElement("input", {
-        accept: ".pdf,.jpg,.jpeg,.bmp,.gif,.png,application/pdf,image/jpeg,image/bmp,image/gif,image/png",
-        className: classes.inputUpload,
-        id: "icon-button-file",
-        type: "file",
-        onChange: onSubmitFile
-      }), /*#__PURE__*/React__default.createElement("label", {
-        htmlFor: "icon-button-file"
-      }, /*#__PURE__*/React__default.createElement(IconButton, {
-        color: "primary",
-        "aria-label": "upload",
-        component: "span",
-        size: "small"
-      }, /*#__PURE__*/React__default.createElement(SvgIcon, {
-        fill: "none",
-        className: classes.attachmentIcon
-      }, /*#__PURE__*/React__default.createElement("path", {
-        d: "M16.768 13.5767L11.6961 18.6486C9.35886 20.9859 5.56937 20.9859 3.23208 18.6486V18.6486C0.894789 16.3114 0.894789 12.5219 3.23208 10.1846L10.4479 2.96872C12.0875 1.32914 14.7458 1.32914 16.3854 2.96873V2.96873C18.025 4.60831 18.025 7.26659 16.3854 8.90617L9.16515 16.1264C8.23032 17.0612 6.71466 17.0612 5.77982 16.1264V16.1264C4.84499 15.1916 4.84499 13.6759 5.77982 12.7411L10.8896 7.63131",
-        strokeWidth: "1.6",
-        strokeLinecap: "round",
-        strokeLinejoin: "round"
-      })))), " ", /*#__PURE__*/React__default.createElement(IconButton, {
-        "aria-describedby": enojiId,
-        onClick: handleEmojiClick,
-        color: "primary",
-        size: "small"
-      }, /*#__PURE__*/React__default.createElement(InsertEmoticon, null))),
-      endAdornment: /*#__PURE__*/React__default.createElement(IconButton, {
-        edge: "end",
-        color: "inherit",
-        size: "small",
-        onClick: onSubmitClick
-      }, /*#__PURE__*/React__default.createElement(Send, null))
+    slotProps: {
+      input: {
+        autoComplete: "off",
+        disableUnderline: true,
+        startAdornment: /*#__PURE__*/React__default.createElement(InputAdornment, {
+          position: "start"
+        }, /*#__PURE__*/React__default.createElement("input", {
+          accept: ".pdf,.jpg,.jpeg,.bmp,.gif,.png,application/pdf,image/jpeg,image/bmp,image/gif,image/png",
+          className: classes.inputUpload,
+          id: "icon-button-file",
+          type: "file",
+          onChange: onSubmitFile
+        }), /*#__PURE__*/React__default.createElement("label", {
+          htmlFor: "icon-button-file"
+        }, /*#__PURE__*/React__default.createElement(IconButton, {
+          color: "primary",
+          "aria-label": "upload",
+          component: "span",
+          size: "small"
+        }, /*#__PURE__*/React__default.createElement(SvgIcon, {
+          fill: "none",
+          className: classes.attachmentIcon
+        }, /*#__PURE__*/React__default.createElement("path", {
+          d: "M16.768 13.5767L11.6961 18.6486C9.35886 20.9859 5.56937 20.9859 3.23208 18.6486V18.6486C0.894789 16.3114 0.894789 12.5219 3.23208 10.1846L10.4479 2.96872C12.0875 1.32914 14.7458 1.32914 16.3854 2.96873V2.96873C18.025 4.60831 18.025 7.26659 16.3854 8.90617L9.16515 16.1264C8.23032 17.0612 6.71466 17.0612 5.77982 16.1264V16.1264C4.84499 15.1916 4.84499 13.6759 5.77982 12.7411L10.8896 7.63131",
+          strokeWidth: "1.6",
+          strokeLinecap: "round",
+          strokeLinejoin: "round"
+        })))), " ", /*#__PURE__*/React__default.createElement(IconButton, {
+          "aria-describedby": enojiId,
+          onClick: handleEmojiClick,
+          color: "primary",
+          size: "small"
+        }, /*#__PURE__*/React__default.createElement(InsertEmoticon, null))),
+        endAdornment: /*#__PURE__*/React__default.createElement(IconButton, {
+          edge: "end",
+          color: "inherit",
+          size: "small",
+          onClick: onSubmitClick
+        }, /*#__PURE__*/React__default.createElement(Send, null))
+      }
     },
     value: text,
     onChange: onChange,
@@ -1649,7 +1652,7 @@ function isVisibleInViewport(element, root) {
   //   rect.bottom,
   //   root.clientHeight,
   // );
-  return rect.top >= 50 && rect.bottom <= root.clientHeight;
+  return rect.top >= 150 && rect.bottom <= root.clientHeight;
 }
 var useStyles$9 = /*#__PURE__*/makeStyles(function (theme) {
   var _img, _arrowDown;
@@ -1696,9 +1699,8 @@ var RoomMessageList = function RoomMessageList(props) {
     pageSize = props.pageSize,
     setMenuState = props.setMenuState,
     initialMenuState = props.initialMenuState,
-    inModale = props.inModale,
-    isConference = props.isConference,
-    onEnterRoom = props.onEnterRoom;
+    onEnterRoom = props.onEnterRoom,
+    hideRooms = props.hideRooms;
   var classes = useStyles$9();
   var isMobile = useMediaQuery(function (theme) {
     return theme.breakpoints.down('sm');
@@ -1753,7 +1755,7 @@ var RoomMessageList = function RoomMessageList(props) {
   }, [chatId]);
   useInterval(function () {
     setIsVisible('');
-  }, isVisible, 3700);
+  }, isVisible, 4700);
   // ------ keep the scroll position and lastMessageCount when messageCount changed ----------
   React__default.useEffect(function () {
     var _lastScrollDistanceTo;
@@ -1834,26 +1836,37 @@ var RoomMessageList = function RoomMessageList(props) {
     in: !!isVisible,
     style: isVisible ? {
       display: 'block',
-      position: 'relative',
-      width: 'auto'
+      position: 'absolute',
+      left: "calc(50% - 70px" + (!hideRooms && !isMobile ? ' + 160px' : '') + ")",
+      width: 150
     } : {
       display: 'none'
     },
     timeout: 2000
+  }, /*#__PURE__*/React__default.createElement(Box, {
+    sx: {
+      width: '100%',
+      position: 'relative',
+      display: 'flex',
+      zIndex: 10,
+      justifyContent: 'center',
+      top: 106,
+      left: '-50%'
+    }
   }, /*#__PURE__*/React__default.createElement(Alert, {
     severity: "warning",
     icon: false,
-    style: {
-      width: 'auto',
-      position: 'absolute',
-      left: isMobile ? '50%' : isConference ? '69%' : '60%',
-      top: inModale ? 105 : 50,
-      zIndex: 10
+    sx: function sx(theme) {
+      return {
+        width: 150,
+        mx: 'auto',
+        justifyContent: 'center'
+      };
     }
   }, /*#__PURE__*/React__default.createElement(Typography, {
     variant: "h6",
     textAlign: "center"
-  }, dayjs(isVisible).format('DD.MM.YYYY')))), /*#__PURE__*/React__default.createElement(CardContent, {
+  }, dayjs(isVisible).format('DD.MM.YYYY'))))), /*#__PURE__*/React__default.createElement(CardContent, {
     className: classes.messageListOuter,
     ref: rootRefSetter,
     onScroll: handleRootScroll
@@ -1970,7 +1983,7 @@ var Room = function Room(props) {
     conferenceJoined = props.conferenceJoined,
     loading = props.loading,
     pageSize = props.pageSize,
-    inModale = props.inModale;
+    hideRooms = props.hideRooms;
   var classes = useStyles$a();
   var _useTranslation = useTranslation(),
     t = _useTranslation.t;
@@ -2035,10 +2048,12 @@ var Room = function Room(props) {
     initialMenuState: initialMenuState,
     onNeedMoreMessages: props.onNeedMoreMessages,
     onMeesageDelete: props.onMeesageDelete,
-    setMenuState: setMenuState,
-    inModale: inModale,
-    isConference: !!(conference != null && conference.id),
-    onEnterRoom: props.onEnterRoom
+    setMenuState: setMenuState
+    // inModale={inModale}
+    // isConference={!!conference?.id}
+    ,
+    onEnterRoom: props.onEnterRoom,
+    hideRooms: hideRooms
   }), /*#__PURE__*/React__default.createElement(Divider, null), /*#__PURE__*/React__default.createElement(CardContent, null, /*#__PURE__*/React__default.createElement(Entry, {
     chat: chat,
     onTyping: props.onTyping,
@@ -2242,10 +2257,10 @@ var useStyles$c = /*#__PURE__*/makeStyles(function (theme) {
   };
 });
 var filterChats = function filterChats(chats, filter) {
-  if (filter === null) return chats;
+  if (!filter) return chats;
   var lowerFilter = filter.toLowerCase();
   return chats.filter(function (chat) {
-    return getChatName(chat).toLowerCase().indexOf(lowerFilter.toLowerCase()) !== -1;
+    return getChatName(chat).toLowerCase().includes(lowerFilter);
   });
 };
 var sortChats = function sortChats(userId, groups, contacts) {
@@ -2297,7 +2312,7 @@ var RoomList = function RoomList(props) {
         }
       });
     });
-  }, [(_props$activeRoom = props.activeRoom) == null ? void 0 : _props$activeRoom.userId, props.typing]);
+  }, [(_props$activeRoom = props.activeRoom) == null ? void 0 : _props$activeRoom.userId, props.typing, chats]);
   return /*#__PURE__*/React__default.createElement(Card, {
     elevation: 1,
     className: classes.root
@@ -5054,7 +5069,8 @@ var ChatPage = function ChatPage(_ref) {
     onOperatorAdd: onOperatorAdd,
     onLeaveGroup: onLeaveGroup,
     inModale: inModale,
-    onContactClick: props.onContactInfoClick
+    onContactClick: props.onContactInfoClick,
+    hideRooms: hideRooms
   });
   var GetRoomList = function GetRoomList() {
     return /*#__PURE__*/createElement(RoomList, {
