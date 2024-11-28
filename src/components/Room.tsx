@@ -76,7 +76,7 @@ type RoomProps = {
   loading: boolean;
   pageSize: number;
   operators: Contact[];
-  inModale?: boolean;
+
   onExitRoom?: (chat: ChatRoom) => void;
   onEnterRoom?: (chat: ChatRoom) => void;
   onNeedMoreMessages: (chat: ChatRoom) => Promise<void>;
@@ -94,6 +94,8 @@ type RoomProps = {
   onLeaveGroup?: (chat: Group) => void;
   onContactClick?: (contact: Contact) => void;
   hideRooms: boolean;
+  inModale?: boolean;
+  inAdmin?: boolean;
 };
 
 const Room: React.FC<RoomProps> = (props: RoomProps) => {
@@ -109,6 +111,8 @@ const Room: React.FC<RoomProps> = (props: RoomProps) => {
     loading,
     pageSize,
     hideRooms,
+    inModale,
+    inAdmin,
   } = props;
   const classes = useStyles();
   const { t } = useTranslation();
@@ -191,7 +195,8 @@ const Room: React.FC<RoomProps> = (props: RoomProps) => {
         onNeedMoreMessages={props.onNeedMoreMessages}
         onMeesageDelete={props.onMeesageDelete}
         setMenuState={setMenuState}
-        // inModale={inModale}
+        inModale={inModale}
+        inAdmin={inAdmin}
         // isConference={!!conference?.id}
         onEnterRoom={props.onEnterRoom}
         hideRooms={hideRooms}

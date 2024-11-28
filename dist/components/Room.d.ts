@@ -12,7 +12,6 @@ declare type RoomProps = {
     loading: boolean;
     pageSize: number;
     operators: Contact[];
-    inModale?: boolean;
     onExitRoom?: (chat: ChatRoom) => void;
     onEnterRoom?: (chat: ChatRoom) => void;
     onNeedMoreMessages: (chat: ChatRoom) => Promise<void>;
@@ -26,6 +25,8 @@ declare type RoomProps = {
     onLeaveGroup?: (chat: Group) => void;
     onContactClick?: (contact: Contact) => void;
     hideRooms: boolean;
+    inModale?: boolean;
+    inAdmin?: boolean;
 };
 declare const Room: React.FC<RoomProps>;
 export default Room;

@@ -1702,6 +1702,8 @@ var RoomMessageList = function RoomMessageList(props) {
     pageSize = props.pageSize,
     setMenuState = props.setMenuState,
     initialMenuState = props.initialMenuState,
+    inModale = props.inModale,
+    inAdmin = props.inAdmin,
     onEnterRoom = props.onEnterRoom,
     hideRooms = props.hideRooms;
   var classes = useStyles$9();
@@ -1840,7 +1842,8 @@ var RoomMessageList = function RoomMessageList(props) {
     style: isVisible ? {
       display: 'block',
       position: 'absolute',
-      left: "calc(50% - 70px" + (!hideRooms && !isMobile ? ' + 160px' : '') + ")",
+      left: "calc(50% - " + (inAdmin ? 226 : 70) + "px" + (!hideRooms && !isMobile ? ' + 160px' : '') + ")",
+      top: inModale ? -120 : 40,
       width: 150
     } : {
       display: 'none'
@@ -1986,7 +1989,9 @@ var Room = function Room(props) {
     conferenceJoined = props.conferenceJoined,
     loading = props.loading,
     pageSize = props.pageSize,
-    hideRooms = props.hideRooms;
+    hideRooms = props.hideRooms,
+    inModale = props.inModale,
+    inAdmin = props.inAdmin;
   var classes = useStyles$a();
   var _useTranslation = reactI18next.useTranslation(),
     t = _useTranslation.t;
@@ -2051,8 +2056,9 @@ var Room = function Room(props) {
     initialMenuState: initialMenuState,
     onNeedMoreMessages: props.onNeedMoreMessages,
     onMeesageDelete: props.onMeesageDelete,
-    setMenuState: setMenuState
-    // inModale={inModale}
+    setMenuState: setMenuState,
+    inModale: inModale,
+    inAdmin: inAdmin
     // isConference={!!conference?.id}
     ,
     onEnterRoom: props.onEnterRoom,
@@ -4786,7 +4792,7 @@ var ChatAlert = function ChatAlert() {
   }, error ? error : success));
 };
 
-var _excluded$1 = ["activeGroupId", "activeChatUserId", "inModale", "hideRooms", "fullWidth"];
+var _excluded$1 = ["activeGroupId", "activeChatUserId", "inModale", "inAdmin", "hideRooms", "fullWidth"];
 // Отключили проигрыш звука
 // const getRingAudio = (): HTMLAudioElement => {
 //   const audio = new Audio(
@@ -4824,6 +4830,8 @@ var ChatPage = function ChatPage(_ref) {
     activeChatUserId = _ref.activeChatUserId,
     _ref$inModale = _ref.inModale,
     inModale = _ref$inModale === void 0 ? false : _ref$inModale,
+    _ref$inAdmin = _ref.inAdmin,
+    inAdmin = _ref$inAdmin === void 0 ? false : _ref$inAdmin,
     _ref$hideRooms = _ref.hideRooms,
     hideRooms = _ref$hideRooms === void 0 ? false : _ref$hideRooms,
     _ref$fullWidth = _ref.fullWidth,
@@ -5072,6 +5080,7 @@ var ChatPage = function ChatPage(_ref) {
     onOperatorAdd: onOperatorAdd,
     onLeaveGroup: onLeaveGroup,
     inModale: inModale,
+    inAdmin: inAdmin,
     onContactClick: props.onContactInfoClick,
     hideRooms: hideRooms
   });

@@ -105,6 +105,8 @@ type RoomMessageListProps = {
 
   onEnterRoom?: (chat: ChatRoom) => void;
   hideRooms: boolean;
+  inModale?: boolean;
+  inAdmin?: boolean;
 };
 
 const RoomMessageList: React.FC<RoomMessageListProps> = (
@@ -119,7 +121,8 @@ const RoomMessageList: React.FC<RoomMessageListProps> = (
     pageSize,
     setMenuState,
     initialMenuState,
-
+    inModale,
+    inAdmin,
     onEnterRoom,
     hideRooms,
   } = props;
@@ -318,9 +321,10 @@ const RoomMessageList: React.FC<RoomMessageListProps> = (
             ? {
                 display: 'block',
                 position: 'absolute',
-                left: `calc(50% - 70px${
+                left: `calc(50% - ${inAdmin ? 226 : 70}px${
                   !hideRooms && !isMobile ? ' + 160px' : ''
                 })`,
+                top: inModale ? -120 : 40,
                 width: 150,
               }
             : { display: 'none' }

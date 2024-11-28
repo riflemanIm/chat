@@ -65,6 +65,7 @@ export const ChatPage: React.FC<ChatPageProps> = ({
   activeGroupId,
   activeChatUserId,
   inModale = false,
+  inAdmin = false,
   hideRooms = false,
   fullWidth = false,
   ...props
@@ -328,6 +329,7 @@ export const ChatPage: React.FC<ChatPageProps> = ({
       onOperatorAdd={onOperatorAdd}
       onLeaveGroup={onLeaveGroup}
       inModale={inModale}
+      inAdmin={inAdmin}
       onContactClick={props.onContactInfoClick}
       hideRooms={hideRooms}
     />
