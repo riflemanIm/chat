@@ -1834,18 +1834,26 @@ var RoomMessageList = function RoomMessageList(props) {
     });
   };
   if (chatId == null) return;
-  var horShisht = function horShisht() {
-    var tmp = inAdmin ? 376 : 234;
-    tmp += hideRooms ? -140 : -300;
-    return tmp;
+  var horShift = function horShift() {
+    var left = inAdmin ? 176 : 234;
+    left += hideRooms ? -140 : -300;
+    var top = inModale ? 106 : 50;
+    top += inAdmin ? 80 : 0;
+    return {
+      left: left,
+      top: top
+    };
   };
+  var _horShift = horShift(),
+    left = _horShift.left,
+    top = _horShift.top;
   return /*#__PURE__*/React__default.createElement(React__default.Fragment, null, /*#__PURE__*/React__default.createElement(Fade, {
     in: !!isVisible,
     style: isVisible ? {
       display: 'block',
       position: 'absolute',
-      left: "calc(50% - " + horShisht() + "px)",
-      top: inModale ? 106 : 50,
+      left: "calc(50% - " + left + "px)",
+      top: top,
       width: 150
     } : {
       display: 'none'

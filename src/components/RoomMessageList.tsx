@@ -313,10 +313,14 @@ const RoomMessageList: React.FC<RoomMessageListProps> = (
   if (chatId == null) return;
 
   const horShift = () => {
-    let tmp = inAdmin ? 376 : 234;
-    tmp += hideRooms ? -140 : -300;
-    return tmp;
+    let left = inAdmin ? 176 : 234;
+    left += hideRooms ? -140 : -300;
+
+    let top = inModale ? 106 : 50;
+    top += inAdmin ? 80 : 0;
+    return { left, top };
   };
+  const { left, top } = horShift();
   return (
     <>
       <Fade
@@ -326,8 +330,8 @@ const RoomMessageList: React.FC<RoomMessageListProps> = (
             ? {
                 display: 'block',
                 position: 'absolute',
-                left: `calc(50% - ${horShift()}px)`,
-                top: inModale ? 106 : 50,
+                left: `calc(50% - ${left}px)`,
+                top,
                 width: 150,
               }
             : { display: 'none' }
