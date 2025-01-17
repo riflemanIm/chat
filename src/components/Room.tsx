@@ -16,6 +16,7 @@ import { makeStyles, createStyles } from "@mui/styles";
 import FileCopyIcon from "@mui/icons-material/FileCopy";
 import DeleteIcon from "@mui/icons-material/Delete";
 import VideocamIcon from "@mui/icons-material/Videocam";
+import RecentActorsIcon from "@mui/icons-material/RecentActors";
 import Entry from "./Entry";
 import RoomHeader from "./RoomHeader";
 import RoomMessageList from "./RoomMessageList";
@@ -143,7 +144,7 @@ const Room: React.FC<RoomProps> = (props: RoomProps) => {
       props.onMeesageDelete(chat, message);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [menuState.message]);
-
+  console.log("conference ", conference);
   return (
     <Card elevation={1} className={classes.root}>
       <Box display="flex" flexDirection="row">
@@ -178,8 +179,8 @@ const Room: React.FC<RoomProps> = (props: RoomProps) => {
                 }}
                 onClick={() => props.onExitRoom && props.onExitRoom(chat)}
               >
-                <VideocamIcon />
-              </IconButton>{" "}
+                {conference?.id ? <VideocamIcon /> : <RecentActorsIcon />}
+              </IconButton>
             </Box>
           </Box>
         )}

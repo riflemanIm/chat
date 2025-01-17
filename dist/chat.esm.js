@@ -1,13 +1,15 @@
 import React__default, { createElement, useState, useRef, useEffect, useMemo, Fragment, forwardRef, memo, useCallback, createContext, useContext, useReducer } from 'react';
-import { Box, Typography, TextField, InputAdornment, IconButton, SvgIcon, Popover, List, ListItemButton, ListItemAvatar, Avatar, ListItemText, Dialog, DialogTitle, DialogContent, Alert, DialogActions, Button, Slide, CardHeader, ListItem, Link, useMediaQuery, Fade, CardContent, CircularProgress, Fab, Backdrop, Card, Tooltip, Divider, Menu as Menu$1, MenuItem as MenuItem$1, ListItemIcon, Chip, Badge, Paper, Snackbar, Container, Grid } from '@mui/material';
+import { Box, Typography, TextField, InputAdornment, IconButton, SvgIcon, Popover, List, ListItemButton, ListItemAvatar, Avatar, ListItemText, Dialog, DialogTitle, DialogContent, Alert, DialogActions, Button, Slide, CardHeader, ListItem, Link, useMediaQuery, Fade, CardContent, CircularProgress, Fab, Backdrop, Card, Divider, Menu as Menu$1, MenuItem as MenuItem$1, ListItemIcon, Chip, Badge, Paper, Tooltip, Snackbar, Container, Grid } from '@mui/material';
 import { makeStyles, createStyles, withStyles } from '@mui/styles';
 import FileCopyIcon from '@mui/icons-material/FileCopy';
 import DeleteIcon from '@mui/icons-material/Delete';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import { InsertEmoticon, Send, Done, DoneAll, ArrowForward } from '@mui/icons-material';
+import VideocamIcon from '@mui/icons-material/Videocam';
+import RecentActorsIcon from '@mui/icons-material/RecentActors';
+import { InsertEmoticon, Send, Done, DoneAll } from '@mui/icons-material';
 import { useTranslation, I18nextProvider } from 'react-i18next';
 import GroupIcon from '@mui/icons-material/Group';
 import CallEndIcon from '@mui/icons-material/CallEnd';
+import PauseIcon from '@mui/icons-material/Pause';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import StarIcon from '@mui/icons-material/Star';
 import dayjs from 'dayjs';
@@ -28,9 +30,9 @@ import useInfiniteScroll from 'react-infinite-scroll-hook';
 import List$1 from '@mui/material/List';
 import axios from 'axios';
 import io from 'socket.io-client';
+import ChatIcon from '@mui/icons-material/Chat';
 import SettingsSuggestIcon from '@mui/icons-material/SettingsSuggest';
 import SettingsVoiceIcon from '@mui/icons-material/SettingsVoice';
-import VideoSettingsIcon from '@mui/icons-material/VideoSettings';
 import i18n from 'i18next';
 
 var MessageStatus;
@@ -890,17 +892,17 @@ var ConferenceTime = function ConferenceTime(_ref2) {
   var diffTimeSec = Math.round((finTime - currTime) / 1000);
   var _useCounter = useCounter(diffTimeSec),
     counter = _useCounter.counter;
+  var _hhMmSs = hhMmSs(diffTimeSec),
+    minutes = _hhMmSs.minutes,
+    seconds = _hhMmSs.seconds,
+    strTime = _hhMmSs.strTime;
   useEffect(function () {
-    if (minutes != null && minutes === 3 && seconds != null && seconds === 0) {
+    if (minutes && minutes === 3 && seconds != null && seconds === 0) {
       setModaleInfo(true);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [counter]);
   if (diffTimeSec < 1) return null;
-  var _hhMmSs = hhMmSs(diffTimeSec),
-    minutes = _hhMmSs.minutes,
-    seconds = _hhMmSs.seconds,
-    strTime = _hhMmSs.strTime;
   return /*#__PURE__*/React__default.createElement(Box, {
     textAlign: "center"
   }, /*#__PURE__*/React__default.createElement(Typography, {
@@ -1103,19 +1105,19 @@ var useStyles$4 = /*#__PURE__*/makeStyles(function (theme) {
       padding: theme.spacing(1)
     },
     avatarGroup: {
-      backgroundColor: '#28B7C6',
-      color: '#fff'
+      backgroundColor: "#28B7C6",
+      color: "#fff"
     }
   });
 });
 var getGroupStatus = function getGroupStatus(group, t) {
   var _group$members;
-  var status = [((_group$members = group.members) == null ? void 0 : _group$members.length) + " " + t('CHAT.MEMBERS')];
+  var status = [((_group$members = group.members) == null ? void 0 : _group$members.length) + " " + t("CHAT.MEMBERS")];
   var onlineCount = (group.members || []).reduce(function (sum, contact) {
     return contact.online ? sum + 1 : sum;
   }, 0);
-  if (onlineCount) status.push(onlineCount + " " + t('CHAT.STATUS.ONLINE'));
-  return status.join(', ');
+  if (onlineCount) status.push(onlineCount + " " + t("CHAT.STATUS.ONLINE"));
+  return status.join(", ");
 };
 var RoomHeader = function RoomHeader(_ref) {
   var apiUrl = _ref.apiUrl,
@@ -1209,12 +1211,12 @@ var RoomHeader = function RoomHeader(_ref) {
         open: !!anchorEl,
         anchorEl: anchorEl,
         anchorOrigin: {
-          vertical: 'bottom',
-          horizontal: 'left'
+          vertical: "bottom",
+          horizontal: "left"
         },
         transformOrigin: {
-          vertical: 'top',
-          horizontal: 'left'
+          vertical: "top",
+          horizontal: "left"
         },
         onClose: handlePopoverClose,
         disableRestoreFocus: true
@@ -1253,7 +1255,7 @@ var RoomHeader = function RoomHeader(_ref) {
   return /*#__PURE__*/React__default.createElement(CardHeader, {
     avatar: /*#__PURE__*/React__default.createElement(Avatar, {
       alt: contact.username,
-      src: contact.avatar ? combineURLs(apiUrl, contact.avatar) : ''
+      src: contact.avatar ? combineURLs(apiUrl, contact.avatar) : ""
     }),
     title: contact.username,
     subheader: /*#__PURE__*/React__default.createElement(ContactStatus, {
@@ -1266,13 +1268,13 @@ var RoomHeader = function RoomHeader(_ref) {
       variant: "contained",
       color: "secondary",
       size: "small",
-      startIcon: /*#__PURE__*/React__default.createElement(CallEndIcon, {
-        color: "error"
+      startIcon: /*#__PURE__*/React__default.createElement(PauseIcon, {
+        color: "primary"
       }),
       onClick: function onClick() {
         return onConferencePause(conference);
       }
-    }, t('CHAT.CONFERENCE.PAUSE')), conference && !isEmpty(conference) && onVideoEnd != null && user.role != null && [3, 4].includes(user.role) && /*#__PURE__*/React__default.createElement(React__default.Fragment, null, /*#__PURE__*/React__default.createElement(Button, {
+    }, t("CHAT.CONFERENCE.PAUSE")), conference && !isEmpty(conference) && onVideoEnd != null && user.role != null && [3, 4].includes(user.role) && /*#__PURE__*/React__default.createElement(React__default.Fragment, null, /*#__PURE__*/React__default.createElement(Button, {
       "aria-label": "cancel call",
       variant: "contained",
       color: "primary",
@@ -1286,10 +1288,10 @@ var RoomHeader = function RoomHeader(_ref) {
       style: {
         marginLeft: 8
       }
-    }, t('CHAT.CONFERENCE.FINISH')), /*#__PURE__*/React__default.createElement(ConfirmDialogSlide, {
+    }, t("CHAT.CONFERENCE.FINISH")), /*#__PURE__*/React__default.createElement(ConfirmDialogSlide, {
       open: confirmFinishConf,
       setOpen: setConfirmFinishConf,
-      contentText: t('CHAT.CONFERENCE.CONFIRM_FINISH_CONF'),
+      contentText: t("CHAT.CONFERENCE.CONFIRM_FINISH_CONF"),
       callback: function callback() {
         onVideoEnd(conference);
       }
@@ -1964,20 +1966,20 @@ var RoomMessageList = function RoomMessageList(props) {
 var useStyles$a = /*#__PURE__*/makeStyles(function (theme) {
   return createStyles({
     root: {
-      width: '100%',
+      width: "100%",
       minWidth: 360,
-      height: '100%',
-      display: 'flex',
-      flexDirection: 'column'
+      height: "100%",
+      display: "flex",
+      flexDirection: "column"
     },
     roomHeader: {
       flex: 1
     },
     flexAll: {
-      flex: '1 1 auto'
+      flex: "1 1 auto"
     },
     flexEnd: {
-      justifyContent: 'flex-end'
+      justifyContent: "flex-end"
     }
   });
 });
@@ -2006,7 +2008,7 @@ var Room = function Room(props) {
   var _useTranslation = useTranslation(),
     t = _useTranslation.t;
   var isMobile = useMediaQuery(function (theme) {
-    return theme.breakpoints.down('sm');
+    return theme.breakpoints.down("sm");
   });
   var _React$useState = React__default.useState(initialMenuState),
     menuState = _React$useState[0],
@@ -2027,20 +2029,43 @@ var Room = function Room(props) {
     if (props.onMeesageDelete && chat && message) props.onMeesageDelete(chat, message);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [menuState.message]);
+  console.log("conference ", conference);
   return /*#__PURE__*/React__default.createElement(Card, {
     elevation: 1,
     className: classes.root
   }, /*#__PURE__*/React__default.createElement(Box, {
     display: "flex",
     flexDirection: "row"
-  }, chat && isMobile && /*#__PURE__*/React__default.createElement(Tooltip, {
-    title: "\u0412\u0435\u0440\u043D\u0443\u0442\u044C\u0441\u044F \u0432 \u043A\u043E\u043D\u0444\u0435\u0440\u0435\u043D\u0446\u0438\u044E"
+  }, chat && isMobile && /*#__PURE__*/React__default.createElement(Box, {
+    sx: {
+      position: "absolute",
+      overflow: "hidden",
+      top: -12,
+      left: 218
+    }
+  }, /*#__PURE__*/React__default.createElement(Box, {
+    display: "flex",
+    flexDirection: "row",
+    columnGap: 3,
+    my: 3,
+    sx: {
+      position: "relative"
+    }
   }, /*#__PURE__*/React__default.createElement(IconButton, {
     "aria-label": "exit room",
+    sx: {
+      color: "#fff",
+      background: "#000",
+      "&:hover": {
+        background: "#eee",
+        color: "#000",
+        boxShadow: "none"
+      }
+    },
     onClick: function onClick() {
       return props.onExitRoom && props.onExitRoom(chat);
     }
-  }, /*#__PURE__*/React__default.createElement(ArrowBackIcon, null))), /*#__PURE__*/React__default.createElement(RoomHeader, {
+  }, conference != null && conference.id ? /*#__PURE__*/React__default.createElement(VideocamIcon, null) : /*#__PURE__*/React__default.createElement(RecentActorsIcon, null)))), /*#__PURE__*/React__default.createElement(RoomHeader, {
     apiUrl: apiUrl,
     user: user,
     chat: chat,
@@ -2091,7 +2116,7 @@ var Room = function Room(props) {
     disabled: !menuState.canCopy
   }, /*#__PURE__*/React__default.createElement("span", {
     className: classes.flexAll
-  }, t('CHAT.MESSAGE.MENU.COPY')), /*#__PURE__*/React__default.createElement(ListItemIcon, {
+  }, t("CHAT.MESSAGE.MENU.COPY")), /*#__PURE__*/React__default.createElement(ListItemIcon, {
     className: classes.flexEnd
   }, /*#__PURE__*/React__default.createElement(FileCopyIcon, {
     fontSize: "small"
@@ -2100,7 +2125,7 @@ var Room = function Room(props) {
     disabled: !menuState.canDelete
   }, /*#__PURE__*/React__default.createElement("span", {
     className: classes.flexAll
-  }, t('CHAT.MESSAGE.MENU.DELETE')), /*#__PURE__*/React__default.createElement(ListItemIcon, {
+  }, t("CHAT.MESSAGE.MENU.DELETE")), /*#__PURE__*/React__default.createElement(ListItemIcon, {
     className: classes.flexEnd
   }, /*#__PURE__*/React__default.createElement(DeleteIcon, {
     fontSize: "small"
@@ -4737,37 +4762,66 @@ var CheckAudiVideoPerm = function CheckAudiVideoPerm(_ref) {
       video: video
     });
     permissions.then(function (data) {
-      console.log('permissions', data);
+      console.log("permissions", data);
       dispatch({
-        type: 'SET_SUCCES',
-        payload: t('CHAT.CONFERENCE.ALLOK')
+        type: "SET_SUCCES",
+        payload: t("CHAT.CONFERENCE.ALLOK")
       });
     }).catch(function (err) {
-      var payload = t('CHAT.CONFERENCE.ErrorAny');
-      if (err.name === 'NotFoundError') {
-        payload = t('CHAT.CONFERENCE.NotFoundError');
+      var payload = t("CHAT.CONFERENCE.ErrorAny");
+      if (err.name === "NotFoundError") {
+        payload = t("CHAT.CONFERENCE.NotFoundError");
       }
-      if (err.name === 'NotAllowedError') {
-        payload = t('CHAT.CONFERENCE.NotAllowedError');
+      if (err.name === "NotAllowedError") {
+        payload = t("CHAT.CONFERENCE.NotAllowedError");
       }
       dispatch({
-        type: 'SET_ERROR',
+        type: "SET_ERROR",
         payload: payload
       });
       //setHavePermissions(false);
-      console.log('err', err.name + " : " + err.message);
+      console.log("err", err.name + " : " + err.message);
     });
   };
-  var title = audio && video ? t('CHAT.CONFERENCE.CheckCamMic') : audio ? t('CHAT.CONFERENCE.CheckMic') : t('CHAT.CONFERENCE.CheckCam');
-  return /*#__PURE__*/React__default.createElement(Tooltip, {
+  var title = audio && video ? t("CHAT.CONFERENCE.CheckCamMic") : audio ? t("CHAT.CONFERENCE.CheckMic") : t("CHAT.CONFERENCE.CheckCam");
+  var isMobile = useMediaQuery(function (theme) {
+    return theme.breakpoints.down("sm");
+  });
+  return !isMobile ? /*#__PURE__*/React__default.createElement(Button, {
+    "aria-label": "cancel call",
+    variant: "contained",
+    sx: {
+      color: "#fff",
+      background: "#000",
+      "&:hover": {
+        background: "#eee",
+        color: "#000",
+        boxShadow: "none"
+      }
+    },
+    size: "small",
+    startIcon: audio && video ? /*#__PURE__*/React__default.createElement(SettingsSuggestIcon, null) : audio ? /*#__PURE__*/React__default.createElement(SettingsVoiceIcon, null) : /*#__PURE__*/React__default.createElement(VideocamIcon, null),
+    onClick: function onClick() {
+      return checkPermissions();
+    }
+  }, title) : /*#__PURE__*/React__default.createElement(Tooltip, {
     title: title
   }, /*#__PURE__*/React__default.createElement(IconButton, {
+    sx: {
+      color: "#fff",
+      background: "#000",
+      "&:hover": {
+        background: "#eee",
+        color: "#000",
+        boxShadow: "none"
+      }
+    },
     "aria-label": "check",
     onClick: function onClick() {
       return checkPermissions();
     },
     size: "large"
-  }, audio && video ? /*#__PURE__*/React__default.createElement(SettingsSuggestIcon, null) : audio ? /*#__PURE__*/React__default.createElement(SettingsVoiceIcon, null) : /*#__PURE__*/React__default.createElement(VideoSettingsIcon, null)));
+  }, audio && video ? /*#__PURE__*/React__default.createElement(SettingsSuggestIcon, null) : audio ? /*#__PURE__*/React__default.createElement(SettingsVoiceIcon, null) : /*#__PURE__*/React__default.createElement(VideocamIcon, null)));
 };
 
 var ChatAlert = function ChatAlert() {
@@ -4812,30 +4866,35 @@ var _excluded$1 = ["activeGroupId", "activeChatUserId", "inModale", "inAdmin", "
 //   return audio;
 // };
 var useStyles$f = /*#__PURE__*/makeStyles(function (theme) {
-  var _root;
   return {
-    root: (_root = {
-      height: '100%',
-      overflow: 'hidden',
-      padding: 0
-    }, _root[theme.breakpoints.down('sm')] = {
-      width: '100%'
-    }, _root),
+    root: {
+      height: "100%",
+      overflow: "hidden",
+      padding: 0,
+      width: "100%"
+    },
     innerGrid: {
-      height: '100%',
-      width: '100%'
+      height: "100%",
+      width: "100%"
     },
     conAbsOnConf: {
-      position: 'absolute',
-      top: 42,
-      left: 25,
+      position: "relative",
+      top: 106,
+      left: 0,
+      zIndex: 1000,
+      margin: theme.spacing(3)
+    },
+    conAbsOnConfDoc: {
+      position: "absolute",
+      top: 52,
+      left: 24,
       zIndex: 1000,
       margin: theme.spacing(3)
     }
   };
 });
 var ChatPage = function ChatPage(_ref) {
-  var _state$conference$dat2, _state$conference$dat3, _state$activeRoom, _state$activeRoom2, _state$conference$dat4, _state$conference$dat5, _state$conference$dat6, _state$conference$dat7, _state$conference$dat8, _state$conference$dat9, _state$conference$dat10;
+  var _state$conference$dat2, _state$activeRoom, _state$activeRoom2, _state$conference$dat3, _state$conference$dat4, _state$conference$dat5, _state$conference$dat6, _state$conference$dat7, _state$conference$dat8, _state$conference$dat9;
   var activeGroupId = _ref.activeGroupId,
     activeChatUserId = _ref.activeChatUserId,
     _ref$inModale = _ref.inModale,
@@ -4844,12 +4903,10 @@ var ChatPage = function ChatPage(_ref) {
     inAdmin = _ref$inAdmin === void 0 ? false : _ref$inAdmin,
     _ref$hideRooms = _ref.hideRooms,
     hideRooms = _ref$hideRooms === void 0 ? false : _ref$hideRooms,
-    _ref$fullWidth = _ref.fullWidth,
-    fullWidth = _ref$fullWidth === void 0 ? false : _ref$fullWidth,
     props = _objectWithoutPropertiesLoose(_ref, _excluded$1);
   var classes = useStyles$f();
   var isMobile = useMediaQuery(function (theme) {
-    return theme.breakpoints.down('sm');
+    return theme.breakpoints.down("sm");
   });
   var _useTranslation = useTranslation(),
     t = _useTranslation.t;
@@ -4867,7 +4924,7 @@ var ChatPage = function ChatPage(_ref) {
   // const [ringAudio] = React.useState(getRingAudio());
   var onExitActiveRoom = useCallback(function () {
     dispatch({
-      type: 'SET_ACTIVE_ROOM',
+      type: "SET_ACTIVE_ROOM",
       payload: {}
     });
   }, [dispatch]);
@@ -4901,21 +4958,21 @@ var ChatPage = function ChatPage(_ref) {
     };
   }(), [getPrivateMessages, getGroupMessages]);
   var onMessageDelete = useCallback(function (chat, message) {
-    socket == null ? void 0 : socket.emit('revokeMessage', {
+    socket == null ? void 0 : socket.emit("revokeMessage", {
       groupId: chat.groupId,
       contactId: chat.userId,
       _id: message._id
     });
   }, [socket == null ? void 0 : socket.id]);
   var onTyping = useCallback(function (chat) {
-    socket == null ? void 0 : socket.emit('typing', {
+    socket == null ? void 0 : socket.emit("typing", {
       groupId: chat == null ? void 0 : chat.groupId,
       contactId: chat == null ? void 0 : chat.userId
     });
   }, [socket == null ? void 0 : socket.id]);
   var onSendMessage = useCallback(function (chat, data) {
     if (chat.groupId) {
-      socket == null ? void 0 : socket.emit('groupMessage', {
+      socket == null ? void 0 : socket.emit("groupMessage", {
         groupId: chat == null ? void 0 : chat.groupId,
         content: data.message,
         width: data.width,
@@ -4925,7 +4982,7 @@ var ChatPage = function ChatPage(_ref) {
         size: data.size
       });
     } else {
-      socket == null ? void 0 : socket.emit('privateMessage', {
+      socket == null ? void 0 : socket.emit("privateMessage", {
         contactId: chat == null ? void 0 : chat.userId,
         content: data.message,
         width: data.width,
@@ -4938,7 +4995,7 @@ var ChatPage = function ChatPage(_ref) {
   }, [socket == null ? void 0 : socket.id]);
   var onChangeChat = useCallback(function (chat) {
     dispatch({
-      type: 'SET_ACTIVE_ROOM',
+      type: "SET_ACTIVE_ROOM",
       payload: {
         groupId: chat == null ? void 0 : chat.groupId,
         contactId: chat == null ? void 0 : chat.userId
@@ -4949,23 +5006,23 @@ var ChatPage = function ChatPage(_ref) {
   var onEnterRoom = useCallback(function (chat) {
     if (!chat || !chat.messages || chat.messages.length === 0) return;
     if (chat.groupId) {
-      socket == null ? void 0 : socket.emit('markAsRead', {
+      socket == null ? void 0 : socket.emit("markAsRead", {
         groupId: chat.groupId,
         _id: chat.messages[chat.messages.length - 1]._id
       });
     } else {
       dispatch({
-        type: 'MARK_PRIVATE_MESSAGES_READ',
+        type: "MARK_PRIVATE_MESSAGES_READ",
         payload: chat.userId
       });
-      socket == null ? void 0 : socket.emit('markAsRead', {
+      socket == null ? void 0 : socket.emit("markAsRead", {
         contactId: chat.userId,
         _id: chat.messages[chat.messages.length - 1]._id
       });
     }
   }, [socket == null ? void 0 : socket.id]);
   var onVideoCall = useCallback(function (chat, visitId, recreate) {
-    socket == null ? void 0 : socket.emit('startConference', {
+    socket == null ? void 0 : socket.emit("startConference", {
       groupId: chat.groupId,
       contactId: chat.userId,
       visitId: visitId,
@@ -4973,33 +5030,33 @@ var ChatPage = function ChatPage(_ref) {
     });
   }, [socket == null ? void 0 : socket.id]);
   var onVideoEnd = useCallback(function (conference) {
-    if ((conference == null ? void 0 : conference.id) != null) socket == null ? void 0 : socket.emit('stopConference', {
+    if ((conference == null ? void 0 : conference.id) != null) socket == null ? void 0 : socket.emit("stopConference", {
       id: conference == null ? void 0 : conference.id
     });
   }, [socket == null ? void 0 : socket.id]);
   var onConferencePause = useCallback(function (conference) {
-    if ((conference == null ? void 0 : conference.id) != null) socket == null ? void 0 : socket.emit('pauseConference', {
+    if ((conference == null ? void 0 : conference.id) != null) socket == null ? void 0 : socket.emit("pauseConference", {
       id: conference.id
     });
   }, [socket == null ? void 0 : socket.id]);
   var onConferenceCallAccept = useCallback(function (conference) {
     // отправляем resumeConference чтобы возобновить запись
-    if ((conference == null ? void 0 : conference.id) != null) socket == null ? void 0 : socket.emit('resumeConference', {
+    if ((conference == null ? void 0 : conference.id) != null) socket == null ? void 0 : socket.emit("resumeConference", {
       id: conference.id
     });
     dispatch({
-      type: 'JOIN_CONFERENCE',
+      type: "JOIN_CONFERENCE",
       payload: conference
     });
   }, [socket == null ? void 0 : socket.id, dispatch]);
   var onOperatorAdd = useCallback(function (group, operator) {
-    socket == null ? void 0 : socket.emit('addOperator', {
+    socket == null ? void 0 : socket.emit("addOperator", {
       groupId: group.groupId,
       operatorId: operator.userId
     });
   }, [socket == null ? void 0 : socket.id]);
   var onLeaveGroup = useCallback(function (group) {
-    socket == null ? void 0 : socket.emit('deleteGroup', {
+    socket == null ? void 0 : socket.emit("deleteGroup", {
       groupId: group.groupId
     });
   }, [socket == null ? void 0 : socket.id]);
@@ -5010,8 +5067,8 @@ var ChatPage = function ChatPage(_ref) {
       });
       onChangeChat(Chat);
     }
-    var mmkId = getParam('mmk');
-    var guid = getParam('guid');
+    var mmkId = getParam("mmk");
+    var guid = getParam("guid");
     if ((mmkId != null || guid != null) && !isEmpty(state.contactGather)) {
       //console.log("mmkId", mmkId);
       var changeChatByMmkId = /*#__PURE__*/function () {
@@ -5121,61 +5178,76 @@ var ChatPage = function ChatPage(_ref) {
     });
   };
   var Gonf = function Gonf() {
-    return state.conference.joined ? /*#__PURE__*/createElement(Fragment, null, /*#__PURE__*/createElement(GetConference, null), /*#__PURE__*/createElement(Box, {
-      className: classes.conAbsOnConf
-    }, /*#__PURE__*/createElement(Paper, {
-      style: {
-        borderRadius: 8
+    return state.conference.joined ? /*#__PURE__*/createElement(Fragment, null, /*#__PURE__*/createElement(GetConference, null), (!state.activeRoom || !isMobile) && /*#__PURE__*/createElement(Box, {
+      sx: function sx(theme) {
+        var _ref4;
+        return _ref4 = {
+          position: "absolute",
+          overflow: "hidden",
+          top: [3, 4].includes(state.user.role) ? 40 : 110,
+          left: [3, 4].includes(state.user.role) ? 40 : 30,
+          zIndex: 1000
+        }, _ref4[theme.breakpoints.down("sm")] = {
+          top: 98,
+          left: 26
+        }, _ref4;
       }
     }, /*#__PURE__*/createElement(Box, {
       display: "flex",
       flexDirection: "row",
-      my: 3
-    }, (isEmpty(state.activeRoom) && isMobile || !isEmpty(state.activeRoom) && !isMobile) && /*#__PURE__*/createElement(Fragment, null, /*#__PURE__*/createElement(CheckAudiVideoPerm, {
+      columnGap: 3,
+      my: 3,
+      sx: {
+        position: "relative"
+      }
+    }, /*#__PURE__*/createElement(Fragment, null, /*#__PURE__*/createElement(CheckAudiVideoPerm, {
       audio: true,
       video: false
     }), /*#__PURE__*/createElement(CheckAudiVideoPerm, {
       audio: false,
       video: true
-    })), isEmpty(state.activeRoom) && state.chatOld != null && isMobile && /*#__PURE__*/createElement(Tooltip, {
-      title: t('CHAT.CONFERENCE.BACK')
+    })), isMobile && /*#__PURE__*/createElement(Tooltip, {
+      title: t("CHAT.CONFERENCE.BACK")
     }, /*#__PURE__*/createElement(IconButton, {
+      sx: {
+        color: "#fff",
+        background: "#000",
+        "&:hover": {
+          background: "#eee",
+          color: "#000",
+          boxShadow: "none"
+        }
+      },
       "aria-label": "check",
       onClick: function onClick() {
         return state.chatOld != null && onChangeChat(state.chatOld);
       },
       size: "large"
-    }, /*#__PURE__*/createElement(ArrowForward, null))))))) : /*#__PURE__*/createElement(GetConferenceCall, null);
+    }, /*#__PURE__*/createElement(ChatIcon, null)))))) : /*#__PURE__*/createElement(GetConferenceCall, null);
   };
   var contacts = useMemo(function () {
     var _state$conference$dat;
     return ((_state$conference$dat = state.conference.data) == null ? void 0 : _state$conference$dat.id) != null ? /*#__PURE__*/createElement(Gonf, null) : /*#__PURE__*/createElement(GetRoomList, null);
-  }, ((_state$conference$dat2 = state.conference.data) == null ? void 0 : _state$conference$dat2.id) != null ? [state.conference.joined, (_state$conference$dat3 = state.conference.data) == null ? void 0 : _state$conference$dat3.id] : [(_state$activeRoom = state.activeRoom) == null ? void 0 : _state$activeRoom.groupId, (_state$activeRoom2 = state.activeRoom) == null ? void 0 : _state$activeRoom2.userId, allMessCount(state.contactGather), allMessCount(state.groupGather)]);
+  }, ((_state$conference$dat2 = state.conference.data) == null ? void 0 : _state$conference$dat2.id) != null ? [state.conference, state.conference, state.activeRoom] : [(_state$activeRoom = state.activeRoom) == null ? void 0 : _state$activeRoom.groupId, (_state$activeRoom2 = state.activeRoom) == null ? void 0 : _state$activeRoom2.userId, allMessCount(state.contactGather), allMessCount(state.groupGather)]);
   return /*#__PURE__*/createElement(Container, {
-    maxWidth: fullWidth ? false : 'lg',
-    className: classes.root,
-    sx: function sx(theme) {
-      return {
-        width: inModale ? "calc(100vw - " + theme.spacing(8) + ")" : '100%'
-      };
-    }
+    className: classes.root
   }, isMobile ? /*#__PURE__*/createElement(Fragment, null, contacts, renderRoom) : /*#__PURE__*/createElement(Grid, {
     container: true,
     spacing: 1,
     className: classes.innerGrid
-  }, (((_state$conference$dat4 = state.conference.data) == null ? void 0 : _state$conference$dat4.id) != null || !hideRooms) && /*#__PURE__*/createElement(Grid, {
+  }, (((_state$conference$dat3 = state.conference.data) == null ? void 0 : _state$conference$dat3.id) != null || !hideRooms) && /*#__PURE__*/createElement(Grid, {
     item: true,
-    sm: ((_state$conference$dat5 = state.conference.data) == null ? void 0 : _state$conference$dat5.id) != null ? 6 : 4,
-    lg: ((_state$conference$dat6 = state.conference.data) == null ? void 0 : _state$conference$dat6.id) != null ? 6 : 4 // на малой ширине нужна пропорция 1/3
+    sm: ((_state$conference$dat4 = state.conference.data) == null ? void 0 : _state$conference$dat4.id) != null ? 6 : 4,
+    lg: ((_state$conference$dat5 = state.conference.data) == null ? void 0 : _state$conference$dat5.id) != null ? 6 : 4 // на малой ширине нужна пропорция 1/3
     ,
-    xl: ((_state$conference$dat7 = state.conference.data) == null ? void 0 : _state$conference$dat7.id) != null ? 6 : 3 // на большой ширине нужна пропорция 1/4
+    xl: ((_state$conference$dat6 = state.conference.data) == null ? void 0 : _state$conference$dat6.id) != null ? 6 : 3 // на большой ширине нужна пропорция 1/4
     ,
     className: classes.innerGrid
   }, contacts), /*#__PURE__*/createElement(Grid, {
     item: true,
-    sm: ((_state$conference$dat8 = state.conference.data) == null ? void 0 : _state$conference$dat8.id) != null ? 6 : hideRooms ? 12 : 8,
-    lg: ((_state$conference$dat9 = state.conference.data) == null ? void 0 : _state$conference$dat9.id) != null ? 6 : hideRooms ? 12 : 8,
-    xl: ((_state$conference$dat10 = state.conference.data) == null ? void 0 : _state$conference$dat10.id) != null ? 6 : hideRooms ? 12 : 9,
+    sm: ((_state$conference$dat7 = state.conference.data) == null ? void 0 : _state$conference$dat7.id) != null ? 6 : hideRooms ? 12 : 8,
+    lg: ((_state$conference$dat8 = state.conference.data) == null ? void 0 : _state$conference$dat8.id) != null ? 6 : hideRooms ? 12 : 8,
+    xl: ((_state$conference$dat9 = state.conference.data) == null ? void 0 : _state$conference$dat9.id) != null ? 6 : hideRooms ? 12 : 9,
     className: classes.innerGrid
   }, renderRoom)), /*#__PURE__*/createElement(ChatAlert, null));
 };
@@ -5320,8 +5392,8 @@ var CHAT$2 = {
 		ErrorAny: "Устройство не настроено",
 		ALLOK: "Все OK",
 		CheckCamMic: "Проверить доступ к микрофону и камере",
-		CheckMic: "Проверить доступ к микрофону",
-		CheckCam: "Проверить доступ к камере",
+		CheckMic: "Проверить микрофон",
+		CheckCam: "Проверить камеру",
 		UntillTheEnd: "До окончания конференции осталось",
 		LEFT_TIME: "Осталось"
 	},

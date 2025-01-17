@@ -4,7 +4,6 @@ import {
   Box,
   Grid,
   useMediaQuery,
-  Paper,
   IconButton,
   Tooltip,
 } from "@mui/material";
@@ -76,7 +75,6 @@ export const ChatPage: React.FC<ChatPageProps> = ({
   ...props
 }: ChatPageProps) => {
   const classes = useStyles();
-  console.log("hideRooms", hideRooms);
 
   const isMobile = useMediaQuery((theme: Theme) =>
     theme.breakpoints.down("sm")
@@ -372,7 +370,7 @@ export const ChatPage: React.FC<ChatPageProps> = ({
       langCode={state.user.langCode}
     />
   );
-  console.log("state.activeRoom ", state.activeRoom);
+
   const Gonf = () =>
     state.conference.joined ? (
       <>
