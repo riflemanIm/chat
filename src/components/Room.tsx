@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback } from "react";
 import {
   Box,
   Card,
@@ -10,16 +10,16 @@ import {
   IconButton,
   useMediaQuery,
   Tooltip,
-} from '@mui/material';
-import { Theme } from '@mui/material/styles';
-import { makeStyles, createStyles } from '@mui/styles';
-import FileCopyIcon from '@mui/icons-material/FileCopy';
-import DeleteIcon from '@mui/icons-material/Delete';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import Entry from './Entry';
-import RoomHeader from './RoomHeader';
-import RoomMessageList from './RoomMessageList';
-import { useTranslation } from 'react-i18next';
+} from "@mui/material";
+import { Theme } from "@mui/material/styles";
+import { makeStyles, createStyles } from "@mui/styles";
+import FileCopyIcon from "@mui/icons-material/FileCopy";
+import DeleteIcon from "@mui/icons-material/Delete";
+import VideocamIcon from "@mui/icons-material/Videocam";
+import Entry from "./Entry";
+import RoomHeader from "./RoomHeader";
+import RoomMessageList from "./RoomMessageList";
+import { useTranslation } from "react-i18next";
 import {
   ChatMessage,
   ChatRoom,
@@ -31,16 +31,16 @@ import {
   Group,
   ContactGather,
   VisitData,
-} from '../types';
+} from "../types";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
-      width: '100%',
+      width: "100%",
       minWidth: 360,
-      height: '100%',
-      display: 'flex',
-      flexDirection: 'column',
+      height: "100%",
+      display: "flex",
+      flexDirection: "column",
     },
 
     roomHeader: {
@@ -48,12 +48,12 @@ const useStyles = makeStyles((theme: Theme) =>
     },
 
     flexAll: {
-      flex: '1 1 auto',
+      flex: "1 1 auto",
     },
     flexEnd: {
-      justifyContent: 'flex-end',
+      justifyContent: "flex-end",
     },
-  }),
+  })
 );
 
 const initialMenuState = {
@@ -83,11 +83,7 @@ type RoomProps = {
   onMeesageDelete?: (chat: ChatRoom, message: ChatMessage) => void;
   onTyping?: (chat: ChatRoom) => void;
   onSendMessage?: (chat: ChatRoom, data: SendMessage) => void;
-  onVideoCall?: (
-    chat: ChatRoom,
-    visitId?: number,
-    recreate?: boolean,
-  ) => void;
+  onVideoCall?: (chat: ChatRoom, visitId?: number, recreate?: boolean) => void;
   onVideoEnd?: (chat: ConferenceData) => void;
   onConferencePause?: (conference: ConferenceData) => void;
   onOperatorAdd?: (chat: Group, operator: Contact) => void;
@@ -117,7 +113,7 @@ const Room: React.FC<RoomProps> = (props: RoomProps) => {
   const classes = useStyles();
   const { t } = useTranslation();
   const isMobile = useMediaQuery((theme: Theme) =>
-    theme.breakpoints.down('sm'),
+    theme.breakpoints.down("sm")
   );
 
   const [menuState, setMenuState] = React.useState<{
@@ -152,16 +148,40 @@ const Room: React.FC<RoomProps> = (props: RoomProps) => {
     <Card elevation={1} className={classes.root}>
       <Box display="flex" flexDirection="row">
         {chat && isMobile && (
-          <Tooltip title="Вернуться в конференцию">
-            <IconButton
-              aria-label="exit room"
-              onClick={() =>
-                props.onExitRoom && props.onExitRoom(chat)
-              }
+          <Box
+            sx={{
+              position: "absolute",
+              overflow: "hidden",
+              top: -12,
+              left: 218,
+            }}
+          >
+            <Box
+              display="flex"
+              flexDirection="row"
+              columnGap={3}
+              my={3}
+              sx={{
+                position: "relative",
+              }}
             >
-              <ArrowBackIcon />
-            </IconButton>
-          </Tooltip>
+              <IconButton
+                aria-label="exit room"
+                sx={{
+                  color: "#fff",
+                  background: "#000",
+                  "&:hover": {
+                    background: "#eee",
+                    color: "#000",
+                    boxShadow: "none",
+                  },
+                }}
+                onClick={() => props.onExitRoom && props.onExitRoom(chat)}
+              >
+                <VideocamIcon />
+              </IconButton>{" "}
+            </Box>
+          </Box>
         )}
         {/* {!isMobile && <CheckAudiVideoPerm />} */}
 
@@ -221,19 +241,14 @@ const Room: React.FC<RoomProps> = (props: RoomProps) => {
         }
       >
         <MenuItem onClick={handleCopy} disabled={!menuState.canCopy}>
-          <span className={classes.flexAll}>
-            {t('CHAT.MESSAGE.MENU.COPY')}
-          </span>
+          <span className={classes.flexAll}>{t("CHAT.MESSAGE.MENU.COPY")}</span>
           <ListItemIcon className={classes.flexEnd}>
             <FileCopyIcon fontSize="small" />
           </ListItemIcon>
         </MenuItem>
-        <MenuItem
-          onClick={handleDelete}
-          disabled={!menuState.canDelete}
-        >
+        <MenuItem onClick={handleDelete} disabled={!menuState.canDelete}>
           <span className={classes.flexAll}>
-            {t('CHAT.MESSAGE.MENU.DELETE')}
+            {t("CHAT.MESSAGE.MENU.DELETE")}
           </span>
           <ListItemIcon className={classes.flexEnd}>
             <DeleteIcon fontSize="small" />

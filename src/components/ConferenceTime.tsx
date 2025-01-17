@@ -25,7 +25,7 @@ type AlertModaleProps = {
 const AlertModale: React.FC<AlertModaleProps> = ({
   modaleInfo,
   setModaleInfo,
-  strTime
+  strTime,
 }) => {
   const { t } = useTranslation();
   return useMemo(
@@ -48,7 +48,7 @@ type ConferenceTimeProps = {
   finishDate: Date;
 };
 const ConferenceTime: React.FC<ConferenceTimeProps> = ({
-  finishDate
+  finishDate,
 }: ConferenceTimeProps) => {
   const { t } = useTranslation();
   const [modaleInfo, setModaleInfo] = useState(false);
@@ -61,16 +61,16 @@ const ConferenceTime: React.FC<ConferenceTimeProps> = ({
   const diffTimeSec = Math.round((finTime - currTime) / 1000);
 
   const { counter } = useCounter(diffTimeSec);
+  const { minutes, seconds, strTime } = hhMmSs(diffTimeSec);
+
   useEffect(() => {
-    if (minutes != null && minutes === 3 && seconds != null && seconds === 0) {
+    if (minutes && minutes === 3 && seconds != null && seconds === 0) {
       setModaleInfo(true);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [counter]);
 
   if (diffTimeSec < 1) return null;
-
-  const { minutes, seconds, strTime } = hhMmSs(diffTimeSec);
 
   return (
     <Box textAlign="center">

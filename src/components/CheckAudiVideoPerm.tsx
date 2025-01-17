@@ -1,10 +1,11 @@
-import React from 'react';
-import { IconButton, Tooltip } from '@mui/material';
-import SettingsSuggestIcon from '@mui/icons-material/SettingsSuggest';
-import SettingsVoiceIcon from '@mui/icons-material/SettingsVoice';
-import VideoSettingsIcon from '@mui/icons-material/VideoSettings';
-import { ChatContext } from '../context/ChatContext';
-import { useTranslation } from 'react-i18next';
+import React from "react";
+import { Button, IconButton, Tooltip, useMediaQuery } from "@mui/material";
+import SettingsSuggestIcon from "@mui/icons-material/SettingsSuggest";
+import SettingsVoiceIcon from "@mui/icons-material/SettingsVoice";
+import VideocamIcon from "@mui/icons-material/Videocam";
+import { ChatContext } from "../context/ChatContext";
+import { useTranslation } from "react-i18next";
+import { Theme } from "@mui/material/styles";
 type CheckAudiVideoPermProps = {
   audio: boolean;
   video: boolean;
@@ -23,40 +24,80 @@ const CheckAudiVideoPerm: React.FC<CheckAudiVideoPermProps> = ({
       video,
     });
     permissions
-      .then(data => {
-        console.log('permissions', data);
+      .then((data) => {
+        console.log("permissions", data);
         dispatch({
-          type: 'SET_SUCCES',
-          payload: t('CHAT.CONFERENCE.ALLOK'),
+          type: "SET_SUCCES",
+          payload: t("CHAT.CONFERENCE.ALLOK"),
         });
       })
-      .catch(err => {
-        let payload = t('CHAT.CONFERENCE.ErrorAny');
-        if (err.name === 'NotFoundError') {
-          payload = t('CHAT.CONFERENCE.NotFoundError');
+      .catch((err) => {
+        let payload = t("CHAT.CONFERENCE.ErrorAny");
+        if (err.name === "NotFoundError") {
+          payload = t("CHAT.CONFERENCE.NotFoundError");
         }
-        if (err.name === 'NotAllowedError') {
-          payload = t('CHAT.CONFERENCE.NotAllowedError');
+        if (err.name === "NotAllowedError") {
+          payload = t("CHAT.CONFERENCE.NotAllowedError");
         }
 
         dispatch({
-          type: 'SET_ERROR',
+          type: "SET_ERROR",
           payload,
         });
         //setHavePermissions(false);
-        console.log('err', `${err.name} : ${err.message}`);
+        console.log("err", `${err.name} : ${err.message}`);
       });
   };
 
   const title =
     audio && video
-      ? t('CHAT.CONFERENCE.CheckCamMic')
+      ? t("CHAT.CONFERENCE.CheckCamMic")
       : audio
-      ? t('CHAT.CONFERENCE.CheckMic')
-      : t('CHAT.CONFERENCE.CheckCam');
-  return (
+        ? t("CHAT.CONFERENCE.CheckMic")
+        : t("CHAT.CONFERENCE.CheckCam");
+  const isMobile = useMediaQuery((theme: Theme) =>
+    theme.breakpoints.down("sm")
+  );
+
+  return !isMobile ? (
+    <Button
+      aria-label="cancel call"
+      variant="contained"
+      sx={{
+        color: "#fff",
+        background: "#000",
+        "&:hover": {
+          background: "#eee",
+          color: "#000",
+          boxShadow: "none",
+        },
+      }}
+      size="small"
+      startIcon={
+        audio && video ? (
+          <SettingsSuggestIcon />
+        ) : audio ? (
+          <SettingsVoiceIcon />
+        ) : (
+          <VideocamIcon />
+        )
+      }
+      onClick={() => checkPermissions()}
+    >
+      {title}
+    </Button>
+  ) : (
     <Tooltip title={title}>
       <IconButton
+        sx={{
+          color: "#fff",
+          background: "#000",
+          "&:hover": {
+            background: "#eee",
+            color: "#000",
+            boxShadow: "none",
+          },
+        }}
         aria-label="check"
         onClick={() => checkPermissions()}
         size="large"
@@ -66,7 +107,7 @@ const CheckAudiVideoPerm: React.FC<CheckAudiVideoPermProps> = ({
         ) : audio ? (
           <SettingsVoiceIcon />
         ) : (
-          <VideoSettingsIcon />
+          <VideocamIcon />
         )}
       </IconButton>
     </Tooltip>
