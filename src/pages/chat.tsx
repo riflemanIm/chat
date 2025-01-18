@@ -43,7 +43,10 @@ const useStyles = makeStyles((theme: Theme) => ({
     height: "100%",
     overflow: "hidden",
     padding: 0,
-    width: "100%",
+    overflow: "hidden",
+    [theme.breakpoints.down("sm")]: {
+      width: "100%",
+    },
   },
   innerGrid: {
     height: "100%",
@@ -332,6 +335,7 @@ export const ChatPage: React.FC<ChatPageProps> = ({
       inAdmin={inAdmin}
       onContactClick={props.onContactInfoClick}
       hideRooms={hideRooms}
+      isMobile={isMobile}
     />
   );
 
@@ -380,8 +384,10 @@ export const ChatPage: React.FC<ChatPageProps> = ({
             sx={(theme) => ({
               position: "absolute",
               overflow: "hidden",
-              top: [3, 4].includes(state.user.role) ? 40 : 110,
-              left: [3, 4].includes(state.user.role) ? 40 : 30,
+              top:
+                state.user?.role && [3, 4].includes(state.user.role) ? 20 : 110,
+              left:
+                state.user?.role && [3, 4].includes(state.user.role) ? 40 : 30,
               zIndex: 1000,
               [theme.breakpoints.down("sm")]: {
                 top: 98,
@@ -446,7 +452,13 @@ export const ChatPage: React.FC<ChatPageProps> = ({
   );
 
   return (
-    <Container className={classes.root}>
+    <Container
+      maxWidth={fullWidth ? false : "lg"}
+      className={classes.root}
+      sx={(theme) => ({
+        width: inModale ? `calc(100vw - ${theme.spacing(8)})` : "100%",
+      })}
+    >
       {isMobile ? (
         <React.Fragment>
           {contacts}

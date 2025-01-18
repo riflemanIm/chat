@@ -1,19 +1,18 @@
-import React from 'react';
+import React from "react";
 
-import { Theme } from '@mui/material/styles';
-//import { getImageMeta } from "../../utils/common";
-import { ChatMessage } from '../../types';
-import { makeStyles, createStyles } from '@mui/styles';
-import { AspectRatio } from 'react-aspect-ratio';
-import { combineURLs } from '../../utils/common';
+import { Theme } from "@mui/material/styles";
+import { ChatMessage } from "../../types";
+import { makeStyles, createStyles } from "@mui/styles";
+import { AspectRatio } from "react-aspect-ratio";
+import { combineURLs } from "../../utils/common";
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     img: {
-      cursor: 'pointer',
+      cursor: "pointer",
       borderRadius: theme.spacing(1.2),
       maxWidth: 284,
       maxHeight: 190,
-      [theme.breakpoints.down('sm')]: {
+      [theme.breakpoints.down("sm")]: {
         maxWidth: 250,
         maxHeight: 170,
       },
@@ -21,12 +20,12 @@ const useStyles = makeStyles((theme: Theme) =>
     aspect: {
       maxWidth: 284,
       height: 190,
-      [theme.breakpoints.down('sm')]: {
+      [theme.breakpoints.down("sm")]: {
         maxWidth: 250,
         height: 170,
       },
     },
-  }),
+  })
 );
 type ImageProrps = {
   apiUrl: string;
@@ -50,10 +49,7 @@ const Image: React.FC<ImageProrps> = ({
           setViewerData({
             visible: true,
 
-            src: combineURLs(
-              apiUrl,
-              `/static/image/${message.content}`,
-            ),
+            src: combineURLs(apiUrl, `/static/image/${message.content}`),
           });
         }}
         className={classes.img}

@@ -1,11 +1,12 @@
 import React from "react";
 import { Button, IconButton, Tooltip, useMediaQuery } from "@mui/material";
+import { Theme } from "@mui/material/styles";
 import SettingsSuggestIcon from "@mui/icons-material/SettingsSuggest";
 import SettingsVoiceIcon from "@mui/icons-material/SettingsVoice";
 import VideocamIcon from "@mui/icons-material/Videocam";
 import { ChatContext } from "../context/ChatContext";
 import { useTranslation } from "react-i18next";
-import { Theme } from "@mui/material/styles";
+
 type CheckAudiVideoPermProps = {
   audio: boolean;
   video: boolean;
@@ -16,7 +17,9 @@ const CheckAudiVideoPerm: React.FC<CheckAudiVideoPermProps> = ({
   video,
 }: CheckAudiVideoPermProps) => {
   const { t } = useTranslation();
-  //const [havePermissions, setHavePermissions] = useState(false);
+  const isMobile = useMediaQuery((theme: Theme) =>
+    theme.breakpoints.down("md")
+  );
   const { dispatch } = React.useContext(ChatContext);
   const checkPermissions = () => {
     const permissions = navigator.mediaDevices.getUserMedia({
@@ -55,9 +58,6 @@ const CheckAudiVideoPerm: React.FC<CheckAudiVideoPermProps> = ({
       : audio
         ? t("CHAT.CONFERENCE.CheckMic")
         : t("CHAT.CONFERENCE.CheckCam");
-  const isMobile = useMediaQuery((theme: Theme) =>
-    theme.breakpoints.down("sm")
-  );
 
   return !isMobile ? (
     <Button

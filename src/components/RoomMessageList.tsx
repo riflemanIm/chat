@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import {
   Box,
   CardContent,
@@ -11,23 +11,20 @@ import {
   Fade,
   Alert,
   useMediaQuery,
-} from '@mui/material';
-import { Theme } from '@mui/material/styles';
-import { makeStyles, createStyles } from '@mui/styles';
-import KeyboardArrowDown from '@mui/icons-material/KeyboardArrowDown';
+} from "@mui/material";
+import { Theme } from "@mui/material/styles";
+import { makeStyles, createStyles } from "@mui/styles";
+import KeyboardArrowDown from "@mui/icons-material/KeyboardArrowDown";
 
-import Message from './Message';
+import Message from "./Message";
 
-import { getChatId } from '../utils/common';
-import { ChatMessage, ChatRoom, User, ContactGather } from '../types';
-import useInfiniteScroll from 'react-infinite-scroll-hook';
-import dayjs from 'dayjs';
-import useInterval from '../hooks/useInterval';
+import { getChatId } from "../utils/common";
+import { ChatMessage, ChatRoom, User, ContactGather } from "../types";
+import useInfiniteScroll from "react-infinite-scroll-hook";
+import dayjs from "dayjs";
+import useInterval from "../hooks/useInterval";
 
-function isVisibleInViewport(
-  element: HTMLLIElement,
-  root: HTMLDivElement,
-) {
+function isVisibleInViewport(element: HTMLLIElement, root: HTMLDivElement) {
   const rect = element.getBoundingClientRect();
   // console.log(
   //   'rect.top',
@@ -43,40 +40,40 @@ const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     messageListOuter: {
       flex: 1,
-      overflowY: 'auto',
+      overflowY: "auto",
       margin: 0,
       padding: 0,
-      height: '100%',
-      scrollbarWidth: 'thin',
+      height: "100%",
+      scrollbarWidth: "thin",
       scrollbarColor: `${theme.palette.primary.light} #fff`,
     },
     messageList: {},
     img: {
-      cursor: 'pointer',
+      cursor: "pointer",
       borderRadius: theme.spacing(1.2),
 
-      maxWidth: 'auto',
-      maxHeight: '95%',
-      [theme.breakpoints.down('sm')]: {
-        maxWidth: 'auto',
-        maxHeight: '95%',
+      maxWidth: "auto",
+      maxHeight: "95%",
+      [theme.breakpoints.down("sm")]: {
+        maxWidth: "auto",
+        maxHeight: "95%",
       },
     },
 
     arrowDown: {
-      position: 'absolute',
-      left: '94.5%',
+      position: "absolute",
+      left: "94.5%",
       bottom: 105,
-      [theme.breakpoints.down('md')]: {
-        left: '91.5%',
+      [theme.breakpoints.down("md")]: {
+        left: "91.5%",
         bottom: 95,
       },
-      [theme.breakpoints.down('sm')]: {
-        left: '84%',
+      [theme.breakpoints.down("sm")]: {
+        left: "84%",
         bottom: 95,
       },
     },
-  }),
+  })
 );
 
 type InitialMenuState = {
@@ -99,9 +96,7 @@ type RoomMessageListProps = {
 
   onNeedMoreMessages: (chat: ChatRoom) => Promise<void>;
   onMeesageDelete?: (chat: ChatRoom, message: ChatMessage) => void;
-  setMenuState: React.Dispatch<
-    React.SetStateAction<InitialMenuState>
-  >;
+  setMenuState: React.Dispatch<React.SetStateAction<InitialMenuState>>;
 
   onEnterRoom?: (chat: ChatRoom) => void;
   hideRooms: boolean;
@@ -110,7 +105,7 @@ type RoomMessageListProps = {
 };
 
 const RoomMessageList: React.FC<RoomMessageListProps> = (
-  props: RoomMessageListProps,
+  props: RoomMessageListProps
 ) => {
   const {
     apiUrl,
@@ -128,9 +123,7 @@ const RoomMessageList: React.FC<RoomMessageListProps> = (
   } = props;
 
   const classes = useStyles();
-  const isMobile = useMediaQuery((theme: Theme) =>
-    theme.breakpoints.down('sm'),
-  );
+
   const DEF = 900;
 
   const chatId = getChatId(chat);
@@ -140,33 +133,27 @@ const RoomMessageList: React.FC<RoomMessageListProps> = (
     src: string;
   }>({
     visible: false,
-    src: '',
+    src: "",
   });
 
-  const [scrollDownButton, setScrollDownButton] = React.useState(
-    false,
-  );
+  const [scrollDownButton, setScrollDownButton] = React.useState(false);
 
-  const scrollableRootRef = React.useRef<React.ElementRef<
-    'div'
-  > | null>(null);
+  const scrollableRootRef = React.useRef<React.ElementRef<"div"> | null>(null);
   const lastScrollDistanceToBottomRef = React.useRef<number>();
   const lastMessageCount = React.useRef<number>();
 
   const hasNextPage =
-    chat == null || chat?.noMoreData == null
-      ? true
-      : !chat.noMoreData;
+    chat == null || chat?.noMoreData == null ? true : !chat.noMoreData;
 
   const messages = React.useMemo(
     () =>
       chat?.messages
-        ? chat.messages.map(it => ({
+        ? chat.messages.map((it) => ({
             ...it,
             ref: React.createRef<HTMLLIElement>(),
           }))
         : [],
-    [chat?.messages],
+    [chat?.messages]
   );
 
   const messageCount = messages?.length || 0;
@@ -174,11 +161,11 @@ const RoomMessageList: React.FC<RoomMessageListProps> = (
   const lastMessage = messageCount && messages[messageCount - 1];
 
   const messageCountUnreaded = messages.filter(
-    it => it?.status != null && it.status === 0,
+    (it) => it?.status != null && it.status === 0
   );
 
   const [isVisible, setIsVisible] = React.useState<string>(
-    messages[messageCount - 1]?.cdate ?? '',
+    messages[messageCount - 1]?.cdate ?? ""
   );
 
   const loadMore = () => {
@@ -194,17 +181,17 @@ const RoomMessageList: React.FC<RoomMessageListProps> = (
 
   React.useEffect(() => {
     if (chatId && scrollableRootRef.current && messageCount) {
-      setIsVisible(messages[messageCount - 1]?.cdate ?? '');
+      setIsVisible(messages[messageCount - 1]?.cdate ?? "");
       scrollDown();
     }
   }, [chatId]);
 
   useInterval(
     () => {
-      setIsVisible('');
+      setIsVisible("");
     },
     isVisible,
-    4700,
+    4700
   );
 
   // ------ keep the scroll position and lastMessageCount when messageCount changed ----------
@@ -233,12 +220,10 @@ const RoomMessageList: React.FC<RoomMessageListProps> = (
     const rootNode = scrollableRootRef.current;
 
     if (rootNode) {
-      const scrollDistanceToBottom =
-        rootNode.scrollHeight - rootNode.scrollTop;
+      const scrollDistanceToBottom = rootNode.scrollHeight - rootNode.scrollTop;
       lastScrollDistanceToBottomRef.current = scrollDistanceToBottom;
 
-      const isShowScrollButton =
-        hasNextPage && scrollDistanceToBottom > DEF;
+      const isShowScrollButton = hasNextPage && scrollDistanceToBottom > DEF;
       setScrollDownButton(isShowScrollButton);
 
       for (let i = 0; i < messageCount; i++) {
@@ -249,10 +234,7 @@ const RoomMessageList: React.FC<RoomMessageListProps> = (
         // );
 
         if (mess?.ref?.current) {
-          const isVisibleMess = isVisibleInViewport(
-            mess.ref.current,
-            rootNode,
-          );
+          const isVisibleMess = isVisibleInViewport(mess.ref.current, rootNode);
           if (isVisibleMess) {
             // console.log(
             //   'visible',
@@ -283,19 +265,18 @@ const RoomMessageList: React.FC<RoomMessageListProps> = (
       rootRef(node);
       scrollableRootRef.current = node;
     },
-    [rootRef],
+    [rootRef]
   );
 
   const handleMenuPopup = (
     message: ChatMessage,
-    event: React.MouseEvent<HTMLElement>,
+    event: React.MouseEvent<HTMLElement>
   ) => {
-    const canCopy = message.messageType === 'text';
+    const canCopy = message.messageType === "text";
     const canDelete =
       user.userId === message.userId &&
       !!props.onMeesageDelete &&
-      new Date().getTime() - new Date(message.cdate).getTime() <=
-        1000 * 60 * 2;
+      new Date().getTime() - new Date(message.cdate).getTime() <= 1000 * 60 * 2;
     if (!canCopy && !canDelete) {
       setMenuState(initialMenuState);
       return;
@@ -328,38 +309,38 @@ const RoomMessageList: React.FC<RoomMessageListProps> = (
         style={
           isVisible
             ? {
-                display: 'block',
-                position: 'absolute',
+                display: "block",
+                position: "absolute",
                 left: `calc(50% - ${left}px)`,
                 top,
                 width: 150,
               }
-            : { display: 'none' }
+            : { display: "none" }
         }
         timeout={2000}
       >
         <Box
           sx={{
-            width: '100%',
-            position: 'relative',
-            display: 'flex',
+            width: "100%",
+            position: "relative",
+            display: "flex",
             zIndex: 10,
-            justifyContent: 'center',
+            justifyContent: "center",
             top: 106,
-            left: '-50%',
+            left: "-50%",
           }}
         >
           <Alert
             severity="warning"
             icon={false}
-            sx={theme => ({
+            sx={(theme) => ({
               width: 150,
-              mx: 'auto',
-              justifyContent: 'center',
+              mx: "auto",
+              justifyContent: "center",
             })}
           >
             <Typography variant="h6" textAlign="center">
-              {dayjs(isVisible).format('DD.MM.YYYY')}
+              {dayjs(isVisible).format("DD.MM.YYYY")}
             </Typography>
           </Alert>
         </Box>
@@ -375,7 +356,7 @@ const RoomMessageList: React.FC<RoomMessageListProps> = (
             <ListItem
               ref={infiniteRef}
               sx={{
-                justifyContent: 'center',
+                justifyContent: "center",
               }}
             >
               <CircularProgress />
@@ -393,17 +374,15 @@ const RoomMessageList: React.FC<RoomMessageListProps> = (
                 isGroupMessage={!!chat?.groupId}
                 isUserFirst={
                   inx === 0 ||
-                  messages[inx - 1].messageType === 'notify' ||
+                  messages[inx - 1].messageType === "notify" ||
                   messages[inx - 1].userId !== messages[inx].userId
                 }
                 isUserLast={
                   inx === messages.length - 1 ||
-                  messages[inx + 1].messageType === 'notify' ||
+                  messages[inx + 1].messageType === "notify" ||
                   messages[inx + 1].userId !== messages[inx].userId
                 }
-                onContextMenu={event =>
-                  handleMenuPopup(message, event)
-                }
+                onContextMenu={(event) => handleMenuPopup(message, event)}
                 //refOnMess={defineRefOnMess(inx)}
                 setViewerData={setViewerData}
               />
@@ -430,14 +409,14 @@ const RoomMessageList: React.FC<RoomMessageListProps> = (
                     width: 24,
                     height: 24,
                     minHeight: 24,
-                    position: 'relative',
+                    position: "relative",
                     top: -10,
-                    pointerEvents: 'none',
+                    pointerEvents: "none",
                   }}
                 >
                   <Typography
                     variant="body2"
-                    sx={theme => ({
+                    sx={(theme) => ({
                       color: theme.palette.background.default,
                     })}
                   >
@@ -450,19 +429,15 @@ const RoomMessageList: React.FC<RoomMessageListProps> = (
         {viewerData.visible && (
           <Backdrop
             sx={{
-              color: '#fff',
+              color: "#fff",
               zIndex: (theme: Theme) => theme.zIndex.drawer + 1,
             }}
             open={viewerData.visible}
             onClick={() => {
-              setViewerData({ visible: false, src: '' });
+              setViewerData({ visible: false, src: "" });
             }}
           >
-            <img
-              src={viewerData.src}
-              className={classes.img}
-              alt=""
-            />
+            <img src={viewerData.src} className={classes.img} alt="" />
           </Backdrop>
         )}
       </CardContent>

@@ -8,8 +8,6 @@ import {
   Menu,
   MenuItem,
   IconButton,
-  useMediaQuery,
-  Tooltip,
 } from "@mui/material";
 import { Theme } from "@mui/material/styles";
 import { makeStyles, createStyles } from "@mui/styles";
@@ -93,6 +91,7 @@ type RoomProps = {
   hideRooms: boolean;
   inModale?: boolean;
   inAdmin?: boolean;
+  isMobile: boolean;
 };
 
 const Room: React.FC<RoomProps> = (props: RoomProps) => {
@@ -110,12 +109,10 @@ const Room: React.FC<RoomProps> = (props: RoomProps) => {
     hideRooms,
     inModale,
     inAdmin,
+    isMobile,
   } = props;
   const classes = useStyles();
   const { t } = useTranslation();
-  const isMobile = useMediaQuery((theme: Theme) =>
-    theme.breakpoints.down("sm")
-  );
 
   const [menuState, setMenuState] = React.useState<{
     message: ChatMessage | null;
@@ -153,8 +150,8 @@ const Room: React.FC<RoomProps> = (props: RoomProps) => {
             sx={{
               position: "absolute",
               overflow: "hidden",
-              top: -12,
-              left: 218,
+              top: user?.role && [3, 4].includes(user.role) ? -56 : -12,
+              left: user?.role && [3, 4].includes(user.role) ? 32 : 218,
             }}
           >
             <Box
@@ -184,7 +181,6 @@ const Room: React.FC<RoomProps> = (props: RoomProps) => {
             </Box>
           </Box>
         )}
-        {/* {!isMobile && <CheckAudiVideoPerm />} */}
 
         <RoomHeader
           apiUrl={apiUrl}

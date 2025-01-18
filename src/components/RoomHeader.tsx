@@ -1,5 +1,12 @@
 import React, { useState } from "react";
-import { Avatar, CardHeader, Button, Popover, IconButton } from "@mui/material";
+import {
+  Avatar,
+  CardHeader,
+  Button,
+  Popover,
+  IconButton,
+  Typography,
+} from "@mui/material";
 import { Theme } from "@mui/material/styles";
 import GroupIcon from "@mui/icons-material/Group";
 import { useTranslation } from "react-i18next";
@@ -236,7 +243,27 @@ const RoomHeader: React.FC<RoomHeaderProps> = ({
           src={contact.avatar ? combineURLs(apiUrl, contact.avatar) : ""}
         />
       }
-      title={contact.username}
+      title={
+        <Typography
+          variant="h6"
+          sx={(theme) => ({
+            whiteSpace: "nowrap",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            fontSize: "0.9rem",
+            [theme.breakpoints.down("md")]: {
+              fontSize: "0.8rem",
+            },
+
+            [theme.breakpoints.down("sm")]: {
+              whiteSpace: "wrap",
+              fontSize: "0.7rem",
+            },
+          })}
+        >
+          {contact.username}
+        </Typography>
+      }
       subheader={<ContactStatus contact={contact} isTyping={isTyping} />}
       className={className}
       action={
@@ -267,9 +294,9 @@ const RoomHeader: React.FC<RoomHeaderProps> = ({
                 <Button
                   aria-label="cancel call"
                   variant="contained"
-                  color="primary"
+                  color="warning"
                   size="small"
-                  startIcon={<CallEndIcon color="error" />}
+                  startIcon={<CallEndIcon color="inherit" />}
                   onClick={() => setConfirmFinishConf(true)}
                   style={{ marginLeft: 8 }}
                 >
