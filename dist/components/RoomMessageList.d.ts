@@ -1,5 +1,5 @@
-import React from 'react';
-import { ChatMessage, ChatRoom, User, ContactGather } from '../types';
+import React from "react";
+import { ChatMessage, ChatRoom, User, ContactGather } from "../types";
 declare type InitialMenuState = {
     message: ChatMessage | null;
     mouseX: null | number;

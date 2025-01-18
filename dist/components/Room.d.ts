@@ -27,6 +27,7 @@ declare type RoomProps = {
     hideRooms: boolean;
     inModale?: boolean;
     inAdmin?: boolean;
+    isMobile: boolean;
 };
 declare const Room: React.FC<RoomProps>;
 export default Room;

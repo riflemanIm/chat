@@ -1,5 +1,5 @@
-import * as React from 'react';
-import { ChatRoom, VisitData } from '../types';
+import React from "react";
+import { ChatRoom, VisitData } from "../types";
 declare type ConferenceButtonProps = {
     visitData: VisitData[];
     chat: ChatRoom;
