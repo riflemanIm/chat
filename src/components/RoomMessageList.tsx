@@ -295,7 +295,7 @@ const RoomMessageList: React.FC<RoomMessageListProps> = (
 
   const horShift = () => {
     let left = inAdmin ? 176 : 234;
-    left += hideRooms ? -140 : -300;
+    left += hideRooms ? -140 : -352;
 
     let top = inModale ? 106 : 50;
     top += inAdmin ? 80 : 0;
