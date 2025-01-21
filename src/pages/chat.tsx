@@ -441,7 +441,11 @@ export const ChatPage: React.FC<ChatPageProps> = ({
   const contacts = React.useMemo(
     () => (state.conference.data?.id != null ? <Gonf /> : <GetRoomList />),
     state.conference.data?.id != null
-      ? [state.conference, state.conference, state.activeRoom]
+      ? [
+          state.conference.joined,
+          state.conference.data?.id,
+          state.activeRoom == null,
+        ]
       : [
           state.activeRoom?.groupId,
           state.activeRoom?.userId,

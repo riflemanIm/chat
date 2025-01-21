@@ -4906,7 +4906,7 @@ var useStyles$f = /*#__PURE__*/makeStyles(function (theme) {
   };
 });
 var ChatPage = function ChatPage(_ref) {
-  var _state$conference$dat2, _state$activeRoom, _state$activeRoom2, _state$conference$dat3, _state$conference$dat4, _state$conference$dat5, _state$conference$dat6, _state$conference$dat7, _state$conference$dat8, _state$conference$dat9;
+  var _state$conference$dat2, _state$conference$dat3, _state$activeRoom, _state$activeRoom2, _state$conference$dat4, _state$conference$dat5, _state$conference$dat6, _state$conference$dat7, _state$conference$dat8, _state$conference$dat9, _state$conference$dat10;
   var activeGroupId = _ref.activeGroupId,
     activeChatUserId = _ref.activeChatUserId,
     _ref$inModale = _ref.inModale,
@@ -5243,7 +5243,7 @@ var ChatPage = function ChatPage(_ref) {
   var contacts = useMemo(function () {
     var _state$conference$dat;
     return ((_state$conference$dat = state.conference.data) == null ? void 0 : _state$conference$dat.id) != null ? /*#__PURE__*/createElement(Gonf, null) : /*#__PURE__*/createElement(GetRoomList, null);
-  }, ((_state$conference$dat2 = state.conference.data) == null ? void 0 : _state$conference$dat2.id) != null ? [state.conference, state.conference, state.activeRoom] : [(_state$activeRoom = state.activeRoom) == null ? void 0 : _state$activeRoom.groupId, (_state$activeRoom2 = state.activeRoom) == null ? void 0 : _state$activeRoom2.userId, allMessCount(state.contactGather), allMessCount(state.groupGather)]);
+  }, ((_state$conference$dat2 = state.conference.data) == null ? void 0 : _state$conference$dat2.id) != null ? [state.conference.joined, (_state$conference$dat3 = state.conference.data) == null ? void 0 : _state$conference$dat3.id, state.activeRoom == null] : [(_state$activeRoom = state.activeRoom) == null ? void 0 : _state$activeRoom.groupId, (_state$activeRoom2 = state.activeRoom) == null ? void 0 : _state$activeRoom2.userId, allMessCount(state.contactGather), allMessCount(state.groupGather)]);
   return /*#__PURE__*/createElement(Container, {
     maxWidth: fullWidth ? false : "lg",
     className: classes.root,
@@ -5256,19 +5256,19 @@ var ChatPage = function ChatPage(_ref) {
     container: true,
     spacing: 1,
     className: classes.innerGrid
-  }, (((_state$conference$dat3 = state.conference.data) == null ? void 0 : _state$conference$dat3.id) != null || !hideRooms) && /*#__PURE__*/createElement(Grid, {
+  }, (((_state$conference$dat4 = state.conference.data) == null ? void 0 : _state$conference$dat4.id) != null || !hideRooms) && /*#__PURE__*/createElement(Grid, {
     item: true,
-    sm: ((_state$conference$dat4 = state.conference.data) == null ? void 0 : _state$conference$dat4.id) != null ? 6 : 4,
-    lg: ((_state$conference$dat5 = state.conference.data) == null ? void 0 : _state$conference$dat5.id) != null ? 6 : 4 // на малой ширине нужна пропорция 1/3
+    sm: ((_state$conference$dat5 = state.conference.data) == null ? void 0 : _state$conference$dat5.id) != null ? 6 : 4,
+    lg: ((_state$conference$dat6 = state.conference.data) == null ? void 0 : _state$conference$dat6.id) != null ? 6 : 4 // на малой ширине нужна пропорция 1/3
     ,
-    xl: ((_state$conference$dat6 = state.conference.data) == null ? void 0 : _state$conference$dat6.id) != null ? 6 : 3 // на большой ширине нужна пропорция 1/4
+    xl: ((_state$conference$dat7 = state.conference.data) == null ? void 0 : _state$conference$dat7.id) != null ? 6 : 3 // на большой ширине нужна пропорция 1/4
     ,
     className: classes.innerGrid
   }, contacts), /*#__PURE__*/createElement(Grid, {
     item: true,
-    sm: ((_state$conference$dat7 = state.conference.data) == null ? void 0 : _state$conference$dat7.id) != null ? 6 : hideRooms ? 12 : 8,
-    lg: ((_state$conference$dat8 = state.conference.data) == null ? void 0 : _state$conference$dat8.id) != null ? 6 : hideRooms ? 12 : 8,
-    xl: ((_state$conference$dat9 = state.conference.data) == null ? void 0 : _state$conference$dat9.id) != null ? 6 : hideRooms ? 12 : 9,
+    sm: ((_state$conference$dat8 = state.conference.data) == null ? void 0 : _state$conference$dat8.id) != null ? 6 : hideRooms ? 12 : 8,
+    lg: ((_state$conference$dat9 = state.conference.data) == null ? void 0 : _state$conference$dat9.id) != null ? 6 : hideRooms ? 12 : 8,
+    xl: ((_state$conference$dat10 = state.conference.data) == null ? void 0 : _state$conference$dat10.id) != null ? 6 : hideRooms ? 12 : 9,
     className: classes.innerGrid
   }, renderRoom)), /*#__PURE__*/createElement(ChatAlert, null));
 };
