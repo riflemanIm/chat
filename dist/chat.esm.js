@@ -4882,8 +4882,8 @@ var useStyles$f = /*#__PURE__*/makeStyles(function (theme) {
       height: "100%",
       overflow: "hidden",
       padding: 0
-    }, _root[theme.breakpoints.down("sm")] = {
-      width: "100%"
+    }, _root[theme.breakpoints.up("lg")] = {
+      minWidth: 1200
     }, _root),
     innerGrid: {
       height: "100%",
@@ -5199,8 +5199,8 @@ var ChatPage = function ChatPage(_ref) {
         return _ref4 = {
           position: "absolute",
           overflow: "hidden",
-          top: (_state$user = state.user) != null && _state$user.role && [3, 4].includes(state.user.role) ? 20 : 110,
-          left: (_state$user2 = state.user) != null && _state$user2.role && [3, 4].includes(state.user.role) ? 40 : 30,
+          top: (_state$user = state.user) != null && _state$user.role && [3, 4].includes(state.user.role) ? 50 : 110,
+          left: (_state$user2 = state.user) != null && _state$user2.role && [3, 4].includes(state.user.role) ? 50 : 30,
           zIndex: 1000
         }, _ref4[theme.breakpoints.down("sm")] = {
           top: 98,
@@ -5243,15 +5243,13 @@ var ChatPage = function ChatPage(_ref) {
   var contacts = useMemo(function () {
     var _state$conference$dat;
     return ((_state$conference$dat = state.conference.data) == null ? void 0 : _state$conference$dat.id) != null ? /*#__PURE__*/createElement(Gonf, null) : /*#__PURE__*/createElement(GetRoomList, null);
-  }, ((_state$conference$dat2 = state.conference.data) == null ? void 0 : _state$conference$dat2.id) != null ? [state.conference.joined, (_state$conference$dat3 = state.conference.data) == null ? void 0 : _state$conference$dat3.id, state.activeRoom == null] : [(_state$activeRoom = state.activeRoom) == null ? void 0 : _state$activeRoom.groupId, (_state$activeRoom2 = state.activeRoom) == null ? void 0 : _state$activeRoom2.userId, allMessCount(state.contactGather), allMessCount(state.groupGather)]);
+  },
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  ((_state$conference$dat2 = state.conference.data) == null ? void 0 : _state$conference$dat2.id) != null ? [state.conference.joined, (_state$conference$dat3 = state.conference.data) == null ? void 0 : _state$conference$dat3.id, state.activeRoom == null] : [(_state$activeRoom = state.activeRoom) == null ? void 0 : _state$activeRoom.groupId, (_state$activeRoom2 = state.activeRoom) == null ? void 0 : _state$activeRoom2.userId, allMessCount(state.contactGather), allMessCount(state.groupGather)]);
+  console.log("fullWidth", fullWidth);
   return /*#__PURE__*/createElement(Container, {
-    maxWidth: fullWidth ? false : "lg",
-    className: classes.root,
-    sx: function sx(theme) {
-      return {
-        width: inModale ? "calc(100vw - " + theme.spacing(8) + ")" : "100%"
-      };
-    }
+    maxWidth: false,
+    className: classes.root
   }, isMobile ? /*#__PURE__*/createElement(Fragment, null, contacts, renderRoom) : /*#__PURE__*/createElement(Grid, {
     container: true,
     spacing: 1,

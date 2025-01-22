@@ -9,7 +9,7 @@ export interface ChatPageProps {
 }
 
 export interface ChatProps extends ChatPageProps {
-  lang: 'ru' | 'en' | 'fr';
+  lang: "ru" | "en" | "fr";
   chatBaseURLApi: string;
   chatWsUrl: string;
   chatWsPath: string;
@@ -19,12 +19,12 @@ export interface ChatProps extends ChatPageProps {
 
 // Тип сообщения
 export type MessageType =
-  | 'text'
-  | 'image'
-  | 'file'
-  | 'video'
-  | 'notify'
-  | 'video_conference';
+  | "text"
+  | "image"
+  | "file"
+  | "video"
+  | "notify"
+  | "video_conference";
 
 export enum MessageStatus {
   sent = 0,
@@ -80,7 +80,7 @@ export interface Contact {
 }
 export interface VisitData {
   chatFrom: Date;
-  conferenceStatus: 'started' | 'finished' | 'none';
+  conferenceStatus: "started" | "finished" | "none";
   contactId: number;
   duration: number;
   plExamName: string;
@@ -256,10 +256,10 @@ export type ChatMessage = GroupMessage | PrivateMessage;
 
 // Операции контекстного меню
 export enum ContextMenuType {
-  COPY = 'COPY', // Скопировать
-  REVOKE = 'REVOKE', // Удалить сообщение
-  TOP_REVERT = 'TOP_REVERT', // Открепить
-  TOP = 'TOP', // Закрепить
-  READ = 'READ', // Прочесть всё
-  DELETE = 'DELETE', // Удалить
+  COPY = "COPY", // Скопировать
+  REVOKE = "REVOKE", // Удалить сообщение
+  TOP_REVERT = "TOP_REVERT", // Открепить
+  TOP = "TOP", // Закрепить
+  READ = "READ", // Прочесть всё
+  DELETE = "DELETE", // Удалить
 }

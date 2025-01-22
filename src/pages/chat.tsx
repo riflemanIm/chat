@@ -43,8 +43,9 @@ const useStyles = makeStyles((theme: Theme) => ({
     height: "100%",
     overflow: "hidden",
     padding: 0,
-    [theme.breakpoints.down("sm")]: {
-      width: "100%",
+
+    [theme.breakpoints.up("lg")]: {
+      minWidth: 1200,
     },
   },
   innerGrid: {
@@ -384,9 +385,9 @@ export const ChatPage: React.FC<ChatPageProps> = ({
               position: "absolute",
               overflow: "hidden",
               top:
-                state.user?.role && [3, 4].includes(state.user.role) ? 20 : 110,
+                state.user?.role && [3, 4].includes(state.user.role) ? 50 : 110,
               left:
-                state.user?.role && [3, 4].includes(state.user.role) ? 40 : 30,
+                state.user?.role && [3, 4].includes(state.user.role) ? 50 : 30,
               zIndex: 1000,
               [theme.breakpoints.down("sm")]: {
                 top: 98,
@@ -440,6 +441,7 @@ export const ChatPage: React.FC<ChatPageProps> = ({
 
   const contacts = React.useMemo(
     () => (state.conference.data?.id != null ? <Gonf /> : <GetRoomList />),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     state.conference.data?.id != null
       ? [
           state.conference.joined,
@@ -454,14 +456,9 @@ export const ChatPage: React.FC<ChatPageProps> = ({
         ]
   );
 
+  console.log("fullWidth", fullWidth);
   return (
-    <Container
-      maxWidth={fullWidth ? false : "lg"}
-      className={classes.root}
-      sx={(theme) => ({
-        width: inModale ? `calc(100vw - ${theme.spacing(8)})` : "100%",
-      })}
-    >
+    <Container maxWidth={false} className={classes.root}>
       {isMobile ? (
         <React.Fragment>
           {contacts}
