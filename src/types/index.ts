@@ -1,8 +1,6 @@
 export interface ChatPageProps {
   activeGroupId?: number;
   activeChatUserId?: number;
-  inModale?: boolean;
-  inAdmin?: boolean;
   hideRooms?: boolean;
   fullWidth?: boolean;
   onContactInfoClick?: (contact: Contact) => void;

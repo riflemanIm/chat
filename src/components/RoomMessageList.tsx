@@ -10,7 +10,6 @@ import {
   ListItem,
   Fade,
   Alert,
-  useMediaQuery,
 } from "@mui/material";
 import { Theme } from "@mui/material/styles";
 import { makeStyles, createStyles } from "@mui/styles";
@@ -97,11 +96,7 @@ type RoomMessageListProps = {
   onNeedMoreMessages: (chat: ChatRoom) => Promise<void>;
   onMeesageDelete?: (chat: ChatRoom, message: ChatMessage) => void;
   setMenuState: React.Dispatch<React.SetStateAction<InitialMenuState>>;
-
   onEnterRoom?: (chat: ChatRoom) => void;
-  hideRooms: boolean;
-  inModale?: boolean;
-  inAdmin?: boolean;
 };
 
 const RoomMessageList: React.FC<RoomMessageListProps> = (
@@ -116,10 +111,7 @@ const RoomMessageList: React.FC<RoomMessageListProps> = (
     pageSize,
     setMenuState,
     initialMenuState,
-    inModale,
-    inAdmin,
     onEnterRoom,
-    hideRooms,
   } = props;
 
   const classes = useStyles();
@@ -293,42 +285,27 @@ const RoomMessageList: React.FC<RoomMessageListProps> = (
 
   if (chatId == null) return;
 
-  const horShift = () => {
-    let left = inAdmin ? 176 : 234;
-    left += hideRooms ? -140 : -352;
-
-    let top = inModale ? 106 : 50;
-    top += inAdmin ? 80 : 0;
-    return { left, top };
-  };
-  const { left, top } = horShift();
   return (
     <>
-      <Fade
-        in={!!isVisible}
-        style={
-          isVisible
-            ? {
-                display: "block",
-                position: "absolute",
-                left: `calc(50% - ${left}px)`,
-                top,
-                width: 150,
-              }
-            : { display: "none" }
-        }
-        timeout={2000}
+      <Box
+        sx={{
+          position: "relative" /* Чтобы `div` был относительно контейнера */,
+          margin: "0 auto",
+        }}
       >
-        <Box
-          sx={{
-            width: "100%",
-            position: "relative",
-            display: "flex",
-            zIndex: 10,
-            justifyContent: "center",
-            top: 106,
-            left: "-50%",
-          }}
+        <Fade
+          in={!!isVisible}
+          style={
+            isVisible
+              ? {
+                  top: "50%",
+                  left: "50%",
+                  transform: "translate( calc(-50% + 75px), -50%)",
+                  width: 160,
+                }
+              : { display: "none" }
+          }
+          timeout={2000}
         >
           <Alert
             severity="warning"
@@ -343,8 +320,8 @@ const RoomMessageList: React.FC<RoomMessageListProps> = (
               {dayjs(isVisible).format("DD.MM.YYYY")}
             </Typography>
           </Alert>
-        </Box>
-      </Fade>
+        </Fade>
+      </Box>
 
       <CardContent
         className={classes.messageListOuter}
