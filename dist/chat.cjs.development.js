@@ -1720,10 +1720,7 @@ var RoomMessageList = function RoomMessageList(props) {
     pageSize = props.pageSize,
     setMenuState = props.setMenuState,
     initialMenuState = props.initialMenuState,
-    inModale = props.inModale,
-    inAdmin = props.inAdmin,
-    onEnterRoom = props.onEnterRoom,
-    hideRooms = props.hideRooms;
+    onEnterRoom = props.onEnterRoom;
   var classes = useStyles$9();
   var DEF = 900;
   var chatId = getChatId(chat);
@@ -1852,41 +1849,22 @@ var RoomMessageList = function RoomMessageList(props) {
     });
   };
   if (chatId == null) return;
-  var horShift = function horShift() {
-    var left = inAdmin ? 176 : 234;
-    left += hideRooms ? -140 : -352;
-    var top = inModale ? 106 : 50;
-    top += inAdmin ? 80 : 0;
-    return {
-      left: left,
-      top: top
-    };
-  };
-  var _horShift = horShift(),
-    left = _horShift.left,
-    top = _horShift.top;
-  return /*#__PURE__*/React__default.createElement(React__default.Fragment, null, /*#__PURE__*/React__default.createElement(material.Fade, {
+  return /*#__PURE__*/React__default.createElement(React__default.Fragment, null, /*#__PURE__*/React__default.createElement(material.Box, {
+    sx: {
+      position: "relative" /* Чтобы `div` был относительно контейнера */,
+      margin: "0 auto"
+    }
+  }, /*#__PURE__*/React__default.createElement(material.Fade, {
     in: !!isVisible,
     style: isVisible ? {
-      display: "block",
-      position: "absolute",
-      left: "calc(50% - " + left + "px)",
-      top: top,
-      width: 150
+      top: "50%",
+      left: "50%",
+      transform: "translate( calc(-50% + 75px), -50%)",
+      width: 160
     } : {
       display: "none"
     },
     timeout: 2000
-  }, /*#__PURE__*/React__default.createElement(material.Box, {
-    sx: {
-      width: "100%",
-      position: "relative",
-      display: "flex",
-      zIndex: 10,
-      justifyContent: "center",
-      top: 106,
-      left: "-50%"
-    }
   }, /*#__PURE__*/React__default.createElement(material.Alert, {
     severity: "warning",
     icon: false,
@@ -2017,9 +1995,6 @@ var Room = function Room(props) {
     conferenceJoined = props.conferenceJoined,
     loading = props.loading,
     pageSize = props.pageSize,
-    hideRooms = props.hideRooms,
-    inModale = props.inModale,
-    inAdmin = props.inAdmin,
     isMobile = props.isMobile;
   var classes = useStyles$a();
   var _useTranslation = reactI18next.useTranslation(),
@@ -2105,13 +2080,7 @@ var Room = function Room(props) {
     initialMenuState: initialMenuState,
     onNeedMoreMessages: props.onNeedMoreMessages,
     onMeesageDelete: props.onMeesageDelete,
-    setMenuState: setMenuState,
-    inModale: inModale,
-    inAdmin: inAdmin
-    // isConference={!!conference?.id}
-    ,
-    onEnterRoom: props.onEnterRoom,
-    hideRooms: hideRooms
+    setMenuState: setMenuState
   }), /*#__PURE__*/React__default.createElement(material.Divider, null), /*#__PURE__*/React__default.createElement(material.CardContent, null, /*#__PURE__*/React__default.createElement(Entry, {
     chat: chat,
     onTyping: props.onTyping,
@@ -4869,7 +4838,7 @@ var ChatAlert = function ChatAlert() {
   }, error ? error : success));
 };
 
-var _excluded$1 = ["activeGroupId", "activeChatUserId", "inModale", "inAdmin", "hideRooms", "fullWidth"];
+var _excluded$1 = ["activeGroupId", "activeChatUserId", "hideRooms", "fullWidth"];
 // Отключили проигрыш звука
 // const getRingAudio = (): HTMLAudioElement => {
 //   const audio = new Audio(
@@ -4912,10 +4881,6 @@ var ChatPage = function ChatPage(_ref) {
   var _state$conference$dat2, _state$conference$dat3, _state$activeRoom, _state$activeRoom2, _state$conference$dat4, _state$conference$dat5, _state$conference$dat6, _state$conference$dat7, _state$conference$dat8, _state$conference$dat9, _state$conference$dat10;
   var activeGroupId = _ref.activeGroupId,
     activeChatUserId = _ref.activeChatUserId,
-    _ref$inModale = _ref.inModale,
-    inModale = _ref$inModale === void 0 ? false : _ref$inModale,
-    _ref$inAdmin = _ref.inAdmin,
-    inAdmin = _ref$inAdmin === void 0 ? false : _ref$inAdmin,
     _ref$hideRooms = _ref.hideRooms,
     hideRooms = _ref$hideRooms === void 0 ? false : _ref$hideRooms,
     _ref$fullWidth = _ref.fullWidth,
@@ -5163,10 +5128,7 @@ var ChatPage = function ChatPage(_ref) {
     onConferencePause: onConferencePause,
     onOperatorAdd: onOperatorAdd,
     onLeaveGroup: onLeaveGroup,
-    inModale: inModale,
-    inAdmin: inAdmin,
     onContactClick: props.onContactInfoClick,
-    hideRooms: hideRooms,
     isMobile: isMobile
   });
   var GetRoomList = function GetRoomList() {
