@@ -1,13 +1,5 @@
 import * as React from "react";
-import {
-  Container,
-  Box,
-  Grid,
-  useMediaQuery,
-  IconButton,
-  Tooltip,
-} from "@mui/material";
-import { makeStyles } from "@mui/styles";
+import { useMediaQuery } from "@mui/material";
 import { Theme } from "@mui/material/styles";
 import { Room, RoomList, Conference } from "../components";
 import { ChatContext } from "../context/ChatContext";
@@ -22,12 +14,11 @@ import {
   SendMessage,
   ConferenceData,
 } from "../types";
-import { getParam, isEmpty, allMessCount } from "../utils/common";
-import ConferenceCall from "../components/ConferenceCall";
-import ChatIcon from "@mui/icons-material/Chat";
 import { useTranslation } from "react-i18next";
-import CheckAudiVideoPerm from "../components/CheckAudiVideoPerm";
 import ChatAlert from "../components/Alert";
+import ChatContainer from "../components/ChatContainer";
+import ChatLayout from "../components/ChatLayout";
+import ConferenceSection from "../components/ConferenceSection";
 
 // Отключили проигрыш звука
 // const getRingAudio = (): HTMLAudioElement => {
@@ -38,36 +29,6 @@ import ChatAlert from "../components/Alert";
 //   return audio;
 // };
 
-const useStyles = makeStyles((theme: Theme) => ({
-  root: {
-    height: "100%",
-    overflow: "hidden",
-    padding: 0,
-
-    [theme.breakpoints.up("lg")]: {
-      minWidth: 1200,
-    },
-  },
-  innerGrid: {
-    height: "100%",
-    width: "100%",
-  },
-  conAbsOnConf: {
-    position: "relative",
-    top: 106,
-    left: 0,
-    zIndex: 1000,
-    margin: theme.spacing(3),
-  },
-  conAbsOnConfDoc: {
-    position: "absolute",
-    top: 52,
-    left: 24,
-    zIndex: 1000,
-    margin: theme.spacing(3),
-  },
-}));
-
 export const ChatPage: React.FC<ChatPageProps> = ({
   activeGroupId,
   activeChatUserId,
@@ -75,8 +36,6 @@ export const ChatPage: React.FC<ChatPageProps> = ({
   fullWidth = false,
   ...props
 }: ChatPageProps) => {
-  const classes = useStyles();
-
   const isMobile = useMediaQuery((theme: Theme) =>
     theme.breakpoints.down("sm")
   );
@@ -256,43 +215,6 @@ export const ChatPage: React.FC<ChatPageProps> = ({
     [socket?.id]
   );
 
-  React.useEffect(() => {
-    if (activeChatUserId != null && !isEmpty(state.contactGather)) {
-      const Chat = Object.values(state.contactGather).find(
-        (item) => item.userId === activeChatUserId
-      );
-      onChangeChat(Chat);
-    }
-
-    const mmkId = getParam("mmk");
-    const guid = getParam("guid");
-    if ((mmkId != null || guid != null) && !isEmpty(state.contactGather)) {
-      //console.log("mmkId", mmkId);
-      const changeChatByMmkId = async () => {
-        const userId = await getUserByMmk(mmkId, guid);
-        if (userId != null) {
-          const Chat = Object.values(state.contactGather).find(
-            (item) => item.userId === userId
-          );
-          onChangeChat(Chat);
-        }
-      };
-      changeChatByMmkId();
-    }
-  }, [state.user.userId]);
-
-  React.useEffect(() => {
-    if (activeGroupId != null && !isEmpty(state.groupGather)) {
-      const onlyChat = Object.values(state.groupGather).find(
-        (item) => item.groupId === activeGroupId
-      );
-
-      if (!isEmpty(onlyChat)) {
-        onChangeChat(onlyChat);
-      }
-    }
-  }, [state.user.userId]);
-
   // Отключили проигрыш звука
   // React.useEffect(() => {
   //   if (
@@ -321,7 +243,7 @@ export const ChatPage: React.FC<ChatPageProps> = ({
       onExitRoom={onExitActiveRoom}
       onEnterRoom={onEnterRoom}
       onNeedMoreMessages={onNeedMoreMessages}
-      onMeesageDelete={onMessageDelete}
+      onMessageDelete={onMessageDelete}
       onTyping={onTyping}
       onSendMessage={onSendMessage}
       onVideoCall={onVideoCall}
@@ -334,157 +256,40 @@ export const ChatPage: React.FC<ChatPageProps> = ({
     />
   );
 
-  const GetRoomList = () => (
-    <RoomList
-      apiUrl={apiUrl}
-      user={state.user}
-      activeRoom={state.activeRoom}
-      groups={Object.values(state.groupGather)}
-      contacts={Object.values(state.contactGather)}
-      typing={state.typing}
-      onChangeChat={onChangeChat}
-    />
-  );
-
-  const GetConferenceCall = () =>
-    state.conference.data && (
-      <ConferenceCall
-        apiUrl={apiUrl}
-        contact={
-          state.contactGather[
-            state.user.userId === state.conference.data.userId
-              ? state.conference.data.contactId
-              : state.conference.data.userId
-          ]
-        }
-        conference={state.conference.data}
-        onAccept={onConferenceCallAccept}
-      />
-    );
-
-  const GetConference = () => (
-    <Conference
-      conference={state.conference.data}
-      onClose={onConferencePause}
-      langCode={state.user.langCode}
-    />
-  );
-
-  const Gonf = () =>
-    state.conference.joined ? (
-      <>
-        <GetConference />
-        {(!state.activeRoom || !isMobile) && (
-          <Box
-            sx={(theme) => ({
-              position: "absolute",
-              overflow: "hidden",
-              top:
-                state.user?.role && [3, 4].includes(state.user.role) ? 50 : 110,
-              left:
-                state.user?.role && [3, 4].includes(state.user.role) ? 50 : 30,
-              zIndex: 1000,
-              [theme.breakpoints.down("sm")]: {
-                top: 98,
-                left: 26,
-              },
-            })}
-          >
-            <Box
-              display="flex"
-              flexDirection="row"
-              columnGap={3}
-              my={3}
-              sx={{
-                position: "relative",
-              }}
-            >
-              <>
-                <CheckAudiVideoPerm audio={true} video={false} />
-                <CheckAudiVideoPerm audio={false} video={true} />
-              </>
-
-              {isMobile && (
-                <Tooltip title={t("CHAT.CONFERENCE.BACK")}>
-                  <IconButton
-                    sx={{
-                      color: "#fff",
-                      background: "#000",
-                      "&:hover": {
-                        background: "#eee",
-                        color: "#000",
-                        boxShadow: "none",
-                      },
-                    }}
-                    aria-label="check"
-                    onClick={() =>
-                      state.chatOld != null && onChangeChat(state.chatOld)
-                    }
-                    size="large"
-                  >
-                    <ChatIcon />
-                  </IconButton>
-                </Tooltip>
-              )}
-            </Box>
-          </Box>
-        )}
-      </>
-    ) : (
-      <GetConferenceCall />
-    );
-
-  const contacts = React.useMemo(
-    () => (state.conference.data?.id != null ? <Gonf /> : <GetRoomList />),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    state.conference.data?.id != null
-      ? [
-          state.conference.joined,
-          state.conference.data?.id,
-          state.activeRoom == null,
-        ]
-      : [
-          state.activeRoom?.groupId,
-          state.activeRoom?.userId,
-          allMessCount(state.contactGather),
-          allMessCount(state.groupGather),
-        ]
-  );
-
-  console.log("fullWidth", fullWidth);
   return (
-    <Container maxWidth={false} className={classes.root}>
-      {isMobile ? (
-        <React.Fragment>
-          {contacts}
-          {renderRoom}
-        </React.Fragment>
-      ) : (
-        <Grid container spacing={1} className={classes.innerGrid}>
-          {(state.conference.data?.id != null || !hideRooms) && (
-            <Grid
-              item
-              sm={state.conference.data?.id != null ? 6 : 4}
-              lg={state.conference.data?.id != null ? 6 : 4} // на малой ширине нужна пропорция 1/3
-              xl={state.conference.data?.id != null ? 6 : 3} // на большой ширине нужна пропорция 1/4
-              className={classes.innerGrid}
-            >
-              {contacts}
-            </Grid>
-          )}
-          <Grid
-            item
-            sm={state.conference.data?.id != null ? 6 : hideRooms ? 12 : 8}
-            lg={state.conference.data?.id != null ? 6 : hideRooms ? 12 : 8}
-            xl={state.conference.data?.id != null ? 6 : hideRooms ? 12 : 9}
-            className={classes.innerGrid}
-          >
-            {renderRoom}
-          </Grid>
-        </Grid>
-      )}
-
+    <ChatContainer>
+      <ChatLayout
+        isMobile={isMobile}
+        conferenceActive={!!state.conference.data?.id}
+        hideRooms={hideRooms}
+        contactsList={
+          state.conference.data?.id != null ? (
+            <ConferenceSection
+              conference={state.conference}
+              onClose={onConferencePause}
+              onAccept={onConferenceCallAccept}
+              isMobile={isMobile}
+              user={state.user}
+              chatOld={state.chatOld}
+              onChangeChat={onChangeChat}
+              apiUrl={apiUrl}
+            />
+          ) : (
+            <RoomList
+              user={state.user}
+              activeRoom={state.activeRoom}
+              groups={Object.values(state.groupGather)}
+              contacts={Object.values(state.contactGather)}
+              typing={state.typing}
+              onChangeChat={onChangeChat}
+              activeChatUserId={activeChatUserId}
+              activeGroupId={activeGroupId}
+            />
+          )
+        }
+        chatRoom={renderRoom}
+      />
       <ChatAlert />
-    </Container>
+    </ChatContainer>
   );
 };

@@ -79,7 +79,7 @@ type RoomProps = {
   onExitRoom?: (chat: ChatRoom) => void;
   onEnterRoom?: (chat: ChatRoom) => void;
   onNeedMoreMessages: (chat: ChatRoom) => Promise<void>;
-  onMeesageDelete?: (chat: ChatRoom, message: ChatMessage) => void;
+  onMessageDelete?: (chat: ChatRoom, message: ChatMessage) => void;
   onTyping?: (chat: ChatRoom) => void;
   onSendMessage?: (chat: ChatRoom, data: SendMessage) => void;
   onVideoCall?: (chat: ChatRoom, visitId?: number, recreate?: boolean) => void;
@@ -131,8 +131,8 @@ const Room: React.FC<RoomProps> = (props: RoomProps) => {
   const handleDelete = useCallback(() => {
     const { message } = menuState;
     setMenuState(initialMenuState);
-    if (props.onMeesageDelete && chat && message)
-      props.onMeesageDelete(chat, message);
+    if (props.onMessageDelete && chat && message)
+      props.onMessageDelete(chat, message);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [menuState.message]);
   console.log("conference ", conference);
@@ -204,7 +204,7 @@ const Room: React.FC<RoomProps> = (props: RoomProps) => {
         pageSize={pageSize}
         initialMenuState={initialMenuState}
         onNeedMoreMessages={props.onNeedMoreMessages}
-        onMeesageDelete={props.onMeesageDelete}
+        onMessageDelete={props.onMessageDelete}
         setMenuState={setMenuState}
       />
       <Divider />
