@@ -1,4 +1,4 @@
-import React from "react";
+import React, { ChangeEvent, FC, useContext, useEffect, useState } from "react";
 import List from "@mui/material/List";
 import { Theme } from "@mui/material/styles";
 
@@ -76,7 +76,7 @@ const sortChats = (
   return roomArr;
 };
 
-const RoomList: React.FC<RoomListProps> = ({
+const RoomList: FC<RoomListProps> = ({
   user,
   activeRoom,
   groups,
@@ -88,27 +88,19 @@ const RoomList: React.FC<RoomListProps> = ({
 }: RoomListProps) => {
   const classes = useStyles();
   const { t } = useTranslation();
-  const { apiUrl, getUserByMmk } = React.useContext(RestContext);
-
-  console.log(
-    "==",
-    sortChats(
-      user.userId,
-      filterChats(groups, null),
-      filterChats(contacts, null)
-    )
+  const { apiUrl, getUserByMmk } = useContext(RestContext);
+  const allContacts = sortChats(
+    user.userId,
+    filterChats(groups, null),
+    filterChats(contacts, null)
   );
-  const [chats, setChats] = React.useState<ChatRoom[]>(
-    sortChats(
-      user.userId,
-      filterChats(groups, null),
-      filterChats(contacts, null)
-    )
-  );
+  const [chats, setChats] = useState<ChatRoom[]>(allContacts);
 
-  console.log("chats=", chats);
+  useEffect(() => {
+    if (!isEmpty(allContacts)) setChats(allContacts);
+  }, [allContacts]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (activeChatUserId != null && !isEmpty(contacts)) {
       const Chat = Object.values(contacts).find(
         (item) => item.userId === activeChatUserId
@@ -118,6 +110,7 @@ const RoomList: React.FC<RoomListProps> = ({
 
     const mmkId = getParam("mmk");
     const guid = getParam("guid");
+
     if ((mmkId != null || guid != null) && !isEmpty(contacts)) {
       //console.log("mmkId", mmkId);
       const changeChatByMmkId = async () => {
@@ -140,9 +133,9 @@ const RoomList: React.FC<RoomListProps> = ({
         onChangeChat(onlyChat);
       }
     }
-  }, [user.userId, activeRoom?.userId]);
+  }, []);
 
-  const onSearchChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
+  const onSearchChange = (e: ChangeEvent<HTMLInputElement>): void => {
     //console.log("e.target.value", e.target.value);
 
     setChats(
@@ -171,7 +164,7 @@ const RoomList: React.FC<RoomListProps> = ({
       />
       <Divider />
       <List aria-label="rooms" className={classes.listStyle}>
-        {chats.map((chat) => (
+        {chats.map((chat: ChatRoom) => (
           <RoomListItem
             key={getChatId(chat)}
             apiUrl={apiUrl}
