@@ -16,7 +16,7 @@ declare type RoomMessageListProps = {
     pageSize: number;
     initialMenuState: InitialMenuState;
     onNeedMoreMessages: (chat: ChatRoom) => Promise<void>;
-    onMeesageDelete?: (chat: ChatRoom, message: ChatMessage) => void;
+    onMessageDelete?: (chat: ChatRoom, message: ChatMessage) => void;
     setMenuState: React.Dispatch<React.SetStateAction<InitialMenuState>>;
     onEnterRoom?: (chat: ChatRoom) => void;
 };

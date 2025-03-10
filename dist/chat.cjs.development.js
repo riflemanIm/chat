@@ -1834,7 +1834,7 @@ var RoomMessageList = function RoomMessageList(props) {
   }, [rootRef]);
   var handleMenuPopup = function handleMenuPopup(message, event) {
     var canCopy = message.messageType === "text";
-    var canDelete = user.userId === message.userId && !!props.onMeesageDelete && new Date().getTime() - new Date(message.cdate).getTime() <= 1000 * 60 * 2;
+    var canDelete = user.userId === message.userId && !!props.onMessageDelete && new Date().getTime() - new Date(message.cdate).getTime() <= 1000 * 60 * 2;
     if (!canCopy && !canDelete) {
       setMenuState(initialMenuState);
       return;
@@ -2015,7 +2015,7 @@ var Room = function Room(props) {
   var handleDelete = React.useCallback(function () {
     var message = menuState.message;
     setMenuState(initialMenuState);
-    if (props.onMeesageDelete && chat && message) props.onMeesageDelete(chat, message);
+    if (props.onMessageDelete && chat && message) props.onMessageDelete(chat, message);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [menuState.message]);
   console.log("conference ", conference);
@@ -2079,7 +2079,7 @@ var Room = function Room(props) {
     pageSize: pageSize,
     initialMenuState: initialMenuState,
     onNeedMoreMessages: props.onNeedMoreMessages,
-    onMeesageDelete: props.onMeesageDelete,
+    onMessageDelete: props.onMessageDelete,
     setMenuState: setMenuState
   }), /*#__PURE__*/React__default.createElement(material.Divider, null), /*#__PURE__*/React__default.createElement(material.CardContent, null, /*#__PURE__*/React__default.createElement(Entry, {
     chat: chat,
@@ -2113,398 +2113,6 @@ var Room = function Room(props) {
   }, /*#__PURE__*/React__default.createElement(DeleteIcon, {
     fontSize: "small"
   })))));
-};
-
-var useStyles$b = /*#__PURE__*/styles.makeStyles(function (theme) {
-  return styles.createStyles({
-    main: {
-      flex: '1 1 auto',
-      whiteSpace: 'nowrap',
-      overflow: 'hidden',
-      textOverflow: 'ellipsis'
-    },
-    time: {
-      paddingLeft: theme.spacing(1),
-      justifyContent: 'flex-end',
-      whiteSpace: 'nowrap'
-    },
-    unread: {
-      justifyContent: 'flex-end',
-      maxHeight: 20
-    },
-    avatarGroup: {
-      backgroundColor: '#28B7C6',
-      color: '#fff'
-    }
-  });
-});
-var getMessageText = function getMessageText(message, t) {
-  if (!message) return null;
-  switch (message.messageType) {
-    case 'text':
-      return message.content;
-    case 'image':
-      return "[" + t('CHAT.MESSAGE.TYPE.IMAGE') + "]";
-    case 'video':
-      return "[" + t('CHAT.MESSAGE.TYPE.VIDEO') + "]";
-    case 'file':
-      return "[" + t('CHAT.MESSAGE.TYPE.FILE') + "]";
-    case 'notify':
-      return "[" + t('CHAT.MESSAGE.TYPE.NOTIFY') + "]";
-    default:
-      return null;
-  }
-};
-var TypingBadge = /*#__PURE__*/styles.withStyles(function (theme) {
-  return styles.createStyles({
-    badge: {
-      backgroundColor: '#44b700',
-      color: '#44b700',
-      boxShadow: "0 0 0 2px " + theme.palette.background.paper,
-      '&::after': {
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        width: '100%',
-        height: '100%',
-        borderRadius: '50%',
-        animation: '$ripple 1.2s infinite ease-in-out',
-        border: '1px solid currentColor',
-        content: '""'
-      }
-    },
-    '@keyframes ripple': {
-      '0%': {
-        transform: 'scale(.8)',
-        opacity: 1
-      },
-      '100%': {
-        transform: 'scale(2.4)',
-        opacity: 0
-      }
-    }
-  });
-})(material.Badge);
-var OnlineBadge = /*#__PURE__*/styles.withStyles(function (theme) {
-  return styles.createStyles({
-    badge: {
-      backgroundColor: theme.palette.primary.main,
-      boxShadow: "0 0 0 2px " + theme.palette.background.paper
-    }
-  });
-})(material.Badge);
-var contactAvatar = function contactAvatar(apiUrl, contact, typing) {
-  var avatar = /*#__PURE__*/React__default.createElement(material.Avatar, {
-    alt: contact.username,
-    src: contact.avatar ? combineURLs(apiUrl, contact.avatar) : ''
-  });
-  var isTyping = !!(typing != null && typing.contactId) && (typing == null ? void 0 : typing.userId) === contact.userId;
-  if (isTyping) return /*#__PURE__*/React__default.createElement(TypingBadge, {
-    overlap: "circular",
-    anchorOrigin: {
-      vertical: 'bottom',
-      horizontal: 'right'
-    },
-    variant: "dot"
-  }, avatar);
-  if (contact != null && contact.online) return /*#__PURE__*/React__default.createElement(OnlineBadge, {
-    overlap: "circular",
-    anchorOrigin: {
-      vertical: 'bottom',
-      horizontal: 'right'
-    },
-    variant: "dot"
-  }, avatar);
-  return avatar;
-};
-var RoomListItem = function RoomListItem(props) {
-  var _chat$messages;
-  var classes = useStyles$b();
-  var _useTranslation = reactI18next.useTranslation(),
-    t = _useTranslation.t;
-  var apiUrl = props.apiUrl,
-    chat = props.chat,
-    typing = props.typing;
-  var roomName = getChatName(chat);
-  var avatar = chat.groupId ? /*#__PURE__*/React__default.createElement(material.Avatar, {
-    alt: roomName,
-    className: classes.avatarGroup
-  }, /*#__PURE__*/React__default.createElement(GroupIcon, null), ' ') : contactAvatar(apiUrl, chat, typing);
-  var lastMessage = chat.messages && chat.messages.length > 0 ? chat.messages[chat.messages.length - 1] : null;
-  var roomText = getMessageText(lastMessage, t);
-  var roomTime = lastMessage == null ? void 0 : lastMessage.cdate;
-  var listItem = React.useMemo(function () {
-    return /*#__PURE__*/React__default.createElement(material.ListItemButton, {
-      selected: props.active,
-      onClick: props.onClick
-    }, /*#__PURE__*/React__default.createElement(material.ListItemAvatar, null, avatar), /*#__PURE__*/React__default.createElement(material.ListItemText, {
-      secondaryTypographyProps: {
-        component: 'span'
-      },
-      primary: /*#__PURE__*/React__default.createElement(material.Box, {
-        display: "flex",
-        flexDirection: "row"
-      }, /*#__PURE__*/React__default.createElement("span", {
-        className: classes.main
-      }, roomName), /*#__PURE__*/React__default.createElement("span", {
-        className: classes.time
-      }, formatTime(roomTime))),
-      secondary: /*#__PURE__*/React__default.createElement(material.Box, {
-        display: "flex",
-        flexDirection: "row"
-      }, /*#__PURE__*/React__default.createElement("span", {
-        className: classes.main
-      }, roomText), chat.unreadCount ? /*#__PURE__*/React__default.createElement(material.Chip, {
-        className: classes.unread,
-        component: "span",
-        size: "small",
-        color: "primary",
-        label: chat.unreadCount
-      }) : null)
-    }));
-  }, [(_chat$messages = chat.messages) == null ? void 0 : _chat$messages.length]);
-  return listItem;
-};
-
-var useStyles$c = /*#__PURE__*/styles.makeStyles(function (theme) {
-  return {
-    root: {
-      width: '100%',
-      height: '100%'
-    },
-    searchField: {
-      width: '100%'
-    },
-    listStyle: {
-      height: '89.5%',
-      overflowY: 'auto',
-      scrollbarWidth: 'thin',
-      scrollbarColor: theme.palette.primary.light + " #fff"
-    }
-  };
-});
-var filterChats = function filterChats(chats, filter) {
-  if (!filter) return chats;
-  var lowerFilter = filter.toLowerCase();
-  return chats.filter(function (chat) {
-    return getChatName(chat).toLowerCase().includes(lowerFilter);
-  });
-};
-var sortChats = function sortChats(userId, groups, contacts) {
-  var roomArr = [].concat(groups, contacts);
-  //console.log('groups', groups, 'contacts', contacts);
-  // Сортировать окно чата (по времени последних сообщений)
-  roomArr = roomArr.sort(chatRoomComparer);
-  // Проверяем, есть ли список, который нужно закрепить
-  var topChatId = localStorage.getItem(userId + "-topChatId");
-  if (topChatId) {
-    var chat = roomArr.find(function (c) {
-      return getChatId(c) === topChatId;
-    });
-    if (chat) {
-      // На первое место
-      roomArr = roomArr.filter(function (k) {
-        return getChatId(k) !== topChatId;
-      });
-      chat.isTop = true;
-      roomArr.unshift(chat);
-    }
-  }
-  return roomArr;
-};
-var RoomList = function RoomList(props) {
-  var _props$activeRoom;
-  var classes = useStyles$c();
-  var _useTranslation = reactI18next.useTranslation(),
-    t = _useTranslation.t;
-  var _React$useState = React__default.useState(sortChats(props.user.userId, filterChats(props.groups, null), filterChats(props.contacts, null))),
-    chats = _React$useState[0],
-    setChats = _React$useState[1];
-  var onSearchChange = function onSearchChange(e) {
-    //console.log("e.target.value", e.target.value);
-    setChats(sortChats(props.user.userId, filterChats(props.groups, e.target.value), filterChats(props.contacts, e.target.value)));
-  };
-  //const activeItem = (id: number) => id === props.activeRoom?.userId;
-  //console.log("chats", chats);
-  var roomList = React__default.useMemo(function () {
-    return chats.map(function (chat) {
-      return /*#__PURE__*/React__default.createElement(RoomListItem, {
-        key: getChatId(chat),
-        apiUrl: props.apiUrl,
-        chat: chat,
-        active: chat === props.activeRoom,
-        typing: props.typing,
-        onClick: function onClick() {
-          return props.onChangeChat != null && props.onChangeChat(chat);
-        }
-      });
-    });
-  }, [(_props$activeRoom = props.activeRoom) == null ? void 0 : _props$activeRoom.userId, props.typing, chats]);
-  return /*#__PURE__*/React__default.createElement(material.Card, {
-    elevation: 1,
-    className: classes.root
-  }, /*#__PURE__*/React__default.createElement(material.CardHeader, {
-    title: /*#__PURE__*/React__default.createElement(material.TextField, {
-      className: classes.searchField,
-      label: t('CHAT.INPUT_SEARCH_CONTACT'),
-      variant: "outlined",
-      size: "small",
-      fullWidth: true,
-      onChange: onSearchChange
-    })
-  }), /*#__PURE__*/React__default.createElement(material.Divider, null), /*#__PURE__*/React__default.createElement(List, {
-    "aria-label": "rooms",
-    className: classes.listStyle
-  }, roomList));
-};
-
-function updateUrlParameter(url, param, value) {
-  var regex = new RegExp("(" + param + "=)[^&]+");
-  return url.replace(regex, "$1" + value);
-}
-var transLang = function transLang(lang) {
-  return lang === "ru" ? "rus" : lang === "fr" ? "fra" : lang === "en" ? "eng" : "";
-};
-var useStyles$d = /*#__PURE__*/styles.makeStyles(function () {
-  return {
-    root: {
-      width: "100%",
-      height: "100%",
-      borderRadius: 4
-    }
-  };
-});
-var Conference = function Conference(_ref) {
-  var conference = _ref.conference,
-    onClose = _ref.onClose,
-    _ref$langCode = _ref.langCode,
-    langCode = _ref$langCode === void 0 ? "en" : _ref$langCode;
-  var classes = useStyles$d();
-  var ref = React__default.useRef(null);
-  var confUrl = conference != null && conference.url && langCode ? updateUrlParameter(conference == null ? void 0 : conference.url, "lang", transLang(langCode)) : "";
-  React.useEffect(function () {
-    var listener = function listener(_ref2) {
-      var _ref$current;
-      var source = _ref2.source,
-        data = _ref2.data;
-      if (source === ((_ref$current = ref.current) == null ? void 0 : _ref$current.contentWindow)) {
-        var type = data.type;
-        if (["notSupported", "connectionFail",
-        // "loginFail",
-        "callFail", "hangUp", "remoteHangUp"
-        // "onParticipantLeft"
-        ].includes(type)) onClose(conference);
-      }
-    };
-    window.addEventListener("message", listener);
-    return function () {
-      window.removeEventListener("message", listener);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [conference == null ? void 0 : conference.id, langCode]);
-  return /*#__PURE__*/React__default.createElement("iframe", {
-    title: "conference",
-    className: classes.root,
-    src: confUrl,
-    allowFullScreen: true,
-    allow: "microphone; camera; autoplay; display-capture",
-    ref: ref
-  });
-};
-
-var useStyles$e = /*#__PURE__*/styles.makeStyles(function () {
-  return {
-    root: {
-      width: "100%",
-      height: "100%",
-      borderRadius: 8,
-      display: "flex",
-      flexDirection: "column",
-      justifyContent: "center",
-      alignItems: "center"
-    },
-    pulse: {
-      height: 100,
-      width: 100,
-      borderRadius: "50%",
-      display: "flex",
-      justifyContent: "center",
-      alignItems: "center",
-      position: "relative",
-      "&::before": {
-        content: "''",
-        position: "absolute",
-        border: "1px solid green",
-        width: "calc(100% + 40px)",
-        height: "calc(100% + 40px)",
-        borderRadius: "50%",
-        animation: "$pulse 1s linear infinite"
-      },
-      "&::after": {
-        content: "''",
-        position: "absolute",
-        border: "1px solid green",
-        width: "calc(100% + 40px)",
-        height: "calc(100% + 40px)",
-        borderRadius: "50%",
-        animation: "$pulse 1s linear infinite",
-        animationDelay: "0.3s"
-      }
-    },
-    avatar: {
-      width: "80%",
-      height: "80%"
-    },
-    footer: {
-      width: "100%",
-      alignSelf: "flex-end",
-      paddingTop: 64,
-      display: "flex",
-      justifyContent: "center"
-    },
-    "@keyframes pulse": {
-      "0%": {
-        transform: "scale(0.5)",
-        opacity: 0
-      },
-      "50%": {
-        transform: "scale(1)",
-        opacity: 1
-      },
-      "100%": {
-        transform: "scale(1.3)",
-        opacity: 0
-      }
-    }
-  };
-});
-var ConferenceCall = function ConferenceCall(_ref) {
-  var conference = _ref.conference,
-    contact = _ref.contact,
-    apiUrl = _ref.apiUrl,
-    onAccept = _ref.onAccept;
-  var classes = useStyles$e();
-  var _useTranslation = reactI18next.useTranslation(),
-    t = _useTranslation.t;
-  return /*#__PURE__*/React__default.createElement(material.Paper, {
-    className: classes.root
-  }, /*#__PURE__*/React__default.createElement("div", {
-    className: classes.pulse
-  }, contact ? /*#__PURE__*/React__default.createElement(material.Avatar, {
-    className: classes.avatar,
-    alt: contact.username,
-    src: contact.avatar ? combineURLs(apiUrl, contact.avatar) : ""
-  }) : /*#__PURE__*/React__default.createElement(material.Avatar, {
-    className: classes.avatar
-  })), /*#__PURE__*/React__default.createElement("div", {
-    className: classes.footer
-  }, /*#__PURE__*/React__default.createElement(material.Button, {
-    variant: "contained",
-    color: "primary",
-    onClick: function onClick() {
-      return onAccept(conference);
-    }
-  }, t("CHAT.CONFERENCE.JOIN"))));
 };
 
 function createCommonjsModule(fn, module) {
@@ -3266,6 +2874,153 @@ try {
   }
 }
 });
+
+var useStyles$b = /*#__PURE__*/styles.makeStyles(function (theme) {
+  return styles.createStyles({
+    main: {
+      flex: "1 1 auto",
+      whiteSpace: "nowrap",
+      overflow: "hidden",
+      textOverflow: "ellipsis"
+    },
+    time: {
+      paddingLeft: theme.spacing(1),
+      justifyContent: "flex-end",
+      whiteSpace: "nowrap"
+    },
+    unread: {
+      justifyContent: "flex-end",
+      maxHeight: 20
+    },
+    avatarGroup: {
+      backgroundColor: "#28B7C6",
+      color: "#fff"
+    }
+  });
+});
+var getMessageText = function getMessageText(message, t) {
+  if (!message) return null;
+  switch (message.messageType) {
+    case "text":
+      return message.content;
+    case "image":
+      return "[" + t("CHAT.MESSAGE.TYPE.IMAGE") + "]";
+    case "video":
+      return "[" + t("CHAT.MESSAGE.TYPE.VIDEO") + "]";
+    case "file":
+      return "[" + t("CHAT.MESSAGE.TYPE.FILE") + "]";
+    case "notify":
+      return "[" + t("CHAT.MESSAGE.TYPE.NOTIFY") + "]";
+    default:
+      return null;
+  }
+};
+var TypingBadge = /*#__PURE__*/styles.withStyles(function (theme) {
+  return styles.createStyles({
+    badge: {
+      backgroundColor: "#44b700",
+      color: "#44b700",
+      boxShadow: "0 0 0 2px " + theme.palette.background.paper,
+      "&::after": {
+        position: "absolute",
+        top: 0,
+        left: 0,
+        width: "100%",
+        height: "100%",
+        borderRadius: "50%",
+        animation: "$ripple 1.2s infinite ease-in-out",
+        border: "1px solid currentColor",
+        content: '""'
+      }
+    },
+    "@keyframes ripple": {
+      "0%": {
+        transform: "scale(.8)",
+        opacity: 1
+      },
+      "100%": {
+        transform: "scale(2.4)",
+        opacity: 0
+      }
+    }
+  });
+})(material.Badge);
+var OnlineBadge = /*#__PURE__*/styles.withStyles(function (theme) {
+  return styles.createStyles({
+    badge: {
+      backgroundColor: theme.palette.primary.main,
+      boxShadow: "0 0 0 2px " + theme.palette.background.paper
+    }
+  });
+})(material.Badge);
+var contactAvatar = function contactAvatar(apiUrl, contact, typing) {
+  var avatar = /*#__PURE__*/React__default.createElement(material.Avatar, {
+    alt: contact.username,
+    src: contact.avatar ? combineURLs(apiUrl, contact.avatar) : ""
+  });
+  var isTyping = !!(typing != null && typing.contactId) && (typing == null ? void 0 : typing.userId) === contact.userId;
+  if (isTyping) return /*#__PURE__*/React__default.createElement(TypingBadge, {
+    overlap: "circular",
+    anchorOrigin: {
+      vertical: "bottom",
+      horizontal: "right"
+    },
+    variant: "dot"
+  }, avatar);
+  if (contact != null && contact.online) return /*#__PURE__*/React__default.createElement(OnlineBadge, {
+    overlap: "circular",
+    anchorOrigin: {
+      vertical: "bottom",
+      horizontal: "right"
+    },
+    variant: "dot"
+  }, avatar);
+  return avatar;
+};
+var RoomListItem = function RoomListItem(props) {
+  var classes = useStyles$b();
+  var _useTranslation = reactI18next.useTranslation(),
+    t = _useTranslation.t;
+  var apiUrl = props.apiUrl,
+    chat = props.chat,
+    typing = props.typing;
+  var roomName = getChatName(chat);
+  var avatar = chat.groupId ? /*#__PURE__*/React__default.createElement(material.Avatar, {
+    alt: roomName,
+    className: classes.avatarGroup
+  }, /*#__PURE__*/React__default.createElement(GroupIcon, null), " ") : contactAvatar(apiUrl, chat, typing);
+  var lastMessage = chat.messages && chat.messages.length > 0 ? chat.messages[chat.messages.length - 1] : null;
+  var roomText = getMessageText(lastMessage, t);
+  var roomTime = lastMessage == null ? void 0 : lastMessage.cdate;
+  return /*#__PURE__*/React__default.createElement(material.ListItemButton, {
+    selected: props.active,
+    onClick: props.onClick
+  }, /*#__PURE__*/React__default.createElement(material.ListItemAvatar, null, avatar), /*#__PURE__*/React__default.createElement(material.ListItemText, {
+    secondaryTypographyProps: {
+      component: "span"
+    },
+    primary: /*#__PURE__*/React__default.createElement(material.Box, {
+      display: "flex",
+      flexDirection: "row"
+    }, /*#__PURE__*/React__default.createElement("span", {
+      className: classes.main
+    }, roomName), /*#__PURE__*/React__default.createElement("span", {
+      className: classes.time
+    }, formatTime(roomTime))),
+    secondary: /*#__PURE__*/React__default.createElement(material.Box, {
+      display: "flex",
+      flexDirection: "row"
+    }, /*#__PURE__*/React__default.createElement("span", {
+      className: classes.main
+    }, roomText), chat.unreadCount ? /*#__PURE__*/React__default.createElement(material.Chip, {
+      className: classes.unread,
+      component: "span",
+      size: "small",
+      color: "primary",
+      label: chat.unreadCount
+    }) : null)
+  }));
+};
 
 var emptyUser = {
   userId: 0,
@@ -4096,6 +3851,306 @@ var RestProvider = function RestProvider(_ref3) {
   }, children);
 };
 
+var useStyles$c = /*#__PURE__*/styles.makeStyles(function (theme) {
+  return {
+    root: {
+      width: "100%",
+      height: "100%"
+    },
+    searchField: {
+      width: "100%"
+    },
+    listStyle: {
+      height: "89.5%",
+      overflowY: "auto",
+      scrollbarWidth: "thin",
+      scrollbarColor: theme.palette.primary.light + " #fff"
+    }
+  };
+});
+var filterChats = function filterChats(chats, filter) {
+  if (!filter) return chats;
+  var lowerFilter = filter.toLowerCase();
+  return chats.filter(function (chat) {
+    return getChatName(chat).toLowerCase().includes(lowerFilter);
+  });
+};
+var sortChats = function sortChats(userId, groups, contacts) {
+  var roomArr = [].concat(groups, contacts);
+  // Сортировать окно чата (по времени последних сообщений)
+  roomArr = roomArr.sort(chatRoomComparer);
+  // Проверяем, есть ли список, который нужно закрепить
+  var topChatId = localStorage.getItem(userId + "-topChatId");
+  if (topChatId) {
+    var chat = roomArr.find(function (c) {
+      return getChatId(c) === topChatId;
+    });
+    if (chat) {
+      // На первое место
+      roomArr = roomArr.filter(function (k) {
+        return getChatId(k) !== topChatId;
+      });
+      chat.isTop = true;
+      roomArr.unshift(chat);
+    }
+  }
+  return roomArr;
+};
+var RoomList = function RoomList(_ref) {
+  var user = _ref.user,
+    activeRoom = _ref.activeRoom,
+    groups = _ref.groups,
+    contacts = _ref.contacts,
+    typing = _ref.typing,
+    onChangeChat = _ref.onChangeChat,
+    activeChatUserId = _ref.activeChatUserId,
+    activeGroupId = _ref.activeGroupId;
+  var classes = useStyles$c();
+  var _useTranslation = reactI18next.useTranslation(),
+    t = _useTranslation.t;
+  var _useContext = React.useContext(RestContext),
+    apiUrl = _useContext.apiUrl,
+    getUserByMmk = _useContext.getUserByMmk;
+  var allContacts = sortChats(user.userId, filterChats(groups, null), filterChats(contacts, null));
+  var _useState = React.useState(allContacts),
+    chats = _useState[0],
+    setChats = _useState[1];
+  React.useEffect(function () {
+    if (!isEmpty(allContacts)) setChats(allContacts);
+  }, [allContacts]);
+  React.useEffect(function () {
+    if (activeChatUserId != null && !isEmpty(contacts)) {
+      var Chat = Object.values(contacts).find(function (item) {
+        return item.userId === activeChatUserId;
+      });
+      if (Chat != null) onChangeChat(Chat);
+    }
+    var mmkId = getParam("mmk");
+    var guid = getParam("guid");
+    if ((mmkId != null || guid != null) && !isEmpty(contacts)) {
+      //console.log("mmkId", mmkId);
+      var changeChatByMmkId = /*#__PURE__*/function () {
+        var _ref2 = _asyncToGenerator(/*#__PURE__*/runtime_1.mark(function _callee() {
+          var userId, _Chat;
+          return runtime_1.wrap(function _callee$(_context) {
+            while (1) {
+              switch (_context.prev = _context.next) {
+                case 0:
+                  _context.next = 2;
+                  return getUserByMmk(mmkId, guid);
+                case 2:
+                  userId = _context.sent;
+                  if (userId != null) {
+                    _Chat = Object.values(contacts).find(function (item) {
+                      return item.userId === userId;
+                    });
+                    if (_Chat != null) onChangeChat(_Chat);
+                  }
+                case 4:
+                case "end":
+                  return _context.stop();
+              }
+            }
+          }, _callee);
+        }));
+        return function changeChatByMmkId() {
+          return _ref2.apply(this, arguments);
+        };
+      }();
+      changeChatByMmkId();
+    }
+    if (activeGroupId != null && !isEmpty(groups)) {
+      var onlyChat = Object.values(groups).find(function (item) {
+        return item.groupId === activeGroupId;
+      });
+      if (onlyChat != null) {
+        onChangeChat(onlyChat);
+      }
+    }
+  }, []);
+  var onSearchChange = function onSearchChange(e) {
+    //console.log("e.target.value", e.target.value);
+    setChats(sortChats(user.userId, filterChats(groups, e.target.value), filterChats(contacts, e.target.value)));
+  };
+  //const activeItem = (id: number) => id === activeRoom?.userId;
+  return /*#__PURE__*/React__default.createElement(material.Card, {
+    elevation: 1,
+    className: classes.root
+  }, /*#__PURE__*/React__default.createElement(material.CardHeader, {
+    title: /*#__PURE__*/React__default.createElement(material.TextField, {
+      className: classes.searchField,
+      label: t("CHAT.INPUT_SEARCH_CONTACT"),
+      variant: "outlined",
+      size: "small",
+      fullWidth: true,
+      onChange: onSearchChange
+    })
+  }), /*#__PURE__*/React__default.createElement(material.Divider, null), /*#__PURE__*/React__default.createElement(List, {
+    "aria-label": "rooms",
+    className: classes.listStyle
+  }, chats.map(function (chat) {
+    return /*#__PURE__*/React__default.createElement(RoomListItem, {
+      key: getChatId(chat),
+      apiUrl: apiUrl,
+      chat: chat,
+      active: chat === activeRoom,
+      typing: typing,
+      onClick: function onClick() {
+        return onChangeChat != null && onChangeChat(chat);
+      }
+    });
+  })));
+};
+
+function updateUrlParameter(url, param, value) {
+  var regex = new RegExp("(" + param + "=)[^&]+");
+  return url.replace(regex, "$1" + value);
+}
+var transLang = function transLang(lang) {
+  return lang === "ru" ? "rus" : lang === "fr" ? "fra" : lang === "en" ? "eng" : "";
+};
+var useStyles$d = /*#__PURE__*/styles.makeStyles(function () {
+  return {
+    root: {
+      width: "100%",
+      height: "100%",
+      borderRadius: 4
+    }
+  };
+});
+var Conference = function Conference(_ref) {
+  var conference = _ref.conference,
+    onClose = _ref.onClose,
+    _ref$langCode = _ref.langCode,
+    langCode = _ref$langCode === void 0 ? "en" : _ref$langCode;
+  var classes = useStyles$d();
+  var ref = React__default.useRef(null);
+  var confUrl = conference != null && conference.url && langCode ? updateUrlParameter(conference == null ? void 0 : conference.url, "lang", transLang(langCode)) : "";
+  React.useEffect(function () {
+    var listener = function listener(_ref2) {
+      var _ref$current;
+      var source = _ref2.source,
+        data = _ref2.data;
+      if (source === ((_ref$current = ref.current) == null ? void 0 : _ref$current.contentWindow)) {
+        var type = data.type;
+        if (["notSupported", "connectionFail",
+        // "loginFail",
+        "callFail", "hangUp", "remoteHangUp"
+        // "onParticipantLeft"
+        ].includes(type)) onClose(conference);
+      }
+    };
+    window.addEventListener("message", listener);
+    return function () {
+      window.removeEventListener("message", listener);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [conference == null ? void 0 : conference.id, langCode]);
+  return /*#__PURE__*/React__default.createElement("iframe", {
+    title: "conference",
+    className: classes.root,
+    src: confUrl,
+    allowFullScreen: true,
+    allow: "microphone; camera; autoplay; display-capture",
+    ref: ref
+  });
+};
+
+var useStyles$e = /*#__PURE__*/styles.makeStyles(function () {
+  return {
+    root: {
+      width: "100%",
+      height: "100%",
+      borderRadius: 8,
+      display: "flex",
+      flexDirection: "column",
+      justifyContent: "center",
+      alignItems: "center"
+    },
+    pulse: {
+      height: 100,
+      width: 100,
+      borderRadius: "50%",
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      position: "relative",
+      "&::before": {
+        content: "''",
+        position: "absolute",
+        border: "1px solid green",
+        width: "calc(100% + 40px)",
+        height: "calc(100% + 40px)",
+        borderRadius: "50%",
+        animation: "$pulse 1s linear infinite"
+      },
+      "&::after": {
+        content: "''",
+        position: "absolute",
+        border: "1px solid green",
+        width: "calc(100% + 40px)",
+        height: "calc(100% + 40px)",
+        borderRadius: "50%",
+        animation: "$pulse 1s linear infinite",
+        animationDelay: "0.3s"
+      }
+    },
+    avatar: {
+      width: "80%",
+      height: "80%"
+    },
+    footer: {
+      width: "100%",
+      alignSelf: "flex-end",
+      paddingTop: 64,
+      display: "flex",
+      justifyContent: "center"
+    },
+    "@keyframes pulse": {
+      "0%": {
+        transform: "scale(0.5)",
+        opacity: 0
+      },
+      "50%": {
+        transform: "scale(1)",
+        opacity: 1
+      },
+      "100%": {
+        transform: "scale(1.3)",
+        opacity: 0
+      }
+    }
+  };
+});
+var ConferenceCall = function ConferenceCall(_ref) {
+  var conference = _ref.conference,
+    contact = _ref.contact,
+    apiUrl = _ref.apiUrl,
+    onAccept = _ref.onAccept;
+  var classes = useStyles$e();
+  var _useTranslation = reactI18next.useTranslation(),
+    t = _useTranslation.t;
+  return /*#__PURE__*/React__default.createElement(material.Paper, {
+    className: classes.root
+  }, /*#__PURE__*/React__default.createElement("div", {
+    className: classes.pulse
+  }, contact ? /*#__PURE__*/React__default.createElement(material.Avatar, {
+    className: classes.avatar,
+    alt: contact.username,
+    src: contact.avatar ? combineURLs(apiUrl, contact.avatar) : ""
+  }) : /*#__PURE__*/React__default.createElement(material.Avatar, {
+    className: classes.avatar
+  })), /*#__PURE__*/React__default.createElement("div", {
+    className: classes.footer
+  }, /*#__PURE__*/React__default.createElement(material.Button, {
+    variant: "contained",
+    color: "primary",
+    onClick: function onClick() {
+      return onAccept(conference);
+    }
+  }, t("CHAT.CONFERENCE.JOIN"))));
+};
+
 var useSocket = function useSocket(url, path, accessToken) {
   var _useState = React.useState(null),
     socket = _useState[0],
@@ -4731,6 +4786,93 @@ var SocketProvider = function SocketProvider(_ref) {
   }, children);
 };
 
+var ChatAlert = function ChatAlert() {
+  // const { t } = useTranslation();
+  //const [havePermissions, setHavePermissions] = useState(false);
+  var _React$useContext = React__default.useContext(ChatContext),
+    _React$useContext$sta = _React$useContext.state,
+    error = _React$useContext$sta.error,
+    success = _React$useContext$sta.success,
+    dispatch = _React$useContext.dispatch;
+  var handleClose = function handleClose() {
+    dispatch({
+      type: "SET_ERROR",
+      payload: undefined
+    });
+    dispatch({
+      type: "SET_SUCCES",
+      payload: undefined
+    });
+  };
+  return /*#__PURE__*/React__default.createElement(material.Snackbar, {
+    anchorOrigin: {
+      vertical: "top",
+      horizontal: "center"
+    },
+    open: !!error || !!success,
+    autoHideDuration: 6000,
+    onClose: handleClose
+  }, /*#__PURE__*/React__default.createElement(material.Alert, {
+    onClose: handleClose,
+    severity: error ? "error" : "success"
+  }, error ? error : success));
+};
+
+var useStyles$f = /*#__PURE__*/styles.makeStyles(function (theme) {
+  var _root;
+  return {
+    root: (_root = {
+      height: "100%",
+      overflow: "hidden",
+      padding: 0
+    }, _root[theme.breakpoints.up("lg")] = {
+      minWidth: 1200
+    }, _root)
+  };
+});
+var ChatContainer = function ChatContainer(_ref) {
+  var children = _ref.children;
+  var classes = useStyles$f();
+  return /*#__PURE__*/React__default.createElement(material.Container, {
+    maxWidth: false,
+    className: classes.root
+  }, children);
+};
+
+var ChatLayout = function ChatLayout(_ref) {
+  var isMobile = _ref.isMobile,
+    conferenceActive = _ref.conferenceActive,
+    hideRooms = _ref.hideRooms,
+    contactsList = _ref.contactsList,
+    chatRoom = _ref.chatRoom;
+  if (isMobile) {
+    return /*#__PURE__*/React__default.createElement(React__default.Fragment, null, contactsList, chatRoom);
+  }
+  return /*#__PURE__*/React__default.createElement(material.Grid, {
+    container: true,
+    spacing: 1,
+    sx: {
+      height: "100%"
+    }
+  }, (conferenceActive || !hideRooms) && /*#__PURE__*/React__default.createElement(material.Grid, {
+    item: true,
+    sm: conferenceActive ? 6 : 4,
+    lg: conferenceActive ? 6 : 4,
+    xl: conferenceActive ? 6 : 3,
+    sx: {
+      height: "100%"
+    }
+  }, contactsList), /*#__PURE__*/React__default.createElement(material.Grid, {
+    item: true,
+    sm: conferenceActive ? 6 : hideRooms ? 12 : 8,
+    lg: conferenceActive ? 6 : hideRooms ? 12 : 8,
+    xl: conferenceActive ? 6 : hideRooms ? 12 : 9,
+    sx: {
+      height: "100%"
+    }
+  }, chatRoom));
+};
+
 var CheckAudiVideoPerm = function CheckAudiVideoPerm(_ref) {
   var audio = _ref.audio,
     video = _ref.video;
@@ -4806,36 +4948,86 @@ var CheckAudiVideoPerm = function CheckAudiVideoPerm(_ref) {
   }, audio && video ? /*#__PURE__*/React__default.createElement(SettingsSuggestIcon, null) : audio ? /*#__PURE__*/React__default.createElement(SettingsVoiceIcon, null) : /*#__PURE__*/React__default.createElement(VideocamIcon, null)));
 };
 
-var ChatAlert = function ChatAlert() {
-  // const { t } = useTranslation();
-  //const [havePermissions, setHavePermissions] = useState(false);
-  var _React$useContext = React__default.useContext(ChatContext),
-    _React$useContext$sta = _React$useContext.state,
-    error = _React$useContext$sta.error,
-    success = _React$useContext$sta.success,
-    dispatch = _React$useContext.dispatch;
-  var handleClose = function handleClose() {
-    dispatch({
-      type: "SET_ERROR",
-      payload: undefined
-    });
-    dispatch({
-      type: "SET_SUCCES",
-      payload: undefined
-    });
-  };
-  return /*#__PURE__*/React__default.createElement(material.Snackbar, {
-    anchorOrigin: {
-      vertical: "top",
-      horizontal: "center"
+var ConferenceControls = function ConferenceControls(_ref) {
+  var isMobile = _ref.isMobile,
+    user = _ref.user,
+    onBackToChat = _ref.onBackToChat;
+  var _useTranslation = reactI18next.useTranslation(),
+    t = _useTranslation.t;
+  return /*#__PURE__*/React.createElement(material.Box, {
+    sx: function sx(theme) {
+      var _ref2;
+      return _ref2 = {
+        position: "absolute",
+        overflow: "hidden",
+        top: user != null && user.role && [3, 4].includes(user.role) ? 50 : 110,
+        left: user != null && user.role && [3, 4].includes(user.role) ? 50 : 30,
+        zIndex: 1000
+      }, _ref2[theme.breakpoints.down("sm")] = {
+        top: 98,
+        left: 26
+      }, _ref2;
+    }
+  }, /*#__PURE__*/React.createElement(material.Box, {
+    display: "flex",
+    flexDirection: "row",
+    columnGap: 3,
+    my: 3,
+    sx: {
+      position: "relative"
+    }
+  }, /*#__PURE__*/React.createElement(CheckAudiVideoPerm, {
+    audio: true,
+    video: false
+  }), /*#__PURE__*/React.createElement(CheckAudiVideoPerm, {
+    audio: false,
+    video: true
+  }), isMobile && /*#__PURE__*/React.createElement(material.Tooltip, {
+    title: t("CHAT.CONFERENCE.BACK")
+  }, /*#__PURE__*/React.createElement(material.IconButton, {
+    sx: {
+      color: "#fff",
+      background: "#000",
+      "&:hover": {
+        background: "#eee",
+        color: "#000",
+        boxShadow: "none"
+      }
     },
-    open: !!error || !!success,
-    autoHideDuration: 6000,
-    onClose: handleClose
-  }, /*#__PURE__*/React__default.createElement(material.Alert, {
-    onClose: handleClose,
-    severity: error ? "error" : "success"
-  }, error ? error : success));
+    onClick: onBackToChat,
+    size: "large"
+  }, /*#__PURE__*/React.createElement(ChatIcon, null)))));
+};
+
+var ConferenceSection = function ConferenceSection(_ref) {
+  var conference = _ref.conference,
+    onClose = _ref.onClose,
+    onAccept = _ref.onAccept,
+    isMobile = _ref.isMobile,
+    user = _ref.user,
+    chatOld = _ref.chatOld,
+    onChangeChat = _ref.onChangeChat,
+    apiUrl = _ref.apiUrl;
+  if (!conference.data) return null;
+  if (conference.joined) {
+    return /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement(Conference, {
+      conference: conference.data,
+      onClose: onClose,
+      langCode: user.langCode
+    }), (!chatOld || !isMobile) && /*#__PURE__*/React.createElement(ConferenceControls, {
+      isMobile: isMobile,
+      user: user,
+      onBackToChat: function onBackToChat() {
+        return chatOld && onChangeChat(chatOld);
+      }
+    }));
+  }
+  return /*#__PURE__*/React.createElement(ConferenceCall, {
+    apiUrl: apiUrl,
+    contact: user.userId === conference.data.userId ? conference.data.contactId : conference.data.userId,
+    conference: conference.data,
+    onAccept: onAccept
+  });
 };
 
 var _excluded$1 = ["activeGroupId", "activeChatUserId", "hideRooms", "fullWidth"];
@@ -4847,51 +5039,17 @@ var _excluded$1 = ["activeGroupId", "activeChatUserId", "hideRooms", "fullWidth"
 //   audio.loop = true;
 //   return audio;
 // };
-var useStyles$f = /*#__PURE__*/styles.makeStyles(function (theme) {
-  var _root;
-  return {
-    root: (_root = {
-      height: "100%",
-      overflow: "hidden",
-      padding: 0
-    }, _root[theme.breakpoints.up("lg")] = {
-      minWidth: 1200
-    }, _root),
-    innerGrid: {
-      height: "100%",
-      width: "100%"
-    },
-    conAbsOnConf: {
-      position: "relative",
-      top: 106,
-      left: 0,
-      zIndex: 1000,
-      margin: theme.spacing(3)
-    },
-    conAbsOnConfDoc: {
-      position: "absolute",
-      top: 52,
-      left: 24,
-      zIndex: 1000,
-      margin: theme.spacing(3)
-    }
-  };
-});
 var ChatPage = function ChatPage(_ref) {
-  var _state$conference$dat2, _state$conference$dat3, _state$activeRoom, _state$activeRoom2, _state$conference$dat4, _state$conference$dat5, _state$conference$dat6, _state$conference$dat7, _state$conference$dat8, _state$conference$dat9, _state$conference$dat10;
+  var _state$conference$dat, _state$conference$dat2;
   var activeGroupId = _ref.activeGroupId,
     activeChatUserId = _ref.activeChatUserId,
     _ref$hideRooms = _ref.hideRooms,
     hideRooms = _ref$hideRooms === void 0 ? false : _ref$hideRooms,
-    _ref$fullWidth = _ref.fullWidth,
-    fullWidth = _ref$fullWidth === void 0 ? false : _ref$fullWidth,
     props = _objectWithoutPropertiesLoose(_ref, _excluded$1);
-  var classes = useStyles$f();
   var isMobile = material.useMediaQuery(function (theme) {
     return theme.breakpoints.down("sm");
   });
-  var _useTranslation = reactI18next.useTranslation(),
-    t = _useTranslation.t;
+  var _useTranslation = reactI18next.useTranslation();
   var _React$useContext = React.useContext(ChatContext),
     state = _React$useContext.state,
     dispatch = _React$useContext.dispatch;
@@ -4901,8 +5059,7 @@ var ChatPage = function ChatPage(_ref) {
     apiUrl = _React$useContext3.apiUrl,
     pageSize = _React$useContext3.pageSize,
     getPrivateMessages = _React$useContext3.getPrivateMessages,
-    getGroupMessages = _React$useContext3.getGroupMessages,
-    getUserByMmk = _React$useContext3.getUserByMmk;
+    getGroupMessages = _React$useContext3.getGroupMessages;
   // const [ringAudio] = React.useState(getRingAudio());
   var onExitActiveRoom = React.useCallback(function () {
     dispatch({
@@ -5042,58 +5199,6 @@ var ChatPage = function ChatPage(_ref) {
       groupId: group.groupId
     });
   }, [socket == null ? void 0 : socket.id]);
-  React.useEffect(function () {
-    if (activeChatUserId != null && !isEmpty(state.contactGather)) {
-      var Chat = Object.values(state.contactGather).find(function (item) {
-        return item.userId === activeChatUserId;
-      });
-      onChangeChat(Chat);
-    }
-    var mmkId = getParam("mmk");
-    var guid = getParam("guid");
-    if ((mmkId != null || guid != null) && !isEmpty(state.contactGather)) {
-      //console.log("mmkId", mmkId);
-      var changeChatByMmkId = /*#__PURE__*/function () {
-        var _ref3 = _asyncToGenerator(/*#__PURE__*/runtime_1.mark(function _callee2() {
-          var userId, _Chat;
-          return runtime_1.wrap(function _callee2$(_context2) {
-            while (1) {
-              switch (_context2.prev = _context2.next) {
-                case 0:
-                  _context2.next = 2;
-                  return getUserByMmk(mmkId, guid);
-                case 2:
-                  userId = _context2.sent;
-                  if (userId != null) {
-                    _Chat = Object.values(state.contactGather).find(function (item) {
-                      return item.userId === userId;
-                    });
-                    onChangeChat(_Chat);
-                  }
-                case 4:
-                case "end":
-                  return _context2.stop();
-              }
-            }
-          }, _callee2);
-        }));
-        return function changeChatByMmkId() {
-          return _ref3.apply(this, arguments);
-        };
-      }();
-      changeChatByMmkId();
-    }
-  }, [state.user.userId]);
-  React.useEffect(function () {
-    if (activeGroupId != null && !isEmpty(state.groupGather)) {
-      var onlyChat = Object.values(state.groupGather).find(function (item) {
-        return item.groupId === activeGroupId;
-      });
-      if (!isEmpty(onlyChat)) {
-        onChangeChat(onlyChat);
-      }
-    }
-  }, [state.user.userId]);
   // Отключили проигрыш звука
   // React.useEffect(() => {
   //   if (
@@ -5120,7 +5225,7 @@ var ChatPage = function ChatPage(_ref) {
     onExitRoom: onExitActiveRoom,
     onEnterRoom: onEnterRoom,
     onNeedMoreMessages: onNeedMoreMessages,
-    onMeesageDelete: onMessageDelete,
+    onMessageDelete: onMessageDelete,
     onTyping: onTyping,
     onSendMessage: onSendMessage,
     onVideoCall: onVideoCall,
@@ -5131,109 +5236,31 @@ var ChatPage = function ChatPage(_ref) {
     onContactClick: props.onContactInfoClick,
     isMobile: isMobile
   });
-  var GetRoomList = function GetRoomList() {
-    return /*#__PURE__*/React.createElement(RoomList, {
-      apiUrl: apiUrl,
+  return /*#__PURE__*/React.createElement(ChatContainer, null, /*#__PURE__*/React.createElement(ChatLayout, {
+    isMobile: isMobile,
+    conferenceActive: !!((_state$conference$dat = state.conference.data) != null && _state$conference$dat.id),
+    hideRooms: hideRooms,
+    contactsList: ((_state$conference$dat2 = state.conference.data) == null ? void 0 : _state$conference$dat2.id) != null ? /*#__PURE__*/React.createElement(ConferenceSection, {
+      conference: state.conference,
+      onClose: onConferencePause,
+      onAccept: onConferenceCallAccept,
+      isMobile: isMobile,
+      user: state.user,
+      chatOld: state.chatOld,
+      onChangeChat: onChangeChat,
+      apiUrl: apiUrl
+    }) : /*#__PURE__*/React.createElement(RoomList, {
       user: state.user,
       activeRoom: state.activeRoom,
       groups: Object.values(state.groupGather),
       contacts: Object.values(state.contactGather),
       typing: state.typing,
-      onChangeChat: onChangeChat
-    });
-  };
-  var GetConferenceCall = function GetConferenceCall() {
-    return state.conference.data && /*#__PURE__*/React.createElement(ConferenceCall, {
-      apiUrl: apiUrl,
-      contact: state.contactGather[state.user.userId === state.conference.data.userId ? state.conference.data.contactId : state.conference.data.userId],
-      conference: state.conference.data,
-      onAccept: onConferenceCallAccept
-    });
-  };
-  var GetConference = function GetConference() {
-    return /*#__PURE__*/React.createElement(Conference, {
-      conference: state.conference.data,
-      onClose: onConferencePause,
-      langCode: state.user.langCode
-    });
-  };
-  var Gonf = function Gonf() {
-    return state.conference.joined ? /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement(GetConference, null), (!state.activeRoom || !isMobile) && /*#__PURE__*/React.createElement(material.Box, {
-      sx: function sx(theme) {
-        var _state$user, _state$user2, _ref4;
-        return _ref4 = {
-          position: "absolute",
-          overflow: "hidden",
-          top: (_state$user = state.user) != null && _state$user.role && [3, 4].includes(state.user.role) ? 50 : 110,
-          left: (_state$user2 = state.user) != null && _state$user2.role && [3, 4].includes(state.user.role) ? 50 : 30,
-          zIndex: 1000
-        }, _ref4[theme.breakpoints.down("sm")] = {
-          top: 98,
-          left: 26
-        }, _ref4;
-      }
-    }, /*#__PURE__*/React.createElement(material.Box, {
-      display: "flex",
-      flexDirection: "row",
-      columnGap: 3,
-      my: 3,
-      sx: {
-        position: "relative"
-      }
-    }, /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement(CheckAudiVideoPerm, {
-      audio: true,
-      video: false
-    }), /*#__PURE__*/React.createElement(CheckAudiVideoPerm, {
-      audio: false,
-      video: true
-    })), isMobile && /*#__PURE__*/React.createElement(material.Tooltip, {
-      title: t("CHAT.CONFERENCE.BACK")
-    }, /*#__PURE__*/React.createElement(material.IconButton, {
-      sx: {
-        color: "#fff",
-        background: "#000",
-        "&:hover": {
-          background: "#eee",
-          color: "#000",
-          boxShadow: "none"
-        }
-      },
-      "aria-label": "check",
-      onClick: function onClick() {
-        return state.chatOld != null && onChangeChat(state.chatOld);
-      },
-      size: "large"
-    }, /*#__PURE__*/React.createElement(ChatIcon, null)))))) : /*#__PURE__*/React.createElement(GetConferenceCall, null);
-  };
-  var contacts = React.useMemo(function () {
-    var _state$conference$dat;
-    return ((_state$conference$dat = state.conference.data) == null ? void 0 : _state$conference$dat.id) != null ? /*#__PURE__*/React.createElement(Gonf, null) : /*#__PURE__*/React.createElement(GetRoomList, null);
-  },
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  ((_state$conference$dat2 = state.conference.data) == null ? void 0 : _state$conference$dat2.id) != null ? [state.conference.joined, (_state$conference$dat3 = state.conference.data) == null ? void 0 : _state$conference$dat3.id, state.activeRoom == null] : [(_state$activeRoom = state.activeRoom) == null ? void 0 : _state$activeRoom.groupId, (_state$activeRoom2 = state.activeRoom) == null ? void 0 : _state$activeRoom2.userId, allMessCount(state.contactGather), allMessCount(state.groupGather)]);
-  console.log("fullWidth", fullWidth);
-  return /*#__PURE__*/React.createElement(material.Container, {
-    maxWidth: false,
-    className: classes.root
-  }, isMobile ? /*#__PURE__*/React.createElement(React.Fragment, null, contacts, renderRoom) : /*#__PURE__*/React.createElement(material.Grid, {
-    container: true,
-    spacing: 1,
-    className: classes.innerGrid
-  }, (((_state$conference$dat4 = state.conference.data) == null ? void 0 : _state$conference$dat4.id) != null || !hideRooms) && /*#__PURE__*/React.createElement(material.Grid, {
-    item: true,
-    sm: ((_state$conference$dat5 = state.conference.data) == null ? void 0 : _state$conference$dat5.id) != null ? 6 : 4,
-    lg: ((_state$conference$dat6 = state.conference.data) == null ? void 0 : _state$conference$dat6.id) != null ? 6 : 4 // на малой ширине нужна пропорция 1/3
-    ,
-    xl: ((_state$conference$dat7 = state.conference.data) == null ? void 0 : _state$conference$dat7.id) != null ? 6 : 3 // на большой ширине нужна пропорция 1/4
-    ,
-    className: classes.innerGrid
-  }, contacts), /*#__PURE__*/React.createElement(material.Grid, {
-    item: true,
-    sm: ((_state$conference$dat8 = state.conference.data) == null ? void 0 : _state$conference$dat8.id) != null ? 6 : hideRooms ? 12 : 8,
-    lg: ((_state$conference$dat9 = state.conference.data) == null ? void 0 : _state$conference$dat9.id) != null ? 6 : hideRooms ? 12 : 8,
-    xl: ((_state$conference$dat10 = state.conference.data) == null ? void 0 : _state$conference$dat10.id) != null ? 6 : hideRooms ? 12 : 9,
-    className: classes.innerGrid
-  }, renderRoom)), /*#__PURE__*/React.createElement(ChatAlert, null));
+      onChangeChat: onChangeChat,
+      activeChatUserId: activeChatUserId,
+      activeGroupId: activeGroupId
+    }),
+    chatRoom: renderRoom
+  }), /*#__PURE__*/React.createElement(ChatAlert, null));
 };
 
 var CHAT = {
