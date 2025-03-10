@@ -94,7 +94,7 @@ type RoomMessageListProps = {
   initialMenuState: InitialMenuState;
 
   onNeedMoreMessages: (chat: ChatRoom) => Promise<void>;
-  onMeesageDelete?: (chat: ChatRoom, message: ChatMessage) => void;
+  onMessageDelete?: (chat: ChatRoom, message: ChatMessage) => void;
   setMenuState: React.Dispatch<React.SetStateAction<InitialMenuState>>;
   onEnterRoom?: (chat: ChatRoom) => void;
 };
@@ -267,7 +267,7 @@ const RoomMessageList: React.FC<RoomMessageListProps> = (
     const canCopy = message.messageType === "text";
     const canDelete =
       user.userId === message.userId &&
-      !!props.onMeesageDelete &&
+      !!props.onMessageDelete &&
       new Date().getTime() - new Date(message.cdate).getTime() <= 1000 * 60 * 2;
     if (!canCopy && !canDelete) {
       setMenuState(initialMenuState);

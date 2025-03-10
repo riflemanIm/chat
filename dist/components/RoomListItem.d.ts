@@ -1,5 +1,5 @@
-import React from 'react';
-import { ChatRoom, SetTyping } from '../types';
+import React from "react";
+import { ChatRoom, SetTyping } from "../types";
 declare type RoomListItemProps = {
     apiUrl: string;
     chat: ChatRoom;
