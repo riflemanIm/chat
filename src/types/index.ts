@@ -1,3 +1,10 @@
+// Этот интерфейс используется для типизации всех ответов от сервера. Когда сервер отправляет данные через сокет, они приходят в таком формате:
+
+export interface ServerRes {
+  code: number; // Код ответа (0 - успех, другие значения - ошибки)
+  msg: string; // Сообщение (обычно сообщение об ошибке)
+  data: unknown; // Данные ответа (могут быть разных типов)
+}
 export interface ChatPageProps {
   activeGroupId?: number;
   activeChatUserId?: number;
@@ -260,4 +267,19 @@ export enum ContextMenuType {
   TOP = "TOP", // Закрепить
   READ = "READ", // Прочесть всё
   DELETE = "DELETE", // Удалить
+}
+
+export const CHAT_ACTIONS = {
+  SET_ACTIVE_ROOM: "SET_ACTIVE_ROOM",
+  SET_LOADING: "SET_LOADING",
+  SET_ERROR: "SET_ERROR",
+  REVOKE_MESSAGE: "REVOKE_MESSAGE",
+  MARK_PRIVATE_MESSAGES_READ: "MARK_PRIVATE_MESSAGES_READ",
+} as const;
+
+export type ChatActionType = keyof typeof CHAT_ACTIONS;
+
+export interface ChatAction {
+  type: ChatActionType;
+  payload?: unknown;
 }

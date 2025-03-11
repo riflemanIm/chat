@@ -1,3 +1,8 @@
+export interface ServerRes {
+    code: number;
+    msg: string;
+    data: unknown;
+}
 export interface ChatPageProps {
     activeGroupId?: number;
     activeChatUserId?: number;
@@ -204,4 +209,16 @@ export declare enum ContextMenuType {
     TOP = "TOP",
     READ = "READ",
     DELETE = "DELETE"
+}
+export declare const CHAT_ACTIONS: {
+    readonly SET_ACTIVE_ROOM: "SET_ACTIVE_ROOM";
+    readonly SET_LOADING: "SET_LOADING";
+    readonly SET_ERROR: "SET_ERROR";
+    readonly REVOKE_MESSAGE: "REVOKE_MESSAGE";
+    readonly MARK_PRIVATE_MESSAGES_READ: "MARK_PRIVATE_MESSAGES_READ";
+};
+export declare type ChatActionType = keyof typeof CHAT_ACTIONS;
+export interface ChatAction {
+    type: ChatActionType;
+    payload?: unknown;
 }

@@ -35,6 +35,7 @@ import SettingsSuggestIcon from '@mui/icons-material/SettingsSuggest';
 import SettingsVoiceIcon from '@mui/icons-material/SettingsVoice';
 import i18n from 'i18next';
 
+// Этот интерфейс используется для типизации всех ответов от сервера. Когда сервер отправляет данные через сокет, они приходят в таком формате:
 var MessageStatus;
 (function (MessageStatus) {
   MessageStatus[MessageStatus["sent"] = 0] = "sent";
@@ -58,6 +59,13 @@ var ContextMenuType;
   ContextMenuType["READ"] = "READ";
   ContextMenuType["DELETE"] = "DELETE";
 })(ContextMenuType || (ContextMenuType = {}));
+var CHAT_ACTIONS = {
+  SET_ACTIVE_ROOM: "SET_ACTIVE_ROOM",
+  SET_LOADING: "SET_LOADING",
+  SET_ERROR: "SET_ERROR",
+  REVOKE_MESSAGE: "REVOKE_MESSAGE",
+  MARK_PRIVATE_MESSAGES_READ: "MARK_PRIVATE_MESSAGES_READ"
+};
 
 var useStyles = /*#__PURE__*/makeStyles(function () {
   return createStyles({
@@ -675,13 +683,6 @@ var getChatId = function getChatId(chat) {
 };
 var getChatName = function getChatName(chat) {
   return chat.groupId ? chat.name : chat.username;
-};
-var allMessCount = function allMessCount(chats) {
-  return Object.values(chats).map(function (it) {
-    return (it == null ? void 0 : it.messages) != null ? it == null ? void 0 : it.messages.length : 0;
-  }).reduce(function (a, b) {
-    return a + b;
-  }, 0);
 };
 var chatRoomComparer = function chatRoomComparer(a, b) {
   var hasMessagesA = Array.isArray(a.messages) && a.messages.length > 0;
@@ -4195,12 +4196,145 @@ var useSocket = function useSocket(url, path, accessToken) {
   };
 };
 
+var createSocketHandlers = function createSocketHandlers(dispatch, socket, state) {
+  return {
+    handleChatData: function handleChatData(data) {
+      dispatch({
+        type: "CLEAR_CHAT_DATA"
+      });
+      dispatch({
+        type: "SET_USER",
+        payload: data.user
+      });
+      data.groupData.forEach(function (group) {
+        socket == null ? void 0 : socket.emit("joinGroupSocket", {
+          groupId: group.groupId
+        });
+        dispatch({
+          type: "SET_GROUP_GATHER",
+          payload: group
+        });
+      });
+      data.contactData.forEach(function (contact) {
+        socket == null ? void 0 : socket.emit("joinPrivateSocket", {
+          contactId: contact.userId
+        });
+        dispatch({
+          type: "SET_CONTACT_GATHER",
+          payload: contact
+        });
+      });
+      dispatch({
+        type: "SET_OPERATORS",
+        payload: data.operatorData
+      });
+      data.userData.forEach(function (user) {
+        return dispatch({
+          type: "SET_USER_GATHER",
+          payload: user
+        });
+      });
+      dispatch({
+        type: "UPDATE_ACTIVE_ROOM"
+      });
+      dispatch({
+        type: "SET_CONFERENCE",
+        payload: data.conferenceData
+      });
+      dispatch({
+        type: "SET_VISIT_DATA",
+        payload: data.visitData
+      });
+    },
+    handleGroupMessage: function handleGroupMessage(data) {
+      dispatch({
+        type: "ADD_GROUP_MESSAGE",
+        payload: data
+      });
+      var activeRoom = state.activeRoom;
+      if (activeRoom && activeRoom.groupId === data.groupId && data.userId !== state.user.userId) {
+        socket == null ? void 0 : socket.emit("markAsRead", {
+          groupId: data.groupId,
+          _id: data._id
+        });
+      }
+    },
+    handlePrivateMessage: function handlePrivateMessage(data) {
+      if (data.contactId === state.user.userId || data.userId === state.user.userId) {
+        var _state$activeRoom;
+        dispatch({
+          type: "ADD_PRIVATE_MESSAGE",
+          payload: data
+        });
+        if (state.activeRoom && !state.activeRoom.groupId && ((_state$activeRoom = state.activeRoom) == null ? void 0 : _state$activeRoom.userId) === data.userId) {
+          socket == null ? void 0 : socket.emit("markAsRead", {
+            contactId: data.userId,
+            _id: data._id
+          });
+        }
+      }
+    }
+  };
+};
+
+function useSocketEvent(socket, event, handler, deps) {
+  if (deps === void 0) {
+    deps = [];
+  }
+  useEffect(function () {
+    if (!socket) return;
+    var wrappedHandler = function wrappedHandler(res) {
+      if (res.code) {
+        console.error("Error in " + event + ":", res.msg);
+        return;
+      }
+      handler(res.data);
+    };
+    socket.on(event, wrappedHandler);
+    return function () {
+      socket.off(event, wrappedHandler);
+    };
+  }, [socket == null ? void 0 : socket.id].concat(deps));
+}
+
+var SOCKET_EVENTS = {
+  // Auth events
+  UNAUTHORIZED: "unauthorized",
+  CHAT_DATA: "chatData",
+  // User status events
+  USER_ONLINE: "userOnline",
+  USER_OFFLINE: "userOffline",
+  JOIN_PRIVATE_SOCKET: "joinPrivateSocket",
+  // Message events
+  TYPING: "typing",
+  REVOKE_MESSAGE: "revokeMessage",
+  GROUP_MESSAGE: "groupMessage",
+  PRIVATE_MESSAGE: "privateMessage",
+  MARK_AS_READ: "markAsRead",
+  // Group events
+  ADD_GROUP: "addGroup",
+  DELETE_GROUP: "deleteGroup",
+  JOIN_GROUP: "joinGroup",
+  UPDATE_GROUP_INFO: "updateGroupInfo",
+  JOIN_GROUP_SOCKET: "joinGroupSocket",
+  // Conference events
+  START_CONFERENCE: "startConference",
+  PAUSE_CONFERENCE: "pauseConference",
+  STOP_CONFERENCE: "stopConference",
+  // Other events
+  ADD_OPERATOR: "addOperator",
+  SET_ACTIVE_ROOM: "setActiveRoom",
+  VISIT_DATA: "visitData",
+  ADD_CONTACT: "addContact",
+  DELETE_CONTACT: "deleteContact",
+  UPDATE_USER_INFO: "updateUserInfo"
+};
+
 var initialContext$1 = {
   online: false
 };
 var SocketContext = /*#__PURE__*/createContext(initialContext$1);
 var SocketProvider = function SocketProvider(_ref) {
-  var _state$activeRoom2, _state$activeRoom3;
   var wsUrl = _ref.wsUrl,
     wsPath = _ref.wsPath,
     children = _ref.children;
@@ -4212,566 +4346,265 @@ var SocketProvider = function SocketProvider(_ref) {
     online = _useSocket.online,
     disconnectSocket = _useSocket.disconnectSocket,
     connectSocket = _useSocket.connectSocket;
+  var handlers = useMemo(function () {
+    return createSocketHandlers(dispatch, socket, state);
+  }, [dispatch, socket, state]);
+  // Connection management
   useEffect(function () {
     if (state.token) {
       connectSocket();
-    }
-    if (!state.token) disconnectSocket();
-    return function () {
+    } else {
       disconnectSocket();
+    }
+    return function () {
+      return disconnectSocket();
     };
   }, [state.token]);
-  useEffect(function () {
-    // listen unauthorized event
-    var listener = function listener(msg) {
-      console.log('unauthorized msg', msg);
-      getRefreshToken(state.token, state.refreshToken, dispatch);
-    };
-    socket == null ? void 0 : socket.on('unauthorized', listener);
-    // listen chatData event
-    var listener1 = function listener1(res) {
-      if (res.code) {
-        dispatch({
-          type: 'SET_ERROR',
-          payload: res.msg
+  // Auth events
+  useSocketEvent(socket, SOCKET_EVENTS.UNAUTHORIZED, function (msg) {
+    console.log("unauthorized msg", msg);
+    getRefreshToken(state.token, state.refreshToken, dispatch);
+  });
+  // Chat data events
+  useSocketEvent(socket, SOCKET_EVENTS.CHAT_DATA, function (data) {
+    dispatch({
+      type: "CLEAR_CHAT_DATA"
+    });
+    dispatch({
+      type: "SET_USER",
+      payload: data.user
+    });
+    data.groupData.forEach(function (group) {
+      socket == null ? void 0 : socket.emit(SOCKET_EVENTS.JOIN_GROUP_SOCKET, {
+        groupId: group.groupId
+      });
+      dispatch({
+        type: "SET_GROUP_GATHER",
+        payload: group
+      });
+    });
+    data.contactData.forEach(function (contact) {
+      socket == null ? void 0 : socket.emit(SOCKET_EVENTS.JOIN_PRIVATE_SOCKET, {
+        contactId: contact.userId
+      });
+      dispatch({
+        type: "SET_CONTACT_GATHER",
+        payload: contact
+      });
+    });
+    dispatch({
+      type: "SET_OPERATORS",
+      payload: data.operatorData
+    });
+    data.userData.forEach(function (user) {
+      return dispatch({
+        type: "SET_USER_GATHER",
+        payload: user
+      });
+    });
+    dispatch({
+      type: "UPDATE_ACTIVE_ROOM"
+    });
+    dispatch({
+      type: "SET_CONFERENCE",
+      payload: data.conferenceData
+    });
+    dispatch({
+      type: "SET_VISIT_DATA",
+      payload: data.visitData
+    });
+  });
+  // User status events
+  useSocketEvent(socket, SOCKET_EVENTS.USER_ONLINE, function (userId) {
+    dispatch({
+      type: "USER_ONLINE",
+      payload: userId
+    });
+  });
+  useSocketEvent(socket, SOCKET_EVENTS.USER_OFFLINE, function (userId) {
+    dispatch({
+      type: "USER_OFFLINE",
+      payload: userId
+    });
+  });
+  // Private socket events
+  useSocketEvent(socket, SOCKET_EVENTS.JOIN_PRIVATE_SOCKET, function () {
+    console.log("Успешно вошел в приватный чат");
+  });
+  // Typing events
+  useSocketEvent(socket, SOCKET_EVENTS.TYPING, function (data) {
+    dispatch({
+      type: "SET_TYPING",
+      payload: data
+    });
+    setTimeout(function () {
+      dispatch({
+        type: "SET_TYPING",
+        payload: null
+      });
+    }, 1000);
+  });
+  // Message events
+  useSocketEvent(socket, SOCKET_EVENTS.REVOKE_MESSAGE, function (data) {
+    dispatch({
+      type: "REVOKE_MESSAGE",
+      payload: data
+    });
+  });
+  useSocketEvent(socket, SOCKET_EVENTS.GROUP_MESSAGE, function (data) {
+    dispatch({
+      type: "ADD_GROUP_MESSAGE",
+      payload: data
+    });
+    var activeRoom = state.activeRoom;
+    if (activeRoom && activeRoom.groupId === data.groupId && data.userId !== state.user.userId) {
+      socket == null ? void 0 : socket.emit("markAsRead", {
+        groupId: data.groupId,
+        _id: data._id
+      });
+    }
+  }, [state.activeRoom, state.user.userId]);
+  useSocketEvent(socket, SOCKET_EVENTS.PRIVATE_MESSAGE, function (data) {
+    if (data.contactId === state.user.userId || data.userId === state.user.userId) {
+      var _state$activeRoom;
+      dispatch({
+        type: "ADD_PRIVATE_MESSAGE",
+        payload: data
+      });
+      if (state.activeRoom && !state.activeRoom.groupId && ((_state$activeRoom = state.activeRoom) == null ? void 0 : _state$activeRoom.userId) === data.userId) {
+        socket == null ? void 0 : socket.emit("markAsRead", {
+          contactId: data.userId,
+          _id: data._id
         });
-        return;
       }
-      var payload = res.data;
-      var groupArr = payload.groupData;
-      var contactArr = payload.contactData;
-      var userArr = payload.userData;
+    }
+  }, [state.activeRoom, state.user.userId]);
+  // Group events
+  useSocketEvent(socket, SOCKET_EVENTS.ADD_GROUP, function (data) {
+    dispatch({
+      type: "SET_GROUP_GATHER",
+      payload: data
+    });
+  });
+  useSocketEvent(socket, SOCKET_EVENTS.DELETE_GROUP, function (data) {
+    if (data.userId === state.user.userId) {
       dispatch({
-        type: 'CLEAR_CHAT_DATA'
+        type: "DEL_GROUP",
+        payload: data.groupId
       });
+    } else {
       dispatch({
-        type: 'SET_USER',
-        payload: payload.user
+        type: "DEL_GROUP_MEMBER",
+        payload: data
       });
-      if (groupArr.length) {
-        for (var _iterator = _createForOfIteratorHelperLoose(groupArr), _step; !(_step = _iterator()).done;) {
-          var group = _step.value;
-          socket == null ? void 0 : socket.emit('joinGroupSocket', {
-            groupId: group.groupId
-          });
-          dispatch({
-            type: 'SET_GROUP_GATHER',
-            payload: group
-          });
+    }
+  }, [state.user.userId]);
+  useSocketEvent(socket, SOCKET_EVENTS.JOIN_GROUP, function (data) {
+    var group = data.group,
+      newUser = data.user;
+    if (!state.groupGather[group.groupId]) {
+      socket == null ? void 0 : socket.emit("chatData");
+    } else if (newUser.userId !== state.user.userId) {
+      dispatch({
+        type: "ADD_GROUP_MEMBER",
+        payload: {
+          groupId: group.groupId,
+          members: [newUser]
         }
-      }
-      if (contactArr.length) {
-        for (var _iterator2 = _createForOfIteratorHelperLoose(contactArr), _step2; !(_step2 = _iterator2()).done;) {
-          var contact = _step2.value;
-          socket == null ? void 0 : socket.emit('joinPrivateSocket', {
-            contactId: contact.userId
-          });
-          dispatch({
-            type: 'SET_CONTACT_GATHER',
-            payload: contact
-          });
-        }
-      }
-      dispatch({
-        type: 'SET_OPERATORS',
-        payload: payload.operatorData
       });
-      if (userArr.length) {
-        for (var _iterator3 = _createForOfIteratorHelperLoose(userArr), _step3; !(_step3 = _iterator3()).done;) {
-          var user_ = _step3.value;
-          dispatch({
-            type: 'SET_USER_GATHER',
-            payload: user_
-          });
-        }
-      }
+    }
+  }, [state.groupGather, state.user.userId]);
+  useSocketEvent(socket, SOCKET_EVENTS.JOIN_GROUP_SOCKET, function (data) {
+    var _groupObj$members;
+    var newUser = _extends({}, data.user, {
+      online: 1,
+      isManager: 0
+    });
+    var groupObj = state.groupGather[data.group.groupId];
+    if (groupObj && !((_groupObj$members = groupObj.members) != null && _groupObj$members.find(function (member) {
+      return member.userId === newUser.userId;
+    }))) {
+      var _groupObj$members2;
+      (_groupObj$members2 = groupObj.members) == null ? void 0 : _groupObj$members2.push(newUser);
+    }
+    dispatch({
+      type: "SET_USER_GATHER",
+      payload: newUser
+    });
+  }, [state.groupGather]);
+  // Contact events
+  useSocketEvent(socket, SOCKET_EVENTS.ADD_CONTACT, function (data) {
+    dispatch({
+      type: "SET_CONTACT_GATHER",
+      payload: data
+    });
+    dispatch({
+      type: "SET_USER_GATHER",
+      payload: data
+    });
+    socket == null ? void 0 : socket.emit("joinPrivateSocket", {
+      contactId: data.userId
+    });
+  });
+  useSocketEvent(socket, SOCKET_EVENTS.DELETE_CONTACT, function (data) {
+    dispatch({
+      type: "DEL_CONTACT",
+      payload: data
+    });
+  });
+  // Info update events
+  useSocketEvent(socket, SOCKET_EVENTS.UPDATE_GROUP_INFO, function (data) {
+    dispatch({
+      type: "UPDATE_GROUP_INFO",
+      payload: data
+    });
+  });
+  // Add error handling
+  useSocketEvent(socket, SOCKET_EVENTS.UPDATE_USER_INFO, function (data) {
+    try {
       dispatch({
-        type: 'UPDATE_ACTIVE_ROOM'
-      });
-      dispatch({
-        type: 'SET_CONFERENCE',
-        payload: payload.conferenceData
-      });
-      dispatch({
-        type: 'SET_VISIT_DATA',
-        payload: payload.visitData
-      });
-    };
-    socket == null ? void 0 : socket.on('chatData', listener1);
-    // listen user online
-    var listener2 = function listener2(res) {
-      dispatch({
-        type: 'USER_ONLINE',
-        payload: res.data
-      });
-    };
-    socket == null ? void 0 : socket.on('userOnline', listener2);
-    // listen user offline
-    var listener3 = function listener3(res) {
-      dispatch({
-        type: 'USER_OFFLINE',
-        payload: res.data
-      });
-    };
-    socket == null ? void 0 : socket.on('userOffline', listener3);
-    // listen private socket join
-    var listener4 = function listener4(res) {
-      if (res.code) {
-        dispatch({
-          type: 'SET_ERROR',
-          payload: res.msg
-        });
-        return;
-      }
-      console.log('Успешно вошел в приватный чат');
-    };
-    socket == null ? void 0 : socket.on('joinPrivateSocket', listener4);
-    // typing
-    var timer;
-    var listener5 = function listener5(res) {
-      if (res.code) {
-        dispatch({
-          type: 'SET_ERROR',
-          payload: res.msg
-        });
-        return;
-      }
-      if (timer) clearTimeout(timer);
-      dispatch({
-        type: 'SET_TYPING',
-        payload: res.data
-      });
-      timer = setTimeout(function () {
-        dispatch({
-          type: 'SET_TYPING',
-          payload: null
-        });
-      }, 1000);
-    };
-    socket == null ? void 0 : socket.on('typing', listener5);
-    // revoke
-    var listener6 = function listener6(res) {
-      if (res.code) {
-        dispatch({
-          type: 'SET_ERROR',
-          payload: res.msg
-        });
-        return;
-      }
-      var data = res.data;
-      dispatch({
-        type: 'REVOKE_MESSAGE',
+        type: "UPDATE_USER_INFO",
         payload: data
       });
-    };
-    socket == null ? void 0 : socket.on('revokeMessage', listener6);
-    // set group gather
-    var listener7 = function listener7(res) {
-      if (res.code) {
-        dispatch({
-          type: 'SET_ERROR',
-          payload: res.msg
-        });
-        return;
-      }
-      dispatch({
-        type: 'SET_GROUP_GATHER',
-        payload: res.data
-      });
-    };
-    socket == null ? void 0 : socket.on('addGroup', listener7);
-    // set contact gather, user gather
-    var listener8 = function listener8(res) {
-      if (res.code) {
-        dispatch({
-          type: 'SET_ERROR',
-          payload: res.msg
-        });
-        return;
-      }
-      var data = res.data;
-      dispatch({
-        type: 'SET_CONTACT_GATHER',
-        payload: data
-      });
-      dispatch({
-        type: 'SET_USER_GATHER',
-        payload: data
-      });
-      socket == null ? void 0 : socket.emit('joinPrivateSocket', {
-        contactId: data.userId
-      });
-    };
-    socket == null ? void 0 : socket.on('addContact', listener8);
-    // delete contact
-    var listener10 = function listener10(res) {
-      if (res.code) {
-        dispatch({
-          type: 'SET_ERROR',
-          payload: res.msg
-        });
-        return;
-      }
-      var data = res.data;
-      dispatch({
-        type: 'DEL_CONTACT',
-        payload: data
-      });
-    };
-    socket == null ? void 0 : socket.on('deleteContact', listener10);
-    // update GroupInfo
-    var listener11 = function listener11(res) {
-      if (res.code) {
-        dispatch({
-          type: 'SET_ERROR',
-          payload: res.msg
-        });
-        return;
-      }
-      var data = res.data;
-      dispatch({
-        type: 'UPDATE_GROUP_INFO',
-        payload: data
-      });
-    };
-    socket == null ? void 0 : socket.on('updateGroupInfo', listener11);
-    // update UserInfo
-    var listener12 = function listener12(res) {
-      if (res.code) {
-        dispatch({
-          type: 'SET_ERROR',
-          payload: res.msg
-        });
-        return;
-      }
-      var data = res.data;
-      dispatch({
-        type: 'UPDATE_USER_INFO',
-        payload: data
-      });
-    };
-    socket == null ? void 0 : socket.on('updateUserInfo', listener12);
-    // start Conference
-    var listener13 = function listener13(res) {
-      if (res.code) {
-        dispatch({
-          type: 'SET_ERROR',
-          payload: res.msg
-        });
-        return;
-      }
-      dispatch({
-        type: 'SET_CONFERENCE',
-        payload: res.data
-      });
-    };
-    socket == null ? void 0 : socket.on('startConference', listener13);
-    // pause Conference
-    var listener14 = function listener14(res) {
-      if (res.code) {
-        dispatch({
-          type: 'SET_ERROR',
-          payload: res.msg
-        });
-        return;
-      }
-      dispatch({
-        type: 'PAUSE_CONFERENCE',
-        payload: res.data
-      });
-    };
-    socket == null ? void 0 : socket.on('pauseConference', listener14);
-    // stop Conference
-    var listener15 = function listener15(res) {
-      if (res.code) {
-        dispatch({
-          type: 'SET_ERROR',
-          payload: res.msg
-        });
-        return;
-      }
-      dispatch({
-        type: 'STOP_CONFERENCE',
-        payload: res.data
-      });
-    };
-    socket == null ? void 0 : socket.on('stopConference', listener15);
-    // add Operator
-    var listener16 = function listener16(res) {
-      if (res.code) {
-        dispatch({
-          type: 'SET_ERROR',
-          payload: res.msg
-        });
-        return;
-      }
-    };
-    socket == null ? void 0 : socket.on('addOperator', listener16);
-    // set ActiveRoom
-    var listener17 = function listener17(res) {
-      if (res.code) {
-        dispatch({
-          type: 'SET_ERROR',
-          payload: res.msg
-        });
-        return;
-      }
-      dispatch({
-        type: 'SET_ACTIVE_ROOM',
-        payload: res.data
-      });
-    };
-    socket == null ? void 0 : socket.on('setActiveRoom', listener17);
-    // visit Data
-    var listener18 = function listener18(res) {
-      if (res.code) {
-        dispatch({
-          type: 'SET_ERROR',
-          payload: res.msg
-        });
-        return;
-      }
-      var payload = res.data;
-      dispatch({
-        type: 'SET_VISIT_DATA',
-        payload: payload.visitData
-      });
-    };
-    socket == null ? void 0 : socket.on('visitData', listener18);
-    return function () {
-      // detatch
-      socket == null ? void 0 : socket.off('unauthorized', listener);
-      socket == null ? void 0 : socket.off('chatData', listener1);
-      socket == null ? void 0 : socket.off('userOnline', listener2);
-      socket == null ? void 0 : socket.off('userOffline', listener3);
-      socket == null ? void 0 : socket.off('joinPrivateSocket', listener4);
-      if (timer) clearTimeout(timer);
-      socket == null ? void 0 : socket.off('typing', listener5);
-      socket == null ? void 0 : socket.off('revokeMessage', listener6);
-      socket == null ? void 0 : socket.off('addGroup', listener7);
-      socket == null ? void 0 : socket.off('addContact', listener8);
-      socket == null ? void 0 : socket.off('deleteContact', listener10);
-      socket == null ? void 0 : socket.off('updateGroupInfo', listener11);
-      socket == null ? void 0 : socket.off('updateUserInfo', listener12);
-      socket == null ? void 0 : socket.off('startConference', listener13);
-      socket == null ? void 0 : socket.off('pauseConference', listener14);
-      socket == null ? void 0 : socket.off('stopConference', listener15);
-      socket == null ? void 0 : socket.off('addOperator', listener16);
-      socket == null ? void 0 : socket.off('setActiveRoom', listener17);
-      socket == null ? void 0 : socket.off('visitData', listener18);
-    };
-  }, [socket == null ? void 0 : socket.id]);
-  useEffect(function () {
-    // group Message
-    var listener = /*#__PURE__*/function () {
-      var _ref2 = _asyncToGenerator(/*#__PURE__*/runtime_1.mark(function _callee(res) {
-        var data, activeRoom;
-        return runtime_1.wrap(function _callee$(_context) {
-          while (1) {
-            switch (_context.prev = _context.next) {
-              case 0:
-                if (!res.code) {
-                  _context.next = 3;
-                  break;
-                }
-                dispatch({
-                  type: 'SET_ERROR',
-                  payload: res.msg
-                });
-                return _context.abrupt("return");
-              case 3:
-                data = res.data;
-                dispatch({
-                  type: 'ADD_GROUP_MESSAGE',
-                  payload: data
-                });
-                activeRoom = state.activeRoom;
-                if (activeRoom && activeRoom.groupId === data.groupId && data.userId !== state.user.userId) {
-                  socket == null ? void 0 : socket.emit('markAsRead', {
-                    groupId: data.groupId,
-                    _id: data._id
-                  });
-                }
-              case 7:
-              case "end":
-                return _context.stop();
-            }
-          }
-        }, _callee);
-      }));
-      return function listener(_x) {
-        return _ref2.apply(this, arguments);
-      };
-    }();
-    socket == null ? void 0 : socket.on('groupMessage', listener);
-    // private Message
-    var listener1 = /*#__PURE__*/function () {
-      var _ref3 = _asyncToGenerator(/*#__PURE__*/runtime_1.mark(function _callee2(res) {
-        var data, _state$activeRoom;
-        return runtime_1.wrap(function _callee2$(_context2) {
-          while (1) {
-            switch (_context2.prev = _context2.next) {
-              case 0:
-                if (!res.code) {
-                  _context2.next = 3;
-                  break;
-                }
-                dispatch({
-                  type: 'SET_ERROR',
-                  payload: res.msg
-                });
-                return _context2.abrupt("return");
-              case 3:
-                data = res.data;
-                if (data.contactId === state.user.userId || data.userId === state.user.userId) {
-                  dispatch({
-                    type: 'ADD_PRIVATE_MESSAGE',
-                    payload: data
-                  });
-                  // если есть активная комната и это приватная комната (!groupId && userId) с отправителем сообщения (userId)
-                  if (state.activeRoom && !state.activeRoom.groupId && ((_state$activeRoom = state.activeRoom) == null ? void 0 : _state$activeRoom.userId) === data.userId) {
-                    socket == null ? void 0 : socket.emit('markAsRead', {
-                      contactId: data.userId,
-                      _id: data._id
-                    });
-                  }
-                }
-              case 5:
-              case "end":
-                return _context2.stop();
-            }
-          }
-        }, _callee2);
-      }));
-      return function listener1(_x2) {
-        return _ref3.apply(this, arguments);
-      };
-    }();
-    socket == null ? void 0 : socket.on('privateMessage', listener1);
-    return function () {
-      socket == null ? void 0 : socket.off('groupMessage', listener);
-      socket == null ? void 0 : socket.off('privateMessage', listener1);
-    };
-  }, [socket == null ? void 0 : socket.id, (_state$activeRoom2 = state.activeRoom) == null ? void 0 : _state$activeRoom2.userId, (_state$activeRoom3 = state.activeRoom) == null ? void 0 : _state$activeRoom3.groupId]);
-  useEffect(function () {
-    // mark As Read
-    var listener = function listener(res) {
-      if (res.code) {
-        dispatch({
-          type: 'SET_ERROR',
-          payload: res.msg
-        });
-        return;
-      }
-      var data = res.data;
-      if (data.userId === state.user.userId) {
-        if (data.groupId) {
-          dispatch({
-            type: 'LOSE_GROUP_UNREAD_GATHER',
-            payload: data.groupId
-          });
-        } else {
-          dispatch({
-            type: 'LOSE_CONTACT_UNREAD_GATHER',
-            payload: data.contactId
-          });
-        }
-      } else {
-        if (data.contactId) dispatch({
-          type: 'MARK_PRIVATE_MESSAGES_READ',
-          payload: data.userId
-        });
-      }
-    };
-    socket == null ? void 0 : socket.on('markAsRead', listener);
-    // delete Group
-    var listener1 = function listener1(res) {
-      if (res.code) {
-        dispatch({
-          type: 'SET_ERROR',
-          payload: res.msg
-        });
-        return;
-      }
-      var data = res.data;
-      if (data.userId === state.user.userId) {
-        // если удаляем себя из группы
-        dispatch({
-          type: 'DEL_GROUP',
-          payload: data.groupId
-        });
-      } else {
-        dispatch({
-          type: 'DEL_GROUP_MEMBER',
-          payload: data
-        });
-      }
-    };
-    socket == null ? void 0 : socket.on('deleteGroup', listener1);
-    var listener2 = function listener2(res) {
-      if (res.code) {
-        dispatch({
-          type: 'SET_ERROR',
-          payload: res.msg
-        });
-        return;
-      }
-      var _res$data = res.data,
-        group = _res$data.group,
-        newUser = _res$data.user;
-      if (!state.groupGather[group.groupId]) {
-        console.log('joined to a new group');
-        // Если группы еще у нас нет, то получаем информацию о пользователях в группе
-        socket == null ? void 0 : socket.emit('chatData');
-      } else if (newUser.userId !== state.user.userId) {
-        // Новые пользователи присоединяются к группе
-        dispatch({
-          type: 'ADD_GROUP_MEMBER',
-          payload: {
-            groupId: group.groupId,
-            members: [newUser]
-          }
-        });
-      }
-    };
-    socket == null ? void 0 : socket.on('joinGroup', listener2);
-    // listen group socket join
-    var listener4 = function listener4(res) {
-      var _groupObj$members;
-      if (res.code) {
-        dispatch({
-          type: 'SET_ERROR',
-          payload: res.msg
-        });
-        return;
-      }
-      var data = res.data;
-      var newUser = data.user;
-      newUser.online = 1;
-      var group = data.group;
-      var groupObj = state.groupGather[group.groupId];
-      // Информация о присоединении к группе новых пользователей
-      if (groupObj && !((_groupObj$members = groupObj.members) != null && _groupObj$members.find(function (member) {
-        return member.userId === newUser.userId;
-      }))) {
-        var _groupObj$members2;
-        newUser.isManager = 0;
-        (_groupObj$members2 = groupObj.members) == null ? void 0 : _groupObj$members2.push(newUser);
-        // Vue.prototype.$message.info(res.msg);
-      }
-      dispatch({
-        type: 'SET_USER_GATHER',
-        payload: newUser
-      });
-    };
-    socket == null ? void 0 : socket.on('joinGroupSocket', listener4);
-    return function () {
-      socket == null ? void 0 : socket.off('markAsRead', listener);
-      socket == null ? void 0 : socket.off('deleteGroup', listener1);
-      socket == null ? void 0 : socket.off('joinGroup', listener2);
-      socket == null ? void 0 : socket.off('joinGroupSocket', listener4);
-    };
-  }, [socket == null ? void 0 : socket.id, state.user.userId, allMessCount(state.groupGather)]);
+    } catch (error) {
+      console.error("Error updating user info:", error);
+    }
+  });
+  // Conference events
+  useSocketEvent(socket, SOCKET_EVENTS.START_CONFERENCE, function (data) {
+    dispatch({
+      type: "SET_CONFERENCE",
+      payload: data
+    });
+  });
+  useSocketEvent(socket, SOCKET_EVENTS.PAUSE_CONFERENCE, function (data) {
+    dispatch({
+      type: "PAUSE_CONFERENCE",
+      payload: data
+    });
+  });
+  useSocketEvent(socket, SOCKET_EVENTS.STOP_CONFERENCE, function (data) {
+    dispatch({
+      type: "STOP_CONFERENCE",
+      payload: data
+    });
+  });
+  // Other events
+  useSocketEvent(socket, SOCKET_EVENTS.ADD_OPERATOR, function () {
+    // Handle operator addition if needed
+  });
+  useSocketEvent(socket, SOCKET_EVENTS.SET_ACTIVE_ROOM, function (data) {
+    dispatch({
+      type: "SET_ACTIVE_ROOM",
+      payload: data
+    });
+  });
+  useSocketEvent(socket, SOCKET_EVENTS.VISIT_DATA, function (data) {
+    dispatch({
+      type: "SET_VISIT_DATA",
+      payload: data.visitData
+    });
+  });
   var value = useMemo(function () {
     return {
       socket: socket,
@@ -5036,6 +4869,10 @@ var _excluded$1 = ["activeGroupId", "activeChatUserId", "hideRooms", "fullWidth"
 //   audio.loop = true;
 //   return audio;
 // };
+// Add at the top of the file after imports
+var isGroup = function isGroup(chat) {
+  return "groupId" in chat;
+};
 var ChatPage = function ChatPage(_ref) {
   var _state$conference$dat, _state$conference$dat2;
   var activeGroupId = _ref.activeGroupId,
@@ -5046,7 +4883,7 @@ var ChatPage = function ChatPage(_ref) {
   var isMobile = useMediaQuery(function (theme) {
     return theme.breakpoints.down("sm");
   });
-  var _useTranslation = useTranslation();
+  // Update context usage
   var _React$useContext = useContext(ChatContext),
     state = _React$useContext.state,
     dispatch = _React$useContext.dispatch;
@@ -5064,138 +4901,203 @@ var ChatPage = function ChatPage(_ref) {
       payload: {}
     });
   }, [dispatch]);
+  // Добавляем утилитарную функцию для безопасной отправки сообщений через сокет
+  var emitSocketEvent = useCallback(function (eventName, data) {
+    if (!socket) {
+      console.warn("Socket not connected, cannot emit " + eventName);
+      return;
+    }
+    try {
+      socket.emit(eventName, data);
+    } catch (error) {
+      console.error("Error emitting " + eventName + ":", error);
+      dispatch({
+        type: "SET_ERROR",
+        payload: "Failed to send " + eventName
+      });
+    }
+  }, [socket, dispatch]);
   var onNeedMoreMessages = useCallback(/*#__PURE__*/function () {
     var _ref2 = _asyncToGenerator(/*#__PURE__*/runtime_1.mark(function _callee(chat) {
       return runtime_1.wrap(function _callee$(_context) {
         while (1) {
           switch (_context.prev = _context.next) {
             case 0:
-              if (!chat.groupId) {
-                _context.next = 5;
+              _context.prev = 0;
+              dispatch({
+                type: "SET_LOADING",
+                payload: true
+              });
+              if (!isGroup(chat)) {
+                _context.next = 7;
                 break;
               }
-              _context.next = 3;
+              _context.next = 5;
               return getGroupMessages(chat);
-            case 3:
-              _context.next = 7;
-              break;
             case 5:
-              _context.next = 7;
-              return getPrivateMessages(chat);
+              _context.next = 9;
+              break;
             case 7:
+              _context.next = 9;
+              return getPrivateMessages(chat);
+            case 9:
+              _context.next = 15;
+              break;
+            case 11:
+              _context.prev = 11;
+              _context.t0 = _context["catch"](0);
+              console.error("Failed to load messages:", _context.t0);
+              dispatch({
+                type: "SET_ERROR",
+                payload: "Failed to load messages"
+              });
+            case 15:
+              _context.prev = 15;
+              dispatch({
+                type: "SET_LOADING",
+                payload: false
+              });
+              return _context.finish(15);
+            case 18:
             case "end":
               return _context.stop();
           }
         }
-      }, _callee);
+      }, _callee, null, [[0, 11, 15, 18]]);
     }));
     return function (_x) {
       return _ref2.apply(this, arguments);
     };
-  }(), [getPrivateMessages, getGroupMessages]);
+  }(), [getPrivateMessages, getGroupMessages, dispatch]);
   var onMessageDelete = useCallback(function (chat, message) {
-    socket == null ? void 0 : socket.emit("revokeMessage", {
-      groupId: chat.groupId,
+    emitSocketEvent("revokeMessage", {
+      groupId: isGroup(chat) ? chat.groupId : undefined,
       contactId: chat.userId,
       _id: message._id
     });
-  }, [socket == null ? void 0 : socket.id]);
+  }, [emitSocketEvent]);
   var onTyping = useCallback(function (chat) {
-    socket == null ? void 0 : socket.emit("typing", {
-      groupId: chat == null ? void 0 : chat.groupId,
-      contactId: chat == null ? void 0 : chat.userId
+    emitSocketEvent("typing", {
+      groupId: isGroup(chat) ? chat.groupId : undefined,
+      contactId: chat.userId
     });
-  }, [socket == null ? void 0 : socket.id]);
+  }, [emitSocketEvent]);
   var onSendMessage = useCallback(function (chat, data) {
-    if (chat.groupId) {
-      socket == null ? void 0 : socket.emit("groupMessage", {
-        groupId: chat == null ? void 0 : chat.groupId,
-        content: data.message,
-        width: data.width,
-        height: data.height,
-        fileName: data.fileName,
-        messageType: data.messageType,
-        size: data.size
-      });
+    var baseMessage = {
+      content: data.message,
+      width: data.width,
+      height: data.height,
+      fileName: data.fileName,
+      messageType: data.messageType,
+      size: data.size
+    };
+    if (isGroup(chat)) {
+      emitSocketEvent("groupMessage", _extends({}, baseMessage, {
+        groupId: chat.groupId
+      }));
     } else {
-      socket == null ? void 0 : socket.emit("privateMessage", {
-        contactId: chat == null ? void 0 : chat.userId,
-        content: data.message,
-        width: data.width,
-        height: data.height,
-        fileName: data.fileName,
-        messageType: data.messageType,
-        size: data.size
-      });
+      emitSocketEvent("privateMessage", _extends({}, baseMessage, {
+        contactId: chat.userId
+      }));
     }
-  }, [socket == null ? void 0 : socket.id]);
-  var onChangeChat = useCallback(function (chat) {
-    dispatch({
-      type: "SET_ACTIVE_ROOM",
-      payload: {
-        groupId: chat == null ? void 0 : chat.groupId,
-        contactId: chat == null ? void 0 : chat.userId
-      }
-    });
-    onEnterRoom(chat);
-  }, [socket == null ? void 0 : socket.id, dispatch]);
+  }, [emitSocketEvent]);
+  // Обновляем onEnterRoom для безопасного доступа к данным
   var onEnterRoom = useCallback(function (chat) {
-    if (!chat || !chat.messages || chat.messages.length === 0) return;
-    if (chat.groupId) {
-      socket == null ? void 0 : socket.emit("markAsRead", {
-        groupId: chat.groupId,
-        _id: chat.messages[chat.messages.length - 1]._id
-      });
-    } else {
+    var _chat$messages;
+    if (!(chat != null && (_chat$messages = chat.messages) != null && _chat$messages.length) || !socket) return;
+    try {
+      var lastMessage = chat.messages[chat.messages.length - 1];
+      if (!(lastMessage != null && lastMessage._id)) return;
+      if (isGroup(chat)) {
+        socket.emit("markAsRead", {
+          groupId: chat.groupId,
+          _id: lastMessage._id
+        });
+      } else {
+        dispatch({
+          type: "MARK_PRIVATE_MESSAGES_READ",
+          payload: chat.userId
+        });
+        socket.emit("markAsRead", {
+          contactId: chat.userId,
+          _id: lastMessage._id
+        });
+      }
+    } catch (error) {
+      console.error("Error marking messages as read:", error);
       dispatch({
-        type: "MARK_PRIVATE_MESSAGES_READ",
-        payload: chat.userId
-      });
-      socket == null ? void 0 : socket.emit("markAsRead", {
-        contactId: chat.userId,
-        _id: chat.messages[chat.messages.length - 1]._id
+        type: "SET_ERROR",
+        payload: "Failed to mark messages as read"
       });
     }
-  }, [socket == null ? void 0 : socket.id]);
+  }, [socket, dispatch]);
+  // Обновляем функцию onChangeChat
+  var onChangeChat = useCallback(function (chat) {
+    if (!chat) return;
+    try {
+      // Устанавливаем активную комнату
+      dispatch({
+        type: "SET_ACTIVE_ROOM",
+        payload: {
+          groupId: isGroup(chat) ? chat.groupId : undefined,
+          contactId: chat == null ? void 0 : chat.userId
+        }
+      });
+      // Помечаем сообщения как прочитанные
+      onEnterRoom(chat);
+    } catch (error) {
+      console.error("Error changing chat:", error);
+      dispatch({
+        type: "SET_ERROR",
+        payload: "Failed to change chat room"
+      });
+    }
+  }, [dispatch, onEnterRoom, socket] // Добавляем socket в зависимости
+  );
   var onVideoCall = useCallback(function (chat, visitId, recreate) {
-    socket == null ? void 0 : socket.emit("startConference", {
-      groupId: chat.groupId,
+    emitSocketEvent("startConference", {
+      groupId: isGroup(chat) ? chat.groupId : undefined,
       contactId: chat.userId,
       visitId: visitId,
       recreate: recreate
     });
-  }, [socket == null ? void 0 : socket.id]);
+  }, [emitSocketEvent]);
   var onVideoEnd = useCallback(function (conference) {
-    if ((conference == null ? void 0 : conference.id) != null) socket == null ? void 0 : socket.emit("stopConference", {
-      id: conference == null ? void 0 : conference.id
-    });
-  }, [socket == null ? void 0 : socket.id]);
+    if (conference != null && conference.id) {
+      emitSocketEvent("stopConference", {
+        id: conference.id
+      });
+    }
+  }, [emitSocketEvent]);
   var onConferencePause = useCallback(function (conference) {
-    if ((conference == null ? void 0 : conference.id) != null) socket == null ? void 0 : socket.emit("pauseConference", {
-      id: conference.id
-    });
-  }, [socket == null ? void 0 : socket.id]);
+    if (conference != null && conference.id) {
+      emitSocketEvent("pauseConference", {
+        id: conference.id
+      });
+    }
+  }, [emitSocketEvent]);
   var onConferenceCallAccept = useCallback(function (conference) {
-    // отправляем resumeConference чтобы возобновить запись
-    if ((conference == null ? void 0 : conference.id) != null) socket == null ? void 0 : socket.emit("resumeConference", {
-      id: conference.id
-    });
-    dispatch({
-      type: "JOIN_CONFERENCE",
-      payload: conference
-    });
-  }, [socket == null ? void 0 : socket.id, dispatch]);
+    if (conference != null && conference.id) {
+      emitSocketEvent("resumeConference", {
+        id: conference.id
+      });
+      dispatch({
+        type: "JOIN_CONFERENCE",
+        payload: conference
+      });
+    }
+  }, [emitSocketEvent, dispatch]);
   var onOperatorAdd = useCallback(function (group, operator) {
-    socket == null ? void 0 : socket.emit("addOperator", {
+    emitSocketEvent("addOperator", {
       groupId: group.groupId,
       operatorId: operator.userId
     });
-  }, [socket == null ? void 0 : socket.id]);
+  }, [emitSocketEvent]);
   var onLeaveGroup = useCallback(function (group) {
-    socket == null ? void 0 : socket.emit("deleteGroup", {
+    emitSocketEvent("deleteGroup", {
       groupId: group.groupId
     });
-  }, [socket == null ? void 0 : socket.id]);
+  }, [emitSocketEvent]);
   // Отключили проигрыш звука
   // React.useEffect(() => {
   //   if (
@@ -5497,5 +5399,5 @@ var ChatIndex = function ChatIndex(_ref) {
   }, /*#__PURE__*/React__default.createElement(ChatPage, props)))));
 };
 
-export { AddContact, ChatContext, ChatIndex, ChatPage, ChatProvider, Conference, ConferenceCall, ContextMenuType, Emoji, Message, MessageStatus, RestContext, RestProvider, Role, Room, RoomList, SocketContext, SocketProvider, Typing, clearLocalStorage, getRefreshToken, signOut };
+export { AddContact, CHAT_ACTIONS, ChatContext, ChatIndex, ChatPage, ChatProvider, Conference, ConferenceCall, ContextMenuType, Emoji, Message, MessageStatus, RestContext, RestProvider, Role, Room, RoomList, SocketContext, SocketProvider, Typing, clearLocalStorage, getRefreshToken, signOut };
 //# sourceMappingURL=chat.esm.js.map

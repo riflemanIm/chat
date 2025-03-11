@@ -14,7 +14,6 @@ import {
   SendMessage,
   ConferenceData,
 } from "../types";
-import { useTranslation } from "react-i18next";
 import ChatAlert from "../components/Alert";
 import ChatContainer from "../components/ChatContainer";
 import ChatLayout from "../components/ChatLayout";
@@ -29,6 +28,11 @@ import ConferenceSection from "../components/ConferenceSection";
 //   return audio;
 // };
 
+// Add at the top of the file after imports
+const isGroup = (chat: ChatRoom): chat is Group => {
+  return "groupId" in chat;
+};
+
 export const ChatPage: React.FC<ChatPageProps> = ({
   activeGroupId,
   activeChatUserId,
@@ -39,17 +43,14 @@ export const ChatPage: React.FC<ChatPageProps> = ({
   const isMobile = useMediaQuery((theme: Theme) =>
     theme.breakpoints.down("sm")
   );
-  const { t } = useTranslation();
+
+  // Update context usage
   const { state, dispatch } = React.useContext(ChatContext);
+
   const { socket } = React.useContext(SocketContext);
 
-  const {
-    apiUrl,
-    pageSize,
-    getPrivateMessages,
-    getGroupMessages,
-    getUserByMmk,
-  } = React.useContext(RestContext);
+  const { apiUrl, pageSize, getPrivateMessages, getGroupMessages } =
+    React.useContext(RestContext);
 
   // const [ringAudio] = React.useState(getRingAudio());
 
@@ -60,159 +61,219 @@ export const ChatPage: React.FC<ChatPageProps> = ({
     });
   }, [dispatch]);
 
+  // Добавляем утилитарную функцию для безопасной отправки сообщений через сокет
+  const emitSocketEvent = React.useCallback(
+    (eventName: string, data: unknown) => {
+      if (!socket) {
+        console.warn(`Socket not connected, cannot emit ${eventName}`);
+        return;
+      }
+
+      try {
+        socket.emit(eventName, data);
+      } catch (error) {
+        console.error(`Error emitting ${eventName}:`, error);
+        dispatch({
+          type: "SET_ERROR",
+          payload: `Failed to send ${eventName}`,
+        });
+      }
+    },
+    [socket, dispatch]
+  );
+
   const onNeedMoreMessages = React.useCallback(
     async (chat: ChatRoom) => {
-      if ((chat as Group).groupId) await getGroupMessages(chat as Group);
-      else await getPrivateMessages(chat as Contact);
+      try {
+        dispatch({ type: "SET_LOADING", payload: true });
+        if (isGroup(chat)) {
+          await getGroupMessages(chat);
+        } else {
+          await getPrivateMessages(chat as Contact);
+        }
+      } catch (error) {
+        console.error("Failed to load messages:", error);
+        dispatch({ type: "SET_ERROR", payload: "Failed to load messages" });
+      } finally {
+        dispatch({ type: "SET_LOADING", payload: false });
+      }
     },
-    [getPrivateMessages, getGroupMessages]
+    [getPrivateMessages, getGroupMessages, dispatch]
   );
 
   const onMessageDelete = React.useCallback(
     (chat: ChatRoom, message: ChatMessage) => {
-      socket?.emit("revokeMessage", {
-        groupId: (chat as Group).groupId, // Идентификатор группы
-        contactId: chat.userId, // Идентификатор контакта
-        _id: message._id, // Идентификатор удаленного сообщения
+      emitSocketEvent("revokeMessage", {
+        groupId: isGroup(chat) ? chat.groupId : undefined,
+        contactId: chat.userId,
+        _id: message._id,
       });
     },
-    [socket?.id]
+    [emitSocketEvent]
   );
 
   const onTyping = React.useCallback(
     (chat: ChatRoom) => {
-      socket?.emit("typing", {
-        groupId: (chat as Group)?.groupId,
-        contactId: chat?.userId,
+      emitSocketEvent("typing", {
+        groupId: isGroup(chat) ? chat.groupId : undefined,
+        contactId: chat.userId,
       });
     },
-    [socket?.id]
+    [emitSocketEvent]
   );
 
   const onSendMessage = React.useCallback(
     (chat: ChatRoom, data: SendMessage) => {
-      if ((chat as Group).groupId) {
-        socket?.emit("groupMessage", {
-          groupId: (chat as Group)?.groupId,
-          content: data.message,
-          width: data.width,
-          height: data.height,
-          fileName: data.fileName,
-          messageType: data.messageType,
-          size: data.size,
+      const baseMessage = {
+        content: data.message,
+        width: data.width,
+        height: data.height,
+        fileName: data.fileName,
+        messageType: data.messageType,
+        size: data.size,
+      };
+
+      if (isGroup(chat)) {
+        emitSocketEvent("groupMessage", {
+          ...baseMessage,
+          groupId: chat.groupId,
         });
       } else {
-        socket?.emit("privateMessage", {
-          contactId: chat?.userId,
-          content: data.message,
-          width: data.width,
-          height: data.height,
-          fileName: data.fileName,
-          messageType: data.messageType,
-          size: data.size,
+        emitSocketEvent("privateMessage", {
+          ...baseMessage,
+          contactId: chat.userId,
         });
       }
     },
-    [socket?.id]
+    [emitSocketEvent]
   );
 
-  const onChangeChat = React.useCallback(
-    (chat: ChatRoom) => {
-      dispatch({
-        type: "SET_ACTIVE_ROOM",
-        payload: {
-          groupId: (chat as Group)?.groupId,
-          contactId: chat?.userId,
-        },
-      });
-      onEnterRoom(chat);
-    },
-    [socket?.id, dispatch]
-  );
-
+  // Обновляем onEnterRoom для безопасного доступа к данным
   const onEnterRoom = React.useCallback(
     (chat: ChatRoom) => {
-      if (!chat || !chat.messages || chat.messages.length === 0) return;
-      if ((chat as Group).groupId) {
-        socket?.emit("markAsRead", {
-          groupId: (chat as Group).groupId,
-          _id: chat.messages[chat.messages.length - 1]._id,
-        });
-      } else {
+      if (!chat?.messages?.length || !socket) return;
+
+      try {
+        const lastMessage = chat.messages[chat.messages.length - 1];
+        if (!lastMessage?._id) return;
+
+        if (isGroup(chat)) {
+          socket.emit("markAsRead", {
+            groupId: chat.groupId,
+            _id: lastMessage._id,
+          });
+        } else {
+          dispatch({
+            type: "MARK_PRIVATE_MESSAGES_READ",
+            payload: chat.userId,
+          });
+          socket.emit("markAsRead", {
+            contactId: chat.userId,
+            _id: lastMessage._id,
+          });
+        }
+      } catch (error) {
+        console.error("Error marking messages as read:", error);
         dispatch({
-          type: "MARK_PRIVATE_MESSAGES_READ",
-          payload: chat.userId,
-        });
-        socket?.emit("markAsRead", {
-          contactId: chat.userId,
-          _id: chat.messages[chat.messages.length - 1]._id,
+          type: "SET_ERROR",
+          payload: "Failed to mark messages as read",
         });
       }
     },
-    [socket?.id]
+    [socket, dispatch]
+  );
+
+  // Обновляем функцию onChangeChat
+  const onChangeChat = React.useCallback(
+    (chat: ChatRoom) => {
+      if (!chat) return;
+
+      try {
+        // Устанавливаем активную комнату
+        dispatch({
+          type: "SET_ACTIVE_ROOM",
+          payload: {
+            groupId: isGroup(chat) ? chat.groupId : undefined,
+            contactId: chat?.userId,
+          },
+        });
+
+        // Помечаем сообщения как прочитанные
+        onEnterRoom(chat);
+      } catch (error) {
+        console.error("Error changing chat:", error);
+        dispatch({
+          type: "SET_ERROR",
+          payload: "Failed to change chat room",
+        });
+      }
+    },
+    [dispatch, onEnterRoom, socket] // Добавляем socket в зависимости
   );
 
   const onVideoCall = React.useCallback(
     (chat: ChatRoom, visitId?: number, recreate?: boolean) => {
-      socket?.emit("startConference", {
-        groupId: (chat as Group).groupId,
+      emitSocketEvent("startConference", {
+        groupId: isGroup(chat) ? chat.groupId : undefined,
         contactId: chat.userId,
         visitId,
         recreate,
       });
     },
-    [socket?.id]
+    [emitSocketEvent]
   );
 
   const onVideoEnd = React.useCallback(
     (conference: ConferenceData | null) => {
-      if (conference?.id != null)
-        socket?.emit("stopConference", {
-          id: conference?.id,
+      if (conference?.id) {
+        emitSocketEvent("stopConference", {
+          id: conference.id,
         });
+      }
     },
-    [socket?.id]
+    [emitSocketEvent]
   );
 
   const onConferencePause = React.useCallback(
     (conference: ConferenceData | null) => {
-      if (conference?.id != null)
-        socket?.emit("pauseConference", {
+      if (conference?.id) {
+        emitSocketEvent("pauseConference", {
           id: conference.id,
         });
+      }
     },
-    [socket?.id]
+    [emitSocketEvent]
   );
 
   const onConferenceCallAccept = React.useCallback(
     (conference: ConferenceData) => {
-      // отправляем resumeConference чтобы возобновить запись
-      if (conference?.id != null)
-        socket?.emit("resumeConference", {
+      if (conference?.id) {
+        emitSocketEvent("resumeConference", {
           id: conference.id,
         });
-      dispatch({ type: "JOIN_CONFERENCE", payload: conference });
+        dispatch({ type: "JOIN_CONFERENCE", payload: conference });
+      }
     },
-    [socket?.id, dispatch]
+    [emitSocketEvent, dispatch]
   );
 
   const onOperatorAdd = React.useCallback(
     (group: Group, operator: Contact) => {
-      socket?.emit("addOperator", {
+      emitSocketEvent("addOperator", {
         groupId: group.groupId,
         operatorId: operator.userId,
       });
     },
-    [socket?.id]
+    [emitSocketEvent]
   );
 
   const onLeaveGroup = React.useCallback(
     (group: Group) => {
-      socket?.emit("deleteGroup", {
+      emitSocketEvent("deleteGroup", {
         groupId: group.groupId,
       });
     },
-    [socket?.id]
+    [emitSocketEvent]
   );
 
   // Отключили проигрыш звука

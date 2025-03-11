@@ -1,5 +1,5 @@
-import React from 'react';
-import { Socket } from 'socket.io-client';
+import React from "react";
+import { Socket } from "socket.io-client";
 export interface ISocketContext {
     socket: Socket | null;
     online: boolean;
