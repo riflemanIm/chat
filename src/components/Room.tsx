@@ -106,7 +106,6 @@ const Room: React.FC<RoomProps> = (props: RoomProps) => {
     isMobile,
   } = props;
 
-  console.log(" -- Room -- ");
   const classes = useStyles();
   const { t } = useTranslation();
 
@@ -137,7 +136,7 @@ const Room: React.FC<RoomProps> = (props: RoomProps) => {
       props.onMessageDelete(chat, message);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [menuState.message]);
-
+  console.log(" -- Room -- ");
   return (
     <Card elevation={1} className={classes.root}>
       <Box display="flex" flexDirection="row">

@@ -91,14 +91,11 @@ const RoomMessageList: React.FC<RoomMessageListProps> = ({
 
   const [isVisible, setIsVisible] = React.useState<string>("");
 
-  const messages = React.useMemo(
-    () =>
-      chat?.messages?.map((it) => ({
-        ...it,
-        ref: React.createRef<HTMLLIElement>(),
-      })) || [],
-    [chat?.messages]
-  );
+  const messages =
+    chat?.messages?.map((it) => ({
+      ...it,
+      ref: React.createRef<HTMLLIElement>(),
+    })) || [];
 
   const hasNextPage = React.useMemo(
     () => (chat == null || chat?.noMoreData == null ? true : !chat.noMoreData),
@@ -107,6 +104,7 @@ const RoomMessageList: React.FC<RoomMessageListProps> = ({
 
   const { scrollDown, handleRootScroll, scrollDownButton, unreadCount } =
     useMessageScroll({
+      chatId,
       messages,
       scrollableRootRef,
       pageSize,
@@ -181,9 +179,8 @@ const RoomMessageList: React.FC<RoomMessageListProps> = ({
         setViewerData={setViewerData}
       />
     ));
-  }, [messages, apiUrl, user, users, chat?.groupId]);
-
-  console.log("RoomMessageList messages", messages);
+  }, [messages.length, apiUrl, user, users, chat?.groupId]);
+  console.count("RoomMessageList - render");
   return (
     <>
       <MessageDateIndicator date={isVisible} />
@@ -229,4 +226,15 @@ const RoomMessageList: React.FC<RoomMessageListProps> = ({
   );
 };
 
-export default RoomMessageList;
+export default React.memo(RoomMessageList, (prevProps, nextProps) => {
+  console.log("RoomMessageList memo");
+  return (
+    (prevProps.chat?.messages || []).filter((it) => it._id) ===
+      (nextProps.chat?.messages || []).filter((it) => it._id) &&
+    prevProps.loading === nextProps.loading &&
+    prevProps.user === nextProps.user &&
+    prevProps.users === nextProps.users &&
+    prevProps.chat?.groupId === nextProps.chat?.groupId &&
+    prevProps.apiUrl === nextProps.apiUrl
+  );
+});

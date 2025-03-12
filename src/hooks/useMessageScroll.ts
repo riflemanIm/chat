@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ChatMessage, ChatRoom } from "../types";
-import { getChatId } from "../utils/common";
 
 function isVisibleInViewport(element: HTMLLIElement, root: HTMLDivElement) {
   const rect = element.getBoundingClientRect();
@@ -14,6 +13,7 @@ function isVisibleInViewport(element: HTMLLIElement, root: HTMLDivElement) {
   return rect.top >= 150 && rect.bottom <= root.clientHeight;
 }
 interface UseMessageScrollProps {
+  chatId: string | null;
   messages: ChatMessage[];
   scrollableRootRef: React.RefObject<HTMLDivElement>;
   pageSize: number;
@@ -24,6 +24,7 @@ interface UseMessageScrollProps {
 }
 
 export const useMessageScroll = ({
+  chatId,
   messages,
   scrollableRootRef,
   pageSize,
@@ -38,7 +39,6 @@ export const useMessageScroll = ({
   const messageCount = messages?.length || 0;
   const lastMessage = messageCount && messages[messageCount - 1];
   const SCROLL_THRESHOLD = 900;
-  const chatId = getChatId(chat);
 
   const scrollDown = useCallback(() => {
     if (scrollableRootRef.current) {
@@ -48,7 +48,7 @@ export const useMessageScroll = ({
         onEnterRoom(chat);
       }
     }
-  }, [chat, onEnterRoom]);
+  }, [chatId, onEnterRoom]);
 
   const handleRootScroll = useCallback(() => {
     const rootNode = scrollableRootRef.current;
@@ -112,7 +112,7 @@ export const useMessageScroll = ({
       }
     }
     lastMessageCount.current = messageCount;
-  }, [messageCount]);
+  }, [messageCount, chatId]);
 
   return {
     scrollDown,
