@@ -34,4 +34,7 @@ export const SOCKET_EVENTS = {
   ADD_CONTACT: "addContact",
   DELETE_CONTACT: "deleteContact",
   UPDATE_USER_INFO: "updateUserInfo",
+
+  ADD_GROUP_MEMBER: "addGroupMember",
+  DELETE_GROUP_MEMBER: "deleteGroupMember",
 } as const;

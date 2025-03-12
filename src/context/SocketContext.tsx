@@ -16,12 +16,9 @@ import {
   GroupMap,
   VisitData,
 } from "../types";
-import { ChatContext } from "./ChatContext";
+import { ChatContext, ChatDispatch } from "./ChatContext";
 import { getRefreshToken } from "./RestContext";
-import { allMessCount } from "../utils/common";
-import { createSocketHandlers } from "./socketHandlers";
-import { useSocketEvent } from "../hooks/useSocketEvent";
-import { SOCKET_EVENTS } from "../types/socketEvents";
+import { allGather } from "../utils/common";
 
 // Формат ответа сервера
 interface ServerRes {
@@ -59,245 +56,405 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({
     state.token
   );
 
-  const handlers = useMemo(
-    () => createSocketHandlers(dispatch, socket, state),
-    [dispatch, socket, state]
-  );
-
-  // Connection management
   useEffect(() => {
     if (state.token) {
       connectSocket();
-    } else {
-      disconnectSocket();
     }
-    return () => disconnectSocket();
+    if (!state.token) disconnectSocket();
+    return () => {
+      disconnectSocket();
+    };
   }, [state.token]);
 
-  // Auth events
-  useSocketEvent<string>(socket, SOCKET_EVENTS.UNAUTHORIZED, (msg) => {
-    console.log("unauthorized msg", msg);
-    getRefreshToken(state.token, state.refreshToken, dispatch);
-  });
-
-  // Chat data events
-  useSocketEvent<ChatData>(socket, SOCKET_EVENTS.CHAT_DATA, (data) => {
-    dispatch({ type: "CLEAR_CHAT_DATA" });
-    dispatch({ type: "SET_USER", payload: data.user });
-
-    data.groupData.forEach((group) => {
-      socket?.emit(SOCKET_EVENTS.JOIN_GROUP_SOCKET, { groupId: group.groupId });
-      dispatch({ type: "SET_GROUP_GATHER", payload: group });
-    });
-
-    data.contactData.forEach((contact) => {
-      socket?.emit(SOCKET_EVENTS.JOIN_PRIVATE_SOCKET, {
-        contactId: contact.userId,
-      });
-      dispatch({ type: "SET_CONTACT_GATHER", payload: contact });
-    });
-
-    dispatch({ type: "SET_OPERATORS", payload: data.operatorData });
-    data.userData.forEach((user) =>
-      dispatch({ type: "SET_USER_GATHER", payload: user })
-    );
-
-    dispatch({ type: "UPDATE_ACTIVE_ROOM" });
-    dispatch({ type: "SET_CONFERENCE", payload: data.conferenceData });
-    dispatch({ type: "SET_VISIT_DATA", payload: data.visitData });
-  });
-
-  // User status events
-  useSocketEvent<number>(socket, SOCKET_EVENTS.USER_ONLINE, (userId) => {
-    dispatch({ type: "USER_ONLINE", payload: userId });
-  });
-
-  useSocketEvent<number>(socket, SOCKET_EVENTS.USER_OFFLINE, (userId) => {
-    dispatch({ type: "USER_OFFLINE", payload: userId });
-  });
-
-  // Private socket events
-  useSocketEvent<void>(socket, SOCKET_EVENTS.JOIN_PRIVATE_SOCKET, () => {
-    console.log("Успешно вошел в приватный чат");
-  });
-
-  // Typing events
-  useSocketEvent<SetTyping>(socket, SOCKET_EVENTS.TYPING, (data) => {
-    dispatch({ type: "SET_TYPING", payload: data });
-    setTimeout(() => {
-      dispatch({ type: "SET_TYPING", payload: null });
-    }, 1000);
-  });
-
-  // Message events
-  useSocketEvent<MessageOperation>(
-    socket,
-    SOCKET_EVENTS.REVOKE_MESSAGE,
-    (data) => {
-      dispatch({ type: "REVOKE_MESSAGE", payload: data });
+  // Consider creating a reusable error handler
+  const handleSocketError = (res: ServerRes, dispatch: ChatDispatch) => {
+    if (res.code) {
+      dispatch({ type: "SET_ERROR", payload: res.msg });
+      return true;
     }
-  );
+    return false;
+  };
 
-  useSocketEvent<GroupMessage>(
-    socket,
-    SOCKET_EVENTS.GROUP_MESSAGE,
-    (data) => {
-      dispatch({ type: "ADD_GROUP_MESSAGE", payload: data });
-      const { activeRoom } = state;
-      if (
-        activeRoom &&
-        (activeRoom as Group).groupId === data.groupId &&
-        data.userId !== state.user.userId
-      ) {
-        socket?.emit("markAsRead", { groupId: data.groupId, _id: data._id });
+  useEffect(() => {
+    // listen unauthorized event
+    const listener = (msg: string) => {
+      console.log("unauthorized msg", msg);
+      getRefreshToken(state.token, state.refreshToken, dispatch);
+    };
+    socket?.on("unauthorized", listener);
+
+    // listen chatData event
+    const listener1 = (res: ServerRes) => {
+      if (handleSocketError(res, dispatch)) return;
+
+      const payload = res.data as ChatData;
+      const groupArr = payload.groupData;
+      const contactArr = payload.contactData;
+      const userArr = payload.userData;
+      dispatch({ type: "CLEAR_CHAT_DATA" });
+      dispatch({ type: "SET_USER", payload: payload.user });
+      if (groupArr.length) {
+        for (const group of groupArr) {
+          socket?.emit("joinGroupSocket", {
+            groupId: group.groupId,
+          });
+          dispatch({ type: "SET_GROUP_GATHER", payload: group });
+        }
       }
-    },
-    [state.activeRoom, state.user.userId]
-  );
+      if (contactArr.length) {
+        for (const contact of contactArr) {
+          socket?.emit("joinPrivateSocket", {
+            contactId: contact.userId,
+          });
+          dispatch({ type: "SET_CONTACT_GATHER", payload: contact });
+        }
+      }
+      dispatch({
+        type: "SET_OPERATORS",
+        payload: payload.operatorData,
+      });
+      if (userArr.length) {
+        for (const user_ of userArr) {
+          dispatch({ type: "SET_USER_GATHER", payload: user_ });
+        }
+      }
+      dispatch({ type: "UPDATE_ACTIVE_ROOM" });
+      dispatch({
+        type: "SET_CONFERENCE",
+        payload: payload.conferenceData,
+      });
+      dispatch({
+        type: "SET_VISIT_DATA",
+        payload: payload.visitData,
+      });
+    };
+    socket?.on("chatData", listener1);
 
-  useSocketEvent<PrivateMessage>(
-    socket,
-    SOCKET_EVENTS.PRIVATE_MESSAGE,
-    (data) => {
+    // listen user online
+    const listener2 = (res: ServerRes) => {
+      dispatch({ type: "USER_ONLINE", payload: res.data as number });
+    };
+    socket?.on("userOnline", listener2);
+
+    // listen user offline
+    const listener3 = (res: ServerRes) => {
+      dispatch({ type: "USER_OFFLINE", payload: res.data as number });
+    };
+    socket?.on("userOffline", listener3);
+
+    // listen private socket join
+    const listener4 = (res: ServerRes) => {
+      if (handleSocketError(res, dispatch)) return;
+      console.log("Успешно вошел в приватный чат");
+    };
+    socket?.on("joinPrivateSocket", listener4);
+
+    // typing
+    let typingTimer: NodeJS.Timeout;
+    const listener5 = (res: ServerRes) => {
+      if (handleSocketError(res, dispatch)) return;
+      if (typingTimer) clearTimeout(typingTimer);
+      dispatch({
+        type: "SET_TYPING",
+        payload: res.data as SetTyping,
+      });
+      typingTimer = setTimeout(() => {
+        dispatch({ type: "SET_TYPING", payload: null });
+      }, 1000);
+    };
+    socket?.on("typing", listener5);
+
+    // revoke
+    const listener6 = (res: ServerRes) => {
+      if (handleSocketError(res, dispatch)) return;
+      const data = res.data as MessageOperation;
+      dispatch({ type: "REVOKE_MESSAGE", payload: data });
+      console.log("REVOKE_MESSAGE");
+    };
+    socket?.on("revokeMessage", listener6);
+
+    // set group gather
+    const listener7 = (res: ServerRes) => {
+      if (handleSocketError(res, dispatch)) return;
+      dispatch({
+        type: "SET_GROUP_GATHER",
+        payload: res.data as Group,
+      });
+    };
+    socket?.on("addGroup", listener7);
+
+    // set contact gather, user gather
+    const listener8 = (res: ServerRes) => {
+      if (handleSocketError(res, dispatch)) return;
+      const data = res.data as Contact;
+      dispatch({ type: "SET_CONTACT_GATHER", payload: data });
+      dispatch({ type: "SET_USER_GATHER", payload: data });
+      socket?.emit("joinPrivateSocket", {
+        contactId: data.userId,
+      });
+    };
+    socket?.on("addContact", listener8);
+
+    // delete contact
+    const listener10 = (res: ServerRes) => {
+      if (handleSocketError(res, dispatch)) return;
+      const data = res.data as Contact;
+      dispatch({ type: "DEL_CONTACT", payload: data });
+    };
+    socket?.on("deleteContact", listener10);
+
+    // update GroupInfo
+    const listener11 = (res: ServerRes) => {
+      if (handleSocketError(res, dispatch)) return;
+      const data = res.data as Group;
+      dispatch({ type: "UPDATE_GROUP_INFO", payload: data });
+    };
+    socket?.on("updateGroupInfo", listener11);
+
+    // update UserInfo
+    const listener12 = (res: ServerRes) => {
+      if (handleSocketError(res, dispatch)) return;
+      const data = res.data as User;
+      dispatch({ type: "UPDATE_USER_INFO", payload: data });
+    };
+    socket?.on("updateUserInfo", listener12);
+
+    // start Conference
+    const listener13 = (res: ServerRes) => {
+      if (handleSocketError(res, dispatch)) return;
+      dispatch({
+        type: "SET_CONFERENCE",
+        payload: res.data as ConferenceData,
+      });
+    };
+    socket?.on("startConference", listener13);
+
+    // pause Conference
+    const listener14 = (res: ServerRes) => {
+      if (handleSocketError(res, dispatch)) return;
+      dispatch({
+        type: "PAUSE_CONFERENCE",
+        payload: res.data as ConferenceData,
+      });
+    };
+    socket?.on("pauseConference", listener14);
+
+    // stop Conference
+    const listener15 = (res: ServerRes) => {
+      if (handleSocketError(res, dispatch)) return;
+      dispatch({
+        type: "STOP_CONFERENCE",
+        payload: res.data as ConferenceData,
+      });
+    };
+    socket?.on("stopConference", listener15);
+
+    // add Operator
+    const listener16 = (res: ServerRes) => {
+      if (handleSocketError(res, dispatch)) return;
+    };
+    socket?.on("addOperator", listener16);
+
+    // set ActiveRoom
+    const listener17 = (res: ServerRes) => {
+      if (handleSocketError(res, dispatch)) return;
+      dispatch({
+        type: "SET_ACTIVE_ROOM",
+        payload: res.data as SetActiveRoom,
+      });
+    };
+    socket?.on("setActiveRoom", listener17);
+
+    // visit Data
+    const listener18 = (res: ServerRes) => {
+      if (handleSocketError(res, dispatch)) return;
+      const payload = res.data as { visitData: VisitData };
+      dispatch({
+        type: "SET_VISIT_DATA",
+        payload: payload.visitData,
+      });
+    };
+    socket?.on("visitData", listener18);
+
+    return () => {
+      // detach
+      socket?.off("unauthorized", listener);
+
+      socket?.off("chatData", listener1);
+
+      socket?.off("userOnline", listener2);
+
+      socket?.off("userOffline", listener3);
+
+      socket?.off("joinPrivateSocket", listener4);
+
+      if (typingTimer) clearTimeout(typingTimer);
+      socket?.off("typing", listener5);
+
+      socket?.off("revokeMessage", listener6);
+
+      socket?.off("addGroup", listener7);
+
+      socket?.off("addContact", listener8);
+
+      socket?.off("deleteContact", listener10);
+
+      socket?.off("updateGroupInfo", listener11);
+
+      socket?.off("updateUserInfo", listener12);
+
+      socket?.off("startConference", listener13);
+
+      socket?.off("pauseConference", listener14);
+
+      socket?.off("stopConference", listener15);
+
+      socket?.off("addOperator", listener16);
+
+      socket?.off("setActiveRoom", listener17);
+
+      socket?.off("visitData", listener18);
+    };
+  }, [socket?.id]);
+
+  // group Message
+  useEffect(() => {
+    const listener = async (res: ServerRes) => {
+      if (handleSocketError(res, dispatch)) return;
+      const data = res.data as GroupMessage;
+      dispatch({ type: "ADD_GROUP_MESSAGE", payload: data });
+      if (data.userId !== state.user.userId) {
+        socket?.emit("markAsRead", {
+          groupId: data.groupId,
+          _id: data._id,
+        });
+      }
+    };
+    socket?.on("groupMessage", listener);
+
+    // private Message
+    const listener1 = async (res: ServerRes) => {
+      if (handleSocketError(res, dispatch)) return;
+      const data = res.data as PrivateMessage;
       if (
         data.contactId === state.user.userId ||
         data.userId === state.user.userId
       ) {
-        dispatch({ type: "ADD_PRIVATE_MESSAGE", payload: data });
-        if (
-          state.activeRoom &&
-          !(state.activeRoom as Group).groupId &&
-          state.activeRoom?.userId === data.userId
-        ) {
-          socket?.emit("markAsRead", { contactId: data.userId, _id: data._id });
+        dispatch({
+          type: "ADD_PRIVATE_MESSAGE",
+          payload: data,
+        });
+
+        // если есть активная комната и это приватная комната (!groupId && userId) с отправителем сообщения (userId)
+        if (state.activeRoom && state.activeRoom?.userId === data.userId) {
+          socket?.emit("markAsRead", {
+            contactId: data.userId,
+            _id: data._id,
+          });
         }
       }
-    },
-    [state.activeRoom, state.user.userId]
-  );
+    };
 
-  // Group events
-  useSocketEvent<Group>(socket, SOCKET_EVENTS.ADD_GROUP, (data) => {
-    dispatch({ type: "SET_GROUP_GATHER", payload: data });
-  });
+    socket?.on("privateMessage", listener1);
 
-  useSocketEvent<GroupMap>(
-    socket,
-    SOCKET_EVENTS.DELETE_GROUP,
-    (data) => {
+    return () => {
+      socket?.off("groupMessage", listener);
+      socket?.off("privateMessage", listener1);
+    };
+  }, [socket?.id, state.activeRoom?.userId, state.activeRoom?.groupId]);
+
+  useEffect(() => {
+    // mark As Read
+    const listener = (res: ServerRes) => {
+      if (handleSocketError(res, dispatch)) return;
+      const data = res.data as MessageOperation;
       if (data.userId === state.user.userId) {
+        if (data.groupId) {
+          dispatch({
+            type: "LOSE_GROUP_UNREAD_GATHER",
+            payload: data.groupId,
+          });
+        } else {
+          dispatch({
+            type: "LOSE_CONTACT_UNREAD_GATHER",
+            payload: data.contactId,
+          });
+        }
+      } else {
+        if (data.contactId)
+          dispatch({
+            type: "MARK_PRIVATE_MESSAGES_READ",
+            payload: data.userId,
+          });
+      }
+    };
+    socket?.on("markAsRead", listener);
+
+    // delete Group
+    const listener1 = (res: ServerRes) => {
+      if (handleSocketError(res, dispatch)) return;
+      const data = res.data as GroupMap;
+      if (data.userId === state.user.userId) {
+        // если удаляем себя из группы
         dispatch({ type: "DEL_GROUP", payload: data.groupId });
       } else {
         dispatch({ type: "DEL_GROUP_MEMBER", payload: data });
       }
-    },
-    [state.user.userId]
-  );
+    };
+    socket?.on("deleteGroup", listener1);
 
-  useSocketEvent<JoinGroup>(
-    socket,
-    SOCKET_EVENTS.JOIN_GROUP,
-    (data) => {
-      const { group, user: newUser } = data;
+    const listener2 = (res: ServerRes) => {
+      if (handleSocketError(res, dispatch)) return;
+      const { group, user: newUser } = res.data as JoinGroup;
+
       if (!state.groupGather[group.groupId]) {
+        console.log("joined to a new group");
+        // Если группы еще у нас нет, то получаем информацию о пользователях в группе
         socket?.emit("chatData");
       } else if (newUser.userId !== state.user.userId) {
+        // Новые пользователи присоединяются к группе
         dispatch({
           type: "ADD_GROUP_MEMBER",
-          payload: { groupId: group.groupId, members: [newUser] },
+          payload: {
+            groupId: group.groupId,
+            members: [newUser],
+          },
         });
       }
-    },
-    [state.groupGather, state.user.userId]
-  );
+    };
+    socket?.on("joinGroup", listener2);
 
-  useSocketEvent<JoinGroup>(
-    socket,
-    SOCKET_EVENTS.JOIN_GROUP_SOCKET,
-    (data) => {
-      const newUser: Contact = { ...data.user, online: 1, isManager: 0 };
-      const groupObj = state.groupGather[data.group.groupId];
+    // listen group socket join
+    const listener4 = (res: ServerRes) => {
+      if (handleSocketError(res, dispatch)) return;
+      const data = res.data as JoinGroup;
+      const newUser: Contact = data.user;
+      newUser.online = 1;
+      const { group } = data;
+      const groupObj = state.groupGather[group.groupId];
+      // Информация о присоединении к группе новых пользователей
       if (
         groupObj &&
         !groupObj.members?.find((member) => member.userId === newUser.userId)
       ) {
+        newUser.isManager = 0;
         groupObj.members?.push(newUser);
+        // Vue.prototype.$message.info(res.msg);
       }
       dispatch({ type: "SET_USER_GATHER", payload: newUser });
-    },
-    [state.groupGather]
-  );
+    };
+    socket?.on("joinGroupSocket", listener4);
 
-  // Contact events
-  useSocketEvent<Contact>(socket, SOCKET_EVENTS.ADD_CONTACT, (data) => {
-    dispatch({ type: "SET_CONTACT_GATHER", payload: data });
-    dispatch({ type: "SET_USER_GATHER", payload: data });
-    socket?.emit("joinPrivateSocket", { contactId: data.userId });
-  });
+    return () => {
+      socket?.off("markAsRead", listener);
 
-  useSocketEvent<Contact>(socket, SOCKET_EVENTS.DELETE_CONTACT, (data) => {
-    dispatch({ type: "DEL_CONTACT", payload: data });
-  });
+      socket?.off("deleteGroup", listener1);
 
-  // Info update events
-  useSocketEvent<Group>(socket, SOCKET_EVENTS.UPDATE_GROUP_INFO, (data) => {
-    dispatch({ type: "UPDATE_GROUP_INFO", payload: data });
-  });
+      socket?.off("joinGroup", listener2);
 
-  // Add error handling
-  useSocketEvent<User>(socket, SOCKET_EVENTS.UPDATE_USER_INFO, (data) => {
-    try {
-      dispatch({ type: "UPDATE_USER_INFO", payload: data });
-    } catch (error) {
-      console.error("Error updating user info:", error);
-    }
-  });
-
-  // Conference events
-  useSocketEvent<ConferenceData>(
-    socket,
-    SOCKET_EVENTS.START_CONFERENCE,
-    (data) => {
-      dispatch({ type: "SET_CONFERENCE", payload: data });
-    }
-  );
-
-  useSocketEvent<ConferenceData>(
-    socket,
-    SOCKET_EVENTS.PAUSE_CONFERENCE,
-    (data) => {
-      dispatch({ type: "PAUSE_CONFERENCE", payload: data });
-    }
-  );
-
-  useSocketEvent<ConferenceData>(
-    socket,
-    SOCKET_EVENTS.STOP_CONFERENCE,
-    (data) => {
-      dispatch({ type: "STOP_CONFERENCE", payload: data });
-    }
-  );
-
-  // Other events
-  useSocketEvent<void>(socket, SOCKET_EVENTS.ADD_OPERATOR, () => {
-    // Handle operator addition if needed
-  });
-
-  useSocketEvent<SetActiveRoom>(
-    socket,
-    SOCKET_EVENTS.SET_ACTIVE_ROOM,
-    (data) => {
-      dispatch({ type: "SET_ACTIVE_ROOM", payload: data });
-    }
-  );
-
-  useSocketEvent<{ visitData: VisitData }>(
-    socket,
-    SOCKET_EVENTS.VISIT_DATA,
-    (data) => {
-      dispatch({ type: "SET_VISIT_DATA", payload: data.visitData });
-    }
-  );
+      socket?.off("joinGroupSocket", listener4);
+    };
+  }, [socket?.id, state.user.userId, allGather(state.groupGather)]);
 
   const value = useMemo(() => ({ socket, online }), [socket, online]);
 

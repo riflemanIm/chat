@@ -10,32 +10,24 @@ export const MessageDateIndicator: React.FC<DateIndicatorProps> = ({
   date,
 }) => {
   return (
-    <Box sx={{ position: "relative", margin: "0 auto" }}>
-      <Fade
-        in={!!date}
-        style={
-          date
-            ? {
-                top: "50%",
-                left: "50%",
-                transform: "translate(calc(-50% + 75px), -50%)",
-                width: 160,
-              }
-            : { display: "none" }
-        }
-        timeout={2000}
-      >
+    <Box sx={{ position: "relative", height: 0, margin: "8px 0" }}>
+      <Fade in={!!date} timeout={2000}>
         <Alert
           severity="warning"
           icon={false}
-          sx={(theme) => ({
+          sx={() => ({
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
             width: 150,
             mx: "auto",
             justifyContent: "center",
+            zIndex: 1000,
           })}
         >
           <Typography variant="h6" textAlign="center">
-            {dayjs(date).format("DD.MM.YYYY")}
+            {date && dayjs(date).format("DD.MM.YYYY")}
           </Typography>
         </Alert>
       </Fade>

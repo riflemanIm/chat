@@ -82,7 +82,7 @@ const RoomMessageList: React.FC<RoomMessageListProps> = ({
 }) => {
   const classes = useStyles();
   const scrollableRootRef = React.useRef<HTMLDivElement>(null);
-  const chatId = getChatId(chat);
+  const chatId = React.useMemo(() => getChatId(chat), [chat]);
 
   const [viewerData, setViewerData] = React.useState<ViewerData>({
     visible: false,
@@ -100,8 +100,10 @@ const RoomMessageList: React.FC<RoomMessageListProps> = ({
     [chat?.messages]
   );
 
-  const hasNextPage =
-    chat == null || chat?.noMoreData == null ? true : !chat.noMoreData;
+  const hasNextPage = React.useMemo(
+    () => (chat == null || chat?.noMoreData == null ? true : !chat.noMoreData),
+    [chat?.noMoreData]
+  );
 
   const { scrollDown, handleRootScroll, scrollDownButton, unreadCount } =
     useMessageScroll({
@@ -155,7 +157,33 @@ const RoomMessageList: React.FC<RoomMessageListProps> = ({
   };
 
   if (!chatId) return null;
+  const messageList = React.useMemo(() => {
+    return messages.map((message, index) => (
+      <Message
+        ref={message.ref}
+        key={message._id || index} // Better to use unique ID if available
+        apiUrl={apiUrl}
+        user={user}
+        message={message}
+        owner={users[message.userId]}
+        isGroupMessage={!!chat?.groupId}
+        isUserFirst={
+          index === 0 ||
+          messages[index - 1].messageType === "notify" ||
+          messages[index - 1].userId !== messages[index].userId
+        }
+        isUserLast={
+          index === messages.length - 1 ||
+          messages[index + 1]?.messageType === "notify" ||
+          messages[index + 1]?.userId !== messages[index].userId
+        }
+        onContextMenu={(event) => handleMenuPopup(message, event)}
+        setViewerData={setViewerData}
+      />
+    ));
+  }, [messages, apiUrl, user, users, chat?.groupId]);
 
+  console.log("RoomMessageList messages", messages);
   return (
     <>
       <MessageDateIndicator date={isVisible} />
@@ -175,29 +203,7 @@ const RoomMessageList: React.FC<RoomMessageListProps> = ({
             </ListItem>
           )}
 
-          {messages.map((message, index) => (
-            <Message
-              ref={message.ref}
-              key={index}
-              apiUrl={apiUrl}
-              user={user}
-              message={message}
-              owner={users[message.userId]}
-              isGroupMessage={!!chat?.groupId}
-              isUserFirst={
-                index === 0 ||
-                messages[index - 1].messageType === "notify" ||
-                messages[index - 1].userId !== messages[index].userId
-              }
-              isUserLast={
-                index === messages.length - 1 ||
-                messages[index + 1]?.messageType === "notify" ||
-                messages[index + 1]?.userId !== messages[index].userId
-              }
-              onContextMenu={(event) => handleMenuPopup(message, event)}
-              setViewerData={setViewerData}
-            />
-          ))}
+          {messageList}
         </List>
 
         <MessageScrollButton

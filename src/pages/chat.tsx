@@ -18,6 +18,7 @@ import ChatAlert from "../components/Alert";
 import ChatContainer from "../components/ChatContainer";
 import ChatLayout from "../components/ChatLayout";
 import ConferenceSection from "../components/ConferenceSection";
+import { isGroup } from "../utils/common";
 
 // Отключили проигрыш звука
 // const getRingAudio = (): HTMLAudioElement => {
@@ -29,9 +30,6 @@ import ConferenceSection from "../components/ConferenceSection";
 // };
 
 // Add at the top of the file after imports
-const isGroup = (chat: ChatRoom): chat is Group => {
-  return "groupId" in chat;
-};
 
 export const ChatPage: React.FC<ChatPageProps> = ({
   activeGroupId,
