@@ -76,6 +76,19 @@ const sortChats = (
   return roomArr;
 };
 
+const getRoomList = (
+  userId: number,
+  groups: ChatRoom[],
+  contacts: ChatRoom[],
+  filter: string | null
+) => {
+  return sortChats(
+    userId,
+    filterChats(groups, filter),
+    filterChats(contacts, filter)
+  );
+};
+
 const RoomList: FC<RoomListProps> = ({
   user,
   activeRoom,
@@ -86,67 +99,64 @@ const RoomList: FC<RoomListProps> = ({
   activeChatUserId,
   activeGroupId,
 }: RoomListProps) => {
+  console.log(" -- RoomList -- ");
   const classes = useStyles();
   const { t } = useTranslation();
   const { apiUrl, getUserByMmk } = useContext(RestContext);
-  const allContacts = sortChats(
-    user.userId,
-    filterChats(groups, null),
-    filterChats(contacts, null)
+
+  // Add search state
+  const [searchFilter, setSearchFilter] = useState<string>("");
+
+  // Memoize the chat list
+  const allContacts = React.useMemo(
+    () => getRoomList(user.userId, groups, contacts, searchFilter),
+    [user.userId, groups, contacts, searchFilter]
   );
-  const [chats, setChats] = useState<ChatRoom[]>(allContacts);
 
+  // First useEffect for initialization
   useEffect(() => {
-    if (!isEmpty(allContacts)) setChats(allContacts);
-  }, [allContacts]);
+    let mounted = true;
 
-  useEffect(() => {
-    if (activeChatUserId != null && !isEmpty(contacts)) {
-      const Chat = Object.values(contacts).find(
-        (item) => item.userId === activeChatUserId
-      );
-      if (Chat != null) onChangeChat(Chat);
-    }
-
-    const mmkId = getParam("mmk");
-    const guid = getParam("guid");
-
-    if ((mmkId != null || guid != null) && !isEmpty(contacts)) {
-      //console.log("mmkId", mmkId);
-      const changeChatByMmkId = async () => {
-        const userId = await getUserByMmk(mmkId, guid);
-        if (userId != null) {
-          const Chat = Object.values(contacts).find(
-            (item) => item.userId === userId
-          );
-          if (Chat != null) onChangeChat(Chat);
+    const initializeChat = async () => {
+      if (activeChatUserId != null && !isEmpty(contacts)) {
+        const chat = contacts.find((item) => item.userId === activeChatUserId);
+        if (chat && mounted) {
+          onChangeChat(chat);
+          return;
         }
-      };
-      changeChatByMmkId();
-    }
-    if (activeGroupId != null && !isEmpty(groups)) {
-      const onlyChat = Object.values(groups).find(
-        (item) => item.groupId === activeGroupId
-      );
-
-      if (onlyChat != null) {
-        onChangeChat(onlyChat);
       }
-    }
-  }, []);
+
+      const mmkId = getParam("mmk");
+      const guid = getParam("guid");
+
+      if ((mmkId != null || guid != null) && !isEmpty(contacts)) {
+        try {
+          const userId = await getUserByMmk(mmkId, guid);
+          if (userId != null && mounted) {
+            const chat = contacts.find((item) => item.userId === userId);
+            if (chat) onChangeChat(chat);
+          }
+        } catch (error) {
+          console.error("Failed to get user by MMK:", error);
+        }
+      }
+
+      if (activeGroupId != null && !isEmpty(groups)) {
+        const group = groups.find((item) => item.groupId === activeGroupId);
+        if (group && mounted) onChangeChat(group);
+      }
+    };
+
+    initializeChat();
+
+    return () => {
+      mounted = false;
+    };
+  }, [activeChatUserId, activeGroupId, getUserByMmk, onChangeChat]);
 
   const onSearchChange = (e: ChangeEvent<HTMLInputElement>): void => {
-    //console.log("e.target.value", e.target.value);
-
-    setChats(
-      sortChats(
-        user.userId,
-        filterChats(groups, e.target.value),
-        filterChats(contacts, e.target.value)
-      )
-    );
+    setSearchFilter(e.target.value);
   };
-  //const activeItem = (id: number) => id === activeRoom?.userId;
 
   return (
     <Card elevation={1} className={classes.root}>
@@ -159,19 +169,20 @@ const RoomList: FC<RoomListProps> = ({
             size="small"
             fullWidth
             onChange={onSearchChange}
+            value={searchFilter}
           />
         }
       />
       <Divider />
       <List aria-label="rooms" className={classes.listStyle}>
-        {chats.map((chat: ChatRoom) => (
+        {allContacts.map((chat: ChatRoom) => (
           <RoomListItem
             key={getChatId(chat)}
             apiUrl={apiUrl}
             chat={chat}
             active={chat === activeRoom}
             typing={typing}
-            onClick={() => onChangeChat != null && onChangeChat(chat)}
+            onClick={() => onChangeChat(chat)}
           />
         ))}
       </List>
