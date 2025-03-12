@@ -5,178 +5,121 @@ import {
   CircularProgress,
   List,
   Backdrop,
-  Fab,
-  Typography,
   ListItem,
-  Fade,
-  Alert,
 } from "@mui/material";
 import { Theme } from "@mui/material/styles";
-import { makeStyles, createStyles } from "@mui/styles";
-import KeyboardArrowDown from "@mui/icons-material/KeyboardArrowDown";
-
-import Message from "./Message";
-
-import { getChatId } from "../utils/common";
-import { ChatMessage, ChatRoom, User, ContactGather } from "../types";
+import { makeStyles } from "@mui/styles";
 import useInfiniteScroll from "react-infinite-scroll-hook";
-import dayjs from "dayjs";
 import useInterval from "../hooks/useInterval";
 
-function isVisibleInViewport(element: HTMLLIElement, root: HTMLDivElement) {
-  const rect = element.getBoundingClientRect();
-  // console.log(
-  //   'rect.top',
-  //   rect.top,
-  //   'rect.bottom',
-  //   rect.bottom,
-  //   root.clientHeight,
-  // );
-  return rect.top >= 150 && rect.bottom <= root.clientHeight;
-}
+import Message from "./Message";
+import { MessageScrollButton } from "./MessageScrollButton";
+import { MessageDateIndicator } from "./MessageDateIndicator";
+import { useMessageScroll } from "../hooks/useMessageScroll";
+import { ChatMessage, ChatRoom, User, ContactGather } from "../types";
+import { getChatId } from "../utils/common";
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    messageListOuter: {
-      flex: 1,
-      overflowY: "auto",
-      margin: 0,
-      padding: 0,
-      height: "100%",
-      scrollbarWidth: "thin",
-      scrollbarColor: `${theme.palette.primary.light} #fff`,
-    },
-    messageList: {},
-    img: {
-      cursor: "pointer",
-      borderRadius: theme.spacing(1.2),
-
+const useStyles = makeStyles((theme: Theme) => ({
+  messageListOuter: {
+    flex: 1,
+    overflowY: "auto",
+    margin: 0,
+    padding: 0,
+    height: "100%",
+    scrollbarWidth: "thin",
+    scrollbarColor: `${theme.palette.primary.light} #fff`,
+  },
+  messageList: {},
+  img: {
+    cursor: "pointer",
+    borderRadius: theme.spacing(1.2),
+    maxWidth: "auto",
+    maxHeight: "95%",
+    [theme.breakpoints.down("sm")]: {
       maxWidth: "auto",
       maxHeight: "95%",
-      [theme.breakpoints.down("sm")]: {
-        maxWidth: "auto",
-        maxHeight: "95%",
-      },
     },
+  },
+}));
+interface ViewerData {
+  visible: boolean;
+  src: string;
+}
 
-    arrowDown: {
-      position: "absolute",
-      left: "94.5%",
-      bottom: 105,
-      [theme.breakpoints.down("md")]: {
-        left: "91.5%",
-        bottom: 95,
-      },
-      [theme.breakpoints.down("sm")]: {
-        left: "84%",
-        bottom: 95,
-      },
-    },
-  })
-);
-
-type InitialMenuState = {
+interface InitialMenuState {
   message: ChatMessage | null;
   mouseX: null | number;
   mouseY: null | number;
   canCopy: boolean;
   canDelete: boolean;
-};
+}
 
-type RoomMessageListProps = {
+interface RoomMessageListProps {
   apiUrl: string;
   user: User;
   users: ContactGather;
   chat: ChatRoom | null;
   loading: boolean;
   pageSize: number;
-
   initialMenuState: InitialMenuState;
-
   onNeedMoreMessages: (chat: ChatRoom) => Promise<void>;
   onMessageDelete?: (chat: ChatRoom, message: ChatMessage) => void;
   setMenuState: React.Dispatch<React.SetStateAction<InitialMenuState>>;
   onEnterRoom?: (chat: ChatRoom) => void;
-};
-
-const RoomMessageList: React.FC<RoomMessageListProps> = (
-  props: RoomMessageListProps
-) => {
-  const {
-    apiUrl,
-    user,
-    users,
-    chat,
-    loading,
-    pageSize,
-    setMenuState,
-    initialMenuState,
-    onEnterRoom,
-  } = props;
-
+}
+const RoomMessageList: React.FC<RoomMessageListProps> = ({
+  apiUrl,
+  user,
+  users,
+  chat,
+  loading,
+  pageSize,
+  initialMenuState,
+  onNeedMoreMessages,
+  onMessageDelete,
+  setMenuState,
+  onEnterRoom,
+}) => {
   const classes = useStyles();
-
-  const DEF = 900;
-
+  const scrollableRootRef = React.useRef<HTMLDivElement>(null);
   const chatId = getChatId(chat);
 
-  const [viewerData, setViewerData] = React.useState<{
-    visible: boolean;
-    src: string;
-  }>({
+  const [viewerData, setViewerData] = React.useState<ViewerData>({
     visible: false,
     src: "",
   });
 
-  const [scrollDownButton, setScrollDownButton] = React.useState(false);
+  const [isVisible, setIsVisible] = React.useState<string>("");
 
-  const scrollableRootRef = React.useRef<React.ElementRef<"div"> | null>(null);
-  const lastScrollDistanceToBottomRef = React.useRef<number>();
-  const lastMessageCount = React.useRef<number>();
+  const messages = React.useMemo(
+    () =>
+      chat?.messages?.map((it) => ({
+        ...it,
+        ref: React.createRef<HTMLLIElement>(),
+      })) || [],
+    [chat?.messages]
+  );
 
   const hasNextPage =
     chat == null || chat?.noMoreData == null ? true : !chat.noMoreData;
 
-  const messages = React.useMemo(
-    () =>
-      chat?.messages
-        ? chat.messages.map((it) => ({
-            ...it,
-            ref: React.createRef<HTMLLIElement>(),
-          }))
-        : [],
-    [chat?.messages]
-  );
-
-  const messageCount = messages?.length || 0;
-
-  const lastMessage = messageCount && messages[messageCount - 1];
-
-  const messageCountUnreaded = messages.filter(
-    (it) => it?.status != null && it.status === 0
-  );
-
-  const [isVisible, setIsVisible] = React.useState<string>(
-    messages[messageCount - 1]?.cdate ?? ""
-  );
-
-  const loadMore = () => {
-    chat && props.onNeedMoreMessages(chat);
-  };
+  const { scrollDown, handleRootScroll, scrollDownButton, unreadCount } =
+    useMessageScroll({
+      messages,
+      scrollableRootRef,
+      pageSize,
+      hasNextPage,
+      chat,
+      onEnterRoom,
+      setIsVisible,
+    });
 
   const [infiniteRef, { rootRef }] = useInfiniteScroll({
     loading,
     hasNextPage,
-    onLoadMore: loadMore,
+    onLoadMore: () => chat && onNeedMoreMessages(chat),
     disabled: false,
   });
-
-  React.useEffect(() => {
-    if (chatId && scrollableRootRef.current && messageCount) {
-      setIsVisible(messages[messageCount - 1]?.cdate ?? "");
-      scrollDown();
-    }
-  }, [chatId]);
 
   useInterval(
     () => {
@@ -186,80 +129,6 @@ const RoomMessageList: React.FC<RoomMessageListProps> = (
     4700
   );
 
-  // ------ keep the scroll position and lastMessageCount when messageCount changed ----------
-  React.useEffect(() => {
-    const scrollableRoot = scrollableRootRef.current;
-    const lastScrollDistanceToBottom =
-      lastScrollDistanceToBottomRef.current ?? 0;
-
-    if (scrollableRoot && lastMessage && chat) {
-      // -----  scroll to prev lastScrollDistanceToBottom -----------
-      if (lastMessageCount.current === messageCount - pageSize) {
-        scrollableRoot.scrollTop =
-          scrollableRoot.scrollHeight - lastScrollDistanceToBottom;
-      } else if (
-        // -----  scroll to bottom forced -----------
-        lastMessage.userId !== chat.userId ||
-        lastScrollDistanceToBottom <= DEF
-      ) {
-        scrollDown();
-      }
-    }
-    lastMessageCount.current = messageCount;
-  }, [messageCount]);
-
-  const handleRootScroll = React.useCallback(() => {
-    const rootNode = scrollableRootRef.current;
-
-    if (rootNode) {
-      const scrollDistanceToBottom = rootNode.scrollHeight - rootNode.scrollTop;
-      lastScrollDistanceToBottomRef.current = scrollDistanceToBottom;
-
-      const isShowScrollButton = hasNextPage && scrollDistanceToBottom > DEF;
-      setScrollDownButton(isShowScrollButton);
-
-      for (let i = 0; i < messageCount; i++) {
-        const mess = messages[i];
-        // console.log(
-        //   '------------loop------------',
-        //   //mess?.ref?.current,
-        // );
-
-        if (mess?.ref?.current) {
-          const isVisibleMess = isVisibleInViewport(mess.ref.current, rootNode);
-          if (isVisibleMess) {
-            // console.log(
-            //   'visible',
-            //   dayjs(mess.cdate).format('DD.MM.YYYY'),
-            // );
-            setIsVisible(mess.cdate);
-            break;
-          }
-        } else {
-          break;
-        }
-      }
-    }
-  }, [messages, chatId]);
-
-  const scrollDown = React.useCallback(() => {
-    if (scrollableRootRef.current) {
-      scrollableRootRef.current.scrollTop =
-        scrollableRootRef.current.scrollHeight;
-      if (onEnterRoom && chat) {
-        onEnterRoom(chat);
-      }
-    }
-  }, [chat, onEnterRoom]);
-
-  const rootRefSetter = React.useCallback(
-    (node: HTMLDivElement) => {
-      rootRef(node);
-      scrollableRootRef.current = node;
-    },
-    [rootRef]
-  );
-
   const handleMenuPopup = (
     message: ChatMessage,
     event: React.MouseEvent<HTMLElement>
@@ -267,12 +136,14 @@ const RoomMessageList: React.FC<RoomMessageListProps> = (
     const canCopy = message.messageType === "text";
     const canDelete =
       user.userId === message.userId &&
-      !!props.onMessageDelete &&
+      !!onMessageDelete &&
       new Date().getTime() - new Date(message.cdate).getTime() <= 1000 * 60 * 2;
+
     if (!canCopy && !canDelete) {
       setMenuState(initialMenuState);
       return;
     }
+
     event.preventDefault();
     setMenuState({
       message,
@@ -283,136 +154,66 @@ const RoomMessageList: React.FC<RoomMessageListProps> = (
     });
   };
 
-  if (chatId == null) return;
+  if (!chatId) return null;
 
   return (
     <>
-      <Box
-        sx={{
-          position: "relative" /* Чтобы `div` был относительно контейнера */,
-          margin: "0 auto",
-        }}
-      >
-        <Fade
-          in={!!isVisible}
-          style={
-            isVisible
-              ? {
-                  top: "50%",
-                  left: "50%",
-                  transform: "translate( calc(-50% + 75px), -50%)",
-                  width: 160,
-                }
-              : { display: "none" }
-          }
-          timeout={2000}
-        >
-          <Alert
-            severity="warning"
-            icon={false}
-            sx={(theme) => ({
-              width: 150,
-              mx: "auto",
-              justifyContent: "center",
-            })}
-          >
-            <Typography variant="h6" textAlign="center">
-              {dayjs(isVisible).format("DD.MM.YYYY")}
-            </Typography>
-          </Alert>
-        </Fade>
-      </Box>
+      <MessageDateIndicator date={isVisible} />
 
       <CardContent
         className={classes.messageListOuter}
-        ref={rootRefSetter}
+        ref={(node) => {
+          rootRef(node);
+          (scrollableRootRef as any).current = node;
+        }}
         onScroll={handleRootScroll}
       >
         <List className={classes.messageList}>
           {hasNextPage && (
-            <ListItem
-              ref={infiniteRef}
-              sx={{
-                justifyContent: "center",
-              }}
-            >
+            <ListItem ref={infiniteRef} sx={{ justifyContent: "center" }}>
               <CircularProgress />
             </ListItem>
           )}
-          {(messages as ChatMessage[]).map((message, inx) => {
-            return (
-              <Message
-                ref={message.ref}
-                key={inx}
-                apiUrl={apiUrl}
-                user={user}
-                message={message}
-                owner={users[message.userId]}
-                isGroupMessage={!!chat?.groupId}
-                isUserFirst={
-                  inx === 0 ||
-                  messages[inx - 1].messageType === "notify" ||
-                  messages[inx - 1].userId !== messages[inx].userId
-                }
-                isUserLast={
-                  inx === messages.length - 1 ||
-                  messages[inx + 1].messageType === "notify" ||
-                  messages[inx + 1].userId !== messages[inx].userId
-                }
-                onContextMenu={(event) => handleMenuPopup(message, event)}
-                //refOnMess={defineRefOnMess(inx)}
-                setViewerData={setViewerData}
-              />
-            );
-          })}
+
+          {messages.map((message, index) => (
+            <Message
+              ref={message.ref}
+              key={index}
+              apiUrl={apiUrl}
+              user={user}
+              message={message}
+              owner={users[message.userId]}
+              isGroupMessage={!!chat?.groupId}
+              isUserFirst={
+                index === 0 ||
+                messages[index - 1].messageType === "notify" ||
+                messages[index - 1].userId !== messages[index].userId
+              }
+              isUserLast={
+                index === messages.length - 1 ||
+                messages[index + 1]?.messageType === "notify" ||
+                messages[index + 1]?.userId !== messages[index].userId
+              }
+              onContextMenu={(event) => handleMenuPopup(message, event)}
+              setViewerData={setViewerData}
+            />
+          ))}
         </List>
-        {scrollDownButton && (
-          <Box className={classes.arrowDown} textAlign="center">
-            <Fab
-              color="info"
-              aria-label="add"
-              size="medium"
-              onClick={() => scrollDown()}
-            >
-              <KeyboardArrowDown />
-            </Fab>
-            {messageCountUnreaded != null &&
-              messageCountUnreaded.length > 0 && (
-                <Fab
-                  color="warning"
-                  aria-label="add"
-                  size="small"
-                  sx={{
-                    width: 24,
-                    height: 24,
-                    minHeight: 24,
-                    position: "relative",
-                    top: -10,
-                    pointerEvents: "none",
-                  }}
-                >
-                  <Typography
-                    variant="body2"
-                    sx={(theme) => ({
-                      color: theme.palette.background.default,
-                    })}
-                  >
-                    {messageCountUnreaded.length}
-                  </Typography>
-                </Fab>
-              )}
-          </Box>
-        )}
+
+        <MessageScrollButton
+          visible={scrollDownButton}
+          unreadCount={unreadCount}
+          onScrollDown={scrollDown}
+        />
+
         {viewerData.visible && (
           <Backdrop
             sx={{
               color: "#fff",
-              zIndex: (theme: Theme) => theme.zIndex.drawer + 1,
+              zIndex: (theme) => theme.zIndex.drawer + 1,
             }}
             open={viewerData.visible}
-            onClick={() => {
-              setViewerData({ visible: false, src: "" });
-            }}
+            onClick={() => setViewerData({ visible: false, src: "" })}
           >
             <img src={viewerData.src} className={classes.img} alt="" />
           </Backdrop>
