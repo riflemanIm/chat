@@ -190,6 +190,7 @@ const RoomMessageList: React.FC<RoomMessageListProps> = ({
     ));
   }, [
     (messages || []).filter((it) => it._id).length,
+    unreadCount,
     apiUrl,
     user,
     users,
@@ -198,7 +199,7 @@ const RoomMessageList: React.FC<RoomMessageListProps> = ({
     isVisible,
   ]);
   // console.count("RoomMessageList - render");
-  // console.log("scrollDownButton", scrollDownButton);
+  console.log("unreadCount", unreadCount);
 
   return (
     <>

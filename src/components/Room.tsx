@@ -104,6 +104,7 @@ const Room: React.FC<RoomProps> = (props: RoomProps) => {
     loading,
     pageSize,
     isMobile,
+    onEnterRoom,
   } = props;
 
   const classes = useStyles();
@@ -207,6 +208,7 @@ const Room: React.FC<RoomProps> = (props: RoomProps) => {
         onNeedMoreMessages={props.onNeedMoreMessages}
         onMessageDelete={props.onMessageDelete}
         setMenuState={setMenuState}
+        onEnterRoom={onEnterRoom}
       />
       <Divider />
       <CardContent>

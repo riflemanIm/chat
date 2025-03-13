@@ -1,238 +1,330 @@
-import React, { ChangeEvent, KeyboardEvent } from "react";
+import React, {
+  ChangeEvent,
+  KeyboardEvent,
+  useCallback,
+  useState,
+  useRef,
+} from "react";
 import {
   Box,
   IconButton,
   InputAdornment,
   TextField,
   Popover,
-  SvgIcon
+  SvgIcon,
+  CircularProgress,
 } from "@mui/material";
-
 import { makeStyles } from "@mui/styles";
 import { Send, InsertEmoticon } from "@mui/icons-material";
 import Emoji from "./Emoji";
 import { useTranslation } from "react-i18next";
 import { ChatRoom, ImageSize, SendMessage } from "../types";
 
+const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+const ALLOWED_FILE_TYPES = {
+  image: ["image/jpeg", "image/png", "image/gif", "image/bmp"],
+  video: ["video/mp4", "video/webm"],
+  document: ["application/pdf"],
+};
+
+const MAX_IMAGE_DIMENSION = 335;
+
 const useStyles = makeStyles(() => ({
   input: {
-    flex: "auto"
+    flex: "auto",
   },
   inputUpload: {
-    display: "none"
+    display: "none",
   },
   attachmentIcon: {
     fill: "none",
-    stroke: "currentColor"
-  }
+    stroke: "currentColor",
+  },
+  error: {
+    color: "red",
+    fontSize: "0.75rem",
+    marginTop: "4px",
+  },
 }));
 
-type EntryProps = {
+interface EntryProps {
   chat: ChatRoom | null;
   onTyping?: (chat: ChatRoom) => void;
   onSendMessage?: (chat: ChatRoom, data: SendMessage) => void;
-};
+  maxMessageLength?: number;
+}
 
-/**
- * Рассчитать пропорции изображения
- */
-const getImageSize = (data: ImageSize) => {
+const getImageSize = (data: ImageSize): ImageSize => {
   let { width, height } = data;
-  if (width > 335 || height > 335) {
+
+  if (width > MAX_IMAGE_DIMENSION || height > MAX_IMAGE_DIMENSION) {
     if (width > height) {
-      height = 335 * (height / width);
-      width = 335;
+      height = MAX_IMAGE_DIMENSION * (height / width);
+      width = MAX_IMAGE_DIMENSION;
     } else {
-      width = 335 * (width / height);
-      height = 335;
+      width = MAX_IMAGE_DIMENSION * (width / height);
+      height = MAX_IMAGE_DIMENSION;
     }
   }
-  return {
-    width,
-    height
-  };
+
+  return { width, height };
 };
 
-const Entry: React.FC<EntryProps> = (props: EntryProps) => {
+const Entry: React.FC<EntryProps> = ({
+  chat,
+  onTyping,
+  onSendMessage,
+  maxMessageLength = 1000,
+}) => {
   const classes = useStyles();
-  const { chat } = props;
-
   const { t } = useTranslation();
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const [empjiEl, setEmojiEl] = React.useState<HTMLButtonElement | null>(null);
-  const [text, setText] = React.useState("");
-  const [lastTyping, setLastTyping] = React.useState({
+  const [emojiAnchorEl, setEmojiAnchorEl] = useState<HTMLButtonElement | null>(
+    null
+  );
+
+  const textRef = useRef<HTMLInputElement>(null);
+  const textValueRef = useRef("");
+
+  const [error, setError] = useState<string>("");
+  const [isUploading, setIsUploading] = useState(false);
+  const [lastTyping, setLastTyping] = useState({
     chat,
-    time: 0
+    time: 0,
   });
 
   const handleEmojiClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setEmojiEl(event.currentTarget);
+    setEmojiAnchorEl(event.currentTarget);
   };
 
   const handleEmojiClose = () => {
-    setEmojiEl(null);
+    setEmojiAnchorEl(null);
   };
 
-  const emojiSelect = (emoji: string) => {
-    setText(`${text}${emoji}`);
-    handleEmojiClose();
-  };
-
-  const onChange = ({ target }: ChangeEvent<HTMLInputElement>) => {
-    setText(target.value);
-    if (
-      chat &&
-      props.onTyping &&
-      (lastTyping.chat !== chat || Date.now() - lastTyping.time >= 500)
-    ) {
-      setLastTyping({
-        chat,
-        time: Date.now()
-      });
-      props.onTyping(chat);
+  const emojiSelect = useCallback((emoji: string) => {
+    if (textRef.current) {
+      const newValue = textValueRef.current + emoji;
+      textValueRef.current = newValue;
+      textRef.current.value = newValue;
     }
+    handleEmojiClose();
+  }, []);
+
+  const handleTyping = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const newText = e.target.value;
+      textValueRef.current = newText;
+
+      if (
+        chat &&
+        onTyping &&
+        (lastTyping.chat !== chat || Date.now() - lastTyping.time >= 500)
+      ) {
+        setLastTyping({
+          chat,
+          time: Date.now(),
+        });
+        onTyping(chat);
+      }
+    },
+    [chat, onTyping, lastTyping.chat]
+  );
+
+  const sendMessage = useCallback(
+    (data: SendMessage) => {
+      if (!chat || !onSendMessage) return;
+      onSendMessage(chat, data);
+    },
+    [chat, onSendMessage]
+  );
+
+  const validateMessage = (message: string): boolean => {
+    if (message.trim().length === 0) {
+      setError(t("CHAT.ERROR.EMPTY_MESSAGE"));
+      return false;
+    }
+    if (message.length > maxMessageLength) {
+      setError(t("CHAT.ERROR.MESSAGE_TOO_LONG"));
+      return false;
+    }
+    setError("");
+    return true;
   };
 
-  const sendMessage = (data: SendMessage) => {
-    if (chat && props.onSendMessage) props.onSendMessage(chat, data);
-  };
+  const handleSubmit = useCallback(() => {
+    const currentText = textValueRef.current;
+    if (!validateMessage(currentText)) return;
 
-  const submit = () => {
-    if (text.trim().length === 0) {
+    sendMessage({ message: currentText, messageType: "text" });
+
+    if (textRef.current) {
+      textRef.current.value = "";
+      textValueRef.current = "";
+    }
+    setError("");
+  }, [sendMessage]);
+
+  const handleFileUpload = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > MAX_FILE_SIZE) {
+      setError(t("CHAT.ERROR.FILE_TOO_LARGE"));
       return;
     }
 
-    sendMessage({ message: text, messageType: "text" });
-    setText("");
-  };
+    try {
+      setIsUploading(true);
+      setError("");
 
-  const onSubmitClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    event.preventDefault();
-    submit();
-  };
+      const messageType =
+        Object.entries(ALLOWED_FILE_TYPES).find(([, types]) =>
+          types.includes(file.type)
+        )?.[0] || "file";
 
-  const onKeyPress = (event: KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === "Enter") {
-      event.preventDefault();
-      submit();
-    }
-  };
-
-  const onSubmitFile = (event: React.FormEvent<HTMLInputElement>) => {
-    if (!event.currentTarget.files) return;
-    const file = event.currentTarget.files[0];
-    let messageType: string;
-    if (file.type.includes("image")) {
-      messageType = "image";
-    } else if (file.type.includes("video")) {
-      messageType = "video";
-    } else {
-      messageType = "file";
-    }
-    if (messageType === "image") {
-      const image = new Image();
-      const url = window.URL || window.webkitURL;
-      image.src = url.createObjectURL(file);
-      image.onload = () => {
-        const imageSize: ImageSize = getImageSize({
-          width: image.width,
-          height: image.height
+      if (messageType === "image") {
+        const imageSize = await new Promise<ImageSize>((resolve) => {
+          const image = new Image();
+          const url = URL.createObjectURL(file);
+          image.onload = () => {
+            URL.revokeObjectURL(url);
+            resolve(
+              getImageSize({
+                width: image.width,
+                height: image.height,
+              })
+            );
+          };
+          image.src = url;
         });
+
         sendMessage({
           message: file,
           width: imageSize.width,
           height: imageSize.height,
-          messageType
+          messageType,
         });
-      };
-    } else {
-      sendMessage({
-        message: file,
-        messageType,
-        fileName: file.name,
-        size: file.size
-      });
+      } else {
+        sendMessage({
+          message: file,
+          messageType,
+          fileName: file.name,
+          size: file.size,
+        });
+      }
+    } catch (err) {
+      setError(t("CHAT.ERROR.UPLOAD_FAILED"));
+    } finally {
+      setIsUploading(false);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
     }
   };
 
-  const emojiOpen = Boolean(empjiEl);
-  const enojiId = emojiOpen ? "simple-popover" : undefined;
+  const onKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === "Enter" && !event.shiftKey) {
+      event.preventDefault();
+      handleSubmit();
+    }
+  };
+
   return (
-    <Box display="flex" flexDirection="row">
+    <Box display="flex" flexDirection="column">
       <TextField
         className={classes.input}
         placeholder={t("CHAT.INPUT_MESSAGE") || ""}
-        autoFocus={true}
+        autoFocus
         variant="standard"
-        slotProps={{          
+        error={!!error}
+        disabled={isUploading}
+        inputRef={textRef}
+        slotProps={{
           input: {
             autoComplete: "off",
-          disableUnderline: true,
-          startAdornment: (
-            <InputAdornment position={"start"}>
-              <input
-                accept=".pdf,.jpg,.jpeg,.bmp,.gif,.png,application/pdf,image/jpeg,image/bmp,image/gif,image/png"
-                className={classes.inputUpload}
-                id="icon-button-file"
-                type="file"
-                onChange={onSubmitFile}
-              />
-              <label htmlFor="icon-button-file">
+            inputProps: {
+              maxLength: maxMessageLength,
+            },
+
+            disableUnderline: true,
+            startAdornment: (
+              <InputAdornment position="start">
+                <input
+                  ref={fileInputRef}
+                  accept={Object.values(ALLOWED_FILE_TYPES).flat().join(",")}
+                  className={classes.inputUpload}
+                  id="icon-button-file"
+                  type="file"
+                  onChange={handleFileUpload}
+                  disabled={isUploading}
+                />
+                <label htmlFor="icon-button-file">
+                  <IconButton
+                    color="primary"
+                    aria-label="upload"
+                    component="span"
+                    size="small"
+                    disabled={isUploading}
+                  >
+                    {isUploading ? (
+                      <CircularProgress size={24} />
+                    ) : (
+                      <SvgIcon className={classes.attachmentIcon}>
+                        <path
+                          d="M16.768 13.5767L11.6961 18.6486C9.35886 20.9859 5.56937 20.9859 3.23208 18.6486V18.6486C0.894789 16.3114 0.894789 12.5219 3.23208 10.1846L10.4479 2.96872C12.0875 1.32914 14.7458 1.32914 16.3854 2.96873V2.96873C18.025 4.60831 18.025 7.26659 16.3854 8.90617L9.16515 16.1264C8.23032 17.0612 6.71466 17.0612 5.77982 16.1264V16.1264C4.84499 15.1916 4.84499 13.6759 5.77982 12.7411L10.8896 7.63131"
+                          strokeWidth="1.6"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                      </SvgIcon>
+                    )}
+                  </IconButton>
+                </label>
                 <IconButton
+                  aria-describedby={
+                    Boolean(emojiAnchorEl) ? "emoji-popover" : undefined
+                  }
+                  onClick={handleEmojiClick}
                   color="primary"
-                  aria-label="upload"
-                  component="span"
                   size="small"
+                  disabled={isUploading}
                 >
-                  <SvgIcon fill="none" className={classes.attachmentIcon}>
-                    <path
-                      d="M16.768 13.5767L11.6961 18.6486C9.35886 20.9859 5.56937 20.9859 3.23208 18.6486V18.6486C0.894789 16.3114 0.894789 12.5219 3.23208 10.1846L10.4479 2.96872C12.0875 1.32914 14.7458 1.32914 16.3854 2.96873V2.96873C18.025 4.60831 18.025 7.26659 16.3854 8.90617L9.16515 16.1264C8.23032 17.0612 6.71466 17.0612 5.77982 16.1264V16.1264C4.84499 15.1916 4.84499 13.6759 5.77982 12.7411L10.8896 7.63131"
-                      strokeWidth="1.6"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </SvgIcon>
+                  <InsertEmoticon />
                 </IconButton>
-              </label>{" "}
+              </InputAdornment>
+            ),
+            endAdornment: (
               <IconButton
-                aria-describedby={enojiId}
-                onClick={handleEmojiClick}
-                color="primary"
+                edge="end"
+                color="inherit"
                 size="small"
+                onClick={handleSubmit}
+                disabled={isUploading || !textValueRef.current.trim()}
               >
-                <InsertEmoticon />
+                <Send />
               </IconButton>
-            </InputAdornment>
-          ),
-          endAdornment: (
-            <IconButton
-              edge="end"
-              color="inherit"
-              size="small"
-              onClick={onSubmitClick}
-            >
-              <Send />
-            </IconButton>
-          )
-        }
+            ),
+            onKeyDown,
+          },
         }}
-        value={text}
-        onChange={onChange}
-        onKeyPress={onKeyPress}
+        onChange={handleTyping}
       />
+      {error && <div className={classes.error}>{error}</div>}
       <Popover
-        id={enojiId}
-        open={emojiOpen}
-        anchorEl={empjiEl}
+        id="emoji-popover"
+        open={Boolean(emojiAnchorEl)}
+        anchorEl={emojiAnchorEl}
         onClose={handleEmojiClose}
         anchorOrigin={{
           vertical: "top",
-          horizontal: "center"
+          horizontal: "center",
         }}
         transformOrigin={{
           vertical: "bottom",
-          horizontal: "left"
+          horizontal: "left",
         }}
       >
         <Emoji onSelect={emojiSelect} />
@@ -240,4 +332,5 @@ const Entry: React.FC<EntryProps> = (props: EntryProps) => {
     </Box>
   );
 };
+
 export default Entry;
