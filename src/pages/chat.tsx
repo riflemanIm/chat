@@ -161,6 +161,10 @@ export const ChatPage: React.FC<ChatPageProps> = ({
             _id: lastMessage._id,
           });
         } else if (chat.userId === lastMessage.userId) {
+          dispatch({
+            type: "MARK_PRIVATE_MESSAGES_READ",
+            payload: chat.userId,
+          });
           socket.emit("markAsRead", {
             contactId: chat.userId,
             _id: lastMessage._id,
