@@ -81,7 +81,8 @@ const RoomMessageList: React.FC<RoomMessageListProps> = ({
   onEnterRoom,
 }) => {
   const classes = useStyles();
-  const scrollableRootRef = React.useRef<HTMLDivElement>(null);
+  const scrollableRootRef = React.useRef<HTMLDivElement | null>(null);
+
   const chatId = React.useMemo(() => getChatId(chat), [chat]);
 
   const [viewerData, setViewerData] = React.useState<ViewerData>({
@@ -120,6 +121,14 @@ const RoomMessageList: React.FC<RoomMessageListProps> = ({
     onLoadMore: () => chat && onNeedMoreMessages(chat),
     disabled: false,
   });
+
+  const rootRefSetter = React.useCallback(
+    (node: HTMLDivElement) => {
+      rootRef(node);
+      scrollableRootRef.current = node;
+    },
+    [rootRef]
+  );
 
   useInterval(
     () => {
@@ -179,18 +188,25 @@ const RoomMessageList: React.FC<RoomMessageListProps> = ({
         setViewerData={setViewerData}
       />
     ));
-  }, [messages.length, apiUrl, user, users, chat?.groupId]);
-  console.count("RoomMessageList - render");
+  }, [
+    (messages || []).filter((it) => it._id).length,
+    apiUrl,
+    user,
+    users,
+    chat?.groupId,
+    scrollDownButton,
+    isVisible,
+  ]);
+  // console.count("RoomMessageList - render");
+  // console.log("scrollDownButton", scrollDownButton);
+
   return (
     <>
       <MessageDateIndicator date={isVisible} />
 
       <CardContent
         className={classes.messageListOuter}
-        ref={(node) => {
-          rootRef(node);
-          (scrollableRootRef as any).current = node;
-        }}
+        ref={rootRefSetter}
         onScroll={handleRootScroll}
       >
         <List className={classes.messageList}>
@@ -225,16 +241,17 @@ const RoomMessageList: React.FC<RoomMessageListProps> = ({
     </>
   );
 };
+export default RoomMessageList;
 
-export default React.memo(RoomMessageList, (prevProps, nextProps) => {
-  console.log("RoomMessageList memo");
-  return (
-    (prevProps.chat?.messages || []).filter((it) => it._id) ===
-      (nextProps.chat?.messages || []).filter((it) => it._id) &&
-    prevProps.loading === nextProps.loading &&
-    prevProps.user === nextProps.user &&
-    prevProps.users === nextProps.users &&
-    prevProps.chat?.groupId === nextProps.chat?.groupId &&
-    prevProps.apiUrl === nextProps.apiUrl
-  );
-});
+// export default React.memo(RoomMessageList, (prevProps, nextProps) => {
+//   console.log("RoomMessageList memo");
+//   return (
+//     (prevProps.chat?.messages || []).filter((it) => it._id) ===
+//       (nextProps.chat?.messages || []).filter((it) => it._id) &&
+//     prevProps.loading === nextProps.loading &&
+//     prevProps.user === nextProps.user &&
+//     prevProps.users === nextProps.users &&
+//     prevProps.chat?.groupId === nextProps.chat?.groupId &&
+//     prevProps.apiUrl === nextProps.apiUrl
+//   );
+// });
