@@ -1,6 +1,6 @@
+import { Box } from "@mui/material";
+import { createStyles, makeStyles } from "@mui/styles";
 import * as React from "react";
-import { Box,  } from "@mui/material";
-import { makeStyles,createStyles } from '@mui/styles';
 
 const useStyles = makeStyles(() =>
   createStyles({

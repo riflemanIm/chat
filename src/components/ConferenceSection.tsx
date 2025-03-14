@@ -1,8 +1,8 @@
 import * as React from "react";
+import { ChatRoom } from "../types";
 import Conference from "./Conference";
 import ConferenceCall from "./ConferenceCall";
 import ConferenceControls from "./ConferenceControls";
-import { ChatRoom } from "../types";
 
 interface ConferenceSectionProps {
   conference: {

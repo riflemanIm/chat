@@ -1,36 +1,36 @@
-import React, { useCallback } from "react";
+import DeleteIcon from "@mui/icons-material/Delete";
+import FileCopyIcon from "@mui/icons-material/FileCopy";
+import RecentActorsIcon from "@mui/icons-material/RecentActors";
+import VideocamIcon from "@mui/icons-material/Videocam";
 import {
   Box,
   Card,
   CardContent,
   Divider,
+  IconButton,
   ListItemIcon,
   Menu,
   MenuItem,
-  IconButton,
 } from "@mui/material";
 import { Theme } from "@mui/material/styles";
-import { makeStyles, createStyles } from "@mui/styles";
-import FileCopyIcon from "@mui/icons-material/FileCopy";
-import DeleteIcon from "@mui/icons-material/Delete";
-import VideocamIcon from "@mui/icons-material/Videocam";
-import RecentActorsIcon from "@mui/icons-material/RecentActors";
-import Entry from "./Entry";
-import RoomHeader from "./RoomHeader";
-import RoomMessageList from "./RoomMessageList";
+import { createStyles, makeStyles } from "@mui/styles";
+import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import {
   ChatMessage,
   ChatRoom,
+  ConferenceData,
+  Contact,
+  ContactGather,
+  Group,
   SendMessage,
   SetTyping,
   User,
-  Contact,
-  ConferenceData,
-  Group,
-  ContactGather,
   VisitData,
 } from "../types";
+import Entry from "./Entry";
+import RoomHeader from "./RoomHeader";
+import RoomMessageList from "./RoomMessageList";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({

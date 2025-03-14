@@ -1,36 +1,36 @@
-import React, { useState } from "react";
+import CallEndIcon from "@mui/icons-material/CallEnd";
+import DeleteIcon from "@mui/icons-material/Delete";
+import GroupIcon from "@mui/icons-material/Group";
+import PauseIcon from "@mui/icons-material/Pause";
+import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import {
   Avatar,
-  CardHeader,
   Button,
-  Popover,
+  CardHeader,
   IconButton,
+  Popover,
   Typography,
 } from "@mui/material";
 import { Theme } from "@mui/material/styles";
-import GroupIcon from "@mui/icons-material/Group";
+import { createStyles, makeStyles } from "@mui/styles";
+import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
-import CallEndIcon from "@mui/icons-material/CallEnd";
-import PauseIcon from "@mui/icons-material/Pause";
-import PersonAddIcon from "@mui/icons-material/PersonAdd";
-import DeleteIcon from "@mui/icons-material/Delete";
-import ContactStatus from "./ContactStatus";
-import ContactList from "./ContactList";
-import AddContact from "./AddContact";
 import {
   ChatRoom,
+  ConferenceData,
   Contact,
   Group,
   SetTyping,
   User,
-  ConferenceData,
   VisitData,
 } from "../types";
-import { makeStyles, createStyles } from "@mui/styles";
-import { combineURLs, formatTime, isEmpty } from "../utils/common";
+import { combineURLs, isEmpty } from "../utils/common";
+import AddContact from "./AddContact";
+import ConferenceButton from "./ConferenceButton";
 import ConferenceTime from "./ConferenceTime";
 import ConfirmDialogSlide from "./ConfirmDialogSlide";
-import ConferenceButton from "./ConferenceButton";
+import ContactList from "./ContactList";
+import ContactStatus from "./ContactStatus";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({

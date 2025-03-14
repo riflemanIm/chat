@@ -1,7 +1,7 @@
-import React from "react";
 import { Container } from "@mui/material";
-import { makeStyles } from "@mui/styles";
 import { Theme } from "@mui/material/styles";
+import { makeStyles } from "@mui/styles";
+import React from "react";
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {

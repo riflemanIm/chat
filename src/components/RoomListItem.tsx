@@ -1,4 +1,3 @@
-import React, { useMemo } from "react";
 import {
   Avatar,
   Badge,
@@ -9,12 +8,13 @@ import {
   ListItemText,
 } from "@mui/material";
 import { Theme } from "@mui/material/styles";
-import { makeStyles, createStyles, withStyles } from "@mui/styles";
+import { createStyles, makeStyles, withStyles } from "@mui/styles";
+import React from "react";
 
 import GroupIcon from "@mui/icons-material/Group";
-import { combineURLs, formatTime, getChatName } from "../utils/common";
 import { useTranslation } from "react-i18next";
 import { ChatMessage, ChatRoom, Contact, Group, SetTyping } from "../types";
+import { combineURLs, formatTime, getChatName } from "../utils/common";
 
 type RoomListItemProps = {
   apiUrl: string;

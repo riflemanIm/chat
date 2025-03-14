@@ -1,5 +1,5 @@
-import React, { useEffect } from "react";
 import { makeStyles } from "@mui/styles";
+import React, { useEffect } from "react";
 import { ConferenceData } from "../types";
 function updateUrlParameter(url: string, param: string, value: string) {
   const regex = new RegExp("(" + param + "=)[^&]+");
@@ -12,8 +12,8 @@ const useStyles = makeStyles(() => ({
   root: {
     width: "100%",
     height: "100%",
-    borderRadius: 4
-  }
+    borderRadius: 4,
+  },
 }));
 
 type ConferenceProps = {
@@ -25,7 +25,7 @@ type ConferenceProps = {
 const Conference: React.FC<ConferenceProps> = ({
   conference,
   onClose,
-  langCode = "en"
+  langCode = "en",
 }: ConferenceProps) => {
   const classes = useStyles();
   const ref = React.useRef<HTMLIFrameElement>(null);
@@ -46,7 +46,7 @@ const Conference: React.FC<ConferenceProps> = ({
             // "loginFail",
             "callFail",
             "hangUp",
-            "remoteHangUp"
+            "remoteHangUp",
             // "onParticipantLeft"
           ].includes(type)
         )

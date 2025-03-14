@@ -1,6 +1,6 @@
-import React from "react";
-import { Alert, Fade, Box, Typography } from "@mui/material";
+import { Alert, Box, Fade, Typography } from "@mui/material";
 import dayjs from "dayjs";
+import React from "react";
 
 interface DateIndicatorProps {
   date: string;

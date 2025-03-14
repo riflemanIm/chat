@@ -1,15 +1,15 @@
-import React, { forwardRef, memo, useMemo } from 'react';
-import { Box, Link, ListItem, Typography } from '@mui/material';
+import { Box, Link, ListItem, Typography } from "@mui/material";
+import React, { forwardRef, memo } from "react";
 
-import { DoneAll, Done } from '@mui/icons-material';
-import { combineURLs, formatTime } from '../utils/common';
-import MessageContent from './MessageContent';
-import { Alert } from '@mui/material';
-import { useTranslation } from 'react-i18next';
-import { ChatMessage, Contact, PrivateMessage, User } from '../types';
+import { Done, DoneAll } from "@mui/icons-material";
+import { Alert } from "@mui/material";
+import { useTranslation } from "react-i18next";
+import { ChatMessage, Contact, PrivateMessage, User } from "../types";
+import { combineURLs, formatTime } from "../utils/common";
+import MessageContent from "./MessageContent";
 
 /* styles */
-import useStyles from './styles';
+import useStyles from "./styles";
 
 type MessageProps = {
   apiUrl: string;
@@ -30,10 +30,8 @@ const wrapMessage = (
   classes: ReturnType<typeof useStyles>,
   isUserFirst: boolean,
   isUserLast: boolean,
-  onContextMenu:
-    | ((event: React.MouseEvent<HTMLElement>) => void)
-    | undefined,
-  child: React.JSX.Element,
+  onContextMenu: ((event: React.MouseEvent<HTMLElement>) => void) | undefined,
+  child: React.JSX.Element
 ) => {
   const { messageType } = message;
 
@@ -41,12 +39,12 @@ const wrapMessage = (
     isUserFirst && isUserLast
       ? `${classes.message} ${classes.firstMessage} ${classes.lastMessage}`
       : isUserFirst
-      ? `${classes.message} ${classes.firstMessage}`
-      : isUserLast
-      ? `${classes.message} ${classes.lastMessage}`
-      : classes.message;
+        ? `${classes.message} ${classes.firstMessage}`
+        : isUserLast
+          ? `${classes.message} ${classes.lastMessage}`
+          : classes.message;
 
-  if (messageType === 'file') {
+  if (messageType === "file") {
     return (
       <Link
         className={`${className} ${classes.file}`}
@@ -61,13 +59,13 @@ const wrapMessage = (
     );
   }
   const isMedia =
-    messageType === 'image' ||
-    messageType === 'video' ||
-    messageType === 'video_conference';
+    messageType === "image" ||
+    messageType === "video" ||
+    messageType === "video_conference";
   return (
     <Box
       display="flex"
-      flexDirection={isMedia ? 'column' : 'row'}
+      flexDirection={isMedia ? "column" : "row"}
       flexWrap="wrap"
       className={className}
       onContextMenu={onContextMenu}
@@ -96,21 +94,19 @@ const Message = memo(
     } = props;
     //console.log('message', message);
 
-    if (message.messageType === 'notify') {
+    if (message.messageType === "notify") {
       // Уведомление - особый случай
       const content =
-        message.content[0] === '{'
+        message.content[0] === "{"
           ? JSON.parse(message.content)
           : message.content;
       return (
         <ListItem className={classes.rootNotify} ref={ref}>
           <Alert
             //ref={refOnMess}
-            severity={
-              typeof content === 'string' ? 'info' : content.severity
-            }
+            severity={typeof content === "string" ? "info" : content.severity}
           >
-            {typeof content === 'string' ? content : content.message}
+            {typeof content === "string" ? content : content.message}
           </Alert>
         </ListItem>
       );
@@ -126,9 +122,9 @@ const Message = memo(
             //ref={refOnMess}
           >
             {message.userId === user.userId
-              ? t('CHAT.MESSAGE.REVOKED.YOU')
+              ? t("CHAT.MESSAGE.REVOKED.YOU")
               : `${message.revokeUserName} ${t(
-                  'CHAT.MESSAGE.REVOKED.CONTACT',
+                  "CHAT.MESSAGE.REVOKED.CONTACT"
                 )}`}
           </Typography>
         </ListItem>
@@ -141,11 +137,11 @@ const Message = memo(
       <ListItem
         ref={ref}
         className={
-          message.messageType === 'video_conference'
+          message.messageType === "video_conference"
             ? classes.rootNotify
             : isMine
-            ? classes.rootUser
-            : classes.rootContact
+              ? classes.rootUser
+              : classes.rootContact
         }
       >
         {wrapMessage(
@@ -181,11 +177,11 @@ const Message = memo(
                 {formatTime(message.cdate)}
               </span>
             </div>
-          </React.Fragment>,
+          </React.Fragment>
         )}
       </ListItem>
     );
-  }),
+  })
 );
-Message.displayName = 'Message';
+Message.displayName = "Message";
 export default Message;

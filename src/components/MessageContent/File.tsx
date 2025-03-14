@@ -1,18 +1,18 @@
-import React from "react";
 import { Avatar, Box } from "@mui/material";
 import { Theme } from "@mui/material/styles";
-import { makeStyles, createStyles } from "@mui/styles";
-import { getFileMeta, splitFileName } from "../../utils/common";
+import { createStyles, makeStyles } from "@mui/styles";
+import React from "react";
 import { ChatMessage } from "../../types";
+import { getFileMeta, splitFileName } from "../../utils/common";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     fileIcon: {
-      fontSize: "0.75rem"
+      fontSize: "0.75rem",
     },
     fileBody: {
-      paddingLeft: theme.spacing(1.2)
-    }
+      paddingLeft: theme.spacing(1.2),
+    },
   })
 );
 type FileProps = {

@@ -1,14 +1,14 @@
-import React, { ChangeEvent, FC, useContext, useState } from "react";
 import List from "@mui/material/List";
 import { Theme } from "@mui/material/styles";
+import React, { ChangeEvent, FC, useContext, useState } from "react";
 
 import { Card, CardHeader, Divider, TextField } from "@mui/material";
-import RoomListItem from "./RoomListItem";
-import { chatRoomComparer, getChatId, getChatName } from "../utils/common";
-import { useTranslation } from "react-i18next";
-import { ChatRoom, Contact, Group, SetTyping, User } from "../types";
 import { makeStyles } from "@mui/styles";
+import { useTranslation } from "react-i18next";
 import { RestContext } from "../context/RestContext";
+import { ChatRoom, Contact, Group, SetTyping, User } from "../types";
+import { chatRoomComparer, getChatId, getChatName } from "../utils/common";
+import RoomListItem from "./RoomListItem";
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {

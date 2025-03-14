@@ -1,24 +1,18 @@
-import React, {
-  ChangeEvent,
-  KeyboardEvent,
-  useCallback,
-  useState,
-  useRef,
-} from "react";
+import { InsertEmoticon, Send } from "@mui/icons-material";
 import {
   Box,
+  CircularProgress,
   IconButton,
   InputAdornment,
-  TextField,
   Popover,
   SvgIcon,
-  CircularProgress,
+  TextField,
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import { Send, InsertEmoticon } from "@mui/icons-material";
-import Emoji from "./Emoji";
+import React, { KeyboardEvent, useCallback, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ChatRoom, ImageSize, SendMessage } from "../types";
+import Emoji from "./Emoji";
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 const ALLOWED_FILE_TYPES = {

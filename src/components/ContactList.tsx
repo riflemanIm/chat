@@ -1,4 +1,4 @@
-import React from 'react';
+import StarIcon from "@mui/icons-material/Star";
 import {
   Avatar,
   List,
@@ -6,17 +6,17 @@ import {
   ListItemButton,
   ListItemText,
   ListProps,
-} from '@mui/material';
-import StarIcon from '@mui/icons-material/Star';
-import ContactStatus from './ContactStatus';
-import { makeStyles } from '@mui/styles';
-import { Contact } from '../types';
-import { combineURLs } from '../utils/common';
+} from "@mui/material";
+import { makeStyles } from "@mui/styles";
+import React from "react";
+import { Contact } from "../types";
+import { combineURLs } from "../utils/common";
+import ContactStatus from "./ContactStatus";
 
 const useStyles = makeStyles(() => ({
   star: {
-    fontSize: '0.85rem',
-    verticalAlign: 'middle',
+    fontSize: "0.85rem",
+    verticalAlign: "middle",
   },
 }));
 
@@ -35,7 +35,7 @@ const ContactList: React.FC<ListProps & ContactListProps> = (
 
   return (
     <List {...listProps} aria-label="contacts">
-      {contacts.map(contact => (
+      {contacts.map((contact) => (
         <ListItemButton
           key={contact.userId}
           onClick={() => onContactClick && onContactClick(contact)}
@@ -43,28 +43,19 @@ const ContactList: React.FC<ListProps & ContactListProps> = (
           <ListItemAvatar>
             <Avatar
               alt={contact.username}
-              src={
-                contact.avatar
-                  ? combineURLs(apiUrl, contact.avatar)
-                  : ''
-              }
+              src={contact.avatar ? combineURLs(apiUrl, contact.avatar) : ""}
             />
           </ListItemAvatar>
           <ListItemText
             primary={
               <span>
-                {contact.username}{' '}
+                {contact.username}{" "}
                 {owner === contact.userId && (
-                  <StarIcon
-                    className={classes.star}
-                    color="primary"
-                  />
+                  <StarIcon className={classes.star} color="primary" />
                 )}
               </span>
             }
-            secondary={
-              <ContactStatus contact={contact} isTyping={false} />
-            }
+            secondary={<ContactStatus contact={contact} isTyping={false} />}
           />
         </ListItemButton>
       ))}

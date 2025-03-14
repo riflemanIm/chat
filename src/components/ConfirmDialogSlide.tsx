@@ -1,19 +1,19 @@
-import * as React from 'react';
-import Button from '@mui/material/Button';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import Slide from '@mui/material/Slide';
-import { TransitionProps } from '@mui/material/transitions';
-import { Typography } from '@mui/material';
-import { useTranslation } from 'react-i18next';
+import { Typography } from "@mui/material";
+import Button from "@mui/material/Button";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import Slide from "@mui/material/Slide";
+import { TransitionProps } from "@mui/material/transitions";
+import * as React from "react";
+import { useTranslation } from "react-i18next";
 
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     children: React.ReactElement<any, any>;
   },
-  ref: React.Ref<unknown>,
+  ref: React.Ref<unknown>
 ) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
@@ -54,10 +54,10 @@ export default function ConfirmDialogSlide({
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose} color="primary">
-            {t('CHAT.BUT_CLOSE')}
+            {t("CHAT.BUT_CLOSE")}
           </Button>
           <Button onClick={handleCloseOk} color="warning">
-            {t('CHAT.BUT_CONFIRM')}
+            {t("CHAT.BUT_CONFIRM")}
           </Button>
         </DialogActions>
       </Dialog>

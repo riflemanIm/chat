@@ -1,8 +1,8 @@
-import * as React from "react";
-import { Box, IconButton, Tooltip } from "@mui/material";
 import ChatIcon from "@mui/icons-material/Chat";
-import CheckAudiVideoPerm from "./CheckAudiVideoPerm";
+import { Box, IconButton, Tooltip } from "@mui/material";
+import * as React from "react";
 import { useTranslation } from "react-i18next";
+import CheckAudiVideoPerm from "./CheckAudiVideoPerm";
 
 interface ConferenceControlsProps {
   isMobile: boolean;

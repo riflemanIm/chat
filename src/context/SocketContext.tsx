@@ -3,22 +3,22 @@ import { Socket } from "socket.io-client";
 import { useSocket } from "../hooks/useSocket";
 import {
   ChatData,
+  ConferenceData,
   Contact,
   Group,
+  GroupMap,
   GroupMessage,
   JoinGroup,
   MessageOperation,
   PrivateMessage,
+  SetActiveRoom,
   SetTyping,
   User,
-  ConferenceData,
-  SetActiveRoom,
-  GroupMap,
   VisitData,
 } from "../types";
+import { allGather } from "../utils/common";
 import { ChatContext, ChatDispatch } from "./ChatContext";
 import { getRefreshToken } from "./RestContext";
-import { allGather } from "../utils/common";
 
 // Формат ответа сервера
 interface ServerRes {

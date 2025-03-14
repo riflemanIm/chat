@@ -1,8 +1,8 @@
-import React from 'react';
-import { makeStyles } from '@mui/styles';
-import { Theme } from '@mui/material/styles';
-import { ChatMessage } from '../../types';
-import { combineURLs } from '../../utils/common';
+import { Theme } from "@mui/material/styles";
+import { makeStyles } from "@mui/styles";
+import React from "react";
+import { ChatMessage } from "../../types";
+import { combineURLs } from "../../utils/common";
 
 const useStyles = makeStyles((theme: Theme) => ({
   mediaContent: {
@@ -10,7 +10,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     borderRadius: theme.spacing(1.2),
     maxWidth: 284,
     height: 190,
-    [theme.breakpoints.down('sm')]: {
+    [theme.breakpoints.down("sm")]: {
       maxWidth: 250,
       height: 170,
     },
@@ -29,13 +29,10 @@ const Video: React.FC<VideoProps> = ({
   isConference,
 }: VideoProps) => {
   const classes = useStyles();
-  let src = '';
+  let src = "";
   if (isConference) {
     const meta = JSON.parse(message.content);
-    src = combineURLs(
-      apiUrl,
-      `/static/conf/${meta.visitId}/${meta.name}`,
-    );
+    src = combineURLs(apiUrl, `/static/conf/${meta.visitId}/${meta.name}`);
   } else src = combineURLs(apiUrl, `/static/file/${message.content}`);
   return (
     <video

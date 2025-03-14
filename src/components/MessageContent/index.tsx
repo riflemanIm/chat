@@ -1,8 +1,8 @@
-import React from 'react';
-import File from './File';
-import Video from './Video';
-import Image from './Image';
-import { ChatMessage } from '../../types';
+import React from "react";
+import { ChatMessage } from "../../types";
+import File from "./File";
+import Image from "./Image";
+import Video from "./Video";
 
 type MessageProps = {
   apiUrl: string;
@@ -15,18 +15,18 @@ const MessageContent: React.FC<MessageProps> = ({
   setViewerData,
 }: MessageProps) => {
   switch (message.messageType) {
-    case 'text':
+    case "text":
       return <React.Fragment>{message.content}</React.Fragment>;
-    case 'video':
-    case 'video_conference':
+    case "video":
+    case "video_conference":
       return (
         <Video
           message={message}
           apiUrl={apiUrl}
-          isConference={message.messageType === 'video_conference'}
+          isConference={message.messageType === "video_conference"}
         />
       );
-    case 'image':
+    case "image":
       return (
         <Image
           message={message}
@@ -34,7 +34,7 @@ const MessageContent: React.FC<MessageProps> = ({
           setViewerData={setViewerData}
         />
       );
-    case 'file':
+    case "file":
       return <File message={message} />;
   }
   return null;

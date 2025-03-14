@@ -1,23 +1,22 @@
-import React from "react";
 import {
-  Box,
+  Backdrop,
   CardContent,
   CircularProgress,
   List,
-  Backdrop,
   ListItem,
 } from "@mui/material";
 import { Theme } from "@mui/material/styles";
 import { makeStyles } from "@mui/styles";
+import React from "react";
 import useInfiniteScroll from "react-infinite-scroll-hook";
 import useInterval from "../hooks/useInterval";
 
-import Message from "./Message";
-import { MessageScrollButton } from "./MessageScrollButton";
-import { MessageDateIndicator } from "./MessageDateIndicator";
 import { useMessageScroll } from "../hooks/useMessageScroll";
-import { ChatMessage, ChatRoom, User, ContactGather } from "../types";
+import { ChatMessage, ChatRoom, ContactGather, User } from "../types";
 import { getChatId } from "../utils/common";
+import Message from "./Message";
+import { MessageDateIndicator } from "./MessageDateIndicator";
+import { MessageScrollButton } from "./MessageScrollButton";
 
 const useStyles = makeStyles((theme: Theme) => ({
   messageListOuter: {

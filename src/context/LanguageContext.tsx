@@ -1,21 +1,21 @@
 import React, {
-  useContext,
-  useReducer,
   Dispatch,
   createContext,
+  useContext,
   useMemo,
-} from 'react';
-import { I18nextProvider } from 'react-i18next';
-import i18n from '../translations';
+  useReducer,
+} from "react";
+import { I18nextProvider } from "react-i18next";
+import i18n from "../translations";
 
 interface LanguageState {
   language: Language;
 }
 
-type Language = 'ru' | 'fr' | 'en';
+type Language = "ru" | "fr" | "en";
 
 type Action = {
-  type: 'RU' | 'FR' | 'EN';
+  type: "RU" | "FR" | "EN";
   payload: Language;
 };
 interface LanguageContextI {
@@ -28,30 +28,27 @@ const languageWithoutCountry = (): Language => {
 };
 
 export const LANGUAGES: Record<string, Language> = {
-  RU: 'ru',
-  FR: 'fr',
-  EN: 'en',
+  RU: "ru",
+  FR: "fr",
+  EN: "en",
 };
 
 export const LANGUAGES_ACTIONS = {
-  SET_RUSSIAN: 'SET_RUSSIAN',
-  SET_ENGLISH: 'SET_ENGLISH',
-  SET_FRENCH: 'SET_FRENCH',
+  SET_RUSSIAN: "SET_RUSSIAN",
+  SET_ENGLISH: "SET_ENGLISH",
+  SET_FRENCH: "SET_FRENCH",
 };
 
-const reducer = (
-  state: LanguageState,
-  action: Action,
-): LanguageState => {
+const reducer = (state: LanguageState, action: Action): LanguageState => {
   switch (action.type) {
     case LANGUAGES_ACTIONS.SET_ENGLISH:
-      i18n.changeLanguage('en');
+      i18n.changeLanguage("en");
       return { language: LANGUAGES.EN };
     case LANGUAGES_ACTIONS.SET_FRENCH:
-      i18n.changeLanguage('fr');
+      i18n.changeLanguage("fr");
       return { language: LANGUAGES.FR };
     case LANGUAGES_ACTIONS.SET_RUSSIAN:
-      i18n.changeLanguage('ru');
+      i18n.changeLanguage("ru");
       return { language: LANGUAGES.RU };
     default:
       return state;
@@ -69,9 +66,10 @@ export const AppLanguageProvider: React.FC<AppLanguageProviderProps> = ({
   const [languageState, dispatchLanguage] = useReducer(reducer, {
     language: languageWithoutCountry(),
   });
-  const value = useMemo(() => ({ languageState, dispatchLanguage }), [
-    languageState,
-  ]);
+  const value = useMemo(
+    () => ({ languageState, dispatchLanguage }),
+    [languageState]
+  );
   return (
     <LanguageContext.Provider value={value}>
       <I18nextProvider i18n={i18n}>{children}</I18nextProvider>

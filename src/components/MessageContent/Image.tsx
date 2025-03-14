@@ -1,9 +1,9 @@
 import React from "react";
 
 import { Theme } from "@mui/material/styles";
-import { ChatMessage } from "../../types";
-import { makeStyles, createStyles } from "@mui/styles";
+import { createStyles, makeStyles } from "@mui/styles";
 import { AspectRatio } from "react-aspect-ratio";
+import { ChatMessage } from "../../types";
 import { combineURLs } from "../../utils/common";
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({

@@ -1,13 +1,13 @@
+import { Alert, Snackbar } from "@mui/material";
 import React from "react";
 import { ChatContext } from "../context/ChatContext";
-import { Alert, Snackbar } from "@mui/material";
 
 const ChatAlert: React.FC = () => {
   // const { t } = useTranslation();
   //const [havePermissions, setHavePermissions] = useState(false);
   const {
     state: { error, success },
-    dispatch
+    dispatch,
   } = React.useContext(ChatContext);
 
   const handleClose = () => {

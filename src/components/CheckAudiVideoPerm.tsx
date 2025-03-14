@@ -1,11 +1,11 @@
-import React from "react";
-import { Button, IconButton, Tooltip, useMediaQuery } from "@mui/material";
-import { Theme } from "@mui/material/styles";
 import SettingsSuggestIcon from "@mui/icons-material/SettingsSuggest";
 import SettingsVoiceIcon from "@mui/icons-material/SettingsVoice";
 import VideocamIcon from "@mui/icons-material/Videocam";
-import { ChatContext } from "../context/ChatContext";
+import { Button, IconButton, Tooltip, useMediaQuery } from "@mui/material";
+import { Theme } from "@mui/material/styles";
+import React from "react";
 import { useTranslation } from "react-i18next";
+import { ChatContext } from "../context/ChatContext";
 
 type CheckAudiVideoPermProps = {
   audio: boolean;
