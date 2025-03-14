@@ -7,8 +7,6 @@ declare type RoomListProps = {
     contacts: Contact[];
     typing: SetTyping | null;
     onChangeChat: (chat: ChatRoom) => void;
-    activeChatUserId?: number | null;
-    activeGroupId?: number | null;
 };
 declare const RoomList: FC<RoomListProps>;
 export default RoomList;

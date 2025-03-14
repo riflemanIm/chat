@@ -1,5 +1,5 @@
-import React from 'react';
-import { ChatMessage, Contact, User } from '../types';
+import React from "react";
+import { ChatMessage, Contact, User } from "../types";
 declare type MessageProps = {
     apiUrl: string;
     user: User;

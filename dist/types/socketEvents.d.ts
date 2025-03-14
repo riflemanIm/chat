@@ -23,4 +23,6 @@ export declare const SOCKET_EVENTS: {
     readonly ADD_CONTACT: "addContact";
     readonly DELETE_CONTACT: "deleteContact";
     readonly UPDATE_USER_INFO: "updateUserInfo";
+    readonly ADD_GROUP_MEMBER: "addGroupMember";
+    readonly DELETE_GROUP_MEMBER: "deleteGroupMember";
 };

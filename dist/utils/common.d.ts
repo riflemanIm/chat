@@ -1,4 +1,4 @@
-import { ChatRoom, ContactGather, GroupGather } from '../types';
+import { ChatRoom, ContactGather, Group, GroupGather } from "../types";
 export declare function isEmpty(value: unknown): boolean;
 export declare function isContainStr(str1: string, str2: string): boolean;
 /**
@@ -6,7 +6,7 @@ export declare function isContainStr(str1: string, str2: string): boolean;
  * @param text
  */
 export declare function isUrl(text: string): boolean;
-export declare const compareDates: (d1: Date | string | undefined, d2: Date | string | undefined, period?: 'day' | 'millisecond' | 'second' | 'minute' | 'hour' | 'month' | 'year' | 'date' | 'milliseconds' | 'seconds' | 'minutes' | 'hours' | 'days', count?: number) => boolean;
+export declare const compareDates: (d1: Date | string | undefined, d2: Date | string | undefined, period?: "day" | "millisecond" | "second" | "minute" | "hour" | "month" | "year" | "date" | "milliseconds" | "seconds" | "minutes" | "hours" | "days", count?: number) => boolean;
 /**
  * Формитирование времени сообщения
  * @param time
@@ -34,7 +34,8 @@ export declare function splitFileName(name: string): {
 };
 export declare const getChatId: (chat: ChatRoom | null) => string | null;
 export declare const getChatName: (chat: ChatRoom) => string;
-export declare const allMessCount: (chats: GroupGather | ContactGather) => any;
+export declare const isGroup: (chat: ChatRoom) => chat is Group;
+export declare const allGather: (chats: GroupGather | ContactGather) => any;
 export declare const chatRoomComparer: (a: ChatRoom, b: ChatRoom) => number;
 export declare const getParam: (param: string) => string | null;
 export declare const combineURLs: (baseURL: string, relativeURL: string, queryParams?: Record<string, string> | undefined) => string;

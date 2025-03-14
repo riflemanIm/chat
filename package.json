@@ -34,7 +34,7 @@
     "classnames": "^2.3.2",
     "react-aspect-ratio": "^1.1.6",
     "react-infinite-scroll-hook": "^5.0.1",
-    "socket.io-client": "^4.8.0"
+    "socket.io-client": "^4.8.1"
   },
   "peerDependencies": {
     "@emotion/core": "*",

@@ -1,6 +1,6 @@
-import React from 'react';
-import { ListProps } from '@mui/material';
-import { Contact } from '../types';
+import { ListProps } from "@mui/material";
+import React from "react";
+import { Contact } from "../types";
 declare type ContactListProps = {
     apiUrl: string;
     contacts: Contact[];

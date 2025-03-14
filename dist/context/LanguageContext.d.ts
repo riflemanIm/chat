@@ -1,10 +1,10 @@
-import React, { Dispatch } from 'react';
+import React, { Dispatch } from "react";
 interface LanguageState {
     language: Language;
 }
-declare type Language = 'ru' | 'fr' | 'en';
+declare type Language = "ru" | "fr" | "en";
 declare type Action = {
-    type: 'RU' | 'FR' | 'EN';
+    type: "RU" | "FR" | "EN";
     payload: Language;
 };
 interface LanguageContextI {

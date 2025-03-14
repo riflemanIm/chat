@@ -1,5 +1,5 @@
-import React from 'react';
-import { AlertColor } from '@mui/material';
+import { AlertColor } from "@mui/material";
+import React from "react";
 declare type AlertDialogProps = {
     children: React.JSX.Element | React.JSX.Element[] | string;
     open: boolean;
