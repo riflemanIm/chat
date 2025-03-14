@@ -18,7 +18,7 @@ import ChatAlert from "../components/Alert";
 import ChatContainer from "../components/ChatContainer";
 import ChatLayout from "../components/ChatLayout";
 import ConferenceSection from "../components/ConferenceSection";
-import { isGroup } from "../utils/common";
+import { getParam, isEmpty, isGroup } from "../utils/common";
 
 // Отключили проигрыш звука
 // const getRingAudio = (): HTMLAudioElement => {
@@ -47,8 +47,13 @@ export const ChatPage: React.FC<ChatPageProps> = ({
 
   const { socket } = React.useContext(SocketContext);
 
-  const { apiUrl, pageSize, getPrivateMessages, getGroupMessages } =
-    React.useContext(RestContext);
+  const {
+    apiUrl,
+    pageSize,
+    getPrivateMessages,
+    getGroupMessages,
+    getUserByMmk,
+  } = React.useContext(RestContext);
 
   // const [ringAudio] = React.useState(getRingAudio());
 
@@ -274,6 +279,63 @@ export const ChatPage: React.FC<ChatPageProps> = ({
     [emitSocketEvent]
   );
 
+  // First useEffect for initialization
+  React.useEffect(() => {
+    let mounted = true;
+    const initializeChat = async () => {
+      if (activeGroupId != null && !isEmpty(state.groupGather)) {
+        const onlyChat = Object.values(state.groupGather).find(
+          (item) => item.groupId === activeGroupId
+        );
+
+        if (!isEmpty(onlyChat) && mounted) {
+          onChangeChat(onlyChat);
+          return;
+        }
+      }
+
+      if (activeChatUserId != null && !isEmpty(state.contactGather)) {
+        const chat = Object.values(state.contactGather).find(
+          (item) => item.userId === activeChatUserId
+        );
+        if (chat && mounted) {
+          onChangeChat(chat);
+          return;
+        }
+      }
+
+      const mmkId = getParam("mmk");
+      const guid = getParam("guid");
+
+      if ((mmkId != null || guid != null) && !isEmpty(state.contactGather)) {
+        //console.log("mmkId", mmkId);
+        try {
+          const userId = await getUserByMmk(mmkId, guid);
+          if (userId != null) {
+            const chat = Object.values(state.contactGather).find(
+              (item) => item.userId === userId
+            );
+            if (chat && mounted) {
+              onChangeChat(chat);
+              return;
+            }
+          }
+        } catch (error) {
+          console.error("Failed to get user by MMK:", error);
+        }
+      }
+      return () => {
+        mounted = false;
+      };
+    };
+
+    initializeChat();
+
+    return () => {
+      mounted = false;
+    };
+  }, [state.user.userId]);
+
   // Отключили проигрыш звука
   // React.useEffect(() => {
   //   if (
@@ -285,7 +347,7 @@ export const ChatPage: React.FC<ChatPageProps> = ({
   //   else ringAudio.pause();
   // }, [state.conference.data?.id, state.conference.ringPlayed]);
 
-  console.log("--state--", state);
+  // console.log("--state--", state);
   const renderRoom = state.activeRoom != null && (
     <Room
       apiUrl={apiUrl}
@@ -341,8 +403,6 @@ export const ChatPage: React.FC<ChatPageProps> = ({
               contacts={Object.values(state.contactGather)}
               typing={state.typing}
               onChangeChat={onChangeChat}
-              activeChatUserId={activeChatUserId}
-              activeGroupId={activeGroupId}
             />
           )
         }

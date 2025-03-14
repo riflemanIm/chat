@@ -199,7 +199,7 @@ const RoomMessageList: React.FC<RoomMessageListProps> = ({
     isVisible,
   ]);
   // console.count("RoomMessageList - render");
-  console.log("unreadCount", unreadCount);
+  // console.log("unreadCount", unreadCount);
 
   return (
     <>

@@ -1,16 +1,10 @@
-import React, { ChangeEvent, FC, useContext, useEffect, useState } from "react";
+import React, { ChangeEvent, FC, useContext, useState } from "react";
 import List from "@mui/material/List";
 import { Theme } from "@mui/material/styles";
 
 import { Card, CardHeader, Divider, TextField } from "@mui/material";
 import RoomListItem from "./RoomListItem";
-import {
-  chatRoomComparer,
-  getChatId,
-  getChatName,
-  getParam,
-  isEmpty,
-} from "../utils/common";
+import { chatRoomComparer, getChatId, getChatName } from "../utils/common";
 import { useTranslation } from "react-i18next";
 import { ChatRoom, Contact, Group, SetTyping, User } from "../types";
 import { makeStyles } from "@mui/styles";
@@ -39,8 +33,6 @@ type RoomListProps = {
   contacts: Contact[];
   typing: SetTyping | null;
   onChangeChat: (chat: ChatRoom) => void;
-  activeChatUserId?: number | null;
-  activeGroupId?: number | null;
 };
 
 const filterChats = (chats: ChatRoom[], filter: string | null): ChatRoom[] => {
@@ -96,13 +88,11 @@ const RoomList: FC<RoomListProps> = ({
   contacts,
   typing,
   onChangeChat,
-  activeChatUserId,
-  activeGroupId,
 }: RoomListProps) => {
   console.log(" -- RoomList -- ");
   const classes = useStyles();
   const { t } = useTranslation();
-  const { apiUrl, getUserByMmk } = useContext(RestContext);
+  const { apiUrl } = useContext(RestContext);
 
   // Add search state
   const [searchFilter, setSearchFilter] = useState<string>("");
@@ -112,47 +102,6 @@ const RoomList: FC<RoomListProps> = ({
     () => getRoomList(user.userId, groups, contacts, searchFilter),
     [user.userId, groups, contacts, searchFilter]
   );
-
-  // First useEffect for initialization
-  useEffect(() => {
-    let mounted = true;
-
-    const initializeChat = async () => {
-      if (activeChatUserId != null && !isEmpty(contacts)) {
-        const chat = contacts.find((item) => item.userId === activeChatUserId);
-        if (chat && mounted) {
-          onChangeChat(chat);
-          return;
-        }
-      }
-
-      const mmkId = getParam("mmk");
-      const guid = getParam("guid");
-
-      if ((mmkId != null || guid != null) && !isEmpty(contacts)) {
-        try {
-          const userId = await getUserByMmk(mmkId, guid);
-          if (userId != null && mounted) {
-            const chat = contacts.find((item) => item.userId === userId);
-            if (chat) onChangeChat(chat);
-          }
-        } catch (error) {
-          console.error("Failed to get user by MMK:", error);
-        }
-      }
-
-      if (activeGroupId != null && !isEmpty(groups)) {
-        const group = groups.find((item) => item.groupId === activeGroupId);
-        if (group && mounted) onChangeChat(group);
-      }
-    };
-
-    initializeChat();
-
-    return () => {
-      mounted = false;
-    };
-  }, [activeChatUserId, activeGroupId, getUserByMmk, onChangeChat]);
 
   const onSearchChange = (e: ChangeEvent<HTMLInputElement>): void => {
     setSearchFilter(e.target.value);
