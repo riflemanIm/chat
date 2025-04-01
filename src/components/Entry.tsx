@@ -18,7 +18,7 @@ const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 const ALLOWED_FILE_TYPES = {
   image: ["image/jpeg", "image/png", "image/gif", "image/bmp"],
   video: ["video/mp4", "video/webm"],
-  document: ["application/pdf"],
+  file: ["application/pdf"],
 };
 
 const MAX_IMAGE_DIMENSION = 335;
