@@ -5202,7 +5202,8 @@ var ChatPage = function ChatPage(_ref) {
           groupId: chat.groupId,
           _id: lastMessage._id
         });
-      } else if (chat.userId === lastMessage.userId) {
+        //} else if (chat.userId === lastMessage.userId) {
+      } else {
         dispatch({
           type: "MARK_PRIVATE_MESSAGES_READ",
           payload: chat.userId
