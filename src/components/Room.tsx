@@ -1,13 +1,10 @@
 import DeleteIcon from "@mui/icons-material/Delete";
 import FileCopyIcon from "@mui/icons-material/FileCopy";
-import RecentActorsIcon from "@mui/icons-material/RecentActors";
-import VideocamIcon from "@mui/icons-material/Videocam";
 import {
   Box,
   Card,
   CardContent,
   Divider,
-  IconButton,
   ListItemIcon,
   Menu,
   MenuItem,
@@ -141,43 +138,6 @@ const Room: React.FC<RoomProps> = (props: RoomProps) => {
   return (
     <Card elevation={1} className={classes.root}>
       <Box display="flex" flexDirection="row">
-        {chat && isMobile && (
-          <Box
-            sx={{
-              position: "absolute",
-              overflow: "hidden",
-              top: user?.role && [3, 4].includes(user.role) ? -56 : -12,
-              left: user?.role && [3, 4].includes(user.role) ? 32 : 218,
-            }}
-          >
-            <Box
-              display="flex"
-              flexDirection="row"
-              columnGap={3}
-              my={3}
-              sx={{
-                position: "relative",
-              }}
-            >
-              <IconButton
-                aria-label="exit room"
-                sx={{
-                  color: "#fff",
-                  background: "#000",
-                  "&:hover": {
-                    background: "#eee",
-                    color: "#000",
-                    boxShadow: "none",
-                  },
-                }}
-                onClick={() => props.onExitRoom && props.onExitRoom(chat)}
-              >
-                {conference?.id ? <VideocamIcon /> : <RecentActorsIcon />}
-              </IconButton>
-            </Box>
-          </Box>
-        )}
-
         <RoomHeader
           apiUrl={apiUrl}
           user={user}

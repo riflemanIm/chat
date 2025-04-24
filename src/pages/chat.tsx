@@ -390,11 +390,11 @@ export const ChatPage: React.FC<ChatPageProps> = ({
               conference={state.conference}
               onClose={onConferencePause}
               onAccept={onConferenceCallAccept}
-              isMobile={isMobile}
               user={state.user}
-              chatOld={state.chatOld}
+              activeRoom={state.activeRoom}
               onChangeChat={onChangeChat}
               apiUrl={apiUrl}
+              isMobile={isMobile}
             />
           ) : (
             <RoomList
@@ -408,6 +408,11 @@ export const ChatPage: React.FC<ChatPageProps> = ({
           )
         }
         chatRoom={renderRoom}
+        activeRoom={state.activeRoom}
+        user={state.user}
+        onExitRoom={onExitActiveRoom}
+        onChangeChat={onChangeChat}
+        chatOld={state.chatOld}
       />
       <ChatAlert />
     </ChatContainer>

@@ -13,7 +13,7 @@ interface ConferenceSectionProps {
   onAccept: (conference: any) => void;
   isMobile: boolean;
   user: any;
-  chatOld: ChatRoom | null;
+  activeRoom: ChatRoom | null;
   onChangeChat: (chat: ChatRoom) => void;
   apiUrl: string;
 }
@@ -24,7 +24,7 @@ export const ConferenceSection: React.FC<ConferenceSectionProps> = ({
   onAccept,
   isMobile,
   user,
-  chatOld,
+  activeRoom,
   onChangeChat,
   apiUrl,
 }) => {
@@ -38,12 +38,8 @@ export const ConferenceSection: React.FC<ConferenceSectionProps> = ({
           onClose={onClose}
           langCode={user.langCode}
         />
-        {(!chatOld || !isMobile) && (
-          <ConferenceControls
-            isMobile={isMobile}
-            user={user}
-            onBackToChat={() => chatOld && onChangeChat(chatOld)}
-          />
+        {((!activeRoom && isMobile) || !isMobile) && (
+          <ConferenceControls user={user} />
         )}
       </>
     );

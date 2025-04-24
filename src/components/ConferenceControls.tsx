@@ -1,22 +1,13 @@
-import ChatIcon from "@mui/icons-material/Chat";
-import { Box, IconButton, Tooltip } from "@mui/material";
+import { Box } from "@mui/material";
 import * as React from "react";
-import { useTranslation } from "react-i18next";
 import CheckAudiVideoPerm from "./CheckAudiVideoPerm";
+import { User } from "../types";
 
 interface ConferenceControlsProps {
-  isMobile: boolean;
-  user: any;
-  onBackToChat: () => void;
+  user: User;
 }
 
-const ConferenceControls: React.FC<ConferenceControlsProps> = ({
-  isMobile,
-  user,
-  onBackToChat,
-}) => {
-  const { t } = useTranslation();
-
+const ConferenceControls: React.FC<ConferenceControlsProps> = ({ user }) => {
   return (
     <Box
       sx={(theme) => ({
@@ -42,25 +33,6 @@ const ConferenceControls: React.FC<ConferenceControlsProps> = ({
       >
         <CheckAudiVideoPerm audio={true} video={false} />
         <CheckAudiVideoPerm audio={false} video={true} />
-        {isMobile && (
-          <Tooltip title={t("CHAT.CONFERENCE.BACK")}>
-            <IconButton
-              sx={{
-                color: "#fff",
-                background: "#000",
-                "&:hover": {
-                  background: "#eee",
-                  color: "#000",
-                  boxShadow: "none",
-                },
-              }}
-              onClick={onBackToChat}
-              size="large"
-            >
-              <ChatIcon />
-            </IconButton>
-          </Tooltip>
-        )}
       </Box>
     </Box>
   );
