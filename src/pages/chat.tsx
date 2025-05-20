@@ -385,7 +385,7 @@ export const ChatPage: React.FC<ChatPageProps> = ({
         conferenceActive={!!state.conference.data?.id}
         hideRooms={hideRooms}
         contactsList={
-          state.conference.data?.id != null ? (
+          state.conference.data?.id != null && activeGroupId == null ? (
             <ConferenceSection
               conference={state.conference}
               onClose={onConferencePause}
