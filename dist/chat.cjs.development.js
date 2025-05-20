@@ -15,8 +15,6 @@ var iconsMaterial = require('@mui/icons-material');
 var reactAspectRatio = require('react-aspect-ratio');
 var DeleteIcon = _interopDefault(require('@mui/icons-material/Delete'));
 var FileCopyIcon = _interopDefault(require('@mui/icons-material/FileCopy'));
-var RecentActorsIcon = _interopDefault(require('@mui/icons-material/RecentActors'));
-var VideocamIcon = _interopDefault(require('@mui/icons-material/Videocam'));
 var CallEndIcon = _interopDefault(require('@mui/icons-material/CallEnd'));
 var GroupIcon = _interopDefault(require('@mui/icons-material/Group'));
 var PauseIcon = _interopDefault(require('@mui/icons-material/Pause'));
@@ -36,7 +34,8 @@ var Slide = _interopDefault(require('@mui/material/Slide'));
 var useInfiniteScroll = _interopDefault(require('react-infinite-scroll-hook'));
 var List = _interopDefault(require('@mui/material/List'));
 var axios = _interopDefault(require('axios'));
-var ChatIcon = _interopDefault(require('@mui/icons-material/Chat'));
+var RecentActorsIcon = _interopDefault(require('@mui/icons-material/RecentActors'));
+var VideocamIcon = _interopDefault(require('@mui/icons-material/Videocam'));
 var SettingsSuggestIcon = _interopDefault(require('@mui/icons-material/SettingsSuggest'));
 var SettingsVoiceIcon = _interopDefault(require('@mui/icons-material/SettingsVoice'));
 var io = _interopDefault(require('socket.io-client'));
@@ -1816,7 +1815,7 @@ var MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 var ALLOWED_FILE_TYPES = {
   image: ["image/jpeg", "image/png", "image/gif", "image/bmp"],
   video: ["video/mp4", "video/webm"],
-  document: ["application/pdf"]
+  file: ["application/pdf"]
 };
 var MAX_IMAGE_DIMENSION = 335;
 var useStyles$9 = /*#__PURE__*/styles.makeStyles(function () {
@@ -3084,7 +3083,6 @@ var Room = function Room(props) {
     conferenceJoined = props.conferenceJoined,
     loading = props.loading,
     pageSize = props.pageSize,
-    isMobile = props.isMobile,
     onEnterRoom = props.onEnterRoom;
   var classes = useStyles$d();
   var _useTranslation = reactI18next.useTranslation(),
@@ -3114,36 +3112,7 @@ var Room = function Room(props) {
   }, /*#__PURE__*/React__default.createElement(material.Box, {
     display: "flex",
     flexDirection: "row"
-  }, chat && isMobile && /*#__PURE__*/React__default.createElement(material.Box, {
-    sx: {
-      position: "absolute",
-      overflow: "hidden",
-      top: user != null && user.role && [3, 4].includes(user.role) ? -56 : -12,
-      left: user != null && user.role && [3, 4].includes(user.role) ? 32 : 218
-    }
-  }, /*#__PURE__*/React__default.createElement(material.Box, {
-    display: "flex",
-    flexDirection: "row",
-    columnGap: 3,
-    my: 3,
-    sx: {
-      position: "relative"
-    }
-  }, /*#__PURE__*/React__default.createElement(material.IconButton, {
-    "aria-label": "exit room",
-    sx: {
-      color: "#fff",
-      background: "#000",
-      "&:hover": {
-        background: "#eee",
-        color: "#000",
-        boxShadow: "none"
-      }
-    },
-    onClick: function onClick() {
-      return props.onExitRoom && props.onExitRoom(chat);
-    }
-  }, conference != null && conference.id ? /*#__PURE__*/React__default.createElement(VideocamIcon, null) : /*#__PURE__*/React__default.createElement(RecentActorsIcon, null)))), /*#__PURE__*/React__default.createElement(RoomHeader, {
+  }, /*#__PURE__*/React__default.createElement(RoomHeader, {
     apiUrl: apiUrl,
     user: user,
     chat: chat,
@@ -4341,33 +4310,73 @@ var ChatLayout = function ChatLayout(_ref) {
     conferenceActive = _ref.conferenceActive,
     hideRooms = _ref.hideRooms,
     contactsList = _ref.contactsList,
-    chatRoom = _ref.chatRoom;
+    chatRoom = _ref.chatRoom,
+    activeRoom = _ref.activeRoom,
+    user = _ref.user,
+    onExitRoom = _ref.onExitRoom,
+    onChangeChat = _ref.onChangeChat,
+    chatOld = _ref.chatOld;
   if (isMobile) {
-    return /*#__PURE__*/React__default.createElement(React__default.Fragment, null, contactsList, chatRoom);
+    return /*#__PURE__*/React__default.createElement(React__default.Fragment, null, conferenceActive && /*#__PURE__*/React__default.createElement(material.Box, {
+      sx: {
+        position: "absolute",
+        overflow: "hidden",
+        zIndex: 1400,
+        top: user != null && user.role && [3, 4].includes(user.role) ? -56 : -12,
+        left: user != null && user.role && [3, 4].includes(user.role) ? 32 : 218
+      }
+    }, /*#__PURE__*/React__default.createElement(material.Box, {
+      display: "flex",
+      flexDirection: "row",
+      columnGap: 3,
+      my: 3,
+      sx: {
+        position: "relative"
+      }
+    }, /*#__PURE__*/React__default.createElement(material.IconButton, {
+      "aria-label": "exit room",
+      sx: {
+        color: "#fff",
+        background: "#000",
+        "&:hover": {
+          background: "#eee",
+          color: "#000",
+          boxShadow: "none"
+        }
+      },
+      onClick: function onClick() {
+        if (activeRoom && onExitRoom) onExitRoom(activeRoom);else if (chatOld && onChangeChat) {
+          console.log("onChangeChat");
+          onChangeChat(chatOld);
+        }
+      }
+    }, activeRoom ? /*#__PURE__*/React__default.createElement(VideocamIcon, null) : /*#__PURE__*/React__default.createElement(RecentActorsIcon, null)))), contactsList, chatRoom);
   }
-  return /*#__PURE__*/React__default.createElement(material.Grid, {
+  return /*#__PURE__*/React__default.createElement(React__default.Fragment, null, /*#__PURE__*/React__default.createElement(material.Grid2, {
     container: true,
     spacing: 1,
     sx: {
       height: "100%"
     }
-  }, (conferenceActive || !hideRooms) && /*#__PURE__*/React__default.createElement(material.Grid, {
-    item: true,
-    sm: conferenceActive ? 6 : 4,
-    lg: conferenceActive ? 6 : 4,
-    xl: conferenceActive ? 6 : 3,
+  }, (conferenceActive || !hideRooms) && /*#__PURE__*/React__default.createElement(material.Grid2, {
+    size: {
+      sm: conferenceActive ? 6 : 4,
+      lg: conferenceActive ? 6 : 4,
+      xl: conferenceActive ? 6 : 3
+    },
     sx: {
       height: "100%"
     }
-  }, contactsList), /*#__PURE__*/React__default.createElement(material.Grid, {
-    item: true,
-    sm: conferenceActive ? 6 : hideRooms ? 12 : 8,
-    lg: conferenceActive ? 6 : hideRooms ? 12 : 8,
-    xl: conferenceActive ? 6 : hideRooms ? 12 : 9,
+  }, contactsList), /*#__PURE__*/React__default.createElement(material.Grid2, {
+    size: {
+      sm: conferenceActive ? 6 : hideRooms ? 12 : 8,
+      lg: conferenceActive ? 6 : hideRooms ? 12 : 8,
+      xl: conferenceActive ? 6 : hideRooms ? 12 : 9
+    },
     sx: {
       height: "100%"
     }
-  }, chatRoom));
+  }, chatRoom)));
 };
 
 var CheckAudiVideoPerm = function CheckAudiVideoPerm(_ref) {
@@ -4446,11 +4455,7 @@ var CheckAudiVideoPerm = function CheckAudiVideoPerm(_ref) {
 };
 
 var ConferenceControls = function ConferenceControls(_ref) {
-  var isMobile = _ref.isMobile,
-    user = _ref.user,
-    onBackToChat = _ref.onBackToChat;
-  var _useTranslation = reactI18next.useTranslation(),
-    t = _useTranslation.t;
+  var user = _ref.user;
   return /*#__PURE__*/React.createElement(material.Box, {
     sx: function sx(theme) {
       var _ref2;
@@ -4479,21 +4484,7 @@ var ConferenceControls = function ConferenceControls(_ref) {
   }), /*#__PURE__*/React.createElement(CheckAudiVideoPerm, {
     audio: false,
     video: true
-  }), isMobile && /*#__PURE__*/React.createElement(material.Tooltip, {
-    title: t("CHAT.CONFERENCE.BACK")
-  }, /*#__PURE__*/React.createElement(material.IconButton, {
-    sx: {
-      color: "#fff",
-      background: "#000",
-      "&:hover": {
-        background: "#eee",
-        color: "#000",
-        boxShadow: "none"
-      }
-    },
-    onClick: onBackToChat,
-    size: "large"
-  }, /*#__PURE__*/React.createElement(ChatIcon, null)))));
+  })));
 };
 
 var ConferenceSection = function ConferenceSection(_ref) {
@@ -4502,8 +4493,7 @@ var ConferenceSection = function ConferenceSection(_ref) {
     onAccept = _ref.onAccept,
     isMobile = _ref.isMobile,
     user = _ref.user,
-    chatOld = _ref.chatOld,
-    onChangeChat = _ref.onChangeChat,
+    activeRoom = _ref.activeRoom,
     apiUrl = _ref.apiUrl;
   if (!conference.data) return null;
   if (conference.joined) {
@@ -4511,12 +4501,8 @@ var ConferenceSection = function ConferenceSection(_ref) {
       conference: conference.data,
       onClose: onClose,
       langCode: user.langCode
-    }), (!chatOld || !isMobile) && /*#__PURE__*/React.createElement(ConferenceControls, {
-      isMobile: isMobile,
-      user: user,
-      onBackToChat: function onBackToChat() {
-        return chatOld && onChangeChat(chatOld);
-      }
+    }), (!activeRoom && isMobile || !isMobile) && /*#__PURE__*/React.createElement(ConferenceControls, {
+      user: user
     }));
   }
   return /*#__PURE__*/React.createElement(ConferenceCall, {
@@ -5418,15 +5404,15 @@ var ChatPage = function ChatPage(_ref) {
     isMobile: isMobile,
     conferenceActive: !!((_state$conference$dat = state.conference.data) != null && _state$conference$dat.id),
     hideRooms: hideRooms,
-    contactsList: ((_state$conference$dat2 = state.conference.data) == null ? void 0 : _state$conference$dat2.id) != null ? /*#__PURE__*/React.createElement(ConferenceSection, {
+    contactsList: ((_state$conference$dat2 = state.conference.data) == null ? void 0 : _state$conference$dat2.id) != null && activeGroupId == null ? /*#__PURE__*/React.createElement(ConferenceSection, {
       conference: state.conference,
       onClose: onConferencePause,
       onAccept: onConferenceCallAccept,
-      isMobile: isMobile,
       user: state.user,
-      chatOld: state.chatOld,
+      activeRoom: state.activeRoom,
       onChangeChat: onChangeChat,
-      apiUrl: apiUrl
+      apiUrl: apiUrl,
+      isMobile: isMobile
     }) : /*#__PURE__*/React.createElement(RoomList, {
       user: state.user,
       activeRoom: state.activeRoom,
@@ -5435,7 +5421,12 @@ var ChatPage = function ChatPage(_ref) {
       typing: state.typing,
       onChangeChat: onChangeChat
     }),
-    chatRoom: renderRoom
+    chatRoom: renderRoom,
+    activeRoom: state.activeRoom,
+    user: state.user,
+    onExitRoom: onExitActiveRoom,
+    onChangeChat: onChangeChat,
+    chatOld: state.chatOld
   }), /*#__PURE__*/React.createElement(ChatAlert, null));
 };
 

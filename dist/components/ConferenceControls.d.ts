@@ -1,8 +1,7 @@
 import * as React from "react";
+import { User } from "../types";
 interface ConferenceControlsProps {
-    isMobile: boolean;
-    user: any;
-    onBackToChat: () => void;
+    user: User;
 }
 declare const ConferenceControls: React.FC<ConferenceControlsProps>;
 export default ConferenceControls;

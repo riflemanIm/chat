@@ -9,7 +9,7 @@ interface ConferenceSectionProps {
     onAccept: (conference: any) => void;
     isMobile: boolean;
     user: any;
-    chatOld: ChatRoom | null;
+    activeRoom: ChatRoom | null;
     onChangeChat: (chat: ChatRoom) => void;
     apiUrl: string;
 }
