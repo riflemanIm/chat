@@ -39,7 +39,7 @@ export const ChatPage: React.FC<ChatPageProps> = ({
   ...props
 }: ChatPageProps) => {
   const isMobile = useMediaQuery((theme: Theme) =>
-    theme.breakpoints.down("sm")
+    theme.breakpoints.down("md")
   );
 
   // Update context usage

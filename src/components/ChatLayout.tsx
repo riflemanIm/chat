@@ -86,26 +86,32 @@ const ChatLayout: React.FC<ChatLayoutProps> = ({
       <Grid container spacing={1} sx={{ height: "100%" }}>
         {(conferenceActive || !hideRooms) && (
           <Grid
-            size={{
-              sm: conferenceActive ? 6 : 4,
-              lg: conferenceActive ? 6 : 4,
-              xl: conferenceActive ? 6 : 3,
-            }}
+            size={
+              activeRoom
+                ? {
+                    sm: conferenceActive ? 6 : 4,
+                    lg: conferenceActive ? 6 : 4,
+                    xl: conferenceActive ? 6 : 3,
+                  }
+                : 12
+            }
             sx={{ height: "100%" }}
           >
             {contactsList}
           </Grid>
         )}
-        <Grid
-          size={{
-            sm: conferenceActive ? 6 : hideRooms ? 12 : 8,
-            lg: conferenceActive ? 6 : hideRooms ? 12 : 8,
-            xl: conferenceActive ? 6 : hideRooms ? 12 : 9,
-          }}
-          sx={{ height: "100%" }}
-        >
-          {chatRoom}
-        </Grid>
+        {activeRoom && (
+          <Grid
+            size={{
+              sm: conferenceActive ? 6 : hideRooms ? 12 : 8,
+              lg: conferenceActive ? 6 : hideRooms ? 12 : 8,
+              xl: conferenceActive ? 6 : hideRooms ? 12 : 9,
+            }}
+            sx={{ height: "100%" }}
+          >
+            {chatRoom}
+          </Grid>
+        )}
       </Grid>
     </>
   );

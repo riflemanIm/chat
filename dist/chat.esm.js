@@ -4356,15 +4356,15 @@ var ChatLayout = function ChatLayout(_ref) {
       height: "100%"
     }
   }, (conferenceActive || !hideRooms) && /*#__PURE__*/React__default.createElement(Grid2, {
-    size: {
+    size: activeRoom ? {
       sm: conferenceActive ? 6 : 4,
       lg: conferenceActive ? 6 : 4,
       xl: conferenceActive ? 6 : 3
-    },
+    } : 12,
     sx: {
       height: "100%"
     }
-  }, contactsList), /*#__PURE__*/React__default.createElement(Grid2, {
+  }, contactsList), activeRoom && /*#__PURE__*/React__default.createElement(Grid2, {
     size: {
       sm: conferenceActive ? 6 : hideRooms ? 12 : 8,
       lg: conferenceActive ? 6 : hideRooms ? 12 : 8,
@@ -5052,7 +5052,7 @@ var ChatPage = function ChatPage(_ref) {
     hideRooms = _ref$hideRooms === void 0 ? false : _ref$hideRooms,
     props = _objectWithoutPropertiesLoose(_ref, _excluded$1);
   var isMobile = useMediaQuery(function (theme) {
-    return theme.breakpoints.down("sm");
+    return theme.breakpoints.down("md");
   });
   // Update context usage
   var _React$useContext = useContext(ChatContext),
