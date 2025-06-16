@@ -41,12 +41,14 @@ export const SocketContext: React.Context<ISocketContext> =
 type SocketProviderProps = {
   wsUrl: string;
   wsPath: string;
+  baseUrl: string;
   children: React.JSX.Element;
 };
 
 export const SocketProvider: React.FC<SocketProviderProps> = ({
   wsUrl,
   wsPath,
+  baseUrl,
   children,
 }: SocketProviderProps) => {
   const { state, dispatch } = useContext(ChatContext);
@@ -79,7 +81,7 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({
     // listen unauthorized event
     const listener = (msg: string) => {
       console.log("unauthorized msg", msg);
-      getRefreshToken(state.token, state.refreshToken, dispatch);
+      getRefreshToken(state.token, state.refreshToken, dispatch, baseUrl);
     };
     socket?.on("unauthorized", listener);
 

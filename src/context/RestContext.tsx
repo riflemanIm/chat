@@ -20,9 +20,10 @@ export const RestContext: React.Context<IRestContext> =
   createContext(initialContext);
 
 type RestProviderProps = {
-  baseURLApi: string;
+  chatBaseURLApi: string;
   pageSize: number;
   children: React.JSX.Element;
+  baseUrl: string;
 };
 
 export function clearLocalStorage() {
@@ -32,9 +33,9 @@ export function clearLocalStorage() {
   localStorage.removeItem("doctor");
   localStorage.removeItem("chatUser");
 }
-export const signOut = async () => {
+export const signOut = async (baseUrl: string) => {
   try {
-    await axios.post("auth/logout");
+    await axios.post(`${baseUrl}/auth/logout`);
   } catch (error) {
     console.log("ERROR Logout", error);
   }
@@ -46,37 +47,43 @@ export const signOut = async () => {
 export const getRefreshToken = async (
   authToken: string,
   refreshToken: string,
-  dispatch: ChatDispatch
+  dispatch: ChatDispatch,
+  baseUrl: string
 ) => {
   try {
-    const { data } = await axios.post("auth/refreshToken", {
+    const { data } = await axios.post(`${baseUrl}/auth/refreshToken`, {
       authToken,
       refreshToken,
     });
     localStorage.setItem("authToken", data?.authToken);
     localStorage.setItem("refreshToken", data?.refreshToken);
-    window.location.href = "/";
+    //window.location.href = "/";
   } catch (error) {
     console.log("ERROR RefreshToken", error);
-    dispatch({ type: "CLEAR_USER" });
-    signOut();
+    //dispatch({ type: "CLEAR_USER" });
+    //signOut(baseUrl);
   }
 };
 export const RestProvider: React.FC<RestProviderProps> = ({
-  baseURLApi,
+  chatBaseURLApi,
   pageSize,
   children,
+  baseUrl,
 }: RestProviderProps) => {
   const { state, dispatch } = useContext(ChatContext);
   const errorInterceptor = (error: AxiosError) => {
-    if (error.response != null && error.response.status === 401) {
-      getRefreshToken(state.token, state.refreshToken, dispatch);
+    if (
+      state.token &&
+      error.response != null &&
+      error.response.status === 401
+    ) {
+      getRefreshToken(state.token, state.refreshToken, dispatch, baseUrl);
     }
   };
 
   const fetch: AxiosInstance = axios.create({
     timeout: 60000, // Таймаут минута
-    baseURL: baseURLApi,
+    baseURL: chatBaseURLApi,
     headers: {
       "Cache-Control": "no-cache",
       Pragma: "no-cache",
@@ -187,14 +194,14 @@ export const RestProvider: React.FC<RestProviderProps> = ({
 
   const value = useMemo(
     () => ({
-      apiUrl: baseURLApi,
+      apiUrl: chatBaseURLApi,
       pageSize,
       fetch,
       getPrivateMessages,
       getGroupMessages,
       getUserByMmk,
     }),
-    [baseURLApi, pageSize]
+    [chatBaseURLApi, pageSize]
   );
 
   return <RestContext.Provider value={value}>{children}</RestContext.Provider>;

@@ -77,14 +77,14 @@ import { ChatIndex } from './chat';
 Используется для исполнения rest запросов к сервису.
 
 ```HTML
-<RestProvider baseURLApi={config.baseURLApi} pageSize={config.pageSize}>
+<RestProvider chatBaseURLApi={config.chatBaseURLApi} pageSize={config.pageSize}>
     ...
 </RestProvider>
 ```
 
 Свойства:
 
-- `baseURLApi` - URL rest-api чата
+- `chatBaseURLApi` - URL rest-api чата
 - `pageSize` - размер страницы для запроса данных
 
 ### `SocketProvider` - контекст websocket

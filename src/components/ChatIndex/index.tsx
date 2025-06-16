@@ -10,6 +10,7 @@ import { ChatPage } from "../../pages/chat";
 export const ChatIndex: React.FC<ChatProps> = ({
   lang,
   chatBaseURLApi,
+  baseUrl,
   chatWsUrl,
   chatWsPath,
   token,
@@ -19,8 +20,16 @@ export const ChatIndex: React.FC<ChatProps> = ({
   return (
     <AppLanguageProvider>
       <ChatProvider defLang={lang} token={token} refreshToken={refreshToken}>
-        <RestProvider baseURLApi={chatBaseURLApi} pageSize={25}>
-          <SocketProvider wsUrl={chatWsUrl} wsPath={chatWsPath}>
+        <RestProvider
+          chatBaseURLApi={chatBaseURLApi}
+          pageSize={25}
+          baseUrl={baseUrl}
+        >
+          <SocketProvider
+            wsUrl={chatWsUrl}
+            wsPath={chatWsPath}
+            baseUrl={baseUrl}
+          >
             <ChatPage {...props} />
           </SocketProvider>
         </RestProvider>
