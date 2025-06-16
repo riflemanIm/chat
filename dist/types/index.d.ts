@@ -13,6 +13,7 @@ export interface ChatPageProps {
 export interface ChatProps extends ChatPageProps {
     lang: "ru" | "en" | "fr";
     chatBaseURLApi: string;
+    baseUrl: string;
     chatWsUrl: string;
     chatWsPath: string;
     token: string;

@@ -11,12 +11,13 @@ export interface IRestContext {
 }
 export declare const RestContext: React.Context<IRestContext>;
 declare type RestProviderProps = {
-    baseURLApi: string;
+    chatBaseURLApi: string;
     pageSize: number;
     children: React.JSX.Element;
+    baseUrl: string;
 };
 export declare function clearLocalStorage(): void;
-export declare const signOut: () => Promise<void>;
-export declare const getRefreshToken: (authToken: string, refreshToken: string, dispatch: any) => Promise<void>;
+export declare const signOut: (baseUrl: string) => Promise<void>;
+export declare const getRefreshToken: (authToken: string, refreshToken: string, dispatch: any, baseUrl: string) => Promise<void>;
 export declare const RestProvider: React.FC<RestProviderProps>;
 export {};

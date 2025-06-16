@@ -3716,14 +3716,14 @@ function clearLocalStorage() {
   localStorage.removeItem("chatUser");
 }
 var signOut = /*#__PURE__*/function () {
-  var _ref = /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/runtime_1.mark(function _callee() {
+  var _ref = /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/runtime_1.mark(function _callee(baseUrl) {
     return runtime_1.wrap(function _callee$(_context) {
       while (1) {
         switch (_context.prev = _context.next) {
           case 0:
             _context.prev = 0;
             _context.next = 3;
-            return axios.post("auth/logout");
+            return axios.post(baseUrl + "/auth/logout");
           case 3:
             _context.next = 8;
             break;
@@ -3741,12 +3741,12 @@ var signOut = /*#__PURE__*/function () {
       }
     }, _callee, null, [[0, 5]]);
   }));
-  return function signOut() {
+  return function signOut(_x) {
     return _ref.apply(this, arguments);
   };
 }();
 var getRefreshToken = /*#__PURE__*/function () {
-  var _ref2 = /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/runtime_1.mark(function _callee2(authToken, refreshToken, dispatch) {
+  var _ref2 = /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/runtime_1.mark(function _callee2(authToken, refreshToken, dispatch, baseUrl) {
     var _yield$axios$post, data;
     return runtime_1.wrap(function _callee2$(_context2) {
       while (1) {
@@ -3754,7 +3754,7 @@ var getRefreshToken = /*#__PURE__*/function () {
           case 0:
             _context2.prev = 0;
             _context2.next = 3;
-            return axios.post("auth/refreshToken", {
+            return axios.post(baseUrl + "/auth/refreshToken", {
               authToken: authToken,
               refreshToken: refreshToken
             });
@@ -3763,43 +3763,42 @@ var getRefreshToken = /*#__PURE__*/function () {
             data = _yield$axios$post.data;
             localStorage.setItem("authToken", data == null ? void 0 : data.authToken);
             localStorage.setItem("refreshToken", data == null ? void 0 : data.refreshToken);
-            window.location.href = "/";
-            _context2.next = 15;
+            //window.location.href = "/";
+            _context2.next = 12;
             break;
-          case 10:
-            _context2.prev = 10;
+          case 9:
+            _context2.prev = 9;
             _context2.t0 = _context2["catch"](0);
             console.log("ERROR RefreshToken", _context2.t0);
-            dispatch({
-              type: "CLEAR_USER"
-            });
-            signOut();
-          case 15:
+            //dispatch({ type: "CLEAR_USER" });
+            //signOut(baseUrl);
+          case 12:
           case "end":
             return _context2.stop();
         }
       }
-    }, _callee2, null, [[0, 10]]);
+    }, _callee2, null, [[0, 9]]);
   }));
-  return function getRefreshToken(_x, _x2, _x3) {
+  return function getRefreshToken(_x2, _x3, _x4, _x5) {
     return _ref2.apply(this, arguments);
   };
 }();
 var RestProvider = function RestProvider(_ref3) {
-  var baseURLApi = _ref3.baseURLApi,
+  var chatBaseURLApi = _ref3.chatBaseURLApi,
     pageSize = _ref3.pageSize,
-    children = _ref3.children;
+    children = _ref3.children,
+    baseUrl = _ref3.baseUrl;
   var _useContext = useContext(ChatContext),
     state = _useContext.state,
     dispatch = _useContext.dispatch;
   var errorInterceptor = function errorInterceptor(error) {
-    if (error.response != null && error.response.status === 401) {
-      getRefreshToken(state.token, state.refreshToken, dispatch);
+    if (state.token && error.response != null && error.response.status === 401) {
+      getRefreshToken(state.token, state.refreshToken, dispatch, baseUrl);
     }
   };
   var fetch = axios.create({
     timeout: 60000,
-    baseURL: baseURLApi,
+    baseURL: chatBaseURLApi,
     headers: {
       "Cache-Control": "no-cache",
       Pragma: "no-cache",
@@ -3877,7 +3876,7 @@ var RestProvider = function RestProvider(_ref3) {
         }
       }, _callee3, null, [[2, 11, 15, 18]]);
     }));
-    return function (_x4, _x5) {
+    return function (_x6, _x7) {
       return _ref4.apply(this, arguments);
     };
   }(), [dispatch]);
@@ -3940,7 +3939,7 @@ var RestProvider = function RestProvider(_ref3) {
         }
       }, _callee4, null, [[2, 11, 15, 18]]);
     }));
-    return function (_x6) {
+    return function (_x8) {
       return _ref5.apply(this, arguments);
     };
   }(), [dispatch]);
@@ -3981,20 +3980,20 @@ var RestProvider = function RestProvider(_ref3) {
         }
       }, _callee5, null, [[0, 9]]);
     }));
-    return function getUserByMmk(_x7, _x8) {
+    return function getUserByMmk(_x9, _x10) {
       return _ref6.apply(this, arguments);
     };
   }();
   var value = useMemo(function () {
     return {
-      apiUrl: baseURLApi,
+      apiUrl: chatBaseURLApi,
       pageSize: pageSize,
       fetch: fetch,
       getPrivateMessages: getPrivateMessages,
       getGroupMessages: getGroupMessages,
       getUserByMmk: getUserByMmk
     };
-  }, [baseURLApi, pageSize]);
+  }, [chatBaseURLApi, pageSize]);
   return /*#__PURE__*/React__default.createElement(RestContext.Provider, {
     value: value
   }, children);
@@ -4565,6 +4564,7 @@ var SocketProvider = function SocketProvider(_ref) {
   var _state$activeRoom2, _state$activeRoom3;
   var wsUrl = _ref.wsUrl,
     wsPath = _ref.wsPath,
+    baseUrl = _ref.baseUrl,
     children = _ref.children;
   var _useContext = useContext(ChatContext),
     state = _useContext.state,
@@ -4598,7 +4598,7 @@ var SocketProvider = function SocketProvider(_ref) {
     // listen unauthorized event
     var listener = function listener(msg) {
       console.log("unauthorized msg", msg);
-      getRefreshToken(state.token, state.refreshToken, dispatch);
+      getRefreshToken(state.token, state.refreshToken, dispatch, baseUrl);
     };
     socket == null ? void 0 : socket.on("unauthorized", listener);
     // listen chatData event
@@ -5642,10 +5642,11 @@ var AppLanguageProvider = function AppLanguageProvider(_ref) {
   }, children));
 };
 
-var _excluded$2 = ["lang", "chatBaseURLApi", "chatWsUrl", "chatWsPath", "token", "refreshToken"];
+var _excluded$2 = ["lang", "chatBaseURLApi", "baseUrl", "chatWsUrl", "chatWsPath", "token", "refreshToken"];
 var ChatIndex = function ChatIndex(_ref) {
   var lang = _ref.lang,
     chatBaseURLApi = _ref.chatBaseURLApi,
+    baseUrl = _ref.baseUrl,
     chatWsUrl = _ref.chatWsUrl,
     chatWsPath = _ref.chatWsPath,
     token = _ref.token,
@@ -5656,11 +5657,13 @@ var ChatIndex = function ChatIndex(_ref) {
     token: token,
     refreshToken: refreshToken
   }, /*#__PURE__*/React__default.createElement(RestProvider, {
-    baseURLApi: chatBaseURLApi,
-    pageSize: 25
+    chatBaseURLApi: chatBaseURLApi,
+    pageSize: 25,
+    baseUrl: baseUrl
   }, /*#__PURE__*/React__default.createElement(SocketProvider, {
     wsUrl: chatWsUrl,
-    wsPath: chatWsPath
+    wsPath: chatWsPath,
+    baseUrl: baseUrl
   }, /*#__PURE__*/React__default.createElement(ChatPage, props)))));
 };
 
