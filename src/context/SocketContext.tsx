@@ -81,7 +81,7 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({
     // listen unauthorized event
     const listener = (msg: string) => {
       console.log("unauthorized msg", msg);
-      getRefreshToken(state.token, state.refreshToken, dispatch, baseUrl);
+      getRefreshToken(state.token, state.refreshToken, baseUrl);
     };
     socket?.on("unauthorized", listener);
 
