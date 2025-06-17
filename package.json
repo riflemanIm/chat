@@ -1,6 +1,6 @@
 {
   "name": "@pmt/chat",
-  "version": "1.25.17",
+  "version": "1.26.0",
   "description": "PMT Chat. Last global change migrate to MUI6",
   "main": "dist/index.js",
   "module": "dist/chat.esm.js",
@@ -46,10 +46,8 @@
     "@mui/material": "*",
     "@mui/styles": "*",
     "dayjs": "*",
-    "i18next": "*",
     "react": "*",
     "react-dom": "*",
-    "react-i18next": "*",
     "react-router-dom": "*"
   },
   "devDependencies": {

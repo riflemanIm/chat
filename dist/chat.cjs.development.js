@@ -39,7 +39,6 @@ var VideocamIcon = _interopDefault(require('@mui/icons-material/Videocam'));
 var SettingsSuggestIcon = _interopDefault(require('@mui/icons-material/SettingsSuggest'));
 var SettingsVoiceIcon = _interopDefault(require('@mui/icons-material/SettingsVoice'));
 var io = _interopDefault(require('socket.io-client'));
-var i18n = _interopDefault(require('i18next'));
 
 // Этот интерфейс используется для типизации всех ответов от сервера. Когда сервер отправляет данные через сокет, они приходят в таком формате:
 (function (MessageStatus) {
@@ -5402,221 +5401,6 @@ var ChatPage = function ChatPage(_ref) {
   }), /*#__PURE__*/React.createElement(ChatAlert, null));
 };
 
-var CHAT = {
-	STATUS: {
-		ONLINE: "online",
-		OFFLINE: "offline",
-		TYPING: "typing"
-	},
-	MESSAGE: {
-		TYPE: {
-			IMAGE: "Image",
-			VIDEO: "Video",
-			FILE: "File",
-			NOTIFY: "Notification"
-		},
-		MENU: {
-			COPY: "Copy",
-			DELETE: "Delete"
-		},
-		REVOKED: {
-			YOU: "You deleted the message",
-			CONTACT: "deleted the message"
-		}
-	},
-	CONFERENCE: {
-		JOIN: "Join",
-		START: "Start",
-		RESTART: "Recreate the conference",
-		CONFIRM_RECREATE_CONF: "Are you sure you want to re-create the conference?",
-		CONFIRM_FINISH_CONF: "Are you sure you want to end the conference?",
-		PAUSE: "Pause",
-		FINISH: "Finish",
-		BACK: "Back to chat",
-		NotFoundError: "Requested device not found",
-		NotAllowedError: "Permission denied. To allow access to the device, go to the browser settings",
-		ErrorAny: "The device is not configured",
-		ALLOK: "All OK",
-		CheckCamMic: "Check access to microphone and camera",
-		CheckMic: "Check access to microphone",
-		CheckCam: "Check access to camera",
-		UntillTheEnd: "There is still time until the end of the conference",
-		LEFT_TIME: "Time left"
-	},
-	ADD_CONTACT: "Add contact",
-	INPUT_MESSAGE: "Please write a message...",
-	INPUT_SEARCH_CONTACT: "Surname Name",
-	MEMBERS: "members",
-	BUT_CLOSE: "Close",
-	BUT_CONFIRM: "Yes"
-};
-var en = {
-	CHAT: CHAT
-};
-
-var CHAT$1 = {
-	STATUS: {
-		ONLINE: "en ligne",
-		OFFLINE: "hors ligne",
-		TYPING: "imprime"
-	},
-	MESSAGE: {
-		TYPE: {
-			IMAGE: "Image",
-			VIDEO: "Vidéo",
-			FILE: "File",
-			NOTIFY: "Notification"
-		},
-		MENU: {
-			COPY: "Copier",
-			DELETE: "Supprimer"
-		},
-		REVOKED: {
-			YOU: "Vous avez supprimé le message",
-			CONTACT: "message supprimé"
-		}
-	},
-	CONFERENCE: {
-		JOIN: "Rejoindre",
-		START: "Démarrer",
-		RESTART: "Recréer la conférence",
-		CONFIRM_RECREATE_CONF: "êtes-vous sûr de vouloir recréer la conférence?",
-		CONFIRM_FINISH_CONF: "êtes-vous sûr de vouloir terminer la conférence?",
-		PAUSE: "Pause",
-		FINISH: "Terminer",
-		BACK: "Retour au chat",
-		NotFoundError: "Périphérique demandé introuvable",
-		NotAllowedError: "Autorisation refusée. Pour autoriser l'accès à l'appareil, accédez aux paramètres du navigateur",
-		ErrorAny: "L'appareil n'est pas configuré",
-		ALLOK: "Tout va bien",
-		CheckCamMic: "Vérifier l'accès au microphone et à la caméra",
-		CheckMic: "Vérifier l'accès au microphone",
-		CheckCam: "Vérifier l'accès à la caméra",
-		UntillTheEnd: " Il est encore temps jusqu'à la fin de la conférence",
-		LEFT_TIME: "temps restant:"
-	},
-	ADD_CONTACT: "Ajouter un contact",
-	INPUT_MESSAGE: "Veuillez écrire un message...",
-	INPUT_SEARCH_CONTACT: "Surname Name",
-	MEMBERS: "members",
-	BUT_CLOSE: "Fermer",
-	BUT_CONFIRM: "Oui"
-};
-var fr = {
-	CHAT: CHAT$1
-};
-
-var CHAT$2 = {
-	STATUS: {
-		ONLINE: "в сети",
-		OFFLINE: "не в сети",
-		TYPING: "печатает"
-	},
-	MESSAGE: {
-		TYPE: {
-			IMAGE: "Изображение",
-			VIDEO: "Видео",
-			FILE: "Файл",
-			NOTIFY: "Уведомление"
-		},
-		MENU: {
-			COPY: "Копировать",
-			DELETE: "Удалить"
-		},
-		REVOKED: {
-			YOU: "Вы удалили сообщение",
-			CONTACT: "удалил(а) сообщение"
-		}
-	},
-	CONFERENCE: {
-		JOIN: "Присоединиться",
-		START: "Начать",
-		RESTART: "Пересоздать конференцию",
-		CONFIRM_RECREATE_CONF: "Вы уверены что хотите пересоздать конференцию?",
-		CONFIRM_FINISH_CONF: "Вы уверены что хотите завершить конференцию?",
-		PAUSE: "Остановить",
-		FINISH: "Завершить",
-		BACK: "Вернуться в чат",
-		NotFoundError: "Запрошенное устройство не найдено",
-		NotAllowedError: "В доступе  отказано. Чтобы разрешить доступ к устройству зайдите в настройки браузера",
-		ErrorAny: "Устройство не настроено",
-		ALLOK: "Все OK",
-		CheckCamMic: "Проверить доступ к микрофону и камере",
-		CheckMic: "Проверить микрофон",
-		CheckCam: "Проверить камеру",
-		UntillTheEnd: "До окончания конференции осталось",
-		LEFT_TIME: "Осталось"
-	},
-	ADD_CONTACT: "Добавить контакт",
-	INPUT_MESSAGE: "Напишите сообщение...",
-	INPUT_SEARCH_CONTACT: "Фамилия Имя Отчество",
-	MEMBERS: "участников",
-	BUT_CLOSE: "Закрыть",
-	BUT_CONFIRM: "Да"
-};
-var ru = {
-	CHAT: CHAT$2
-};
-
-i18n.addResourceBundle("ru", "translations", ru);
-i18n.addResourceBundle("en", "translations", en);
-i18n.addResourceBundle("fr", "translations", fr);
-
-var languageWithoutCountry = function languageWithoutCountry() {
-  return i18n.language.substring(0, 2);
-};
-var LANGUAGES = {
-  RU: "ru",
-  FR: "fr",
-  EN: "en"
-};
-var LANGUAGES_ACTIONS = {
-  SET_RUSSIAN: "SET_RUSSIAN",
-  SET_ENGLISH: "SET_ENGLISH",
-  SET_FRENCH: "SET_FRENCH"
-};
-var reducer = function reducer(state, action) {
-  switch (action.type) {
-    case LANGUAGES_ACTIONS.SET_ENGLISH:
-      i18n.changeLanguage("en");
-      return {
-        language: LANGUAGES.EN
-      };
-    case LANGUAGES_ACTIONS.SET_FRENCH:
-      i18n.changeLanguage("fr");
-      return {
-        language: LANGUAGES.FR
-      };
-    case LANGUAGES_ACTIONS.SET_RUSSIAN:
-      i18n.changeLanguage("ru");
-      return {
-        language: LANGUAGES.RU
-      };
-    default:
-      return state;
-  }
-};
-var LanguageContext = /*#__PURE__*/React.createContext({});
-var AppLanguageProvider = function AppLanguageProvider(_ref) {
-  var children = _ref.children;
-  var _useReducer = React.useReducer(reducer, {
-      language: languageWithoutCountry()
-    }),
-    languageState = _useReducer[0],
-    dispatchLanguage = _useReducer[1];
-  var value = React.useMemo(function () {
-    return {
-      languageState: languageState,
-      dispatchLanguage: dispatchLanguage
-    };
-  }, [languageState]);
-  return /*#__PURE__*/React__default.createElement(LanguageContext.Provider, {
-    value: value
-  }, /*#__PURE__*/React__default.createElement(reactI18next.I18nextProvider, {
-    i18n: i18n
-  }, children));
-};
-
 var _excluded$2 = ["lang", "chatBaseURLApi", "baseUrl", "chatWsUrl", "chatWsPath", "token", "refreshToken"];
 var ChatIndex = function ChatIndex(_ref) {
   var lang = _ref.lang,
@@ -5627,7 +5411,7 @@ var ChatIndex = function ChatIndex(_ref) {
     token = _ref.token,
     refreshToken = _ref.refreshToken,
     props = _objectWithoutPropertiesLoose(_ref, _excluded$2);
-  return /*#__PURE__*/React__default.createElement(AppLanguageProvider, null, /*#__PURE__*/React__default.createElement(ChatProvider, {
+  return /*#__PURE__*/React__default.createElement(ChatProvider, {
     defLang: lang,
     token: token,
     refreshToken: refreshToken
@@ -5639,7 +5423,7 @@ var ChatIndex = function ChatIndex(_ref) {
     wsUrl: chatWsUrl,
     wsPath: chatWsPath,
     baseUrl: baseUrl
-  }, /*#__PURE__*/React__default.createElement(ChatPage, props)))));
+  }, /*#__PURE__*/React__default.createElement(ChatPage, props))));
 };
 
 exports.AddContact = AddContact;
