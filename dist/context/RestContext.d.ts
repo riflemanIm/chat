@@ -17,7 +17,6 @@ declare type RestProviderProps = {
     baseUrl: string;
 };
 export declare function clearLocalStorage(): void;
-export declare const signOut: (baseUrl: string) => Promise<void>;
-export declare const getRefreshToken: (authToken: string, refreshToken: string, dispatch: any, baseUrl: string) => Promise<void>;
+export declare function getRefreshToken(authToken: string, refreshToken: string, baseUrl: string): Promise<void>;
 export declare const RestProvider: React.FC<RestProviderProps>;
 export {};

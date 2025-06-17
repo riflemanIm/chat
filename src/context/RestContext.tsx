@@ -33,23 +33,14 @@ export function clearLocalStorage() {
   localStorage.removeItem("doctor");
   localStorage.removeItem("chatUser");
 }
-export const signOut = async (baseUrl: string) => {
-  try {
-    await axios.post(`${baseUrl}/auth/logout`);
-  } catch (error) {
-    console.log("ERROR Logout", error);
-  }
 
-  clearLocalStorage();
-  window.location.href = "/";
-};
-
-export const getRefreshToken = async (
+export async function getRefreshToken(
   authToken: string,
   refreshToken: string,
-  dispatch: ChatDispatch,
   baseUrl: string
-) => {
+) {
+  localStorage.removeItem("authToken");
+  localStorage.removeItem("refreshToken");
   try {
     const { data } = await axios.post(`${baseUrl}/auth/refreshToken`, {
       authToken,
@@ -57,13 +48,12 @@ export const getRefreshToken = async (
     });
     localStorage.setItem("authToken", data?.authToken);
     localStorage.setItem("refreshToken", data?.refreshToken);
-    //window.location.href = "/";
   } catch (error) {
     console.log("ERROR RefreshToken", error);
-    //dispatch({ type: "CLEAR_USER" });
-    //signOut(baseUrl);
   }
-};
+  window.location.reload();
+}
+
 export const RestProvider: React.FC<RestProviderProps> = ({
   chatBaseURLApi,
   pageSize,
@@ -77,7 +67,7 @@ export const RestProvider: React.FC<RestProviderProps> = ({
       error.response != null &&
       error.response.status === 401
     ) {
-      getRefreshToken(state.token, state.refreshToken, dispatch, baseUrl);
+      getRefreshToken(state.token, state.refreshToken, baseUrl);
     }
   };
 
