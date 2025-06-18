@@ -25,32 +25,31 @@ type ConferenceProps = {
 const Conference: React.FC<ConferenceProps> = ({
   conference,
   onClose,
-  langCode = "en",
+  langCode = "rus",
 }: ConferenceProps) => {
   const classes = useStyles();
   const ref = React.useRef<HTMLIFrameElement>(null);
-  const confUrl =
-    conference?.url && langCode
-      ? updateUrlParameter(conference?.url, "lang", transLang(langCode))
-      : "";
-
+  // const confUrl =
+  //   conference?.url && langCode
+  //     ? updateUrlParameter(conference?.url, "lang", transLang(langCode))
+  //     : "";
+  const confUrl = conference?.url;
+  console.log("confUrl", confUrl);
+  const TERMINATION_EVENTS = [
+    "connectionFail",
+    "loginFail",
+    "callFail",
+    "hangUp",
+    "remoteHangUp",
+    "logout",
+    "connectionClosed",
+  ];
   useEffect(() => {
     const listener = ({ source, data }: MessageEvent) => {
       if (source === ref.current?.contentWindow) {
         const { type } = data;
 
-        if (
-          [
-            "notSupported",
-            "connectionFail",
-            // "loginFail",
-            "callFail",
-            "hangUp",
-            "remoteHangUp",
-            // "onParticipantLeft"
-          ].includes(type)
-        )
-          onClose(conference);
+        if (TERMINATION_EVENTS.includes(type)) onClose(conference);
       }
     };
     window.addEventListener("message", listener);

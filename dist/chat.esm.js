@@ -389,13 +389,6 @@ var AddContact = function AddContact(props) {
   }));
 };
 
-function updateUrlParameter(url, param, value) {
-  var regex = new RegExp("(" + param + "=)[^&]+");
-  return url.replace(regex, "$1" + value);
-}
-var transLang = function transLang(lang) {
-  return lang === "ru" ? "rus" : lang === "fr" ? "fra" : lang === "en" ? "eng" : "";
-};
 var useStyles$2 = /*#__PURE__*/makeStyles(function () {
   return {
     root: {
@@ -409,10 +402,16 @@ var Conference = function Conference(_ref) {
   var conference = _ref.conference,
     onClose = _ref.onClose,
     _ref$langCode = _ref.langCode,
-    langCode = _ref$langCode === void 0 ? "en" : _ref$langCode;
+    langCode = _ref$langCode === void 0 ? "rus" : _ref$langCode;
   var classes = useStyles$2();
   var ref = React__default.useRef(null);
-  var confUrl = conference != null && conference.url && langCode ? updateUrlParameter(conference == null ? void 0 : conference.url, "lang", transLang(langCode)) : "";
+  // const confUrl =
+  //   conference?.url && langCode
+  //     ? updateUrlParameter(conference?.url, "lang", transLang(langCode))
+  //     : "";
+  var confUrl = conference == null ? void 0 : conference.url;
+  console.log("confUrl", confUrl);
+  var TERMINATION_EVENTS = ["connectionFail", "loginFail", "callFail", "hangUp", "remoteHangUp", "logout", "connectionClosed"];
   useEffect(function () {
     var listener = function listener(_ref2) {
       var _ref$current;
@@ -420,9 +419,7 @@ var Conference = function Conference(_ref) {
         data = _ref2.data;
       if (source === ((_ref$current = ref.current) == null ? void 0 : _ref$current.contentWindow)) {
         var type = data.type;
-        if (["notSupported", "connectionFail",
-        // "loginFail",
-        "callFail", "hangUp", "remoteHangUp"].includes(type)) onClose(conference);
+        if (TERMINATION_EVENTS.includes(type)) onClose(conference);
       }
     };
     window.addEventListener("message", listener);
