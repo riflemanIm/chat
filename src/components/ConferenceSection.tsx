@@ -2,7 +2,6 @@ import * as React from "react";
 import { ChatRoom } from "../types";
 import Conference from "./Conference";
 import ConferenceCall from "./ConferenceCall";
-import ConferenceControls from "./ConferenceControls";
 
 interface ConferenceSectionProps {
   conference: {
@@ -38,9 +37,9 @@ export const ConferenceSection: React.FC<ConferenceSectionProps> = ({
           onClose={onClose}
           langCode={user.langCode}
         />
-        {((!activeRoom && isMobile) || !isMobile) && (
+        {/* {((!activeRoom && isMobile) || !isMobile) && (
           <ConferenceControls user={user} />
-        )}
+        )} */}
       </>
     );
   }
