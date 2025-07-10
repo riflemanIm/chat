@@ -348,7 +348,7 @@ export const ChatPage: React.FC<ChatPageProps> = ({
   //   else ringAudio.pause();
   // }, [state.conference.data?.id, state.conference.ringPlayed]);
 
-  // console.log("--state--", state);
+  console.log("--state--", state);
   const renderRoom = state.activeRoom != null && (
     <Room
       apiUrl={apiUrl}
