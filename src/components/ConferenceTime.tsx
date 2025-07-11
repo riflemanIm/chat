@@ -1,76 +1,50 @@
-import { Box, Typography } from "@mui/material";
 import React, { useEffect, useMemo, useState } from "react";
+import { Box, Typography } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import useCounter from "../hooks/useCounter";
 import AlertDialog from "./AlertDialog";
-//import { useTranslation } from "react-i18next";
 
-const hhMmSs = (totalSeconds: number) => {
-  const hours = Math.floor(totalSeconds / 3600);
-  const strHours = hours < 10 ? `0${hours}` : hours;
-  totalSeconds %= 3600;
-  const minutes = Math.floor(totalSeconds / 60);
-  const strMinutes = minutes < 10 ? `0${minutes}` : minutes;
-  const seconds = totalSeconds % 60;
-  const strSeconds = seconds < 10 ? `0${seconds}` : seconds;
-
-  const strTime = `${strHours}:${strMinutes}:${strSeconds}`;
-  return { hours, minutes, seconds, strTime };
-};
-type AlertModaleProps = {
-  modaleInfo: boolean;
-  setModaleInfo: (vars: boolean) => void;
-  strTime: string;
-};
-const AlertModale: React.FC<AlertModaleProps> = ({
-  modaleInfo,
-  setModaleInfo,
-  strTime,
-}) => {
-  const { t } = useTranslation();
-  return useMemo(
-    () => (
-      <AlertDialog open={modaleInfo} setOpen={setModaleInfo} severity="info">
-        <Typography variant="body1" textAlign="center">
-          {t("CHAT.CONFERENCE.UntillTheEnd")}:
-        </Typography>
-        <Typography variant="h6" textAlign="center">
-          {strTime}
-        </Typography>
-      </AlertDialog>
-    ),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [modaleInfo]
-  );
-};
+function formatHHMMSS(totalSeconds: number) {
+  const hrs = Math.floor(totalSeconds / 3600);
+  const mins = Math.floor((totalSeconds % 3600) / 60);
+  const secs = totalSeconds % 60;
+  const pad = (n: number) => n.toString().padStart(2, "0");
+  return `${pad(hrs)}:${pad(mins)}:${pad(secs)}`;
+}
 
 type ConferenceTimeProps = {
-  finishDate: Date;
+  finishDate: Date | string;
 };
-const ConferenceTime: React.FC<ConferenceTimeProps> = ({
-  finishDate,
-}: ConferenceTimeProps) => {
+
+export default function ConferenceTime({ finishDate }: ConferenceTimeProps) {
   const { t } = useTranslation();
-  const [modaleInfo, setModaleInfo] = useState(false);
-  const currTime = Date.now();
-  // console.log("currentDate server", currentDate);
-  // console.log("currTime client", currTime);
-  const finTime = new Date(finishDate).getTime();
+  const [showAlert, setShowAlert] = useState(false);
 
-  //const diffTimeMin = Math.round((finTime - currTime) / (1000 * 60));
-  const diffTimeSec = Math.round((finTime - currTime) / 1000);
+  // Преобразуем finishDate в timestamp, если он передан как строка
+  const now = Date.now();
+  const finishTimeMs =
+    typeof finishDate === "string"
+      ? new Date(finishDate).getTime()
+      : finishDate.getTime();
 
-  const { counter } = useCounter(diffTimeSec);
-  const { minutes, seconds, strTime } = hhMmSs(diffTimeSec);
+  const initialSec = Math.max(0, Math.round((finishTimeMs - now) / 1000));
+  const { counter, isFinished } = useCounter(initialSec);
 
-  useEffect(() => {
-    if (minutes && minutes === 3 && seconds != null && seconds === 0) {
-      setModaleInfo(true);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+  const { strTime } = useMemo(() => {
+    const str = formatHHMMSS(counter);
+    return { strTime: str };
   }, [counter]);
 
-  if (diffTimeSec < 1) return null;
+  // Показываем модалку за 3 минуты (180 сек) до конца
+  useEffect(() => {
+    if (counter === 180) {
+      setShowAlert(true);
+    }
+  }, [counter]);
+
+  if (isFinished) {
+    return null;
+  }
 
   return (
     <Box textAlign="center">
@@ -80,13 +54,14 @@ const ConferenceTime: React.FC<ConferenceTimeProps> = ({
       <Typography variant="button" component="span">
         {strTime}
       </Typography>
-      <AlertModale
-        modaleInfo={modaleInfo}
-        setModaleInfo={setModaleInfo}
-        strTime={strTime}
-      />
+      <AlertDialog open={showAlert} setOpen={setShowAlert} severity="info">
+        <Typography variant="body1" textAlign="center">
+          {t("CHAT.CONFERENCE.UntillTheEnd")}:
+        </Typography>
+        <Typography variant="h6" textAlign="center">
+          {strTime}
+        </Typography>
+      </AlertDialog>
     </Box>
   );
-};
-
-export default ConferenceTime;
+}
