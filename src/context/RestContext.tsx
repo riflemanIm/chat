@@ -1,13 +1,20 @@
 import axios, { AxiosError, AxiosInstance } from "axios";
 import React, { createContext, useCallback, useContext, useMemo } from "react";
 import { Contact, Group, PagingResponse, PrivateMessage } from "../types";
-import { ChatContext, ChatDispatch } from "./ChatContext";
+import { ChatContext } from "./ChatContext";
 
 export interface IRestContext {
   apiUrl: string;
   pageSize: number;
   fetch: AxiosInstance | null;
-  getPrivateMessages: (chat: Contact) => Promise<void>;
+  getPrivateMessages: (
+    chat: Contact,
+    options?: {
+      search?: string;
+      reset?: boolean;
+      callback?: () => void;
+    }
+  ) => Promise<void>;
   getGroupMessages: (chat: Group) => Promise<void>;
   getUserByMmk: (
     mmkId: string | null,
@@ -94,9 +101,12 @@ export const RestProvider: React.FC<RestProviderProps> = ({
   );
 
   const getPrivateMessages = useCallback(
-    async (chat: Contact, callback?: () => void) => {
+    async (
+      chat: Contact,
+      options?: { search?: string; reset?: boolean; callback?: () => void }
+    ) => {
       const contactId = chat.userId;
-      const current = chat.messages?.length;
+      const current = options?.reset ? 0 : chat.messages?.length;
       try {
         dispatch({ type: "SET_LOADING", payload: true });
         //console.log("/contact/messages");
@@ -105,7 +115,7 @@ export const RestProvider: React.FC<RestProviderProps> = ({
             contactId,
             current,
             pageSize,
-            //search: "02.09.2025",
+            search: options?.search,
           },
         });
 
@@ -118,8 +128,8 @@ export const RestProvider: React.FC<RestProviderProps> = ({
               messages: data as PrivateMessage[],
             },
           });
-          if (callback) {
-            callback();
+          if (options?.callback) {
+            options.callback();
           }
         }
       } catch (error) {
@@ -129,7 +139,7 @@ export const RestProvider: React.FC<RestProviderProps> = ({
         dispatch({ type: "SET_LOADING", payload: false });
       }
     },
-    [dispatch]
+    [dispatch, fetch, pageSize]
   );
 
   const getGroupMessages = useCallback(
@@ -165,7 +175,7 @@ export const RestProvider: React.FC<RestProviderProps> = ({
         dispatch({ type: "SET_LOADING", payload: false });
       }
     },
-    [dispatch]
+    [dispatch, fetch, pageSize]
   );
 
   const getUserByMmk = async (mmkId: string | null, guid: string | null) => {
@@ -193,7 +203,14 @@ export const RestProvider: React.FC<RestProviderProps> = ({
       getGroupMessages,
       getUserByMmk,
     }),
-    [chatBaseURLApi, pageSize]
+    [
+      chatBaseURLApi,
+      pageSize,
+      fetch,
+      getPrivateMessages,
+      getGroupMessages,
+      getUserByMmk,
+    ]
   );
 
   return <RestContext.Provider value={value}>{children}</RestContext.Provider>;

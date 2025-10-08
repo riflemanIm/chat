@@ -91,7 +91,10 @@ export const ChatPage: React.FC<ChatPageProps> = ({
         if (isGroup(chat)) {
           await getGroupMessages(chat);
         } else {
-          await getPrivateMessages(chat as Contact);
+          const searchQuery = state.messageSearch?.trim();
+          await getPrivateMessages(chat as Contact, {
+            search: searchQuery ? searchQuery : undefined,
+          });
         }
       } catch (error) {
         console.error("Failed to load messages:", error);
@@ -100,7 +103,14 @@ export const ChatPage: React.FC<ChatPageProps> = ({
         dispatch({ type: "SET_LOADING", payload: false });
       }
     },
-    [getPrivateMessages, getGroupMessages, dispatch]
+    [getPrivateMessages, getGroupMessages, dispatch, state.messageSearch]
+  );
+
+  const onMessageSearchChange = React.useCallback(
+    (value: string) => {
+      dispatch({ type: "SET_MESSAGE_SEARCH", payload: value });
+    },
+    [dispatch]
   );
 
   const onMessageDelete = React.useCallback(
@@ -358,7 +368,6 @@ export const ChatPage: React.FC<ChatPageProps> = ({
   //     ringAudio.play();
   //   else ringAudio.pause();
   // }, [state.conference.data?.id, state.conference.ringPlayed]);
-
   const renderRoom = state.activeRoom ? (
     <Room
       apiUrl={apiUrl}
@@ -384,6 +393,8 @@ export const ChatPage: React.FC<ChatPageProps> = ({
       onOperatorAdd={onOperatorAdd}
       onLeaveGroup={onLeaveGroup}
       onContactClick={props.onContactInfoClick}
+      messageSearch={state.messageSearch}
+      onMessageSearchChange={onMessageSearchChange}
       isMobile={isMobile}
     />
   ) : null;

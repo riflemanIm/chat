@@ -128,7 +128,9 @@ const RoomList: FC<RoomListProps> = ({
             key={getChatId(chat)}
             apiUrl={apiUrl}
             chat={chat}
-            active={chat === activeRoom}
+            active={
+              activeRoom != null && getChatId(chat) === getChatId(activeRoom)
+            }
             typing={typing}
             onClick={() => onChangeChat(chat)}
           />

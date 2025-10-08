@@ -27,6 +27,7 @@ export interface ChatState {
   refreshToken: string;
   activeRoom: ChatRoom | null;
   chatOld: ChatRoom | null;
+  messageSearch: string;
 
   groupGather: GroupGather;
   userGather: ContactGather;
@@ -59,6 +60,7 @@ const emptyChatState: ChatState = {
   refreshToken: "",
   activeRoom: null, // активная комната
   chatOld: null, // активная комната
+  messageSearch: "",
 
   groupGather: {}, // список групп
   userGather: {}, // список онлайн
@@ -113,6 +115,7 @@ type ChatActionType =
   | "SET_LOADING"
   | "SET_ERROR"
   | "SET_SUCCES"
+  | "SET_MESSAGE_SEARCH"
   | "SET_USER"
   | "SET_TOKEN"
   | "CLEAR_USER"
@@ -542,6 +545,7 @@ const setActiveRoom = (state: ChatState, data: SetActiveRoom) => {
       : data.contactId
         ? state.contactGather[data.contactId]
         : null,
+    messageSearch: "",
   };
 };
 
@@ -697,6 +701,11 @@ function chatReducer(state: ChatState, action: Action): ChatState {
         loading: action.payload as boolean,
         error: "",
       };
+    case "SET_MESSAGE_SEARCH":
+      return {
+        ...state,
+        messageSearch: (action.payload as string) ?? "",
+      };
     case "SET_ERROR":
       return {
         ...state,
@@ -731,6 +740,7 @@ function chatReducer(state: ChatState, action: Action): ChatState {
           ringPlayed: false,
         },
         typing: null,
+        messageSearch: "",
       };
     case "SET_OPERATORS":
       return {

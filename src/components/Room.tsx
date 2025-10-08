@@ -80,6 +80,7 @@ type RoomProps = {
   loading: boolean;
   pageSize: number;
   operators: Contact[];
+  messageSearch: string;
 
   onExitRoom?: (chat: ChatRoom) => void;
   onEnterRoom?: (chat: ChatRoom) => void;
@@ -93,6 +94,7 @@ type RoomProps = {
   onOperatorAdd?: (chat: Group, operator: Contact) => void;
   onLeaveGroup?: (chat: Group) => void;
   onContactClick?: (contact: Contact) => void;
+  onMessageSearchChange?: (value: string) => void;
   isMobile: boolean;
 };
 
@@ -110,6 +112,7 @@ const Room: React.FC<RoomProps> = (props: RoomProps) => {
     pageSize,
     onEnterRoom,
     operators,
+    messageSearch,
     onVideoCall,
     onVideoEnd,
     onConferencePause,
@@ -120,6 +123,7 @@ const Room: React.FC<RoomProps> = (props: RoomProps) => {
     onMessageDelete,
     onTyping,
     onSendMessage,
+    onMessageSearchChange,
   } = props;
 
   const classes = useStyles();
@@ -174,6 +178,8 @@ const Room: React.FC<RoomProps> = (props: RoomProps) => {
           onOperatorAdd={onOperatorAdd}
           onLeaveGroup={onLeaveGroup}
           onContactClick={onContactClick}
+          messageSearch={messageSearch}
+          onMessageSearchChange={onMessageSearchChange}
         />
       </Box>
       <Divider />
@@ -189,6 +195,7 @@ const Room: React.FC<RoomProps> = (props: RoomProps) => {
         onMessageDelete={onMessageDelete}
         setMenuState={setMenuState}
         onEnterRoom={onEnterRoom}
+        messageSearch={messageSearch}
       />
       <Divider />
       <CardContent>

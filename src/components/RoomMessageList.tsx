@@ -65,6 +65,7 @@ interface RoomMessageListProps {
   onMessageDelete?: (chat: ChatRoom, message: ChatMessage) => void;
   setMenuState: React.Dispatch<React.SetStateAction<InitialMenuState>>;
   onEnterRoom?: (chat: ChatRoom) => void;
+  messageSearch: string;
 }
 const RoomMessageList: React.FC<RoomMessageListProps> = ({
   apiUrl,
@@ -78,6 +79,7 @@ const RoomMessageList: React.FC<RoomMessageListProps> = ({
   onMessageDelete,
   setMenuState,
   onEnterRoom,
+  messageSearch,
 }) => {
   const classes = useStyles();
   const scrollableRootRef = React.useRef<HTMLDivElement | null>(null);
@@ -94,19 +96,32 @@ const RoomMessageList: React.FC<RoomMessageListProps> = ({
 
   const [isVisible, setIsVisible] = React.useState<string>("");
 
-  const messages = (chat?.messages || []).map((message, index) => {
-    const key =
-      message._id != null
-        ? String(message._id)
-        : `${message.userId}-${message.cdate}-${index}`;
-    if (!messageRefs.current[key]) {
-      messageRefs.current[key] = React.createRef<HTMLLIElement>();
-    }
-    return {
-      ...message,
-      ref: messageRefs.current[key],
-    };
-  });
+  const messages = React.useMemo(() => {
+    return (chat?.messages || []).map((message, index) => {
+      const key =
+        message._id != null
+          ? String(message._id)
+          : `${message.userId}-${message.cdate}-${index}`;
+      if (!messageRefs.current[key]) {
+        messageRefs.current[key] = React.createRef<HTMLLIElement>();
+      }
+      return {
+        ...message,
+        ref: messageRefs.current[key],
+      };
+    });
+  }, [chat?.messages]);
+
+  const normalizedSearch = messageSearch.trim().toLowerCase();
+
+  const filteredMessages = React.useMemo(() => {
+    if (!normalizedSearch) return messages;
+    return messages.filter((message) => {
+      if (!message.content) return false;
+      const contentString = String(message.content).toLowerCase();
+      return contentString.includes(normalizedSearch);
+    });
+  }, [messages, normalizedSearch]);
 
   const hasNextPage = chat?.noMoreData === true ? false : true;
 
@@ -117,7 +132,7 @@ const RoomMessageList: React.FC<RoomMessageListProps> = ({
   const { scrollDown, handleRootScroll, scrollDownButton, unreadCount } =
     useMessageScroll({
       chatId,
-      messages,
+      messages: filteredMessages,
       scrollableRootRef,
       pageSize,
       hasNextPage,
@@ -177,7 +192,7 @@ const RoomMessageList: React.FC<RoomMessageListProps> = ({
   if (!chatId) return null;
   const messageList = React.useMemo(
     () =>
-      messages.map((message, index) => (
+      filteredMessages.map((message, index) => (
         <Message
           ref={message.ref}
           key={
@@ -190,19 +205,29 @@ const RoomMessageList: React.FC<RoomMessageListProps> = ({
           isGroupMessage={!!chat?.groupId}
           isUserFirst={
             index === 0 ||
-            messages[index - 1].messageType === "notify" ||
-            messages[index - 1].userId !== messages[index].userId
+            filteredMessages[index - 1].messageType === "notify" ||
+            filteredMessages[index - 1].userId !==
+              filteredMessages[index].userId
           }
           isUserLast={
-            index === messages.length - 1 ||
-            messages[index + 1]?.messageType === "notify" ||
-            messages[index + 1]?.userId !== messages[index].userId
+            index === filteredMessages.length - 1 ||
+            filteredMessages[index + 1]?.messageType === "notify" ||
+            filteredMessages[index + 1]?.userId !==
+              filteredMessages[index].userId
           }
           onContextMenu={(event) => handleMenuPopup(message, event)}
           setViewerData={setViewerData}
         />
       )),
-    [messages, apiUrl, user, users, chat?.groupId, handleMenuPopup, setViewerData]
+    [
+      filteredMessages,
+      apiUrl,
+      user,
+      users,
+      chat?.groupId,
+      handleMenuPopup,
+      setViewerData,
+    ]
   );
   // console.count("RoomMessageList - render");
   // console.log("unreadCount", unreadCount);
