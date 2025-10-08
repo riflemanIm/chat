@@ -7,7 +7,9 @@ import pkg from "./package.json" with { type: "json" };
 
 // Всё, что хотим оставить внешним (не бандлить):
 // Фреймворк/рендер, MUI, Emotion и ваши внутренние пакеты.
-const external = [...Object.keys(pkg.peerDependencies ?? {})];
+const peerDeps = Object.keys(pkg.peerDependencies ?? {});
+const external = (id: string): boolean =>
+  peerDeps.some((dep) => id === dep || id.startsWith(`${dep}/`));
 
 export default defineConfig({
   plugins: [
