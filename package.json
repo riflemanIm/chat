@@ -6,12 +6,12 @@
   "author": "Oleg Lambin",
   "license": "ISC",
   "main": "dist/index.cjs",
-  "module": "dist/chat.esm.js",
+  "module": "dist/mobimed.esm.js",
   "types": "dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/chat.esm.js",
+      "import": "./dist/mobimed.esm.js",
       "require": "./dist/index.cjs"
     }
   },
