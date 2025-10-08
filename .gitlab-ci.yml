@@ -40,8 +40,14 @@ publish:
     - job: build
       artifacts: true
   script:
-    - echo "//${CI_SERVER_HOST}/api/v4/projects/${CI_PROJECT_ID}/packages/npm/:_authToken=${CI_JOB_TOKEN}" > .npmrc
-    - npm publish --registry "https://${CI_SERVER_HOST}/api/v4/packages/npm/"
+    - |
+      cat <<EOF > .npmrc
+      @pmt:registry=https://${CI_SERVER_HOST}/api/v4/projects/${CI_PROJECT_ID}/packages/npm/
+      //${CI_SERVER_HOST}/api/v4/projects/${CI_PROJECT_ID}/packages/npm/:_authToken=${CI_JOB_TOKEN}
+      //${CI_SERVER_HOST}/api/v4/projects/${CI_PROJECT_ID}/packages/npm/:username=gitlab-ci-token
+      always-auth=true
+      EOF
+    - npm publish --registry "https://${CI_SERVER_HOST}/api/v4/projects/${CI_PROJECT_ID}/packages/npm/"
   rules:
     - if: $CI_COMMIT_TAG
     - if: '$CI_COMMIT_BRANCH == "master" && $CI_PIPELINE_SOURCE == "push"'

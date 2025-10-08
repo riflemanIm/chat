@@ -18,6 +18,9 @@
   "files": [
     "dist"
   ],
+  "publishConfig": {
+    "@pmt:registry": "https://gitlab.postmodern.ru/api/v4/projects/50/packages/npm/"
+  },
   "scripts": {
     "build": "rimraf dist && vite build",
     "dev": "vite"
