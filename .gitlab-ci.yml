@@ -1,7 +1,5 @@
 default:
   image: node:22
-  variables:
-    YARN_CACHE_FOLDER: .yarn/cache
   cache:
     key: ${CI_PROJECT_NAME}-${CI_COMMIT_REF_SLUG}
     paths:
@@ -10,7 +8,7 @@ default:
   before_script:
     - corepack enable
     - corepack prepare yarn@1.22.22 --activate
-    - yarn install --frozen-lockfile
+    - YARN_CACHE_FOLDER=.yarn/cache yarn install --frozen-lockfile
 
 stages:
   - build
