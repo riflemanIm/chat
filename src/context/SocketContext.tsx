@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useMemo } from "react";
+import React, { createContext, useContext, useEffect, useMemo, useRef } from "react";
 import { Socket } from "socket.io-client";
 import { useSocket } from "../hooks/useSocket";
 import {
@@ -16,7 +16,6 @@ import {
   User,
   VisitData,
 } from "../types";
-import { allGather } from "../utils/common";
 import { ChatContext, ChatDispatch } from "./ChatContext";
 import { getRefreshToken } from "./RestContext";
 
@@ -57,6 +56,16 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({
     wsPath,
     state.token
   );
+  const groupGatherRef = useRef(state.groupGather);
+  const contactGatherRef = useRef(state.contactGather);
+
+  useEffect(() => {
+    groupGatherRef.current = state.groupGather;
+  }, [state.groupGather]);
+
+  useEffect(() => {
+    contactGatherRef.current = state.contactGather;
+  }, [state.contactGather]);
 
   useEffect(() => {
     if (state.token) {
@@ -371,23 +380,41 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({
       if (handleSocketError(res, dispatch)) return;
       const data = res.data as MessageOperation;
       if (data.userId === state.user.userId) {
-        if (data.groupId) {
-          dispatch({
-            type: "LOSE_GROUP_UNREAD_GATHER",
-            payload: data.groupId,
-          });
+        if (typeof data.groupId === "number") {
+          const group = groupGatherRef.current[data.groupId];
+          if (group?.unreadCount) {
+            dispatch({
+              type: "LOSE_GROUP_UNREAD_GATHER",
+              payload: data.groupId,
+            });
+          }
         } else {
-          dispatch({
-            type: "LOSE_CONTACT_UNREAD_GATHER",
-            payload: data.contactId,
-          });
+          const contactId = data.contactId;
+          if (typeof contactId === "number") {
+            const contact = contactGatherRef.current[contactId];
+            if ((contact?.unreadCount ?? 0) > 0) {
+              dispatch({
+                type: "LOSE_CONTACT_UNREAD_GATHER",
+                payload: contactId,
+              });
+            }
+          }
         }
-      } else {
-        if (data.contactId)
-          dispatch({
-            type: "MARK_PRIVATE_MESSAGES_READ",
-            payload: data.userId,
-          });
+      } else if (typeof data.contactId === "number") {
+        const userId = data.userId;
+        if (typeof userId === "number") {
+          const contact = contactGatherRef.current[userId];
+          const hasUnread =
+            (contact?.unreadCount ?? 0) > 0 ||
+            (contact?.messages?.some((message) => message.status !== 1) ??
+              false);
+          if (hasUnread) {
+            dispatch({
+              type: "MARK_PRIVATE_MESSAGES_READ",
+              payload: userId,
+            });
+          }
+        }
       }
     };
     socket?.on("markAsRead", listener);
@@ -409,7 +436,7 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({
       if (handleSocketError(res, dispatch)) return;
       const { group, user: newUser } = res.data as JoinGroup;
 
-      if (!state.groupGather[group.groupId]) {
+      if (!groupGatherRef.current[group.groupId]) {
         console.log("joined to a new group");
         // Если группы еще у нас нет, то получаем информацию о пользователях в группе
         socket?.emit("chatData");
@@ -433,7 +460,7 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({
       const newUser: Contact = data.user;
       newUser.online = 1;
       const { group } = data;
-      const groupObj = state.groupGather[group.groupId];
+      const groupObj = groupGatherRef.current[group.groupId];
       // Информация о присоединении к группе новых пользователей
       if (
         groupObj &&
@@ -456,7 +483,7 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({
 
       socket?.off("joinGroupSocket", listener4);
     };
-  }, [socket?.id, state.user.userId, allGather(state.groupGather)]);
+  }, [socket?.id, state.user.userId]);
 
   const value = useMemo(() => ({ socket, online }), [socket, online]);
 

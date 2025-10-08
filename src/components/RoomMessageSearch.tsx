@@ -1,4 +1,5 @@
 import CloseIcon from "@mui/icons-material/Close";
+import SearchIcon from "@mui/icons-material/Search";
 import {
   Box,
   IconButton,
@@ -19,6 +20,8 @@ type RoomMessageSearchProps = {
   onChange: (value: string) => void;
 };
 
+const FIELD_WIDTH = 280;
+
 const RoomMessageSearch: React.FC<RoomMessageSearchProps> = ({
   anchorEl,
   open,
@@ -31,6 +34,13 @@ const RoomMessageSearch: React.FC<RoomMessageSearchProps> = ({
     theme.breakpoints.down("md")
   );
   const [draft, setDraft] = React.useState(value);
+
+  const handleSubmit = React.useCallback(() => {
+    onChange(draft);
+    if (isMobile) {
+      onClose();
+    }
+  }, [draft, isMobile, onChange, onClose]);
 
   React.useEffect(() => {
     if (!isMobile || !open) {
@@ -54,9 +64,8 @@ const RoomMessageSearch: React.FC<RoomMessageSearchProps> = ({
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Enter") {
-      if (isMobile) {
-        onClose();
-      }
+      event.preventDefault();
+      handleSubmit();
     }
   };
 
@@ -70,22 +79,36 @@ const RoomMessageSearch: React.FC<RoomMessageSearchProps> = ({
       value={draft}
       onChange={handleInputChange}
       onKeyDown={handleKeyDown}
+      sx={{ width: FIELD_WIDTH }}
       slotProps={{
         input: {
-          endAdornment: draft ? (
+          endAdornment: (
             <InputAdornment position="end">
-              <IconButton size="small" onClick={handleClear}>
-                <CloseIcon fontSize="small" />
+              {draft ? (
+                <IconButton
+                  size="small"
+                  onClick={handleClear}
+                  aria-label={t("CHAT.MESSAGE.CLEAR_SEARCH", "Очистить поиск")}
+                >
+                  <CloseIcon fontSize="small" />
+                </IconButton>
+              ) : null}
+              <IconButton
+                size="small"
+                onClick={handleSubmit}
+                aria-label={t("CHAT.MESSAGE.SEARCH_SUBMIT", "Найти сообщения")}
+              >
+                <SearchIcon fontSize="small" />
               </IconButton>
             </InputAdornment>
-          ) : undefined,
+          ),
         },
       }}
     />
   );
 
   if (!isMobile) {
-    return <Box sx={{ maxWidth: 280 }}>{searchField}</Box>;
+    return <Box sx={{ width: FIELD_WIDTH }}>{searchField}</Box>;
   }
 
   return (
@@ -97,7 +120,7 @@ const RoomMessageSearch: React.FC<RoomMessageSearchProps> = ({
       disableEnforceFocus
       keepMounted
     >
-      <Box sx={{ px: 2, py: 1.5, maxWidth: 280 }}>{searchField}</Box>
+      <Box sx={{ px: 2, py: 1.5, width: FIELD_WIDTH }}>{searchField}</Box>
     </Menu>
   );
 };

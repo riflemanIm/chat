@@ -18,7 +18,7 @@ import {
   Group,
   SendMessage,
 } from "../types";
-import { getParam, isEmpty, isGroup } from "../utils/common";
+import { getChatId, getParam, isEmpty, isGroup } from "../utils/common";
 
 // Отключили проигрыш звука
 // const getRingAudio = (): HTMLAudioElement => {
@@ -108,9 +108,12 @@ export const ChatPage: React.FC<ChatPageProps> = ({
 
   const onMessageSearchChange = React.useCallback(
     (value: string) => {
+      if (state.messageSearch === value) {
+        return;
+      }
       dispatch({ type: "SET_MESSAGE_SEARCH", payload: value });
     },
-    [dispatch]
+    [dispatch, state.messageSearch]
   );
 
   const onMessageDelete = React.useCallback(
@@ -201,15 +204,20 @@ export const ChatPage: React.FC<ChatPageProps> = ({
     (chat: ChatRoom) => {
       if (!chat) return;
 
+      const currentChatId = state.activeRoom ? getChatId(state.activeRoom) : null;
+      const nextChatId = getChatId(chat);
+
       try {
-        // Устанавливаем активную комнату
-        dispatch({
-          type: "SET_ACTIVE_ROOM",
-          payload: {
-            groupId: isGroup(chat) ? chat.groupId : undefined,
-            contactId: chat?.userId,
-          },
-        });
+        if (currentChatId !== nextChatId) {
+          // Устанавливаем активную комнату только если она изменилась
+          dispatch({
+            type: "SET_ACTIVE_ROOM",
+            payload: {
+              groupId: isGroup(chat) ? chat.groupId : undefined,
+              contactId: chat?.userId,
+            },
+          });
+        }
 
         // Помечаем сообщения как прочитанные
         onEnterRoom(chat);
@@ -221,7 +229,7 @@ export const ChatPage: React.FC<ChatPageProps> = ({
         });
       }
     },
-    [dispatch, onEnterRoom]
+    [dispatch, onEnterRoom, state.activeRoom]
   );
 
   const onVideoCall = React.useCallback(
