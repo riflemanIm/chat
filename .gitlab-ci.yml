@@ -1,14 +1,42 @@
-image: node:16
+default:
+  image: node:22
+  variables:
+    YARN_CACHE_FOLDER: .yarn/cache
+  cache:
+    key: ${CI_PROJECT_NAME}-${CI_COMMIT_REF_SLUG}
+    paths:
+      - .yarn/cache
+      - node_modules/
+  before_script:
+    - corepack enable
+    - corepack prepare yarn@1.22.22 --activate
+    - yarn install --frozen-lockfile
 
 stages:
+  - build
   - deploy
 
-deploy:
-  stage: deploy
-  tags: ['office', 'node']
-  before_script:
-    - npm install --legacy-peer-deps
+build:
+  stage: build
   script:
-    - echo "//${CI_SERVER_HOST}/api/v4/projects/${CI_PROJECT_ID}/packages/npm/:_authToken=${CI_JOB_TOKEN}">.npmrc
+    - yarn build
+  artifacts:
+    paths:
+      - dist/
+    expire_in: 1 week
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH && $CI_COMMIT_BRANCH != "master"
+    - if: $CI_COMMIT_BRANCH == "master"
+    - if: $CI_COMMIT_TAG
+
+publish:
+  stage: deploy
+  needs:
+    - job: build
+      artifacts: true
+  script:
+    - echo "//${CI_SERVER_HOST}/api/v4/projects/${CI_PROJECT_ID}/packages/npm/:_authToken=${CI_JOB_TOKEN}" > .npmrc
     - npm publish
-  only: ['master', 'tags']
+  rules:
+    - if: $CI_COMMIT_TAG
