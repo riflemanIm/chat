@@ -3,12 +3,11 @@ default:
   cache:
     key: ${CI_PROJECT_NAME}-${CI_COMMIT_REF_SLUG}
     paths:
-      - .yarn/cache
       - node_modules/
   before_script:
-    - corepack enable
-    - corepack prepare yarn@1.22.22 --activate
-    - YARN_CACHE_FOLDER=.yarn/cache yarn install --frozen-lockfile
+    - node -v
+    - npm -v
+    - npx yarn@1.22.22 install --frozen-lockfile
 
 stages:
   - build
@@ -17,7 +16,7 @@ stages:
 build:
   stage: build
   script:
-    - yarn build
+    - npx yarn@1.22.22 build
   artifacts:
     paths:
       - dist/
