@@ -36,8 +36,10 @@ const MessageContent: React.FC<MessageProps> = ({
       );
     case "file":
       return <File message={message} />;
+    default:
+      console.warn(`Unsupported message type: ${message.messageType}`);
+      return null;
   }
-  return null;
 };
 
 export default MessageContent;

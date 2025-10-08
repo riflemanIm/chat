@@ -99,11 +99,13 @@ export const RestProvider: React.FC<RestProviderProps> = ({
       const current = chat.messages?.length;
       try {
         dispatch({ type: "SET_LOADING", payload: true });
+        //console.log("/contact/messages");
         const { data } = await fetch.get("/contact/messages", {
           params: {
             contactId,
             current,
             pageSize,
+            //search: "02.09.2025",
           },
         });
 

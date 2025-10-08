@@ -81,6 +81,9 @@ const RoomMessageList: React.FC<RoomMessageListProps> = ({
 }) => {
   const classes = useStyles();
   const scrollableRootRef = React.useRef<HTMLDivElement | null>(null);
+  const messageRefs = React.useRef<
+    Record<string, React.RefObject<HTMLLIElement>>
+  >({});
 
   const chatId = React.useMemo(() => getChatId(chat), [chat]);
 
@@ -91,16 +94,25 @@ const RoomMessageList: React.FC<RoomMessageListProps> = ({
 
   const [isVisible, setIsVisible] = React.useState<string>("");
 
-  const messages =
-    chat?.messages?.map((it) => ({
-      ...it,
-      ref: React.createRef<HTMLLIElement>(),
-    })) || [];
+  const messages = (chat?.messages || []).map((message, index) => {
+    const key =
+      message._id != null
+        ? String(message._id)
+        : `${message.userId}-${message.cdate}-${index}`;
+    if (!messageRefs.current[key]) {
+      messageRefs.current[key] = React.createRef<HTMLLIElement>();
+    }
+    return {
+      ...message,
+      ref: messageRefs.current[key],
+    };
+  });
 
-  const hasNextPage = React.useMemo(
-    () => (chat == null || chat?.noMoreData == null ? true : !chat.noMoreData),
-    [chat?.noMoreData]
-  );
+  const hasNextPage = chat?.noMoreData === true ? false : true;
+
+  React.useEffect(() => {
+    messageRefs.current = {};
+  }, [chatId]);
 
   const { scrollDown, handleRootScroll, scrollDownButton, unreadCount } =
     useMessageScroll({
@@ -118,7 +130,7 @@ const RoomMessageList: React.FC<RoomMessageListProps> = ({
     loading,
     hasNextPage,
     onLoadMore: () => chat && onNeedMoreMessages(chat),
-    disabled: false,
+    disabled: !hasNextPage,
   });
 
   const rootRefSetter = React.useCallback(
@@ -137,66 +149,61 @@ const RoomMessageList: React.FC<RoomMessageListProps> = ({
     4700
   );
 
-  const handleMenuPopup = (
-    message: ChatMessage,
-    event: React.MouseEvent<HTMLElement>
-  ) => {
-    const canCopy = message.messageType === "text";
-    const canDelete =
-      user.userId === message.userId &&
-      !!onMessageDelete &&
-      new Date().getTime() - new Date(message.cdate).getTime() <= 1000 * 60 * 2;
+  const handleMenuPopup = React.useCallback(
+    (message: ChatMessage, event: React.MouseEvent<HTMLElement>) => {
+      const canCopy = message.messageType === "text";
+      const canDelete =
+        user.userId === message.userId &&
+        !!onMessageDelete &&
+        new Date().getTime() - new Date(message.cdate).getTime() <= 1000 * 60 * 2;
 
-    if (!canCopy && !canDelete) {
-      setMenuState(initialMenuState);
-      return;
-    }
+      if (!canCopy && !canDelete) {
+        setMenuState(initialMenuState);
+        return;
+      }
 
-    event.preventDefault();
-    setMenuState({
-      message,
-      mouseX: event.clientX - 2,
-      mouseY: event.clientY - 4,
-      canCopy,
-      canDelete,
-    });
-  };
+      event.preventDefault();
+      setMenuState({
+        message,
+        mouseX: event.clientX - 2,
+        mouseY: event.clientY - 4,
+        canCopy,
+        canDelete,
+      });
+    },
+    [initialMenuState, onMessageDelete, setMenuState, user.userId]
+  );
 
   if (!chatId) return null;
-  const messageList = React.useMemo(() => {
-    return messages.map((message, index) => (
-      <Message
-        ref={message.ref}
-        key={message._id || index} // Better to use unique ID if available
-        apiUrl={apiUrl}
-        user={user}
-        message={message}
-        owner={users[message.userId]}
-        isGroupMessage={!!chat?.groupId}
-        isUserFirst={
-          index === 0 ||
-          messages[index - 1].messageType === "notify" ||
-          messages[index - 1].userId !== messages[index].userId
-        }
-        isUserLast={
-          index === messages.length - 1 ||
-          messages[index + 1]?.messageType === "notify" ||
-          messages[index + 1]?.userId !== messages[index].userId
-        }
-        onContextMenu={(event) => handleMenuPopup(message, event)}
-        setViewerData={setViewerData}
-      />
-    ));
-  }, [
-    (messages || []).filter((it) => it._id).length,
-    unreadCount,
-    apiUrl,
-    user,
-    users,
-    chat?.groupId,
-    scrollDownButton,
-    isVisible,
-  ]);
+  const messageList = React.useMemo(
+    () =>
+      messages.map((message, index) => (
+        <Message
+          ref={message.ref}
+          key={
+            message._id ?? `${message.userId}-${message.cdate}-${index}`
+          }
+          apiUrl={apiUrl}
+          user={user}
+          message={message}
+          owner={users[message.userId]}
+          isGroupMessage={!!chat?.groupId}
+          isUserFirst={
+            index === 0 ||
+            messages[index - 1].messageType === "notify" ||
+            messages[index - 1].userId !== messages[index].userId
+          }
+          isUserLast={
+            index === messages.length - 1 ||
+            messages[index + 1]?.messageType === "notify" ||
+            messages[index + 1]?.userId !== messages[index].userId
+          }
+          onContextMenu={(event) => handleMenuPopup(message, event)}
+          setViewerData={setViewerData}
+        />
+      )),
+    [messages, apiUrl, user, users, chat?.groupId, handleMenuPopup, setViewerData]
+  );
   // console.count("RoomMessageList - render");
   // console.log("unreadCount", unreadCount);
 

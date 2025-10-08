@@ -89,7 +89,6 @@ const RoomList: FC<RoomListProps> = ({
   typing,
   onChangeChat,
 }: RoomListProps) => {
-  console.log(" -- RoomList -- ");
   const classes = useStyles();
   const { t } = useTranslation();
   const { apiUrl } = useContext(RestContext);

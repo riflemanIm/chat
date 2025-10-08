@@ -1,5 +1,6 @@
 import { Box, Link, ListItem, Typography } from "@mui/material";
-import React, { forwardRef, memo } from "react";
+import type { AlertColor } from "@mui/material";
+import React, { forwardRef, memo, useMemo } from "react";
 
 import { Done, DoneAll } from "@mui/icons-material";
 import { Alert } from "@mui/material";
@@ -35,21 +36,21 @@ const wrapMessage = (
 ) => {
   const { messageType } = message;
 
-  const className =
-    isUserFirst && isUserLast
-      ? `${classes.message} ${classes.firstMessage} ${classes.lastMessage}`
-      : isUserFirst
-        ? `${classes.message} ${classes.firstMessage}`
-        : isUserLast
-          ? `${classes.message} ${classes.lastMessage}`
-          : classes.message;
+  const className = [
+    classes.message,
+    isUserFirst ? classes.firstMessage : "",
+    isUserLast ? classes.lastMessage : "",
+  ]
+    .filter(Boolean)
+    .join(" ");
 
   if (messageType === "file") {
+    const fileUrl = combineURLs(apiUrl, `/static/file/${message.content}`);
     return (
       <Link
         className={`${className} ${classes.file}`}
         underline="none"
-        href={combineURLs(apiUrl, `/static/file/${message.content}`)}
+        href={fileUrl}
         target="_blank"
         download
         onContextMenu={onContextMenu}
@@ -84,7 +85,6 @@ const Message = memo(
       apiUrl,
       message,
       owner,
-
       user,
       isGroupMessage,
       isUserFirst,
@@ -92,21 +92,39 @@ const Message = memo(
       setViewerData,
       //refOnMess,
     } = props;
-    //console.log('message', message);
+
+    type NotifyPayload = {
+      severity?: AlertColor;
+      message: string;
+    };
+
+    const notifyContent = useMemo(() => {
+      if (!message.content?.trim().startsWith("{")) return message.content;
+      try {
+        return JSON.parse(message.content) as NotifyPayload;
+      } catch (error) {
+        console.warn("Failed to parse notify content", error);
+        return message.content;
+      }
+    }, [message.content]);
 
     if (message.messageType === "notify") {
-      // Уведомление - особый случай
-      const content =
-        message.content[0] === "{"
-          ? JSON.parse(message.content)
-          : message.content;
+      const severity: AlertColor =
+        typeof notifyContent === "string"
+          ? "info"
+          : notifyContent.severity ?? "info";
+      const notifyText =
+        typeof notifyContent === "string"
+          ? notifyContent
+          : notifyContent.message;
+
       return (
         <ListItem className={classes.rootNotify} ref={ref}>
           <Alert
             //ref={refOnMess}
-            severity={typeof content === "string" ? "info" : content.severity}
+            severity={severity}
           >
-            {typeof content === "string" ? content : content.message}
+            {notifyText}
           </Alert>
         </ListItem>
       );
@@ -167,14 +185,14 @@ const Message = memo(
             </div>
             <div className={classes.status}>
               <span>
-                {isMine ? (
-                  (message as PrivateMessage).status === 0 ? (
-                    <Done className={classes.statusImage} />
-                  ) : (
-                    <DoneAll className={classes.statusImage} />
-                  )
-                ) : null}
-                {formatTime(message.cdate)}
+                {isMine
+                  ? (message as PrivateMessage).status === 0 ? (
+                      <Done className={classes.statusImage} />
+                    ) : (
+                      <DoneAll className={classes.statusImage} />
+                    )
+                  : null}
+                {formatTime(message.cdate) ?? ""}
               </span>
             </div>
           </React.Fragment>

@@ -3,6 +3,7 @@ import { makeStyles } from "@mui/styles";
 import React from "react";
 import { ChatMessage } from "../../types";
 import { combineURLs } from "../../utils/common";
+import { Typography } from "@mui/material";
 
 const useStyles = makeStyles((theme: Theme) => ({
   mediaContent: {
@@ -29,11 +30,35 @@ const Video: React.FC<VideoProps> = ({
   isConference,
 }: VideoProps) => {
   const classes = useStyles();
-  let src = "";
-  if (isConference) {
-    const meta = JSON.parse(message.content);
-    src = combineURLs(apiUrl, `/static/conf/${meta.visitId}/${meta.name}`);
-  } else src = combineURLs(apiUrl, `/static/file/${message.content}`);
+  const src = React.useMemo(() => {
+    if (!isConference) {
+      return combineURLs(apiUrl, `/static/file/${message.content}`);
+    }
+
+    try {
+      const meta = JSON.parse(message.content) as {
+        visitId: number;
+        name: string;
+      };
+
+      if (meta?.visitId && meta?.name) {
+        return combineURLs(apiUrl, `/static/conf/${meta.visitId}/${meta.name}`);
+      }
+    } catch (error) {
+      console.warn("Failed to parse conference video", error);
+    }
+
+    return "";
+  }, [apiUrl, isConference, message.content]);
+
+  if (!src) {
+    return (
+      <Typography variant="caption" component="span" color="text.secondary">
+        Видео недоступно
+      </Typography>
+    );
+  }
+
   return (
     <video
       src={src}
@@ -41,6 +66,7 @@ const Video: React.FC<VideoProps> = ({
       controls
       muted
       preload="none"
+      playsInline
     >
       Ваш браузер не поддерживает тег video.
     </video>

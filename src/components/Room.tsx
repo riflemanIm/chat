@@ -52,7 +52,15 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-const initialMenuState = {
+type MenuState = {
+  message: ChatMessage | null;
+  mouseX: number | null;
+  mouseY: number | null;
+  canCopy: boolean;
+  canDelete: boolean;
+};
+
+const initialMenuState: MenuState = {
   message: null,
   mouseX: null,
   mouseY: null,
@@ -100,40 +108,52 @@ const Room: React.FC<RoomProps> = (props: RoomProps) => {
     conferenceJoined,
     loading,
     pageSize,
-    isMobile,
     onEnterRoom,
+    operators,
+    onVideoCall,
+    onVideoEnd,
+    onConferencePause,
+    onOperatorAdd,
+    onLeaveGroup,
+    onContactClick,
+    onNeedMoreMessages,
+    onMessageDelete,
+    onTyping,
+    onSendMessage,
   } = props;
 
   const classes = useStyles();
   const { t } = useTranslation();
 
-  const [menuState, setMenuState] = React.useState<{
-    message: ChatMessage | null;
-    mouseX: null | number;
-    mouseY: null | number;
-    canCopy: boolean;
-    canDelete: boolean;
-  }>(initialMenuState);
+  const [menuState, setMenuState] = React.useState<MenuState>(initialMenuState);
 
-  const handleMenuClose = () => {
+  const resetMenuState = React.useCallback(() => {
     setMenuState(initialMenuState);
-  };
+  }, []);
+
+  const handleMenuClose = React.useCallback(() => {
+    resetMenuState();
+  }, [resetMenuState]);
 
   const handleCopy = useCallback(() => {
     const { message } = menuState;
-    setMenuState(initialMenuState);
-    if (!message) return;
-    navigator.clipboard.writeText(message.content);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [menuState.message]);
+    resetMenuState();
+    if (!message?.content) return;
+
+    if (typeof navigator !== "undefined" && navigator.clipboard?.writeText) {
+      navigator.clipboard.writeText(message.content).catch(() => {
+        console.warn("Copy failed");
+      });
+    }
+  }, [menuState.message, resetMenuState]);
 
   const handleDelete = useCallback(() => {
     const { message } = menuState;
-    setMenuState(initialMenuState);
-    if (props.onMessageDelete && chat && message)
-      props.onMessageDelete(chat, message);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [menuState.message]);
+    resetMenuState();
+    if (chat && message && onMessageDelete) {
+      onMessageDelete(chat, message);
+    }
+  }, [menuState.message, resetMenuState, chat, onMessageDelete]);
 
   return (
     <Card elevation={1} className={classes.root}>
@@ -146,14 +166,14 @@ const Room: React.FC<RoomProps> = (props: RoomProps) => {
           conference={conference}
           visitData={visitData}
           conferenceJoined={conferenceJoined}
-          operators={props.operators}
+          operators={operators}
           className={classes.roomHeader}
-          onVideoCall={props.onVideoCall}
-          onVideoEnd={props.onVideoEnd}
-          onConferencePause={props.onConferencePause}
-          onOperatorAdd={props.onOperatorAdd}
-          onLeaveGroup={props.onLeaveGroup}
-          onContactClick={props.onContactClick}
+          onVideoCall={onVideoCall}
+          onVideoEnd={onVideoEnd}
+          onConferencePause={onConferencePause}
+          onOperatorAdd={onOperatorAdd}
+          onLeaveGroup={onLeaveGroup}
+          onContactClick={onContactClick}
         />
       </Box>
       <Divider />
@@ -165,8 +185,8 @@ const Room: React.FC<RoomProps> = (props: RoomProps) => {
         loading={loading}
         pageSize={pageSize}
         initialMenuState={initialMenuState}
-        onNeedMoreMessages={props.onNeedMoreMessages}
-        onMessageDelete={props.onMessageDelete}
+        onNeedMoreMessages={onNeedMoreMessages}
+        onMessageDelete={onMessageDelete}
         setMenuState={setMenuState}
         onEnterRoom={onEnterRoom}
       />
@@ -174,8 +194,8 @@ const Room: React.FC<RoomProps> = (props: RoomProps) => {
       <CardContent>
         <Entry
           chat={chat}
-          onTyping={props.onTyping}
-          onSendMessage={props.onSendMessage}
+          onTyping={onTyping}
+          onSendMessage={onSendMessage}
         />
       </CardContent>
       <Menu

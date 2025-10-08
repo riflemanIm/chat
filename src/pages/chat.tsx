@@ -44,7 +44,6 @@ export const ChatPage: React.FC<ChatPageProps> = ({
 
   // Update context usage
   const { state, dispatch } = React.useContext(ChatContext);
-
   const { socket } = React.useContext(SocketContext);
 
   const {
@@ -212,7 +211,7 @@ export const ChatPage: React.FC<ChatPageProps> = ({
         });
       }
     },
-    [dispatch, onEnterRoom, socket] // Добавляем socket в зависимости
+    [dispatch, onEnterRoom]
   );
 
   const onVideoCall = React.useCallback(
@@ -281,61 +280,73 @@ export const ChatPage: React.FC<ChatPageProps> = ({
   );
 
   // First useEffect for initialization
+  const groups = React.useMemo<Group[]>(
+    () => Object.values(state.groupGather),
+    [state.groupGather]
+  );
+
+  const contacts = React.useMemo<Contact[]>(
+    () => Object.values(state.contactGather),
+    [state.contactGather]
+  );
+
   React.useEffect(() => {
-    let mounted = true;
-    const initializeChat = async () => {
-      if (activeGroupId != null && !isEmpty(state.groupGather)) {
-        const onlyChat = Object.values(state.groupGather).find(
-          (item) => item.groupId === activeGroupId
-        );
+    let cancelled = false;
 
-        if (!isEmpty(onlyChat) && mounted) {
-          onChangeChat(onlyChat);
-          return;
-        }
+    const selectChat = (chat: ChatRoom | undefined | null) => {
+      if (!cancelled && chat) {
+        onChangeChat(chat);
       }
-
-      if (activeChatUserId != null && !isEmpty(state.contactGather)) {
-        const chat = Object.values(state.contactGather).find(
-          (item) => item.userId === activeChatUserId
-        );
-        if (chat && mounted) {
-          onChangeChat(chat);
-          return;
-        }
-      }
-
-      const mmkId = getParam("mmk");
-      const guid = getParam("guid");
-
-      if ((mmkId != null || guid != null) && !isEmpty(state.contactGather)) {
-        //console.log("mmkId", mmkId);
-        try {
-          const userId = await getUserByMmk(mmkId, guid);
-          if (userId != null) {
-            const chat = Object.values(state.contactGather).find(
-              (item) => item.userId === userId
-            );
-            if (chat && mounted) {
-              onChangeChat(chat);
-              return;
-            }
-          }
-        } catch (error) {
-          console.error("Failed to get user by MMK:", error);
-        }
-      }
-      return () => {
-        mounted = false;
-      };
     };
 
-    initializeChat();
+    if (activeGroupId != null && !isEmpty(groups)) {
+      const targetGroup = groups.find((item) => item.groupId === activeGroupId);
+      if (targetGroup) {
+        selectChat(targetGroup);
+        return () => {
+          cancelled = true;
+        };
+      }
+    }
+
+    if (activeChatUserId != null && !isEmpty(contacts)) {
+      const targetContact = contacts.find(
+        (item) => item.userId === activeChatUserId
+      );
+      if (targetContact) {
+        selectChat(targetContact);
+        return () => {
+          cancelled = true;
+        };
+      }
+    }
+
+    const mmkId = getParam("mmk");
+    const guid = getParam("guid");
+
+    if ((mmkId != null || guid != null) && !isEmpty(contacts)) {
+      getUserByMmk(mmkId, guid)
+        .then((userId) => {
+          if (userId != null) {
+            selectChat(contacts.find((item) => item.userId === userId));
+          }
+        })
+        .catch((error) => {
+          console.error("Failed to get user by MMK:", error);
+        });
+    }
 
     return () => {
-      mounted = false;
+      cancelled = true;
     };
-  }, [state.user.userId]);
+  }, [
+    activeGroupId,
+    activeChatUserId,
+    contacts,
+    groups,
+    onChangeChat,
+    getUserByMmk,
+  ]);
 
   // Отключили проигрыш звука
   // React.useEffect(() => {
@@ -348,8 +359,7 @@ export const ChatPage: React.FC<ChatPageProps> = ({
   //   else ringAudio.pause();
   // }, [state.conference.data?.id, state.conference.ringPlayed]);
 
-  console.log("--state--", state);
-  const renderRoom = state.activeRoom != null && (
+  const renderRoom = state.activeRoom ? (
     <Room
       apiUrl={apiUrl}
       user={state.user}
@@ -376,7 +386,7 @@ export const ChatPage: React.FC<ChatPageProps> = ({
       onContactClick={props.onContactInfoClick}
       isMobile={isMobile}
     />
-  );
+  ) : null;
 
   return (
     <ChatContainer>
@@ -400,8 +410,8 @@ export const ChatPage: React.FC<ChatPageProps> = ({
             <RoomList
               user={state.user}
               activeRoom={state.activeRoom}
-              groups={Object.values(state.groupGather)}
-              contacts={Object.values(state.contactGather)}
+              groups={groups}
+              contacts={contacts}
               typing={state.typing}
               onChangeChat={onChangeChat}
             />

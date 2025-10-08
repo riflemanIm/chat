@@ -27,31 +27,35 @@ const useStyles = makeStyles((theme: Theme) =>
     },
   })
 );
-type ImageProrps = {
+type ImageProps = {
   apiUrl: string;
   message: ChatMessage;
   setViewerData: (value: { visible: boolean; src: string }) => void;
 };
 
-const Image: React.FC<ImageProrps> = ({
+const Image: React.FC<ImageProps> = ({
   apiUrl,
   message,
   setViewerData,
-}: ImageProrps) => {
+}: ImageProps) => {
   const classes = useStyles();
-  //const meta = getImageMeta(message.content);
+  const imageSrc = React.useMemo(
+    () => combineURLs(apiUrl, `/static/image/${message.content}`),
+    [apiUrl, message.content]
+  );
+  const handleOpen = React.useCallback(() => {
+    setViewerData({
+      visible: true,
+      src: imageSrc,
+    });
+  }, [imageSrc, setViewerData]);
 
   return (
     <AspectRatio ratio="3/4" className={classes.aspect}>
       <img
-        src={combineURLs(apiUrl, `/static/image/${message.content}`)}
-        onClick={() => {
-          setViewerData({
-            visible: true,
-
-            src: combineURLs(apiUrl, `/static/image/${message.content}`),
-          });
-        }}
+        src={imageSrc}
+        loading="lazy"
+        onClick={handleOpen}
         className={classes.img}
         alt={message.cdate}
       />

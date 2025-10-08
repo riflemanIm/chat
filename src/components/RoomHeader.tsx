@@ -13,7 +13,7 @@ import {
 } from "@mui/material";
 import { Theme } from "@mui/material/styles";
 import { createStyles, makeStyles } from "@mui/styles";
-import React, { useState } from "react";
+import React, { useCallback, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
   ChatRoom,
@@ -94,6 +94,7 @@ const RoomHeader: React.FC<RoomHeaderProps> = ({
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const [addOperatorOpen, setAddOperatorOpen] = useState(false);
   const [confirmFinishConf, setConfirmFinishConf] = React.useState(false);
+  const closeTimer = useRef<NodeJS.Timeout | null>(null);
   if (!chat)
     return (
       <CardHeader
@@ -104,44 +105,46 @@ const RoomHeader: React.FC<RoomHeaderProps> = ({
       />
     );
 
-  let closeTimer: NodeJS.Timeout | null = null;
-  const handlePopoverIn = (
-    event: React.MouseEvent<HTMLElement, MouseEvent>
-  ) => {
-    if (!anchorEl) {
-      setAnchorEl(event.currentTarget);
-    }
-    if (closeTimer) {
-      clearTimeout(closeTimer);
-      closeTimer = null;
-    }
-  };
-
-  const handlePopoverClose = () => {
+  const handlePopoverClose = useCallback(() => {
     setAnchorEl(null);
-    if (closeTimer) {
-      clearTimeout(closeTimer);
-      closeTimer = null;
+    if (closeTimer.current) {
+      clearTimeout(closeTimer.current);
+      closeTimer.current = null;
     }
-  };
+  }, []);
 
-  const handlePopoverOut = () => {
-    if (!closeTimer) {
-      closeTimer = setTimeout(() => {
+  const handlePopoverIn = useCallback(
+    (event: React.MouseEvent<HTMLElement, MouseEvent>) => {
+      setAnchorEl((prev) => prev ?? event.currentTarget);
+      if (closeTimer.current) {
+        clearTimeout(closeTimer.current);
+        closeTimer.current = null;
+      }
+    },
+    []
+  );
+
+  const handlePopoverOut = useCallback(() => {
+    if (!closeTimer.current) {
+      closeTimer.current = setTimeout(() => {
         handlePopoverClose();
       }, 1000);
     }
-  };
+  }, [handlePopoverClose]);
 
-  const handleAddOperatorOpen = () => {
+  const handleAddOperatorOpen = useCallback(() => {
     setAddOperatorOpen(true);
-  };
+  }, []);
 
-  const handleAddOperatorClose = (operator?: Contact) => {
-    setAddOperatorOpen(false);
-    if (onOperatorAdd && operator && chat)
-      onOperatorAdd(chat as Group, operator);
-  };
+  const handleAddOperatorClose = useCallback(
+    (operator?: Contact) => {
+      setAddOperatorOpen(false);
+      if (onOperatorAdd && operator && chat) {
+        onOperatorAdd(chat as Group, operator);
+      }
+    },
+    [chat, onOperatorAdd]
+  );
 
   const group = chat as Group;
   if (group.groupId) {
@@ -234,6 +237,12 @@ const RoomHeader: React.FC<RoomHeaderProps> = ({
   }
   const contact = chat as Contact;
   const isTyping = !!typing?.contactId && typing?.userId === contact.userId;
+  const isConferenceActive = conference != null && !isEmpty(conference);
+  const isOperatorRole = user.role != null && [3, 4].includes(user.role);
+  const canPauseConference =
+    isConferenceActive && conferenceJoined && user.role !== 1 && !!onConferencePause;
+  const canFinishConference = isConferenceActive && isOperatorRole && !!onVideoEnd;
+  const canStartConference = !isConferenceActive && isOperatorRole && !!onVideoCall;
 
   return (
     <CardHeader
@@ -268,61 +277,50 @@ const RoomHeader: React.FC<RoomHeaderProps> = ({
       className={className}
       action={
         <React.Fragment>
-          {user.role !== 1 &&
-            conferenceJoined &&
-            conference &&
-            !isEmpty(conference) &&
-            onConferencePause != null && (
+          {canPauseConference && conference && (
+            <Button
+              aria-label="cancel call"
+              variant="contained"
+              color="secondary"
+              size="small"
+              startIcon={<PauseIcon color="primary" />}
+              onClick={() => onConferencePause?.(conference)}
+            >
+              {t("CHAT.CONFERENCE.PAUSE")}
+            </Button>
+          )}
+
+          {canFinishConference && conference && (
+            <>
               <Button
                 aria-label="cancel call"
                 variant="contained"
-                color="secondary"
+                color="warning"
                 size="small"
-                startIcon={<PauseIcon color="primary" />}
-                onClick={() => onConferencePause(conference)}
+                startIcon={<CallEndIcon color="inherit" />}
+                onClick={() => setConfirmFinishConf(true)}
+                style={{ marginLeft: 8 }}
               >
-                {t("CHAT.CONFERENCE.PAUSE")}
+                {t("CHAT.CONFERENCE.FINISH")}
               </Button>
-            )}
-
-          {conference &&
-            !isEmpty(conference) &&
-            onVideoEnd != null &&
-            user.role != null &&
-            [3, 4].includes(user.role) && (
-              <>
-                <Button
-                  aria-label="cancel call"
-                  variant="contained"
-                  color="warning"
-                  size="small"
-                  startIcon={<CallEndIcon color="inherit" />}
-                  onClick={() => setConfirmFinishConf(true)}
-                  style={{ marginLeft: 8 }}
-                >
-                  {t("CHAT.CONFERENCE.FINISH")}
-                </Button>
-                <ConfirmDialogSlide
-                  open={confirmFinishConf}
-                  setOpen={setConfirmFinishConf}
-                  contentText={t("CHAT.CONFERENCE.CONFIRM_FINISH_CONF")}
-                  callback={() => {
-                    onVideoEnd(conference);
-                  }}
-                />
-              </>
-            )}
-
-          {isEmpty(conference) &&
-            onVideoCall != null &&
-            user.role &&
-            [3, 4].includes(user.role) && (
-              <ConferenceButton
-                visitData={visitData}
-                chat={contact}
-                onVideoCall={onVideoCall}
+              <ConfirmDialogSlide
+                open={confirmFinishConf}
+                setOpen={setConfirmFinishConf}
+                contentText={t("CHAT.CONFERENCE.CONFIRM_FINISH_CONF")}
+                callback={() => {
+                  onVideoEnd?.(conference);
+                }}
               />
-            )}
+            </>
+          )}
+
+          {canStartConference && (
+            <ConferenceButton
+              visitData={visitData}
+              chat={contact}
+              onVideoCall={onVideoCall!}
+            />
+          )}
 
           {conference?.finishDate != null && (
             <ConferenceTime finishDate={conference.finishDate} />
