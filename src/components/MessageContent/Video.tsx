@@ -41,7 +41,7 @@ const Video: React.FC<VideoProps> = ({
         name: string;
       };
 
-      if (meta?.visitId && meta?.name) {
+      if (meta && meta.visitId && meta.name) {
         return combineURLs(apiUrl, `/static/conf/${meta.visitId}/${meta.name}`);
       }
     } catch (error) {

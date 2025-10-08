@@ -147,9 +147,10 @@ export const isGroup = (chat: ChatRoom): chat is Group => {
 };
 
 export const allGather = (chats: GroupGather | ContactGather) => {
-  return Object.values(chats)
-    .map((it) => (it?.messages != null ? it?.messages.length : 0))
-    .reduce((a: number, b: number) => a + b, 0);
+  return Object.values(chats).reduce((sum: number, item) => {
+    const count = item && Array.isArray(item.messages) ? item.messages.length : 0;
+    return sum + count;
+  }, 0);
 };
 
 export const chatRoomComparer = (a: ChatRoom, b: ChatRoom): number => {

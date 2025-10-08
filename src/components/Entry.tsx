@@ -162,7 +162,8 @@ const Entry: React.FC<EntryProps> = ({
   const handleFileUpload = async (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    const file = event.target.files?.[0];
+    const files = event.target.files;
+    const file = files && files.length > 0 ? files[0] : undefined;
     if (!file) return;
 
     if (file.size > MAX_FILE_SIZE) {
@@ -174,10 +175,10 @@ const Entry: React.FC<EntryProps> = ({
       setIsUploading(true);
       setError("");
 
-      const messageType =
-        Object.entries(ALLOWED_FILE_TYPES).find(([, types]) =>
-          types.includes(file.type)
-        )?.[0] || "file";
+      const matchedTypeEntry = Object.entries(ALLOWED_FILE_TYPES).find(
+        ([, types]) => types.includes(file.type)
+      );
+      const messageType = matchedTypeEntry ? matchedTypeEntry[0] : "file";
 
       if (messageType === "image") {
         const imageSize = await new Promise<ImageSize>((resolve) => {

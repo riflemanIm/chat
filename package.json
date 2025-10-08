@@ -1,71 +1,58 @@
 {
   "name": "@pmt/chat",
-  "version": "1.27.0",
-  "description": "PMT Chat. Last global change migrate to MUI6",
-  "main": "dist/index.js",
+  "version": "2.0.0",
+  "type": "module",
+  "description": "Chat UI components for PMT project",
+  "author": "Oleg Lambin",
+  "license": "ISC",
+  "main": "dist/index.cjs",
   "module": "dist/chat.esm.js",
   "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/chat.esm.js",
+      "require": "./dist/index.cjs"
+    }
+  },
   "files": [
     "dist"
   ],
-  "repository": {
-    "type": "git",
-    "url": "git@gitlab.postmodern.ru:pmt/react/chat.git"
-  },
-  "publishConfig": {
-    "@pmt:registry": "https://gitlab.postmodern.ru/api/v4/projects/50/packages/npm/"
-  },
-  "keywords": [
-    "chat, telechat"
-  ],
-  "author": "Pavel Ishenin",
-  "license": "ISC",
-  "eslintConfig": {
-    "extends": [
-      "react-app"
-    ]
-  },
   "scripts": {
-    "build": "tsdx build --transpileOnly --entry ./src/index.ts",
-    "prepare": "yarn build"
+    "build": "rimraf dist && vite build",
+    "dev": "vite"
+  },
+  "peerDependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-i18next": "^15.0.0",
+    "i18next": "^23.0.0",
+    "@mui/material": "^6.1.1",
+    "@mui/icons-material": "^6.1.1",
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0"
   },
   "dependencies": {
-    "axios": "^1.7.7",
+    "axios": "^1.7.9",
     "classnames": "^2.3.2",
+    "dayjs": "^1.11.13",
     "react-aspect-ratio": "^1.1.6",
     "react-infinite-scroll-hook": "^5.0.1",
     "socket.io-client": "^4.8.1"
   },
-  "peerDependencies": {
-    "@emotion/core": "*",
-    "@emotion/css": "*",
-    "@emotion/react": "*",
-    "@emotion/styled": "*",
-    "@mui/icons-material": "*",
-    "@mui/lab": "*",
-    "@mui/material": "*",
-    "@mui/styles": "*",
-    "dayjs": "*",
-    "react": "*",
-    "react-dom": "*",
-    "react-router-dom": "*"
-  },
   "devDependencies": {
-    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
-    "@babel/preset-react": "^7.24.7",
-    "@emotion/babel-preset-css-prop": "^11.12.0",
-    "@types/react": "^18.3.5",
-    "@types/react-dom": "^18.3.0",
-    "@types/typography": "^0.16.5",
-    "@typescript-eslint/eslint-plugin": "^8.7.0",
-    "@typescript-eslint/parser": "^8.7.0",
-    "eslint": "^8.51.0",
-    "eslint-config-airbnb": "^19.0.4",
-    "eslint-plugin-import": "^2.28.1",
-    "eslint-plugin-jsx-a11y": "^6.7.1",
-    "eslint-plugin-react": "^7.33.2",
-    "eslint-plugin-react-hooks": "^4.6.0",
-    "tsdx": "^0.14.1",
-    "typescript": "^5.2.2"
-  }
+    "typescript": "^5.6.3",
+    "vite": "^6.0.5",
+    "@vitejs/plugin-react": "^4.3.4",
+    "vite-plugin-dts": "^4.2.3",
+    "vite-plugin-svgr": "^4.3.0",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "@types/classnames": "^2.3.1",
+    "@types/node": "^22.9.1",
+    "rimraf": "^6.0.1",
+    "i18next": "^23.14.0",
+    "react-i18next": "^15.1.2"
+  },
+  "sideEffects": false
 }

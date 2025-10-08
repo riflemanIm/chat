@@ -1,0 +1,1 @@
+{"version":3,"file":"useInterval.d.ts","sourceRoot":"","sources":["../../src/hooks/useInterval.ts"],"names":[],"mappings":"AAEA,KAAK,QAAQ,GAAG,MAAM,IAAI,CAAC;AAC3B,KAAK,cAAc,GAAG,OAAO,GAAG,MAAM,GAAG,MAAM,GAAG,IAAI,GAAG,SAAS,CAAC;AAEnE,MAAM,CAAC,OAAO,UAAU,WAAW,CACjC,QAAQ,EAAE,QAAQ,EAClB,MAAM,EAAE,cAAc,EACtB,KAAK,EAAE,MAAM,GACZ,IAAI,CAkBN"}

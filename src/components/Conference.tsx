@@ -29,12 +29,12 @@ const Conference: React.FC<ConferenceProps> = ({
 }: ConferenceProps) => {
   const classes = useStyles();
   const ref = React.useRef<HTMLIFrameElement>(null);
-  // const confUrl =
-  //   conference?.url && langCode
-  //     ? updateUrlParameter(conference?.url, "lang", transLang(langCode))
-  //     : "";
-  const confUrl = conference?.url;
-  console.log("confUrl", confUrl);
+  let confUrl = "";
+  if (conference && conference.url) {
+    confUrl = langCode
+      ? updateUrlParameter(conference.url, "lang", transLang(langCode))
+      : conference.url;
+  }
   const TERMINATION_EVENTS = [
     "connectionFail",
     "loginFail",
@@ -44,9 +44,12 @@ const Conference: React.FC<ConferenceProps> = ({
     "logout",
     "connectionClosed",
   ];
+  const conferenceId = conference ? conference.id : undefined;
+
   useEffect(() => {
     const listener = ({ source, data }: MessageEvent) => {
-      if (source === ref.current?.contentWindow) {
+      const contentWindow = ref.current ? ref.current.contentWindow : null;
+      if (contentWindow && source === contentWindow) {
         const { type } = data;
 
         if (TERMINATION_EVENTS.includes(type)) onClose(conference);
@@ -57,7 +60,7 @@ const Conference: React.FC<ConferenceProps> = ({
       window.removeEventListener("message", listener);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [conference?.id, langCode]);
+  }, [conferenceId, langCode]);
 
   return (
     <iframe

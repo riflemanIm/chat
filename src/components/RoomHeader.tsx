@@ -69,7 +69,8 @@ type RoomHeaderProps = {
 };
 
 const getGroupStatus = (group: Group, t: (key: string) => string) => {
-  const status = [`${group.members?.length} ${t("CHAT.MEMBERS")}`];
+  const memberCount = Array.isArray(group.members) ? group.members.length : 0;
+  const status = [`${memberCount} ${t("CHAT.MEMBERS")}`];
   const onlineCount = (group.members || []).reduce(
     (sum: number, contact) => (contact.online ? sum + 1 : sum),
     0
@@ -105,7 +106,7 @@ const RoomHeader: React.FC<RoomHeaderProps> = ({
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const [addOperatorOpen, setAddOperatorOpen] = useState(false);
   const [confirmFinishConf, setConfirmFinishConf] = React.useState(false);
-  const closeTimer = useRef<NodeJS.Timeout | null>(null);
+  const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [searchAnchorEl, setSearchAnchorEl] = useState<HTMLElement | null>(
     null
   );
@@ -130,7 +131,7 @@ const RoomHeader: React.FC<RoomHeaderProps> = ({
 
   const handlePopoverIn = useCallback(
     (event: React.MouseEvent<HTMLElement, MouseEvent>) => {
-      setAnchorEl((prev) => prev ?? event.currentTarget);
+      setAnchorEl((prev) => (prev != null ? prev : event.currentTarget));
       if (closeTimer.current) {
         clearTimeout(closeTimer.current);
         closeTimer.current = null;
@@ -174,7 +175,9 @@ const RoomHeader: React.FC<RoomHeaderProps> = ({
 
   const handleSearchChange = useCallback(
     (value: string) => {
-      onMessageSearchChange?.(value);
+      if (onMessageSearchChange) {
+        onMessageSearchChange(value);
+      }
     },
     [onMessageSearchChange]
   );
@@ -287,7 +290,8 @@ const RoomHeader: React.FC<RoomHeaderProps> = ({
                 </React.Fragment>
               )}
               {user.role === 4 &&
-                group.members?.find(
+                Array.isArray(group.members) &&
+                group.members.some(
                   (it) => it.userId !== user.userId && it.role === 4
                 ) &&
                 onLeaveGroup && (
@@ -306,18 +310,20 @@ const RoomHeader: React.FC<RoomHeaderProps> = ({
     );
   }
   const contact = chat as Contact;
-  const isTyping = !!typing?.contactId && typing?.userId === contact.userId;
+  const isTyping = Boolean(
+    typing && typing.contactId && typing.userId === contact.userId
+  );
   const isConferenceActive = conference != null && !isEmpty(conference);
   const isOperatorRole = user.role != null && [3, 4].includes(user.role);
   const canPauseConference =
     isConferenceActive &&
     conferenceJoined &&
     user.role !== 1 &&
-    !!onConferencePause;
+    typeof onConferencePause === "function";
   const canFinishConference =
-    isConferenceActive && isOperatorRole && !!onVideoEnd;
+    isConferenceActive && isOperatorRole && typeof onVideoEnd === "function";
   const canStartConference =
-    !isConferenceActive && isOperatorRole && !!onVideoCall;
+    !isConferenceActive && isOperatorRole && typeof onVideoCall === "function";
 
   return (
     <>
@@ -374,7 +380,11 @@ const RoomHeader: React.FC<RoomHeaderProps> = ({
                 color="secondary"
                 size="small"
                 startIcon={<PauseIcon color="primary" />}
-                onClick={() => onConferencePause?.(conference)}
+                onClick={() => {
+                  if (onConferencePause) {
+                    onConferencePause(conference);
+                  }
+                }}
               >
                 {t("CHAT.CONFERENCE.PAUSE")}
               </Button>
@@ -397,21 +407,23 @@ const RoomHeader: React.FC<RoomHeaderProps> = ({
                   setOpen={setConfirmFinishConf}
                   contentText={t("CHAT.CONFERENCE.CONFIRM_FINISH_CONF")}
                   callback={() => {
-                    onVideoEnd?.(conference);
+                    if (onVideoEnd) {
+                      onVideoEnd(conference);
+                    }
                   }}
                 />
               </React.Fragment>
             )}
 
-            {canStartConference && (
+            {canStartConference && onVideoCall && (
               <ConferenceButton
                 visitData={visitData}
                 chat={contact}
-                onVideoCall={onVideoCall!}
+                onVideoCall={onVideoCall}
               />
             )}
 
-            {conference?.finishDate != null && (
+            {conference && conference.finishDate != null && (
               <ConferenceTime finishDate={conference.finishDate} />
             )}
           </Box>

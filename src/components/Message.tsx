@@ -99,12 +99,14 @@ const Message = memo(
     };
 
     const notifyContent = useMemo(() => {
-      if (!message.content?.trim().startsWith("{")) return message.content;
+      const rawContent = message.content;
+      if (typeof rawContent !== "string" || rawContent.trim().indexOf("{") !== 0)
+        return rawContent;
       try {
-        return JSON.parse(message.content) as NotifyPayload;
+        return JSON.parse(rawContent) as NotifyPayload;
       } catch (error) {
         console.warn("Failed to parse notify content", error);
-        return message.content;
+        return rawContent;
       }
     }, [message.content]);
 

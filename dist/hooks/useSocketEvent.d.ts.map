@@ -1,0 +1,1 @@
+{"version":3,"file":"useSocketEvent.d.ts","sourceRoot":"","sources":["../../src/hooks/useSocketEvent.ts"],"names":[],"mappings":"AACA,OAAO,EAAE,MAAM,EAAE,MAAM,kBAAkB,CAAC;AAG1C,wBAAgB,cAAc,CAAC,CAAC,EAC9B,MAAM,EAAE,MAAM,GAAG,IAAI,EACrB,KAAK,EAAE,MAAM,EACb,OAAO,EAAE,CAAC,IAAI,EAAE,CAAC,KAAK,IAAI,EAC1B,IAAI,GAAE,GAAG,EAAO,QAmBjB"}

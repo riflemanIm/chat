@@ -152,7 +152,7 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({
     socket?.on("joinPrivateSocket", listener4);
 
     // typing
-    let typingTimer: NodeJS.Timeout;
+    let typingTimer: ReturnType<typeof setTimeout>;
     const listener5 = (res: ServerRes) => {
       if (handleSocketError(res, dispatch)) return;
       if (typingTimer) clearTimeout(typingTimer);
