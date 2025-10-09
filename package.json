@@ -8,6 +8,7 @@
   "main": "dist/index.cjs",
   "module": "dist/mobimed.esm.js",
   "types": "dist/index.d.ts",
+  "packageManager": "yarn@1.22.22",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",

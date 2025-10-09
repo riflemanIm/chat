@@ -1,20 +1,27 @@
+image: node:22-alpine
+
 variables:
-  NODE_VERSION: "22.9.0"
-  NODE_DIST: "linux-x64"
+  NODE_OPTIONS: "--max-old-space-size=4096"
+
+workflow:
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "push" || $CI_PIPELINE_SOURCE == "merge_request_event" || $CI_COMMIT_TAG
 
 default:
   cache:
-    key: ${CI_PROJECT_NAME}-${CI_COMMIT_REF_SLUG}
+    key:
+      files:
+        - yarn.lock
+      prefix: ${CI_PROJECT_NAME}
     paths:
-      - .cache/node
       - node_modules/
   before_script:
-    - export NODE_DIR="$CI_PROJECT_DIR/.cache/node"
-    - if [ ! -x "$NODE_DIR/bin/node" ] || [ "$($NODE_DIR/bin/node -v 2>/dev/null)" != "v${NODE_VERSION}" ]; then rm -rf "$NODE_DIR"; mkdir -p "$NODE_DIR"; curl -fsSL "https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}-${NODE_DIST}.tar.xz" -o node.tar.xz; tar -xJf node.tar.xz -C "$NODE_DIR" --strip-components=1; rm node.tar.xz; fi
-    - export PATH="$NODE_DIR/bin:$PATH"
     - node -v
-    - npm -v
-    - npx yarn@1.22.22 install --frozen-lockfile
+    - corepack enable
+    # Если хочешь зафиксировать Yarn v1: добавь в package.json "packageManager": "yarn@1.22.22"
+    - corepack use yarn@1.22.22
+    - yarn -v
+    - yarn install --frozen-lockfile --prefer-offline
 
 stages:
   - build
@@ -23,22 +30,19 @@ stages:
 build:
   stage: build
   script:
-    - npx yarn@1.22.22 build
+    - yarn build
   artifacts:
     paths:
       - dist/
     expire_in: 1 week
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
-    - if: $CI_COMMIT_BRANCH && $CI_COMMIT_BRANCH != "master"
-    - if: $CI_COMMIT_BRANCH == "master"
     - if: $CI_COMMIT_TAG
+    - if: $CI_COMMIT_BRANCH
 
 publish:
   stage: deploy
-  needs:
-    - job: build
-      artifacts: true
+  needs: ["build"]
   script:
     - |
       cat <<EOF > .npmrc
@@ -50,4 +54,3 @@ publish:
     - npm publish --registry "https://${CI_SERVER_HOST}/api/v4/projects/${CI_PROJECT_ID}/packages/npm/"
   rules:
     - if: $CI_COMMIT_TAG
-    - if: '$CI_COMMIT_BRANCH == "master" && $CI_PIPELINE_SOURCE == "push"'
