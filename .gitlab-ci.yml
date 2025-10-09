@@ -2,6 +2,8 @@ image: node:22-alpine
 
 variables:
   NODE_OPTIONS: "--max-old-space-size=4096"
+  NODE_VERSION: "22.9.0"
+  NODE_DIST: "linux-x64"
 
 workflow:
   rules:
@@ -14,8 +16,19 @@ default:
         - yarn.lock
       prefix: ${CI_PROJECT_NAME}
     paths:
+      - .cache/node/
       - node_modules/
   before_script:
+    - export NODE_DIR="$CI_PROJECT_DIR/.cache/node"
+    - |
+      if [ ! -x "$NODE_DIR/bin/node" ] || [ "$("$NODE_DIR/bin/node" -v 2>/dev/null)" != "v${NODE_VERSION}" ]; then
+        rm -rf "$NODE_DIR"
+        mkdir -p "$NODE_DIR"
+        curl -fsSL "https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}-${NODE_DIST}.tar.xz" -o node.tar.xz
+        tar -xJf node.tar.xz -C "$NODE_DIR" --strip-components=1
+        rm node.tar.xz
+      fi
+    - export PATH="$NODE_DIR/bin:$PATH"
     - node -v
     - corepack enable
     # Если хочешь зафиксировать Yarn v1: добавь в package.json "packageManager": "yarn@1.22.22"
