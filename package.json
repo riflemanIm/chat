@@ -3,7 +3,7 @@
   "version": "2.0.3",
   "type": "module",
   "description": "Chat UI components for PMT project",
-  "author": "Oleg Lambin",
+  "author": "Pavel Ishenin, Oleg Lambin",
   "license": "ISC",
   "main": "dist/index.cjs",
   "module": "dist/mobimed.esm.js",
