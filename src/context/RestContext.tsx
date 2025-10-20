@@ -113,7 +113,12 @@ export const RestProvider: React.FC<RestProviderProps> = ({
   const getPrivateMessages = useCallback(
     async (
       chat: Contact,
-      options?: { search?: string; reset?: boolean; callback?: () => void }
+      options?: {
+        search?: string;
+        reset?: boolean;
+        callback?: () => void;
+        shouldIgnore?: () => boolean;
+      }
     ) => {
       const contactId = chat.userId;
       const current = options?.reset ? 0 : chat.messages?.length;

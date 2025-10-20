@@ -9,8 +9,12 @@ export interface IRestContext {
         search?: string;
         reset?: boolean;
         callback?: () => void;
+        shouldIgnore?: () => boolean;
     }) => Promise<void>;
-    getGroupMessages: (chat: Group) => Promise<void>;
+    getGroupMessages: (chat: Group, options?: {
+        reset?: boolean;
+        shouldIgnore?: () => boolean;
+    }) => Promise<void>;
     getUserByMmk: (mmkId: string | null, guid: string | null) => Promise<number | undefined>;
 }
 export declare const RestContext: React.Context<IRestContext>;
