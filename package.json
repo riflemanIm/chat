@@ -1,9 +1,64 @@
 {
   "name": "@pmt/chat",
-  "version": "1.0.1",
-  "main": "src/index.ts",
-  "types": "src/index.ts",
+  "version": "2.0.7",
+  "type": "module",
+  "description": "Chat UI components for PMT project",
+  "author": "Pavel Ishenin, Oleg Lambin",
+  "license": "ISC",
+  "main": "dist/index.cjs",
+  "module": "dist/mobimed.esm.js",
+  "types": "dist/index.d.ts",
+  "packageManager": "yarn@1.22.22",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/mobimed.esm.js",
+      "require": "./dist/index.cjs"
+    }
+  },
   "files": [
-    "src"
-  ]
+    "dist"
+  ],
+  "publishConfig": {
+    "@pmt:registry": "https://gitlab.postmodern.ru/api/v4/projects/50/packages/npm/"
+  },
+  "scripts": {
+    "build": "rimraf dist && vite build",
+    "dev": "vite"
+  },
+  "peerDependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-i18next": "^15.0.0",
+    "i18next": "^23.0.0",
+    "@mui/material": "^6.1.1",
+    "@mui/icons-material": "^6.1.1",
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
+    "@mui/styles": "^6.1.1"
+  },
+  "dependencies": {
+    "axios": "^1.7.9",
+    "classnames": "^2.3.2",
+    "dayjs": "^1.11.13",
+    "react-aspect-ratio": "^1.1.6",
+    "react-infinite-scroll-hook": "^5.0.1",
+    "socket.io-client": "^4.8.1"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.3",
+    "vite": "^6.0.5",
+    "@vitejs/plugin-react": "^4.3.4",
+    "vite-plugin-dts": "^4.2.3",
+    "vite-plugin-svgr": "^4.3.0",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "@types/classnames": "^2.3.1",
+    "@types/node": "^22.9.1",
+    "rimraf": "^6.0.1",
+    "i18next": "^23.14.0",
+    "react-i18next": "^15.1.2",
+    "@mui/styles": "^6.1.1"
+  },
+  "sideEffects": false
 }
