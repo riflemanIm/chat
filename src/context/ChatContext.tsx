@@ -279,16 +279,31 @@ const contactUnreadGather = (
   userId: number,
   predicate: (x?: number) => number
 ) => {
-  const newState = { ...state };
-
-  if (newState.contactGather[userId]) {
-    newState.contactGather[userId] = {
-      ...newState.contactGather[userId],
-      unreadCount: predicate(newState.contactGather[userId].unreadCount),
-    };
+  const contact = state.contactGather[userId];
+  if (!contact) {
+    return state;
   }
 
-  // обновляем активный чат
+  const nextUnread = predicate(contact.unreadCount);
+  const currentUnread = contact.unreadCount ?? 0;
+
+  if (nextUnread === currentUnread) {
+    return state;
+  }
+
+  const contactGather = {
+    ...state.contactGather,
+    [userId]: {
+      ...contact,
+      unreadCount: nextUnread,
+    },
+  };
+
+  const newState: ChatState = {
+    ...state,
+    contactGather,
+  };
+
   newState.activeRoom = getFreshActiveRoom(newState);
 
   return newState;
@@ -299,16 +314,31 @@ const groupUnreadGather = (
   groupId: number,
   predicate: (x?: number) => number
 ) => {
-  const newState = { ...state };
-
-  if (newState.groupGather[groupId]) {
-    newState.groupGather[groupId] = {
-      ...newState.groupGather[groupId],
-      unreadCount: predicate(newState.groupGather[groupId].unreadCount),
-    };
+  const group = state.groupGather[groupId];
+  if (!group) {
+    return state;
   }
 
-  // обновляем активный чат
+  const nextUnread = predicate(group.unreadCount);
+  const currentUnread = group.unreadCount ?? 0;
+
+  if (nextUnread === currentUnread) {
+    return state;
+  }
+
+  const groupGather = {
+    ...state.groupGather,
+    [groupId]: {
+      ...group,
+      unreadCount: nextUnread,
+    },
+  };
+
+  const newState: ChatState = {
+    ...state,
+    groupGather,
+  };
+
   newState.activeRoom = getFreshActiveRoom(newState);
 
   return newState;
@@ -457,31 +487,55 @@ const addGroupMember = (state: ChatState, payload: GroupMember) => {
 };
 
 const markPrivateMessagesRead = (state: ChatState, userId: number) => {
-  const newState = { ...state };
-
-  if (newState.contactGather[userId]) {
-    const updatedValue = { ...newState.contactGather[userId] };
-
-    if (updatedValue.messages) {
-      for (let i = 0; i < updatedValue.messages.length; i++)
-        updatedValue.messages[i] = {
-          ...updatedValue.messages[i],
-          status: 1,
-        };
-    }
-    newState.contactGather[userId] = updatedValue;
+  const contact = state.contactGather[userId];
+  if (!contact) {
+    return state;
   }
 
-  // обновляем активный чат
-  newState.activeRoom = getFreshActiveRoom(newState);
-  // помечаем все не прочитанные как прочитанные
-  if (newState.activeRoom != null && newState.activeRoom.messages) {
-    for (let i = 0; i < newState.activeRoom.messages.length; i++)
-      newState.activeRoom.messages[i] = {
-        ...newState.activeRoom.messages[i],
-        status: 1,
-      };
+  const hasUnread =
+    (contact.unreadCount ?? 0) > 0 ||
+    (contact.messages?.some((message) => message.status !== 1) ?? false);
+
+  if (!hasUnread) {
+    return state;
   }
+
+  const normalizedMessages = contact.messages
+    ? contact.messages.map((message) =>
+        message.status === 1 ? message : { ...message, status: 1 }
+      )
+    : contact.messages;
+
+  const updatedContact: Contact = {
+    ...contact,
+    unreadCount: 0,
+    messages: normalizedMessages,
+  };
+
+  const contactGather = {
+    ...state.contactGather,
+    [userId]: updatedContact,
+  };
+
+  const newState: ChatState = {
+    ...state,
+    contactGather,
+  };
+
+  const isActiveContact =
+    state.activeRoom != null &&
+    !(state.activeRoom as Group).groupId &&
+    state.activeRoom.userId === userId;
+
+  if (isActiveContact) {
+    newState.activeRoom = {
+      ...updatedContact,
+      messages: normalizedMessages,
+    };
+  } else {
+    newState.activeRoom = getFreshActiveRoom(newState);
+  }
+
   return newState;
 };
 
@@ -536,15 +590,16 @@ const addGroupMessages = (state: ChatState, data: AddGroupMessages) => {
 };
 
 const setActiveRoom = (state: ChatState, data: SetActiveRoom) => {
-  //if (state.activeRoom && data.ifNotExists) return state;
+  const nextActiveRoom = data.groupId
+    ? state.groupGather[data.groupId]
+    : data.contactId
+      ? state.contactGather[data.contactId]
+      : null;
+
   return {
     ...state,
     chatOld: state.activeRoom != null ? { ...state.activeRoom } : null,
-    activeRoom: data.groupId
-      ? state.groupGather[data.groupId]
-      : data.contactId
-        ? state.contactGather[data.contactId]
-        : null,
+    activeRoom: nextActiveRoom ?? null,
     messageSearch: "",
   };
 };

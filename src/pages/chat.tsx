@@ -38,6 +38,7 @@ export const ChatPage: React.FC<ChatPageProps> = ({
   fullWidth = false,
   ...props
 }: ChatPageProps) => {
+  console.log("activeChatUserId", activeChatUserId);
   const isMobile = useMediaQuery((theme: Theme) =>
     theme.breakpoints.down("md")
   );
@@ -204,20 +205,14 @@ export const ChatPage: React.FC<ChatPageProps> = ({
     (chat: ChatRoom) => {
       if (!chat) return;
 
-      const currentChatId = state.activeRoom ? getChatId(state.activeRoom) : null;
-      const nextChatId = getChatId(chat);
-
       try {
-        if (currentChatId !== nextChatId) {
-          // Устанавливаем активную комнату только если она изменилась
-          dispatch({
-            type: "SET_ACTIVE_ROOM",
-            payload: {
-              groupId: isGroup(chat) ? chat.groupId : undefined,
-              contactId: chat?.userId,
-            },
-          });
-        }
+        dispatch({
+          type: "SET_ACTIVE_ROOM",
+          payload: {
+            groupId: isGroup(chat) ? chat.groupId : undefined,
+            contactId: chat?.userId,
+          },
+        });
 
         // Помечаем сообщения как прочитанные
         onEnterRoom(chat);
@@ -229,7 +224,7 @@ export const ChatPage: React.FC<ChatPageProps> = ({
         });
       }
     },
-    [dispatch, onEnterRoom, state.activeRoom]
+    [dispatch, onEnterRoom]
   );
 
   const onVideoCall = React.useCallback(
@@ -308,11 +303,34 @@ export const ChatPage: React.FC<ChatPageProps> = ({
     [state.contactGather]
   );
 
+  const requestedChatId = React.useMemo(() => {
+    if (activeGroupId != null) {
+      return `group:${activeGroupId}`;
+    }
+    if (activeChatUserId != null) {
+      return `user:${activeChatUserId}`;
+    }
+    return null;
+  }, [activeGroupId, activeChatUserId]);
+
+  const activeChatIdRef = React.useRef<string | null>(getChatId(state.activeRoom));
+
+  React.useEffect(() => {
+    activeChatIdRef.current = getChatId(state.activeRoom);
+  }, [state.activeRoom]);
+
   React.useEffect(() => {
     let cancelled = false;
 
     const selectChat = (chat: ChatRoom | undefined | null) => {
       if (!cancelled && chat) {
+        const chatId = getChatId(chat);
+        if (!chatId) {
+          return;
+        }
+        if (chatId === activeChatIdRef.current && chatId === requestedChatId) {
+          return;
+        }
         onChangeChat(chat);
       }
     };
@@ -364,6 +382,7 @@ export const ChatPage: React.FC<ChatPageProps> = ({
     groups,
     onChangeChat,
     getUserByMmk,
+    requestedChatId,
   ]);
 
   // Отключили проигрыш звука

@@ -68,37 +68,43 @@ export const RestProvider: React.FC<RestProviderProps> = ({
   baseUrl,
 }: RestProviderProps) => {
   const { state, dispatch } = useContext(ChatContext);
-  const errorInterceptor = (error: AxiosError) => {
-    if (
-      state.token &&
-      error.response != null &&
-      error.response.status === 401
-    ) {
-      getRefreshToken(state.token, state.refreshToken, baseUrl);
-    }
-  };
 
-  const fetch: AxiosInstance = axios.create({
-    timeout: 60000, // Таймаут минута
-    baseURL: chatBaseURLApi,
-    headers: {
-      "Cache-Control": "no-cache",
-      Pragma: "no-cache",
-      Authorization: `Bearer ${state.token}`,
-    },
-    withCredentials: false,
-  });
-
-  fetch.interceptors.response.use(
-    (response) => {
-      return response;
-    },
+  const errorInterceptor = useCallback(
     (error: AxiosError) => {
-      console.log("ERROR AxiosError");
-      errorInterceptor(error);
-      return Promise.reject(error);
-    }
+      if (
+        state.token &&
+        error.response != null &&
+        error.response.status === 401
+      ) {
+        getRefreshToken(state.token, state.refreshToken, baseUrl);
+      }
+    },
+    [baseUrl, state.refreshToken, state.token]
   );
+
+  const fetch = useMemo<AxiosInstance>(() => {
+    const instance = axios.create({
+      timeout: 60000, // Таймаут минута
+      baseURL: chatBaseURLApi,
+      headers: {
+        "Cache-Control": "no-cache",
+        Pragma: "no-cache",
+        Authorization: `Bearer ${state.token}`,
+      },
+      withCredentials: false,
+    });
+
+    instance.interceptors.response.use(
+      (response) => response,
+      (error: AxiosError) => {
+        console.log("ERROR AxiosError");
+        errorInterceptor(error);
+        return Promise.reject(error);
+      }
+    );
+
+    return instance;
+  }, [chatBaseURLApi, errorInterceptor, state.token]);
 
   const getPrivateMessages = useCallback(
     async (
@@ -178,21 +184,24 @@ export const RestProvider: React.FC<RestProviderProps> = ({
     [dispatch, fetch, pageSize]
   );
 
-  const getUserByMmk = async (mmkId: string | null, guid: string | null) => {
-    try {
-      const { data }: { data: number } = await fetch.get("/contact/find", {
-        params: {
-          mmkId,
-          guid,
-        },
-      });
-      if (data != null) {
-        return data;
+  const getUserByMmk = useCallback(
+    async (mmkId: string | null, guid: string | null) => {
+      try {
+        const { data }: { data: number } = await fetch.get("/contact/find", {
+          params: {
+            mmkId,
+            guid,
+          },
+        });
+        if (data != null) {
+          return data;
+        }
+      } catch (error) {
+        console.log("err getUserByMmk", error);
       }
-    } catch (error) {
-      console.log("err getUserByMmk", error);
-    }
-  };
+    },
+    [fetch]
+  );
 
   const value = useMemo(
     () => ({
