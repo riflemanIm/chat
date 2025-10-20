@@ -112,9 +112,56 @@ export const ChatPage: React.FC<ChatPageProps> = ({
       if (state.messageSearch === value) {
         return;
       }
-      dispatch({ type: "SET_MESSAGE_SEARCH", payload: value });
+
+      const activeRoom = state.activeRoom;
+      const trimmed = value.trim();
+      const hadSearch = Boolean(state.messageSearch.trim());
+      const hasQuery = Boolean(trimmed);
+
+      if (!activeRoom || (!hasQuery && !hadSearch)) {
+        dispatch({ type: "SET_MESSAGE_SEARCH", payload: value });
+        return;
+      }
+
+      const requestId = searchRequestRef.current + 1;
+      searchRequestRef.current = requestId;
+
+      const fetchAndApplySearch = async () => {
+        try {
+          if (isGroup(activeRoom)) {
+            await getGroupMessages(activeRoom as Group, {
+              reset: true,
+              shouldIgnore: () => searchRequestRef.current !== requestId,
+            });
+          } else {
+            await getPrivateMessages(activeRoom as Contact, {
+              search: hasQuery ? trimmed : undefined,
+              reset: true,
+              shouldIgnore: () => searchRequestRef.current !== requestId,
+            });
+          }
+        } catch (error) {
+          console.error("Failed to search messages:", error);
+          dispatch({
+            type: "SET_ERROR",
+            payload: "Failed to search messages",
+          });
+        } finally {
+          if (searchRequestRef.current === requestId) {
+            dispatch({ type: "SET_MESSAGE_SEARCH", payload: value });
+          }
+        }
+      };
+
+      void fetchAndApplySearch();
     },
-    [dispatch, state.messageSearch]
+    [
+      dispatch,
+      getGroupMessages,
+      getPrivateMessages,
+      state.activeRoom,
+      state.messageSearch,
+    ]
   );
 
   const onMessageDelete = React.useCallback(
@@ -312,6 +359,8 @@ export const ChatPage: React.FC<ChatPageProps> = ({
     }
     return null;
   }, [activeGroupId, activeChatUserId]);
+
+  const searchRequestRef = React.useRef(0);
 
   const activeChatIdRef = React.useRef<string | null>(getChatId(state.activeRoom));
 

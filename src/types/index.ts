@@ -235,11 +235,13 @@ export interface AddPrivateMessages {
   pageSize: number;
   contactId: number;
   messages: PrivateMessage[];
+  reset?: boolean;
 }
 
 export interface AddGroupMessages extends PagingResponse {
   pageSize: number;
   groupId: number;
+  reset?: boolean;
 }
 
 export interface SetActiveRoom {

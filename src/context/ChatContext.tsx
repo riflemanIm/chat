@@ -542,16 +542,19 @@ const markPrivateMessagesRead = (state: ChatState, userId: number) => {
 const addPrivateMessages = (state: ChatState, data: AddPrivateMessages) => {
   const newState = { ...state };
 
-  const { messages, contactId } = data;
+  const { messages, contactId, reset } = data;
+  const contact = newState.contactGather[contactId];
 
-  if (newState.contactGather[contactId]) {
+  if (contact) {
+    const existingMessages = contact.messages || [];
+    const nextMessages = reset
+      ? [...(messages || [])]
+      : [...(messages || []), ...existingMessages];
+
     newState.contactGather[contactId] = {
-      ...newState.contactGather[contactId],
-      messages: [
-        ...(messages || []),
-        ...(newState.contactGather[contactId].messages || []),
-      ],
-      noMoreData: messages?.length ? messages?.length < data.pageSize : true,
+      ...contact,
+      messages: nextMessages,
+      noMoreData: messages?.length ? messages.length < data.pageSize : true,
     };
   }
 
@@ -564,15 +567,18 @@ const addPrivateMessages = (state: ChatState, data: AddPrivateMessages) => {
 const addGroupMessages = (state: ChatState, data: AddGroupMessages) => {
   const newState = { ...state };
 
-  const { groupId, messages, userArr: users } = data;
-  if (newState.groupGather[groupId]) {
+  const { groupId, messages, userArr: users, reset } = data;
+  const group = newState.groupGather[groupId];
+  if (group) {
+    const existingMessages = group.messages || [];
+    const nextMessages = reset
+      ? [...(messages || [])]
+      : [...(messages || []), ...existingMessages];
+
     newState.groupGather[groupId] = {
-      ...newState.groupGather[groupId],
-      messages: [
-        ...(messages || []),
-        ...(newState.groupGather[groupId].messages || []),
-      ],
-      noMoreData: messages?.length ? messages?.length < data.pageSize : true,
+      ...group,
+      messages: nextMessages,
+      noMoreData: messages?.length ? messages.length < data.pageSize : true,
     };
   }
 

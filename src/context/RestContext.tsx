@@ -13,9 +13,13 @@ export interface IRestContext {
       search?: string;
       reset?: boolean;
       callback?: () => void;
+      shouldIgnore?: () => boolean;
     }
   ) => Promise<void>;
-  getGroupMessages: (chat: Group) => Promise<void>;
+  getGroupMessages: (
+    chat: Group,
+    options?: { reset?: boolean; shouldIgnore?: () => boolean }
+  ) => Promise<void>;
   getUserByMmk: (
     mmkId: string | null,
     guid: string | null
@@ -126,14 +130,17 @@ export const RestProvider: React.FC<RestProviderProps> = ({
         });
 
         if (data) {
-          dispatch({
-            type: "ADD_PRIVATE_MESSAGES",
-            payload: {
-              pageSize,
-              contactId,
-              messages: data as PrivateMessage[],
-            },
-          });
+          if (!options?.shouldIgnore?.()) {
+            dispatch({
+              type: "ADD_PRIVATE_MESSAGES",
+              payload: {
+                pageSize,
+                contactId,
+                messages: data as PrivateMessage[],
+                reset: options?.reset ?? false,
+              },
+            });
+          }
           if (options?.callback) {
             options.callback();
           }
@@ -149,9 +156,12 @@ export const RestProvider: React.FC<RestProviderProps> = ({
   );
 
   const getGroupMessages = useCallback(
-    async (chat: Group) => {
+    async (
+      chat: Group,
+      options?: { reset?: boolean; shouldIgnore?: () => boolean }
+    ) => {
       const { groupId } = chat;
-      const current = chat.messages?.length;
+      const current = options?.reset ? 0 : chat.messages?.length;
       try {
         dispatch({ type: "SET_LOADING", payload: true });
         const { data }: { data: PagingResponse } = await fetch.get(
@@ -165,14 +175,17 @@ export const RestProvider: React.FC<RestProviderProps> = ({
           }
         );
         if (data) {
-          dispatch({
-            type: "ADD_GROUP_MESSAGES",
-            payload: {
-              pageSize,
-              groupId,
-              ...data,
-            },
-          });
+          if (!options?.shouldIgnore?.()) {
+            dispatch({
+              type: "ADD_GROUP_MESSAGES",
+              payload: {
+                pageSize,
+                groupId,
+                ...data,
+                reset: options?.reset ?? false,
+              },
+            });
+          }
         }
       } catch (error) {
         const err = error as AxiosError;
