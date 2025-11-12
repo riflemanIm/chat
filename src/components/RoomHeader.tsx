@@ -33,7 +33,6 @@ import ConferenceTime from "./ConferenceTime";
 import ConfirmDialogSlide from "./ConfirmDialogSlide";
 import ContactList from "./ContactList";
 import ContactStatus from "./ContactStatus";
-import ButtonMessageSearchIcon from "./ButtonMessageSearchIcon";
 import RoomMessageSearch from "./RoomMessageSearch";
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -107,10 +106,24 @@ const RoomHeader: React.FC<RoomHeaderProps> = ({
   const [addOperatorOpen, setAddOperatorOpen] = useState(false);
   const [confirmFinishConf, setConfirmFinishConf] = React.useState(false);
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const [searchAnchorEl, setSearchAnchorEl] = useState<HTMLElement | null>(
-    null
+
+  const contact = chat as Contact;
+  const isTyping = Boolean(
+    typing && typing.contactId && typing.userId === contact.userId
   );
-  const noopClose = useCallback(() => undefined, []);
+  const isConferenceActive = conference != null && !isEmpty(conference);
+  const inMobileOrConferenceActive = isMobile || isConferenceActive;
+  const isOperatorRole = user.role != null && [3, 4].includes(user.role);
+  const canPauseConference =
+    isConferenceActive &&
+    conferenceJoined &&
+    user.role !== 1 &&
+    typeof onConferencePause === "function";
+  const canFinishConference =
+    isConferenceActive && isOperatorRole && typeof onVideoEnd === "function";
+  const canStartConference =
+    !isConferenceActive && isOperatorRole && typeof onVideoCall === "function";
+
   if (!chat)
     return (
       <CardHeader
@@ -160,46 +173,6 @@ const RoomHeader: React.FC<RoomHeaderProps> = ({
       }
     },
     [chat, onOperatorAdd]
-  );
-
-  const handleSearchOpen = useCallback(
-    (event: React.MouseEvent<HTMLElement>) => {
-      setSearchAnchorEl(event.currentTarget);
-    },
-    []
-  );
-
-  const handleSearchClose = useCallback(() => {
-    setSearchAnchorEl(null);
-  }, []);
-
-  const handleSearchChange = useCallback(
-    (value: string) => {
-      if (onMessageSearchChange) {
-        onMessageSearchChange(value);
-      }
-    },
-    [onMessageSearchChange]
-  );
-
-  const searchMenu = (
-    <RoomMessageSearch
-      anchorEl={searchAnchorEl}
-      open={Boolean(searchAnchorEl)}
-      value={messageSearch}
-      onClose={handleSearchClose}
-      onChange={handleSearchChange}
-    />
-  );
-
-  const renderDesktopSearch = () => (
-    <RoomMessageSearch
-      anchorEl={null}
-      open={false}
-      value={messageSearch}
-      onClose={noopClose}
-      onChange={handleSearchChange}
-    />
   );
 
   const group = chat as Group;
@@ -265,14 +238,11 @@ const RoomHeader: React.FC<RoomHeaderProps> = ({
               gap={1}
               sx={{ "& > *": { flexShrink: 0 } }}
             >
-              {isMobile ? (
-                <ButtonMessageSearchIcon
-                  onClick={handleSearchOpen}
-                  active={Boolean(messageSearch)}
-                />
-              ) : (
-                renderDesktopSearch()
-              )}
+              <RoomMessageSearch
+                value={messageSearch}
+                onChange={onMessageSearchChange}
+                inMobileOrConferenceActive={inMobileOrConferenceActive}
+              />
               {user.role === 4 && (
                 <React.Fragment>
                   <IconButton
@@ -305,25 +275,9 @@ const RoomHeader: React.FC<RoomHeaderProps> = ({
             </Box>
           }
         />
-        {isMobile ? searchMenu : null}
       </>
     );
   }
-  const contact = chat as Contact;
-  const isTyping = Boolean(
-    typing && typing.contactId && typing.userId === contact.userId
-  );
-  const isConferenceActive = conference != null && !isEmpty(conference);
-  const isOperatorRole = user.role != null && [3, 4].includes(user.role);
-  const canPauseConference =
-    isConferenceActive &&
-    conferenceJoined &&
-    user.role !== 1 &&
-    typeof onConferencePause === "function";
-  const canFinishConference =
-    isConferenceActive && isOperatorRole && typeof onVideoEnd === "function";
-  const canStartConference =
-    !isConferenceActive && isOperatorRole && typeof onVideoCall === "function";
 
   return (
     <>
@@ -358,78 +312,80 @@ const RoomHeader: React.FC<RoomHeaderProps> = ({
         subheader={<ContactStatus contact={contact} isTyping={isTyping} />}
         className={className}
         action={
-          <Box
-            display="flex"
-            flexDirection="row"
-            alignItems="center"
-            gap={1}
-            sx={{ "& > *": { flexShrink: 0 } }}
-          >
-            {isMobile ? (
-              <ButtonMessageSearchIcon
-                onClick={handleSearchOpen}
-                active={Boolean(messageSearch)}
+          <>
+            <Box
+              display="flex"
+              flexDirection="row"
+              alignItems="center"
+              gap={1}
+              sx={{ "& > *": { flexShrink: 0 } }}
+            >
+              <RoomMessageSearch
+                value={messageSearch}
+                onChange={onMessageSearchChange}
+                inMobileOrConferenceActive={inMobileOrConferenceActive}
               />
-            ) : (
-              renderDesktopSearch()
-            )}
-            {canPauseConference && conference && (
-              <Button
-                aria-label="cancel call"
-                variant="contained"
-                color="secondary"
-                size="small"
-                startIcon={<PauseIcon color="primary" />}
-                onClick={() => {
-                  if (onConferencePause) {
-                    onConferencePause(conference);
-                  }
-                }}
-              >
-                {t("CHAT.CONFERENCE.PAUSE")}
-              </Button>
-            )}
-
-            {canFinishConference && conference && (
-              <React.Fragment>
+              {canPauseConference && conference && (
                 <Button
                   aria-label="cancel call"
                   variant="contained"
-                  color="warning"
+                  color="secondary"
                   size="small"
-                  startIcon={<CallEndIcon color="inherit" />}
-                  onClick={() => setConfirmFinishConf(true)}
-                >
-                  {t("CHAT.CONFERENCE.FINISH")}
-                </Button>
-                <ConfirmDialogSlide
-                  open={confirmFinishConf}
-                  setOpen={setConfirmFinishConf}
-                  contentText={t("CHAT.CONFERENCE.CONFIRM_FINISH_CONF")}
-                  callback={() => {
-                    if (onVideoEnd) {
-                      onVideoEnd(conference);
+                  startIcon={<PauseIcon color="primary" />}
+                  onClick={() => {
+                    if (onConferencePause) {
+                      onConferencePause(conference);
                     }
                   }}
+                >
+                  {t("CHAT.CONFERENCE.PAUSE")}
+                </Button>
+              )}
+
+              {canFinishConference && conference && (
+                <React.Fragment>
+                  <Button
+                    aria-label="cancel call"
+                    variant="contained"
+                    color="warning"
+                    size="small"
+                    startIcon={<CallEndIcon color="inherit" />}
+                    onClick={() => setConfirmFinishConf(true)}
+                  >
+                    {t("CHAT.CONFERENCE.FINISH")}
+                  </Button>
+                  <ConfirmDialogSlide
+                    open={confirmFinishConf}
+                    setOpen={setConfirmFinishConf}
+                    contentText={t("CHAT.CONFERENCE.CONFIRM_FINISH_CONF")}
+                    callback={() => {
+                      if (onVideoEnd) {
+                        onVideoEnd(conference);
+                      }
+                    }}
+                  />
+                </React.Fragment>
+              )}
+
+              {canStartConference && onVideoCall && (
+                <ConferenceButton
+                  visitData={visitData}
+                  chat={contact}
+                  onVideoCall={onVideoCall}
                 />
-              </React.Fragment>
-            )}
-
-            {canStartConference && onVideoCall && (
-              <ConferenceButton
-                visitData={visitData}
-                chat={contact}
-                onVideoCall={onVideoCall}
-              />
-            )}
-
-            {conference && conference.finishDate != null && (
-              <ConferenceTime finishDate={conference.finishDate} />
-            )}
-          </Box>
+              )}
+              {!isOperatorRole && isConferenceActive && (
+                <ConferenceTime finishDate={conference.finishDate} />
+              )}
+            </Box>
+            {isOperatorRole &&
+              isConferenceActive &&
+              conference.finishDate != null && (
+                <ConferenceTime finishDate={conference.finishDate} />
+              )}
+          </>
         }
       />
-      {isMobile ? searchMenu : null}
     </>
   );
 };

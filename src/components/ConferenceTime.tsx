@@ -13,7 +13,7 @@ function formatHHMMSS(totalSeconds: number) {
 }
 
 type ConferenceTimeProps = {
-  finishDate: Date | string;
+  finishDate: Date | string | null | undefined;
 };
 
 export default function ConferenceTime({ finishDate }: ConferenceTimeProps) {
@@ -22,6 +22,9 @@ export default function ConferenceTime({ finishDate }: ConferenceTimeProps) {
 
   // Преобразуем finishDate в timestamp, если он передан как строка
   const now = Date.now();
+  if (finishDate == null) {
+    return null;
+  }
   const finishTimeMs =
     typeof finishDate === "string"
       ? new Date(finishDate).getTime()
@@ -47,7 +50,7 @@ export default function ConferenceTime({ finishDate }: ConferenceTimeProps) {
   }
 
   return (
-    <Box textAlign="center">
+    <Box textAlign="right">
       <Typography variant="body2" component="span">
         {t("CHAT.CONFERENCE.LEFT_TIME")}:{" "}
       </Typography>

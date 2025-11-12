@@ -6,59 +6,71 @@ import {
   InputAdornment,
   Menu,
   TextField,
-  useMediaQuery,
 } from "@mui/material";
-import { Theme } from "@mui/material/styles";
 import React from "react";
 import { useTranslation } from "react-i18next";
+import ButtonMessageSearchIcon from "./ButtonMessageSearchIcon";
 
 type RoomMessageSearchProps = {
-  anchorEl: HTMLElement | null;
-  open: boolean;
   value: string;
-  onClose: () => void;
-  onChange: (value: string) => void;
+  onChange?: (value: string) => void;
+  inMobileOrConferenceActive: boolean;
 };
 
 const FIELD_WIDTH = 280;
 
 const RoomMessageSearch: React.FC<RoomMessageSearchProps> = ({
-  anchorEl,
-  open,
   value,
-  onClose,
   onChange,
+  inMobileOrConferenceActive,
 }) => {
   const { t } = useTranslation();
-  const isMobile = useMediaQuery((theme: Theme) =>
-    theme.breakpoints.down("md")
-  );
+
   const [draft, setDraft] = React.useState(value);
+  const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
+  const menuOpen = Boolean(anchorEl);
 
   const handleSubmit = React.useCallback(() => {
-    onChange(draft);
-    if (isMobile) {
-      onClose();
+    onChange?.(draft);
+    if (inMobileOrConferenceActive) {
+      setAnchorEl(null);
     }
-  }, [draft, isMobile, onChange, onClose]);
+  }, [draft, inMobileOrConferenceActive, onChange]);
+
+  const handleSearchOpen = React.useCallback(
+    (event: React.MouseEvent<HTMLElement>) => {
+      setAnchorEl(event.currentTarget);
+    },
+    []
+  );
+
+  const handleSearchClose = React.useCallback(() => {
+    setAnchorEl(null);
+  }, []);
 
   React.useEffect(() => {
-    if (!isMobile || !open) {
+    if (!inMobileOrConferenceActive || !menuOpen) {
       setDraft(value);
     }
-  }, [value, open, isMobile]);
+  }, [value, menuOpen, inMobileOrConferenceActive]);
+
+  React.useEffect(() => {
+    if (!inMobileOrConferenceActive) {
+      setAnchorEl(null);
+    }
+  }, [inMobileOrConferenceActive]);
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const nextValue = event.target.value;
     setDraft(nextValue);
-    onChange(nextValue);
+    onChange?.(nextValue);
   };
 
   const handleClear = () => {
     setDraft("");
-    onChange("");
-    if (isMobile) {
-      onClose();
+    onChange?.("");
+    if (inMobileOrConferenceActive) {
+      setAnchorEl(null);
     }
   };
 
@@ -71,7 +83,7 @@ const RoomMessageSearch: React.FC<RoomMessageSearchProps> = ({
 
   const searchField = (
     <TextField
-      autoFocus={isMobile ? open : false}
+      autoFocus={inMobileOrConferenceActive ? menuOpen : false}
       fullWidth
       size="small"
       variant="outlined"
@@ -107,21 +119,27 @@ const RoomMessageSearch: React.FC<RoomMessageSearchProps> = ({
     />
   );
 
-  if (!isMobile) {
+  if (!inMobileOrConferenceActive) {
     return <Box sx={{ width: FIELD_WIDTH }}>{searchField}</Box>;
   }
 
   return (
-    <Menu
-      anchorEl={anchorEl}
-      open={open}
-      onClose={onClose}
-      disableAutoFocus
-      disableEnforceFocus
-      keepMounted
-    >
-      <Box sx={{ px: 2, py: 1.5, width: FIELD_WIDTH }}>{searchField}</Box>
-    </Menu>
+    <React.Fragment>
+      <ButtonMessageSearchIcon
+        onClick={handleSearchOpen}
+        active={Boolean(value)}
+      />
+      <Menu
+        anchorEl={anchorEl}
+        open={menuOpen}
+        onClose={handleSearchClose}
+        disableAutoFocus
+        disableEnforceFocus
+        keepMounted
+      >
+        <Box sx={{ px: 2, py: 1.5, width: FIELD_WIDTH }}>{searchField}</Box>
+      </Menu>
+    </React.Fragment>
   );
 };
 
