@@ -1,10 +1,8 @@
 import { default as React } from 'react';
 type RoomMessageSearchProps = {
-    anchorEl: HTMLElement | null;
-    open: boolean;
     value: string;
-    onClose: () => void;
-    onChange: (value: string) => void;
+    onChange?: (value: string) => void;
+    inMobileOrConferenceActive: boolean;
 };
 declare const RoomMessageSearch: React.FC<RoomMessageSearchProps>;
 export default RoomMessageSearch;
