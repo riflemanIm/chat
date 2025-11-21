@@ -1,6 +1,6 @@
 {
   "name": "@pmt/chat",
-  "version": "2.0.9",
+  "version": "2.0.10",
   "type": "module",
   "description": "Chat UI components for PMT project",
   "author": "Pavel Ishenin, Oleg Lambin",

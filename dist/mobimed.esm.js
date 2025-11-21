@@ -47,7 +47,7 @@ function Hs() {
     (function(n, r) {
       t.exports = r();
     })(Gs, (function() {
-      var n = 1e3, r = 6e4, s = 36e5, o = "millisecond", i = "second", a = "minute", l = "hour", u = "day", d = "week", m = "month", g = "quarter", S = "year", f = "date", b = "Invalid Date", _ = /^(\d{4})[-/]?(\d{1,2})?[-/]?(\d{0,2})[Tt\s]*(\d{1,2})?:?(\d{1,2})?:?(\d{1,2})?[.:]?(\d+)?$/, A = /\[([^\]]+)]|Y{1,4}|M{1,4}|D{1,2}|d{1,4}|H{1,2}|h{1,2}|a|A|m{1,2}|s{1,2}|Z{1,2}|SSS/g, M = { name: "en", weekdays: "Sunday_Monday_Tuesday_Wednesday_Thursday_Friday_Saturday".split("_"), months: "January_February_March_April_May_June_July_August_September_October_November_December".split("_"), ordinal: function(T) {
+      var n = 1e3, r = 6e4, s = 36e5, o = "millisecond", i = "second", a = "minute", l = "hour", u = "day", d = "week", m = "month", g = "quarter", _ = "year", f = "date", b = "Invalid Date", S = /^(\d{4})[-/]?(\d{1,2})?[-/]?(\d{0,2})[Tt\s]*(\d{1,2})?:?(\d{1,2})?:?(\d{1,2})?[.:]?(\d+)?$/, A = /\[([^\]]+)]|Y{1,4}|M{1,4}|D{1,2}|d{1,4}|H{1,2}|h{1,2}|a|A|m{1,2}|s{1,2}|Z{1,2}|SSS/g, M = { name: "en", weekdays: "Sunday_Monday_Tuesday_Wednesday_Thursday_Friday_Saturday".split("_"), months: "January_February_March_April_May_June_July_August_September_October_November_December".split("_"), ordinal: function(T) {
         var C = ["th", "st", "nd", "rd"], w = T % 100;
         return "[" + T + (C[(w - 20) % 10] || C[w] || C[0]) + "]";
       } }, x = function(T, C, w) {
@@ -63,7 +63,7 @@ function Hs() {
       }, a: function(T) {
         return T < 0 ? Math.ceil(T) || 0 : Math.floor(T);
       }, p: function(T) {
-        return { M: m, y: S, w: d, d: u, D: f, h: l, m: a, s: i, ms: o, Q: g }[T] || String(T || "").toLowerCase().replace(/s$/, "");
+        return { M: m, y: _, w: d, d: u, D: f, h: l, m: a, s: i, ms: o, Q: g }[T] || String(T || "").toLowerCase().replace(/s$/, "");
       }, u: function(T) {
         return T === void 0;
       } }, D = "en", P = {};
@@ -103,7 +103,7 @@ function Hs() {
             if (v.u(E)) return /* @__PURE__ */ new Date();
             if (E instanceof Date) return new Date(E);
             if (typeof E == "string" && !/Z$/i.test(E)) {
-              var R = E.match(_);
+              var R = E.match(S);
               if (R) {
                 var I = R[2] - 1 || 0, U = (R[7] || "0").substring(0, 3);
                 return y ? new Date(Date.UTC(R[1], I, R[3] || 1, R[4] || 0, R[5] || 0, R[6] || 0, U)) : new Date(R[1], I, R[3] || 1, R[4] || 0, R[5] || 0, R[6] || 0, U);
@@ -139,7 +139,7 @@ function Hs() {
             return v.w(E.toDate()[Ae].apply(E.toDate("s"), (y ? [0, 0, 0, 0] : [23, 59, 59, 999]).slice(re)), E);
           }, $ = this.$W, L = this.$M, z = this.$D, de = "set" + (this.$u ? "UTC" : "");
           switch (R) {
-            case S:
+            case _:
               return y ? I(1, 0) : I(31, 11);
             case m:
               return y ? I(1, L) : I(0, L + 1);
@@ -161,8 +161,8 @@ function Hs() {
         }, C.endOf = function(w) {
           return this.startOf(w, !1);
         }, C.$set = function(w, h) {
-          var E, y = v.p(w), R = "set" + (this.$u ? "UTC" : ""), I = (E = {}, E[u] = R + "Date", E[f] = R + "Date", E[m] = R + "Month", E[S] = R + "FullYear", E[l] = R + "Hours", E[a] = R + "Minutes", E[i] = R + "Seconds", E[o] = R + "Milliseconds", E)[y], U = y === u ? this.$D + (h - this.$W) : h;
-          if (y === m || y === S) {
+          var E, y = v.p(w), R = "set" + (this.$u ? "UTC" : ""), I = (E = {}, E[u] = R + "Date", E[f] = R + "Date", E[m] = R + "Month", E[_] = R + "FullYear", E[l] = R + "Hours", E[a] = R + "Minutes", E[i] = R + "Seconds", E[o] = R + "Milliseconds", E)[y], U = y === u ? this.$D + (h - this.$W) : h;
+          if (y === m || y === _) {
             var $ = this.clone().set(f, 1);
             $.$d[I](U), $.init(), this.$d = $.set(f, Math.min(this.$D, $.daysInMonth())).$d;
           } else I && this.$d[I](U);
@@ -179,7 +179,7 @@ function Hs() {
             return v.w(z.date(z.date() + Math.round(L * w)), y);
           };
           if (R === m) return this.set(m, this.$M + w);
-          if (R === S) return this.set(S, this.$y + w);
+          if (R === _) return this.set(_, this.$y + w);
           if (R === u) return I(1);
           if (R === d) return I(7);
           var U = (E = {}, E[a] = r, E[l] = s, E[i] = n, E)[R] || 1, $ = this.$d.getTime() + w * U;
@@ -259,7 +259,7 @@ function Hs() {
             return v.m(R, U);
           };
           switch (I) {
-            case S:
+            case _:
               y = z() / 12;
               break;
             case m:
@@ -307,7 +307,7 @@ function Hs() {
           return this.$d.toUTCString();
         }, T;
       })(), G = q.prototype;
-      return O.prototype = G, [["$ms", o], ["$s", i], ["$m", a], ["$H", l], ["$W", u], ["$M", m], ["$y", S], ["$D", f]].forEach((function(T) {
+      return O.prototype = G, [["$ms", o], ["$s", i], ["$m", a], ["$H", l], ["$W", u], ["$M", m], ["$y", _], ["$D", f]].forEach((function(T) {
         G[T[1]] = function(C) {
           return this.$g(C, T[0], T[1]);
         };
@@ -775,8 +775,8 @@ function ao() {
         className: d,
         children: m,
         ratio: g,
-        style: S
-      } = u, f = s(u, n), b = r({}, S, {
+        style: _
+      } = u, f = s(u, n), b = r({}, _, {
         // https://github.com/roderickhsiao/react-aspect-ratio/commit/53ec15858ae186c41e70b8c14cc5a5b6e97cb6e3
         [o]: "(" + g + ")"
       });
@@ -824,8 +824,8 @@ function co() {
       className: d = i,
       children: m,
       ratio: g = 1,
-      style: S
-    } = l, f = s(l, n), b = r({}, S, {
+      style: _
+    } = l, f = s(l, n), b = r({}, _, {
       // https://github.com/roderickhsiao/react-aspect-ratio/commit/53ec15858ae186c41e70b8c14cc5a5b6e97cb6e3
       [o]: "(" + g + ")"
     });
@@ -1151,12 +1151,12 @@ const fo = ee(
           )}`
         }
       ) });
-    const S = a.userId === o.userId;
+    const _ = a.userId === o.userId;
     return /* @__PURE__ */ c(
       tt,
       {
         ref: e,
-        className: o.messageType === "video_conference" ? n.rootNotify : S ? n.rootUser : n.rootContact,
+        className: o.messageType === "video_conference" ? n.rootNotify : _ ? n.rootUser : n.rootContact,
         children: Eo(
           s,
           o,
@@ -1165,7 +1165,7 @@ const fo = ee(
           d,
           t.onContextMenu,
           /* @__PURE__ */ N(B.Fragment, { children: [
-            !S && l && i && u && /* @__PURE__ */ c("div", { className: n.header, children: i.username }),
+            !_ && l && i && u && /* @__PURE__ */ c("div", { className: n.header, children: i.username }),
             /* @__PURE__ */ c(
               "div",
               {
@@ -1181,7 +1181,7 @@ const fo = ee(
               }
             ),
             /* @__PURE__ */ c("div", { className: n.status, children: /* @__PURE__ */ N("span", { children: [
-              S ? o.status === 0 ? /* @__PURE__ */ c(ms, { className: n.statusImage }) : /* @__PURE__ */ c(gs, { className: n.statusImage }) : null,
+              _ ? o.status === 0 ? /* @__PURE__ */ c(ms, { className: n.statusImage }) : /* @__PURE__ */ c(gs, { className: n.statusImage }) : null,
               ht(o.cdate) ?? ""
             ] }) })
           ] })
@@ -1222,7 +1222,7 @@ const bo = 10 * 1024 * 1024, mn = {
 }) => {
   const s = So(), { t: o } = ce(), i = oe(null), [a, l] = ne(
     null
-  ), u = oe(null), d = oe(""), [m, g] = ne(""), [S, f] = ne(!1), [b, _] = ne({
+  ), u = oe(null), d = oe(""), [m, g] = ne(""), [_, f] = ne(!1), [b, S] = ne({
     chat: t,
     time: 0
   }), A = (O) => {
@@ -1238,7 +1238,7 @@ const bo = 10 * 1024 * 1024, mn = {
   }, []), k = K(
     (O) => {
       const v = O.target.value;
-      d.current = v, t && e && (b.chat !== t || Date.now() - b.time >= 500) && (_({
+      d.current = v, t && e && (b.chat !== t || Date.now() - b.time >= 500) && (S({
         chat: t,
         time: Date.now()
       }), e(t));
@@ -1307,7 +1307,7 @@ const bo = 10 * 1024 * 1024, mn = {
         autoFocus: !0,
         variant: "standard",
         error: !!m,
-        disabled: S,
+        disabled: _,
         inputRef: u,
         slotProps: {
           input: {
@@ -1326,7 +1326,7 @@ const bo = 10 * 1024 * 1024, mn = {
                   id: "icon-button-file",
                   type: "file",
                   onChange: X,
-                  disabled: S
+                  disabled: _
                 }
               ),
               /* @__PURE__ */ c("label", { htmlFor: "icon-button-file", children: /* @__PURE__ */ c(
@@ -1336,8 +1336,8 @@ const bo = 10 * 1024 * 1024, mn = {
                   "aria-label": "upload",
                   component: "span",
                   size: "small",
-                  disabled: S,
-                  children: S ? /* @__PURE__ */ c(Wn, { size: 24 }) : /* @__PURE__ */ c(ns, { className: s.attachmentIcon, children: /* @__PURE__ */ c(
+                  disabled: _,
+                  children: _ ? /* @__PURE__ */ c(Wn, { size: 24 }) : /* @__PURE__ */ c(ns, { className: s.attachmentIcon, children: /* @__PURE__ */ c(
                     "path",
                     {
                       d: "M16.768 13.5767L11.6961 18.6486C9.35886 20.9859 5.56937 20.9859 3.23208 18.6486V18.6486C0.894789 16.3114 0.894789 12.5219 3.23208 10.1846L10.4479 2.96872C12.0875 1.32914 14.7458 1.32914 16.3854 2.96873V2.96873C18.025 4.60831 18.025 7.26659 16.3854 8.90617L9.16515 16.1264C8.23032 17.0612 6.71466 17.0612 5.77982 16.1264V16.1264C4.84499 15.1916 4.84499 13.6759 5.77982 12.7411L10.8896 7.63131",
@@ -1355,7 +1355,7 @@ const bo = 10 * 1024 * 1024, mn = {
                   onClick: A,
                   color: "primary",
                   size: "small",
-                  disabled: S,
+                  disabled: _,
                   children: /* @__PURE__ */ c(Es, {})
                 }
               )
@@ -1367,7 +1367,7 @@ const bo = 10 * 1024 * 1024, mn = {
                 color: "inherit",
                 size: "small",
                 onClick: j,
-                disabled: S || !d.current.trim(),
+                disabled: _ || !d.current.trim(),
                 children: /* @__PURE__ */ c(ys, {})
               }
             ),
@@ -1475,13 +1475,13 @@ const Co = Os((t) => /* @__PURE__ */ c(
   )})`;
 };
 function Ao(t) {
-  const { t: e } = ce(), [n, r] = B.useState(null), [s, o] = B.useState(null), [i, a] = B.useState(!1), l = !!n, u = (S) => {
-    r(S.currentTarget);
+  const { t: e } = ce(), [n, r] = B.useState(null), [s, o] = B.useState(null), [i, a] = B.useState(!1), l = !!n, u = (_) => {
+    r(_.currentTarget);
   }, d = () => {
     r(null);
-  }, m = (S) => {
-    r(null), o(S.visitId), S.conferenceStatus === "finished" ? a(!0) : t.onVideoCall(t.chat, S.visitId);
-  }, g = B.useMemo(() => t.visitData.filter((S) => S.contactId === t.chat.userId), [t.visitData, t.chat]);
+  }, m = (_) => {
+    r(null), o(_.visitId), _.conferenceStatus === "finished" ? a(!0) : t.onVideoCall(t.chat, _.visitId);
+  }, g = B.useMemo(() => t.visitData.filter((_) => _.contactId === t.chat.userId), [t.visitData, t.chat]);
   return /* @__PURE__ */ N("div", { children: [
     /* @__PURE__ */ c(
       Dt,
@@ -1522,18 +1522,18 @@ function Ao(t) {
         anchorEl: n,
         open: l,
         onClose: d,
-        children: g.map((S) => /* @__PURE__ */ N(
+        children: g.map((_) => /* @__PURE__ */ N(
           vs,
           {
-            onClick: () => m(S),
-            value: S.visitId,
+            onClick: () => m(_),
+            value: _.visitId,
             disableRipple: !0,
             children: [
-              S.conferenceStatus === "finished" ? /* @__PURE__ */ c(Cs, {}) : /* @__PURE__ */ c(Rs, {}),
-              To(S)
+              _.conferenceStatus === "finished" ? /* @__PURE__ */ c(Cs, {}) : /* @__PURE__ */ c(Rs, {}),
+              To(_)
             ]
           },
-          S.visitId
+          _.visitId
         ))
       }
     )
@@ -1626,8 +1626,8 @@ const Io = ({
   const { t: r } = ce(), [s, o] = B.useState(t), [i, a] = B.useState(null), l = !!i, u = B.useCallback(() => {
     e?.(s), n && a(null);
   }, [s, n, e]), d = B.useCallback(
-    (_) => {
-      a(_.currentTarget);
+    (S) => {
+      a(S.currentTarget);
     },
     []
   ), m = B.useCallback(() => {
@@ -1638,13 +1638,13 @@ const Io = ({
   }, [t, l, n]), B.useEffect(() => {
     n || a(null);
   }, [n]);
-  const g = (_) => {
-    const A = _.target.value;
+  const g = (S) => {
+    const A = S.target.value;
     o(A), e?.(A);
-  }, S = () => {
+  }, _ = () => {
     o(""), e?.(""), n && a(null);
-  }, f = (_) => {
-    _.key === "Enter" && (_.preventDefault(), u());
+  }, f = (S) => {
+    n && l && S.key !== "Escape" && S.stopPropagation(), S.key === "Enter" && (S.preventDefault(), u());
   }, b = /* @__PURE__ */ c(
     Wt,
     {
@@ -1664,7 +1664,7 @@ const Io = ({
               be,
               {
                 size: "small",
-                onClick: S,
+                onClick: _,
                 "aria-label": r("CHAT.MESSAGE.CLEAR_SEARCH", "Очистить поиск"),
                 children: /* @__PURE__ */ c(Ms, { fontSize: "small" })
               }
@@ -1734,10 +1734,10 @@ const Io = ({
   onVideoCall: d,
   onVideoEnd: m,
   onConferencePause: g,
-  onOperatorAdd: S,
+  onOperatorAdd: _,
   onLeaveGroup: f,
   onContactClick: b,
-  onMessageSearchChange: _
+  onMessageSearchChange: S
 }) => {
   const A = No(), { t: M } = ce(), x = Jn(
     (z) => z.breakpoints.down("md")
@@ -1767,9 +1767,9 @@ const Io = ({
     j(!0);
   }, []), $ = K(
     (z) => {
-      j(!1), S && z && n && S(n, z);
+      j(!1), _ && z && n && _(n, z);
     },
-    [n, S]
+    [n, _]
   ), L = n;
   return L.groupId ? /* @__PURE__ */ c(xe, { children: /* @__PURE__ */ c(
     nt,
@@ -1837,7 +1837,7 @@ const Io = ({
               yn,
               {
                 value: u,
-                onChange: _,
+                onChange: S,
                 inMobileOrConferenceActive: T
               }
             ),
@@ -1920,7 +1920,7 @@ const Io = ({
                 yn,
                 {
                   value: u,
-                  onChange: _,
+                  onChange: S,
                   inMobileOrConferenceActive: T
                 }
               ),
@@ -2010,13 +2010,13 @@ function $o(t) {
       a(void 0);
       return;
     }
-    let S = Uo.getObserver({ root: s.current, rootMargin: e, threshold: n });
-    S.observe(g, (f) => {
+    let _ = Uo.getObserver({ root: s.current, rootMargin: e, threshold: n });
+    _.observe(g, (f) => {
       a(f);
-    }), o.current = S;
+    }), o.current = _;
   }, [e, n]), u = K(() => {
-    let g = o.current, S = r.current;
-    S && g?.unobserve(S), o.current = null;
+    let g = o.current, _ = r.current;
+    _ && g?.unobserve(_), o.current = null;
   }, []), d = K((g) => {
     u(), r.current = g, l();
   }, [l, u]), m = K((g) => {
@@ -2075,9 +2075,9 @@ const Yo = ({
   onEnterRoom: i,
   setIsVisible: a
 }) => {
-  const [l, u] = ne(!1), d = oe(), m = oe(), g = e?.length || 0, S = g && e[g - 1], f = 900, b = K(() => {
+  const [l, u] = ne(!1), d = oe(), m = oe(), g = e?.length || 0, _ = g && e[g - 1], f = 900, b = K(() => {
     n.current && (n.current.scrollTop = n.current.scrollHeight, i && o && i(o));
-  }, [t, i]), _ = K(() => {
+  }, [t, i]), S = K(() => {
     const A = n.current;
     if (A) {
       const M = A.scrollHeight - A.scrollTop;
@@ -2100,13 +2100,13 @@ const Yo = ({
     t && n.current && e.length && (a(e[g - 1]?.cdate ?? ""), b());
   }, [t]), Z(() => {
     const A = n.current, M = d.current ?? 0;
-    A && S && o && (m.current === g - r ? A.scrollTop = A.scrollHeight - M : (
+    A && _ && o && (m.current === g - r ? A.scrollTop = A.scrollHeight - M : (
       // -----  scroll to bottom forced -----------
-      (S.userId !== o.userId || M <= f) && b()
+      (_.userId !== o.userId || M <= f) && b()
     )), m.current = g;
   }, [g, t]), {
     scrollDown: b,
-    handleRootScroll: _,
+    handleRootScroll: S,
     scrollDownButton: l,
     setScrollDownButton: u,
     unreadCount: e.filter((A) => A.status === 0).length
@@ -2220,7 +2220,7 @@ const Yo = ({
   onEnterRoom: d,
   messageSearch: m
 }) => {
-  const g = Qo(), S = B.useRef(null), f = B.useRef({}), b = B.useMemo(() => Se(r), [r]), [_, A] = B.useState({
+  const g = Qo(), _ = B.useRef(null), f = B.useRef({}), b = B.useMemo(() => Se(r), [r]), [S, A] = B.useState({
     visible: !1,
     src: ""
   }), [M, x] = B.useState(""), k = B.useMemo(() => (r?.messages || []).map((h, E) => {
@@ -2236,7 +2236,7 @@ const Yo = ({
   const { scrollDown: X, handleRootScroll: V, scrollDownButton: O, unreadCount: v } = Yo({
     chatId: b,
     messages: P,
-    scrollableRootRef: S,
+    scrollableRootRef: _,
     pageSize: o,
     hasNextPage: j,
     chat: r,
@@ -2249,7 +2249,7 @@ const Yo = ({
     disabled: !j
   }), T = B.useCallback(
     (h) => {
-      G(h), S.current = h;
+      G(h), _.current = h;
     },
     [G]
   );
@@ -2326,16 +2326,16 @@ const Yo = ({
               onScrollDown: X
             }
           ),
-          _.visible && /* @__PURE__ */ c(
+          S.visible && /* @__PURE__ */ c(
             cs,
             {
               sx: {
                 color: "#fff",
                 zIndex: (h) => h.zIndex.drawer + 1
               },
-              open: _.visible,
+              open: S.visible,
               onClick: () => A({ visible: !1, src: "" }),
-              children: /* @__PURE__ */ c("img", { src: _.src, className: g.img, alt: "" })
+              children: /* @__PURE__ */ c("img", { src: S.src, className: g.img, alt: "" })
             }
           )
         ]
@@ -2381,10 +2381,10 @@ const Yo = ({
     pageSize: d,
     onEnterRoom: m,
     operators: g,
-    messageSearch: S,
+    messageSearch: _,
     onVideoCall: f,
     onVideoEnd: b,
-    onConferencePause: _,
+    onConferencePause: S,
     onOperatorAdd: A,
     onLeaveGroup: M,
     onContactClick: x,
@@ -2421,11 +2421,11 @@ const Yo = ({
         className: V.roomHeader,
         onVideoCall: f,
         onVideoEnd: b,
-        onConferencePause: _,
+        onConferencePause: S,
         onOperatorAdd: A,
         onLeaveGroup: M,
         onContactClick: x,
-        messageSearch: S,
+        messageSearch: _,
         onMessageSearchChange: X
       }
     ) }),
@@ -2444,7 +2444,7 @@ const Yo = ({
         onMessageDelete: D,
         setMenuState: q,
         onEnterRoom: m,
-        messageSearch: S
+        messageSearch: _
       }
     ),
     /* @__PURE__ */ c(Nt, {}),
@@ -2793,8 +2793,8 @@ function bt(t, e, n) {
     metaTokens: !0,
     dots: !1,
     indexes: !1
-  }, !1, function(b, _) {
-    return !p.isUndefined(_[b]);
+  }, !1, function(b, S) {
+    return !p.isUndefined(S[b]);
   });
   const r = n.metaTokens, s = n.visitor || d, o = n.dots, i = n.indexes, l = (n.Blob || typeof Blob < "u" && Blob) && p.isSpecCompliantForm(e);
   if (!p.isFunction(s))
@@ -2809,9 +2809,9 @@ function bt(t, e, n) {
       throw new F("Blob is not supported. Use a Buffer instead.");
     return p.isArrayBuffer(f) || p.isTypedArray(f) ? l && typeof Blob == "function" ? new Blob([f]) : Buffer.from(f) : f;
   }
-  function d(f, b, _) {
+  function d(f, b, S) {
     let A = f;
-    if (f && !_ && typeof f == "object") {
+    if (f && !S && typeof f == "object") {
       if (p.endsWith(b, "{}"))
         b = r ? b : b.slice(0, -2), f = JSON.stringify(f);
       else if (p.isArray(f) && Gi(f) || (p.isFileList(f) || p.endsWith(b, "[]")) && (A = p.toArray(f)))
@@ -2823,14 +2823,14 @@ function bt(t, e, n) {
           );
         }), !1;
     }
-    return Pt(f) ? !0 : (e.append(bn(_, b, o), u(f)), !1);
+    return Pt(f) ? !0 : (e.append(bn(S, b, o), u(f)), !1);
   }
   const m = [], g = Object.assign(Hi, {
     defaultVisitor: d,
     convertValue: u,
     isVisitable: Pt
   });
-  function S(f, b) {
+  function _(f, b) {
     if (!p.isUndefined(f)) {
       if (m.indexOf(f) !== -1)
         throw Error("Circular reference detected in " + b.join("."));
@@ -2841,13 +2841,13 @@ function bt(t, e, n) {
           p.isString(M) ? M.trim() : M,
           b,
           g
-        )) === !0 && S(A, b ? b.concat(M) : [M]);
+        )) === !0 && _(A, b ? b.concat(M) : [M]);
       }), m.pop();
     }
   }
   if (!p.isObject(t))
     throw new TypeError("data must be an object");
-  return S(t), e;
+  return _(t), e;
 }
 function Sn(t) {
   const e = {
@@ -3331,8 +3331,8 @@ function ua(t, e) {
       g += n[m++], m = m % t;
     if (s = (s + 1) % t, s === o && (o = (o + 1) % t), u - i < e)
       return;
-    const S = d && u - d;
-    return S ? Math.round(g * 1e3 / S) : void 0;
+    const _ = d && u - d;
+    return _ ? Math.round(g * 1e3 / _) : void 0;
   };
 }
 function da(t, e) {
@@ -3504,58 +3504,58 @@ const Ir = (t) => {
     const s = Ir(t);
     let o = s.data;
     const i = ae.from(s.headers).normalize();
-    let { responseType: a, onUploadProgress: l, onDownloadProgress: u } = s, d, m, g, S, f;
+    let { responseType: a, onUploadProgress: l, onDownloadProgress: u } = s, d, m, g, _, f;
     function b() {
-      S && S(), f && f(), s.cancelToken && s.cancelToken.unsubscribe(d), s.signal && s.signal.removeEventListener("abort", d);
+      _ && _(), f && f(), s.cancelToken && s.cancelToken.unsubscribe(d), s.signal && s.signal.removeEventListener("abort", d);
     }
-    let _ = new XMLHttpRequest();
-    _.open(s.method.toUpperCase(), s.url, !0), _.timeout = s.timeout;
+    let S = new XMLHttpRequest();
+    S.open(s.method.toUpperCase(), s.url, !0), S.timeout = s.timeout;
     function A() {
-      if (!_)
+      if (!S)
         return;
       const x = ae.from(
-        "getAllResponseHeaders" in _ && _.getAllResponseHeaders()
+        "getAllResponseHeaders" in S && S.getAllResponseHeaders()
       ), D = {
-        data: !a || a === "text" || a === "json" ? _.responseText : _.response,
-        status: _.status,
-        statusText: _.statusText,
+        data: !a || a === "text" || a === "json" ? S.responseText : S.response,
+        status: S.status,
+        statusText: S.statusText,
         headers: x,
         config: t,
-        request: _
+        request: S
       };
       xr(function(j) {
         n(j), b();
       }, function(j) {
         r(j), b();
-      }, D), _ = null;
+      }, D), S = null;
     }
-    "onloadend" in _ ? _.onloadend = A : _.onreadystatechange = function() {
-      !_ || _.readyState !== 4 || _.status === 0 && !(_.responseURL && _.responseURL.indexOf("file:") === 0) || setTimeout(A);
-    }, _.onabort = function() {
-      _ && (r(new F("Request aborted", F.ECONNABORTED, t, _)), _ = null);
-    }, _.onerror = function(k) {
-      const D = k && k.message ? k.message : "Network Error", P = new F(D, F.ERR_NETWORK, t, _);
-      P.event = k || null, r(P), _ = null;
-    }, _.ontimeout = function() {
+    "onloadend" in S ? S.onloadend = A : S.onreadystatechange = function() {
+      !S || S.readyState !== 4 || S.status === 0 && !(S.responseURL && S.responseURL.indexOf("file:") === 0) || setTimeout(A);
+    }, S.onabort = function() {
+      S && (r(new F("Request aborted", F.ECONNABORTED, t, S)), S = null);
+    }, S.onerror = function(k) {
+      const D = k && k.message ? k.message : "Network Error", P = new F(D, F.ERR_NETWORK, t, S);
+      P.event = k || null, r(P), S = null;
+    }, S.ontimeout = function() {
       let k = s.timeout ? "timeout of " + s.timeout + "ms exceeded" : "timeout exceeded";
       const D = s.transitional || Ar;
       s.timeoutErrorMessage && (k = s.timeoutErrorMessage), r(new F(
         k,
         D.clarifyTimeoutError ? F.ETIMEDOUT : F.ECONNABORTED,
         t,
-        _
-      )), _ = null;
-    }, o === void 0 && i.setContentType(null), "setRequestHeader" in _ && p.forEach(i.toJSON(), function(k, D) {
-      _.setRequestHeader(D, k);
-    }), p.isUndefined(s.withCredentials) || (_.withCredentials = !!s.withCredentials), a && a !== "json" && (_.responseType = s.responseType), u && ([g, f] = pt(u, !0), _.addEventListener("progress", g)), l && _.upload && ([m, S] = pt(l), _.upload.addEventListener("progress", m), _.upload.addEventListener("loadend", S)), (s.cancelToken || s.signal) && (d = (x) => {
-      _ && (r(!x || x.type ? new Be(null, t, _) : x), _.abort(), _ = null);
+        S
+      )), S = null;
+    }, o === void 0 && i.setContentType(null), "setRequestHeader" in S && p.forEach(i.toJSON(), function(k, D) {
+      S.setRequestHeader(D, k);
+    }), p.isUndefined(s.withCredentials) || (S.withCredentials = !!s.withCredentials), a && a !== "json" && (S.responseType = s.responseType), u && ([g, f] = pt(u, !0), S.addEventListener("progress", g)), l && S.upload && ([m, _] = pt(l), S.upload.addEventListener("progress", m), S.upload.addEventListener("loadend", _)), (s.cancelToken || s.signal) && (d = (x) => {
+      S && (r(!x || x.type ? new Be(null, t, S) : x), S.abort(), S = null);
     }, s.cancelToken && s.cancelToken.subscribe(d), s.signal && (s.signal.aborted ? d() : s.signal.addEventListener("abort", d)));
     const M = la(s.url);
     if (M && te.protocols.indexOf(M) === -1) {
       r(new F("Unsupported protocol " + M + ":", F.ERR_BAD_REQUEST, t));
       return;
     }
-    _.send(o || null);
+    S.send(o || null);
   });
 }, Ea = (t, e) => {
   const { length: n } = t = t ? t.filter(Boolean) : [];
@@ -3670,11 +3670,11 @@ const Ir = (t) => {
     stream: d && ((f) => f.body)
   };
   s && ["text", "arrayBuffer", "blob", "formData", "stream"].forEach((f) => {
-    !m[f] && (m[f] = (b, _) => {
+    !m[f] && (m[f] = (b, S) => {
       let A = b && b[f];
       if (A)
         return A.call(b);
-      throw new F(`Response type '${f}' is not supported`, F.ERR_NOT_SUPPORT, _);
+      throw new F(`Response type '${f}' is not supported`, F.ERR_NOT_SUPPORT, S);
     });
   });
   const g = async (f) => {
@@ -3691,14 +3691,14 @@ const Ir = (t) => {
       return f.byteLength;
     if (p.isURLSearchParams(f) && (f = f + ""), p.isString(f))
       return (await l(f)).byteLength;
-  }, S = async (f, b) => {
-    const _ = p.toFiniteNumber(f.getContentLength());
-    return _ ?? g(b);
+  }, _ = async (f, b) => {
+    const S = p.toFiniteNumber(f.getContentLength());
+    return S ?? g(b);
   };
   return async (f) => {
     let {
       url: b,
-      method: _,
+      method: S,
       data: A,
       signal: M,
       cancelToken: x,
@@ -3717,7 +3717,7 @@ const Ir = (t) => {
     });
     let C;
     try {
-      if (P && u && _ !== "get" && _ !== "head" && (C = await S(X, A)) !== 0) {
+      if (P && u && S !== "get" && S !== "head" && (C = await _(X, A)) !== 0) {
         let I = new n(b, {
           method: "POST",
           body: A,
@@ -3735,7 +3735,7 @@ const Ir = (t) => {
       const w = o && "credentials" in n.prototype, h = {
         ...O,
         signal: q,
-        method: _.toUpperCase(),
+        method: S.toUpperCase(),
         headers: X.normalize().toJSON(),
         body: A,
         duplex: "half",
@@ -3987,18 +3987,18 @@ let ke = class {
       return d;
     }
     g = a.length;
-    let S = n;
+    let _ = n;
     for (; m < g; ) {
       const f = a[m++], b = a[m++];
       try {
-        S = f(S);
-      } catch (_) {
-        b.call(this, _);
+        _ = f(_);
+      } catch (S) {
+        b.call(this, S);
         break;
       }
     }
     try {
-      d = Nn.call(this, S);
+      d = Nn.call(this, _);
     } catch (f) {
       return Promise.reject(f);
     }
@@ -4708,44 +4708,44 @@ const Qa = ({
       withCredentials: !1
     });
     return g.interceptors.response.use(
-      (S) => S,
-      (S) => (console.log("ERROR AxiosError"), i(S), Promise.reject(S))
+      (_) => _,
+      (_) => (console.log("ERROR AxiosError"), i(_), Promise.reject(_))
     ), g;
   }, [t, i, s.token]), l = K(
-    async (g, S) => {
-      const f = g.userId, b = S?.reset ? 0 : g.messages?.length;
+    async (g, _) => {
+      const f = g.userId, b = _?.reset ? 0 : g.messages?.length;
       try {
         o({ type: "SET_LOADING", payload: !0 });
-        const { data: _ } = await a.get("/contact/messages", {
+        const { data: S } = await a.get("/contact/messages", {
           params: {
             contactId: f,
             current: b,
             pageSize: e,
-            search: S?.search
+            search: _?.search
           }
         });
-        _ && (S?.shouldIgnore?.() || o({
+        S && (_?.shouldIgnore?.() || o({
           type: "ADD_PRIVATE_MESSAGES",
           payload: {
             pageSize: e,
             contactId: f,
-            messages: _,
-            reset: S?.reset ?? !1
+            messages: S,
+            reset: _?.reset ?? !1
           }
-        }), S?.callback && S.callback());
-      } catch (_) {
-        o({ type: "SET_ERROR", payload: _.message });
+        }), _?.callback && _.callback());
+      } catch (S) {
+        o({ type: "SET_ERROR", payload: S.message });
       } finally {
         o({ type: "SET_LOADING", payload: !1 });
       }
     },
     [o, a, e]
   ), u = K(
-    async (g, S) => {
-      const { groupId: f } = g, b = S?.reset ? 0 : g.messages?.length;
+    async (g, _) => {
+      const { groupId: f } = g, b = _?.reset ? 0 : g.messages?.length;
       try {
         o({ type: "SET_LOADING", payload: !0 });
-        const { data: _ } = await a.get(
+        const { data: S } = await a.get(
           "/group/messages",
           {
             params: {
@@ -4755,29 +4755,29 @@ const Qa = ({
             }
           }
         );
-        _ && (S?.shouldIgnore?.() || o({
+        S && (_?.shouldIgnore?.() || o({
           type: "ADD_GROUP_MESSAGES",
           payload: {
             pageSize: e,
             groupId: f,
-            ..._,
-            reset: S?.reset ?? !1
+            ...S,
+            reset: _?.reset ?? !1
           }
         }));
-      } catch (_) {
-        o({ type: "SET_ERROR", payload: _.message });
+      } catch (S) {
+        o({ type: "SET_ERROR", payload: S.message });
       } finally {
         o({ type: "SET_LOADING", payload: !1 });
       }
     },
     [o, a, e]
   ), d = K(
-    async (g, S) => {
+    async (g, _) => {
       try {
         const { data: f } = await a.get("/contact/find", {
           params: {
             mmkId: g,
-            guid: S
+            guid: _
           }
         });
         if (f != null)
@@ -4986,8 +4986,8 @@ const Qa = ({
   const i = oc(), { t: a } = ce(), { apiUrl: l } = Yt(en), [u, d] = ne(""), m = B.useMemo(
     () => ac(t.userId, n, r, u),
     [t.userId, n, r, u]
-  ), g = (S) => {
-    d(S.target.value);
+  ), g = (_) => {
+    d(_.target.value);
   };
   return /* @__PURE__ */ N(Qn, { elevation: 1, className: i.root, children: [
     /* @__PURE__ */ c(
@@ -5008,16 +5008,16 @@ const Qa = ({
       }
     ),
     /* @__PURE__ */ c(Nt, {}),
-    /* @__PURE__ */ c(Ps, { "aria-label": "rooms", className: i.listStyle, children: m.map((S) => /* @__PURE__ */ c(
+    /* @__PURE__ */ c(Ps, { "aria-label": "rooms", className: i.listStyle, children: m.map((_) => /* @__PURE__ */ c(
       sc,
       {
         apiUrl: l,
-        chat: S,
-        active: e != null && Se(S) === Se(e),
+        chat: _,
+        active: e != null && Se(_) === Se(e),
         typing: s,
-        onClick: () => o(S)
+        onClick: () => o(_)
       },
-      Se(S)
+      Se(_)
     )) })
   ] });
 }, lc = () => {
@@ -7531,10 +7531,10 @@ const al = (t, e, n) => {
       });
     };
     i?.on("chatData", b);
-    const _ = (h) => {
+    const S = (h) => {
       o({ type: "USER_ONLINE", payload: h.data });
     };
-    i?.on("userOnline", _);
+    i?.on("userOnline", S);
     const A = (h) => {
       o({ type: "USER_OFFLINE", payload: h.data });
     };
@@ -7633,21 +7633,21 @@ const al = (t, e, n) => {
       });
     };
     return i?.on("visitData", w), () => {
-      i?.off("unauthorized", f), i?.off("chatData", b), i?.off("userOnline", _), i?.off("userOffline", A), i?.off("joinPrivateSocket", M), x && clearTimeout(x), i?.off("typing", k), i?.off("revokeMessage", D), i?.off("addGroup", P), i?.off("addContact", j), i?.off("deleteContact", X), i?.off("updateGroupInfo", V), i?.off("updateUserInfo", O), i?.off("startConference", v), i?.off("pauseConference", q), i?.off("stopConference", G), i?.off("addOperator", T), i?.off("setActiveRoom", C), i?.off("visitData", w);
+      i?.off("unauthorized", f), i?.off("chatData", b), i?.off("userOnline", S), i?.off("userOffline", A), i?.off("joinPrivateSocket", M), x && clearTimeout(x), i?.off("typing", k), i?.off("revokeMessage", D), i?.off("addGroup", P), i?.off("addContact", j), i?.off("deleteContact", X), i?.off("updateGroupInfo", V), i?.off("updateUserInfo", O), i?.off("startConference", v), i?.off("pauseConference", q), i?.off("stopConference", G), i?.off("addOperator", T), i?.off("setActiveRoom", C), i?.off("visitData", w);
     };
   }, [i?.id]), Z(() => {
-    const f = async (_) => {
-      if (g(_, o)) return;
-      const A = _.data;
+    const f = async (S) => {
+      if (g(S, o)) return;
+      const A = S.data;
       o({ type: "ADD_GROUP_MESSAGE", payload: A }), A.userId !== s.user.userId && i?.emit("markAsRead", {
         groupId: A.groupId,
         _id: A._id
       });
     };
     i?.on("groupMessage", f);
-    const b = async (_) => {
-      if (g(_, o)) return;
-      const A = _.data;
+    const b = async (S) => {
+      if (g(S, o)) return;
+      const A = S.data;
       (A.contactId === s.user.userId || A.userId === s.user.userId) && (o({
         type: "ADD_PRIVATE_MESSAGE",
         payload: A
@@ -7694,7 +7694,7 @@ const al = (t, e, n) => {
       x.userId === s.user.userId ? o({ type: "DEL_GROUP", payload: x.groupId }) : o({ type: "DEL_GROUP_MEMBER", payload: x });
     };
     i?.on("deleteGroup", b);
-    const _ = (M) => {
+    const S = (M) => {
       if (g(M, o)) return;
       const { group: x, user: k } = M.data;
       d.current[x.groupId] ? k.userId !== s.user.userId && o({
@@ -7705,7 +7705,7 @@ const al = (t, e, n) => {
         }
       }) : (console.log("joined to a new group"), i?.emit("chatData"));
     };
-    i?.on("joinGroup", _);
+    i?.on("joinGroup", S);
     const A = (M) => {
       if (g(M, o)) return;
       const x = M.data, k = x.user;
@@ -7714,11 +7714,11 @@ const al = (t, e, n) => {
       P && !P.members?.find((j) => j.userId === k.userId) && (k.isManager = 0, P.members?.push(k)), o({ type: "SET_USER_GATHER", payload: k });
     };
     return i?.on("joinGroupSocket", A), () => {
-      i?.off("markAsRead", f), i?.off("deleteGroup", b), i?.off("joinGroup", _), i?.off("joinGroupSocket", A);
+      i?.off("markAsRead", f), i?.off("deleteGroup", b), i?.off("joinGroup", S), i?.off("joinGroupSocket", A);
     };
   }, [i?.id, s.user.userId]);
-  const S = Me(() => ({ socket: i, online: a }), [i, a]);
-  return /* @__PURE__ */ c(Qr.Provider, { value: S, children: r });
+  const _ = Me(() => ({ socket: i, online: a }), [i, a]);
+  return /* @__PURE__ */ c(Qr.Provider, { value: _, children: r });
 }, ul = ({
   activeGroupId: t,
   activeChatUserId: e,
@@ -7734,7 +7734,7 @@ const al = (t, e, n) => {
     pageSize: d,
     getPrivateMessages: m,
     getGroupMessages: g,
-    getUserByMmk: S
+    getUserByMmk: _
   } = W.useContext(en), f = W.useCallback(() => {
     a({
       type: "SET_ACTIVE_ROOM",
@@ -7756,7 +7756,7 @@ const al = (t, e, n) => {
       }
     },
     [l, a]
-  ), _ = W.useCallback(
+  ), S = W.useCallback(
     async (y) => {
       try {
         if (a({ type: "SET_LOADING", payload: !0 }), we(y))
@@ -7972,7 +7972,7 @@ const al = (t, e, n) => {
         };
     }
     const I = dn("mmk"), U = dn("guid");
-    return (I != null || U != null) && !st(T) && S(I, U).then(($) => {
+    return (I != null || U != null) && !st(T) && _(I, U).then(($) => {
       $ != null && R(T.find((L) => L.userId === $));
     }).catch(($) => {
       console.error("Failed to get user by MMK:", $);
@@ -7985,7 +7985,7 @@ const al = (t, e, n) => {
     T,
     G,
     P,
-    S,
+    _,
     C
   ]);
   const E = i.activeRoom ? /* @__PURE__ */ c(
@@ -8004,7 +8004,7 @@ const al = (t, e, n) => {
       pageSize: d,
       onExitRoom: f,
       onEnterRoom: D,
-      onNeedMoreMessages: _,
+      onNeedMoreMessages: S,
       onMessageDelete: M,
       onTyping: x,
       onSendMessage: k,

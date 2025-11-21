@@ -75,6 +75,10 @@ const RoomMessageSearch: React.FC<RoomMessageSearchProps> = ({
   };
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (inMobileOrConferenceActive && menuOpen && event.key !== "Escape") {
+      event.stopPropagation();
+    }
+
     if (event.key === "Enter") {
       event.preventDefault();
       handleSubmit();
