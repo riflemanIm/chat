@@ -72,7 +72,7 @@ const useStyles = makeStyles(() => ({
 
 type ConferenceCallProps = {
   conference: ConferenceData;
-  contact: Contact;
+  contact?: Contact | number | null;
   apiUrl: string;
   onAccept: (conference: ConferenceData) => void;
   canResume?: boolean;
@@ -91,15 +91,21 @@ const ConferenceCall: React.FC<ConferenceCallProps> = ({
   const { t } = useTranslation();
 
   const showPausedNotice = !canResume && isPaused;
+  const resolvedContact =
+    typeof contact === "number" || !contact ? null : contact;
 
   return (
     <Paper className={classes.root}>
       <div className={classes.pulse}>
-        {contact ? (
+        {resolvedContact ? (
           <Avatar
             className={classes.avatar}
-            alt={contact.username}
-            src={contact.avatar ? combineURLs(apiUrl, contact.avatar) : ""}
+            alt={resolvedContact.username}
+            src={
+              resolvedContact.avatar
+                ? combineURLs(apiUrl, resolvedContact.avatar)
+                : ""
+            }
           />
         ) : (
           <Avatar className={classes.avatar} />
