@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Box, Typography } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import useCounter from "../hooks/useCounter";
@@ -14,9 +14,13 @@ function formatHHMMSS(totalSeconds: number) {
 
 type ConferenceTimeProps = {
   finishDate: Date | string | null | undefined;
+  paused?: boolean;
 };
 
-export default function ConferenceTime({ finishDate }: ConferenceTimeProps) {
+export default function ConferenceTime({
+  finishDate,
+  paused = false,
+}: ConferenceTimeProps) {
   const { t } = useTranslation();
   const [showAlert, setShowAlert] = useState(false);
 
@@ -31,7 +35,19 @@ export default function ConferenceTime({ finishDate }: ConferenceTimeProps) {
       : finishDate.getTime();
 
   const initialSec = Math.max(0, Math.round((finishTimeMs - now) / 1000));
-  const { counter, isFinished } = useCounter(initialSec);
+  const { counter, isFinished, reset } = useCounter(initialSec, { paused });
+  const finishTimeRef = useRef(finishTimeMs);
+
+  useEffect(() => {
+    if (finishTimeRef.current !== finishTimeMs) {
+      finishTimeRef.current = finishTimeMs;
+      const secondsLeft = Math.max(
+        0,
+        Math.round((finishTimeMs - Date.now()) / 1000)
+      );
+      reset(secondsLeft);
+    }
+  }, [finishTimeMs, reset]);
 
   const { strTime } = useMemo(() => {
     const str = formatHHMMSS(counter);

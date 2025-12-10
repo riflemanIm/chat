@@ -25,6 +25,7 @@ export const SOCKET_EVENTS = {
   // Conference events
   START_CONFERENCE: "startConference",
   PAUSE_CONFERENCE: "pauseConference",
+  RESUME_CONFERENCE: "resumeConference",
   STOP_CONFERENCE: "stopConference",
 
   // Other events

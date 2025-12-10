@@ -1,6 +1,14 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 
-export default function useCounter(initialSeconds: number) {
+type UseCounterOptions = {
+  paused?: boolean;
+};
+
+export default function useCounter(
+  initialSeconds: number,
+  options: UseCounterOptions = {}
+) {
+  const { paused = false } = options;
   const [counter, setCounter] = useState(initialSeconds);
   const [isFinished, setIsFinished] = useState(initialSeconds <= 0);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -30,8 +38,11 @@ export default function useCounter(initialSeconds: number) {
   }, []);
 
   useEffect(() => {
-    if (!isFinished && counter > 0) {
+    if (!isFinished && counter > 0 && !paused) {
       start();
+    } else if (paused && intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
     }
     return () => {
       if (intervalRef.current) {
@@ -39,7 +50,7 @@ export default function useCounter(initialSeconds: number) {
         intervalRef.current = null; // не забываем обнулять ссылку
       }
     };
-  }, [start, counter, isFinished]);
+  }, [start, counter, isFinished, paused]);
 
   return { counter, isFinished, reset };
 }

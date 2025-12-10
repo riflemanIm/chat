@@ -243,6 +243,7 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({
         type: "SET_CONFERENCE",
         payload: res.data as ConferenceData,
       });
+      dispatch({ type: "RESUME_CONFERENCE" });
     };
     socket?.on("startConference", listener13);
 
@@ -255,6 +256,16 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({
       });
     };
     socket?.on("pauseConference", listener14);
+
+    // resume Conference
+    const listener14a = (res: ServerRes) => {
+      if (handleSocketError(res, dispatch)) return;
+      dispatch({
+        type: "RESUME_CONFERENCE",
+        payload: res.data as ConferenceData,
+      });
+    };
+    socket?.on("resumeConference", listener14a);
 
     // stop Conference
     const listener15 = (res: ServerRes) => {
@@ -323,6 +334,7 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({
       socket?.off("startConference", listener13);
 
       socket?.off("pauseConference", listener14);
+      socket?.off("resumeConference", listener14a);
 
       socket?.off("stopConference", listener15);
 

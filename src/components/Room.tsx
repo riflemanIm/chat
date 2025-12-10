@@ -76,7 +76,6 @@ type RoomProps = {
   typing: SetTyping | null;
   conference: ConferenceData | null;
   visitData: VisitData[];
-  conferenceJoined: boolean;
   loading: boolean;
   pageSize: number;
   operators: Contact[];
@@ -89,8 +88,6 @@ type RoomProps = {
   onTyping?: (chat: ChatRoom) => void;
   onSendMessage?: (chat: ChatRoom, data: SendMessage) => void;
   onVideoCall?: (chat: ChatRoom, visitId?: number, recreate?: boolean) => void;
-  onVideoEnd?: (chat: ConferenceData) => void;
-  onConferencePause?: (conference: ConferenceData) => void;
   onOperatorAdd?: (chat: Group, operator: Contact) => void;
   onLeaveGroup?: (chat: Group) => void;
   onContactClick?: (contact: Contact) => void;
@@ -107,15 +104,12 @@ const Room: React.FC<RoomProps> = (props: RoomProps) => {
     typing,
     conference,
     visitData,
-    conferenceJoined,
     loading,
     pageSize,
     onEnterRoom,
     operators,
     messageSearch,
     onVideoCall,
-    onVideoEnd,
-    onConferencePause,
     onOperatorAdd,
     onLeaveGroup,
     onContactClick,
@@ -169,12 +163,9 @@ const Room: React.FC<RoomProps> = (props: RoomProps) => {
           typing={typing}
           conference={conference}
           visitData={visitData}
-          conferenceJoined={conferenceJoined}
           operators={operators}
           className={classes.roomHeader}
           onVideoCall={onVideoCall}
-          onVideoEnd={onVideoEnd}
-          onConferencePause={onConferencePause}
           onOperatorAdd={onOperatorAdd}
           onLeaveGroup={onLeaveGroup}
           onContactClick={onContactClick}

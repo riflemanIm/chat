@@ -362,7 +362,9 @@ export const ChatPage: React.FC<ChatPageProps> = ({
 
   const searchRequestRef = React.useRef(0);
 
-  const activeChatIdRef = React.useRef<string | null>(getChatId(state.activeRoom));
+  const activeChatIdRef = React.useRef<string | null>(
+    getChatId(state.activeRoom)
+  );
 
   React.useEffect(() => {
     activeChatIdRef.current = getChatId(state.activeRoom);
@@ -454,7 +456,6 @@ export const ChatPage: React.FC<ChatPageProps> = ({
       typing={state.typing}
       conference={state.conference.data}
       visitData={state.visitData}
-      conferenceJoined={state.conference.joined}
       loading={state.loading}
       pageSize={pageSize}
       onExitRoom={onExitActiveRoom}
@@ -464,8 +465,6 @@ export const ChatPage: React.FC<ChatPageProps> = ({
       onTyping={onTyping}
       onSendMessage={onSendMessage}
       onVideoCall={onVideoCall}
-      onVideoEnd={onVideoEnd}
-      onConferencePause={onConferencePause}
       onOperatorAdd={onOperatorAdd}
       onLeaveGroup={onLeaveGroup}
       onContactClick={props.onContactInfoClick}
@@ -474,7 +473,7 @@ export const ChatPage: React.FC<ChatPageProps> = ({
       isMobile={isMobile}
     />
   ) : null;
-
+  console.log("state.conference", state.conference);
   return (
     <ChatContainer>
       <ChatLayout
@@ -491,6 +490,7 @@ export const ChatPage: React.FC<ChatPageProps> = ({
               activeRoom={state.activeRoom}
               onChangeChat={onChangeChat}
               apiUrl={apiUrl}
+              onVideoEnd={onVideoEnd}
               isMobile={isMobile}
             />
           ) : (

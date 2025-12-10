@@ -1,6 +1,13 @@
+import CallEndIcon from "@mui/icons-material/CallEnd";
+import PauseIcon from "@mui/icons-material/Pause";
+import { Box, Button, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import React, { useEffect } from "react";
-import { ConferenceData } from "../types";
+import { useTranslation } from "react-i18next";
+import { ConferenceData, User } from "../types";
+import { isEmpty } from "../utils/common";
+import ConferenceTime from "./ConferenceTime";
+import ConfirmDialogSlide from "./ConfirmDialogSlide";
 function updateUrlParameter(url: string, param: string, value: string) {
   const regex = new RegExp("(" + param + "=)[^&]+");
   return url.replace(regex, "$1" + value);
@@ -12,7 +19,7 @@ const useStyles = makeStyles(() => ({
   root: {
     width: "100%",
     height: "100%",
-    borderRadius: 4,
+    border: 0,
   },
 }));
 
@@ -20,15 +27,27 @@ type ConferenceProps = {
   conference: ConferenceData | null;
   onClose: (conference: ConferenceData | null) => void;
   langCode?: string | null;
+  user: User;
+  conferenceJoined: boolean;
+  conferencePaused: boolean;
+  onVideoEnd?: (conference: ConferenceData) => void;
+  onConferencePause?: (conference: ConferenceData) => void;
 };
 
 const Conference: React.FC<ConferenceProps> = ({
   conference,
   onClose,
   langCode = "rus",
+  user,
+  conferenceJoined,
+  conferencePaused,
+  onVideoEnd,
+  onConferencePause,
 }: ConferenceProps) => {
   const classes = useStyles();
   const ref = React.useRef<HTMLIFrameElement>(null);
+  const { t } = useTranslation();
+  const [confirmFinishConf, setConfirmFinishConf] = React.useState(false);
   let confUrl = "";
   if (conference && conference.url) {
     confUrl = langCode
@@ -45,6 +64,16 @@ const Conference: React.FC<ConferenceProps> = ({
     "connectionClosed",
   ];
   const conferenceId = conference ? conference.id : undefined;
+  const isOperatorRole = user.role != null && [3, 4].includes(user.role);
+  const isConferenceActive = conference != null && !isEmpty(conference);
+  const canPauseConference =
+    isConferenceActive &&
+    conferenceJoined &&
+    isOperatorRole &&
+    !conferencePaused &&
+    typeof onConferencePause === "function";
+  const canFinishConference =
+    isConferenceActive && isOperatorRole && typeof onVideoEnd === "function";
 
   useEffect(() => {
     const listener = ({ source, data }: MessageEvent) => {
@@ -63,14 +92,100 @@ const Conference: React.FC<ConferenceProps> = ({
   }, [conferenceId, langCode]);
 
   return (
-    <iframe
-      title="conference"
-      className={classes.root}
-      src={confUrl}
-      allowFullScreen
-      allow="microphone; camera; autoplay; display-capture"
-      ref={ref}
-    />
+    <Box
+      display="flex"
+      flexDirection="column"
+      height="100%"
+      width="100%"
+      gap={1}
+    >
+      <Box flex={1} minHeight={0} sx={{ borderRadius: 1, overflow: "hidden" }}>
+        <iframe
+          title="conference"
+          className={classes.root}
+          src={confUrl}
+          allowFullScreen
+          allow="microphone; camera; autoplay; display-capture"
+          ref={ref}
+        />
+      </Box>
+      <Box
+        display="flex"
+        flexWrap="wrap"
+        gap={1}
+        alignItems="center"
+        flexShrink={0}
+        sx={{ "& > *": { flexShrink: 0 } }}
+      >
+        {canPauseConference && conference && (
+          <Button
+            aria-label="pause call"
+            variant="contained"
+            color="primary"
+            size="small"
+            startIcon={<PauseIcon color="inherit" />}
+            onClick={() => {
+              if (onConferencePause) {
+                onConferencePause(conference);
+              }
+            }}
+          >
+            {t("CHAT.CONFERENCE.PAUSE")}
+          </Button>
+        )}
+
+        {canFinishConference && conference && (
+          <>
+            <Button
+              aria-label="finish call"
+              variant="contained"
+              color="warning"
+              size="small"
+              startIcon={<CallEndIcon color="inherit" />}
+              onClick={() => setConfirmFinishConf(true)}
+            >
+              {t("CHAT.CONFERENCE.FINISH")}
+            </Button>
+            <ConfirmDialogSlide
+              open={confirmFinishConf}
+              setOpen={setConfirmFinishConf}
+              contentText={t("CHAT.CONFERENCE.CONFIRM_FINISH_CONF")}
+              callback={() => {
+                if (onVideoEnd && conference) {
+                  onVideoEnd(conference);
+                }
+              }}
+            />
+          </>
+        )}
+
+        {conference && isConferenceActive && (
+          <>
+            {!isOperatorRole && !conferencePaused && (
+              <Box mx="auto">
+                <ConferenceTime
+                  finishDate={conference.finishDate}
+                  paused={conferencePaused}
+                />
+              </Box>
+            )}
+
+            {isOperatorRole &&
+              conference.finishDate != null &&
+              (conferencePaused ? (
+                <Typography variant="body2" color="textSecondary">
+                  {t("CHAT.CONFERENCE.PAUSED")}
+                </Typography>
+              ) : (
+                <ConferenceTime
+                  finishDate={conference.finishDate}
+                  paused={conferencePaused}
+                />
+              ))}
+          </>
+        )}
+      </Box>
+    </Box>
   );
 };
 export default Conference;

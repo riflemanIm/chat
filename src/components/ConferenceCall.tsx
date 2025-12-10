@@ -1,4 +1,4 @@
-import { Avatar, Button, Paper } from "@mui/material";
+import { Avatar, Button, Paper, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import React from "react";
 import { useTranslation } from "react-i18next";
@@ -75,6 +75,8 @@ type ConferenceCallProps = {
   contact: Contact;
   apiUrl: string;
   onAccept: (conference: ConferenceData) => void;
+  canResume?: boolean;
+  isPaused?: boolean;
 };
 
 const ConferenceCall: React.FC<ConferenceCallProps> = ({
@@ -82,9 +84,13 @@ const ConferenceCall: React.FC<ConferenceCallProps> = ({
   contact,
   apiUrl,
   onAccept,
+  canResume = true,
+  isPaused = false,
 }: ConferenceCallProps) => {
   const classes = useStyles();
   const { t } = useTranslation();
+
+  const showPausedNotice = !canResume && isPaused;
 
   return (
     <Paper className={classes.root}>
@@ -100,13 +106,17 @@ const ConferenceCall: React.FC<ConferenceCallProps> = ({
         )}
       </div>
       <div className={classes.footer}>
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={() => onAccept(conference)}
-        >
-          {t("CHAT.CONFERENCE.JOIN")}
-        </Button>
+        {showPausedNotice ? (
+          <Typography variant="body2">{t("CHAT.CONFERENCE.PAUSED")}</Typography>
+        ) : (
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => onAccept(conference)}
+          >
+            {t("CHAT.CONFERENCE.RESUME")}
+          </Button>
+        )}
       </div>
     </Paper>
   );

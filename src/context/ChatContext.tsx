@@ -38,6 +38,7 @@ export interface ChatState {
     data: ConferenceData | null;
     joined: boolean;
     ringPlayed: boolean;
+    paused: boolean;
   };
   typing: SetTyping | null;
   loading: boolean;
@@ -71,6 +72,7 @@ const emptyChatState: ChatState = {
     data: null, // данные конференции
     joined: false,
     ringPlayed: false,
+    paused: false,
   },
   typing: null, // кто печатает текст
   loading: false, // загрузка данных
@@ -107,6 +109,7 @@ type ChatActionType =
   | "SET_CONFERENCE"
   | "JOIN_CONFERENCE"
   | "PAUSE_CONFERENCE"
+  | "RESUME_CONFERENCE"
   | "STOP_CONFERENCE"
   | "SET_TYPING"
   | "MARK_AS_READ"
@@ -172,6 +175,38 @@ const getActiveRoom = (state: ChatState) => {
     if (rooms.length > 0) newActiveRoom = rooms[0];
   }
   return newActiveRoom;
+};
+
+const isConferencePaused = (
+  conference: ConferenceData | null | undefined,
+  visitData: VisitData[]
+) => {
+  if (!conference) return false;
+  const rawStatus =
+    typeof (conference as any)?.status !== "undefined"
+      ? (conference as any).status
+      : (conference as any)?.conferenceStatus;
+
+  if (typeof rawStatus !== "undefined" && rawStatus !== null) {
+    const normalized =
+      typeof rawStatus === "string"
+        ? rawStatus.toLowerCase()
+        : Number(rawStatus);
+    if (normalized === 2 || normalized === "paused") {
+      return true;
+    }
+    return false;
+  }
+
+  if (Array.isArray(visitData) && conference.contactId != null) {
+    return visitData.some(
+      (visit) =>
+        visit.contactId === conference.contactId &&
+        visit.conferenceStatus === "paused"
+    );
+  }
+
+  return false;
 };
 
 const setUserOnline = (
@@ -627,29 +662,42 @@ const clearUser = (state: ChatState): ChatState => {
 
 const setConference = (
   state: ChatState,
-  conference: ConferenceData
+  conference: ConferenceData | null
 ): ChatState => {
+  if (!conference) {
+    return {
+      ...state,
+      conference: {
+        data: null,
+        joined: false,
+        ringPlayed: false,
+        paused: false,
+      },
+    };
+  }
+
   return {
     ...state,
     conference: {
       data: { ...conference },
-      joined: conference?.userId === state.user.userId,
-      ringPlayed: conference?.userId !== state.user.userId,
+      joined: conference.userId === state.user.userId,
+      ringPlayed: conference.userId !== state.user.userId,
+      paused: isConferencePaused(conference, state.visitData),
     },
   };
 };
 
 const pauseConference = (
   state: ChatState,
-  conference: ConferenceData
+  conference: ConferenceData | null
 ): ChatState => {
   if (state.conference.data?.id !== conference?.id) return state;
+
   return {
     ...state,
     conference: {
-      data: { ...state.conference.data },
-      joined: false,
-      ringPlayed: false,
+      ...state.conference,
+      paused: true,
     },
   };
 };
@@ -661,7 +709,27 @@ const stopConference = (
   if (state.conference.data?.id !== conference?.id) return state;
   return {
     ...state,
-    conference: { data: null, joined: false, ringPlayed: false },
+    conference: {
+      data: null,
+      joined: false,
+      ringPlayed: false,
+      paused: false,
+    },
+  };
+};
+
+const resumeConference = (
+  state: ChatState,
+  conference?: ConferenceData | null
+): ChatState => {
+  if (state.conference.data?.id !== conference?.id) return state;
+
+  return {
+    ...state,
+    conference: {
+      ...state.conference,
+      paused: false,
+    },
   };
 };
 
@@ -744,10 +812,13 @@ function chatReducer(state: ChatState, action: Action): ChatState {
           data: { ...(action.payload as ConferenceData) },
           joined: true,
           ringPlayed: false,
+          paused: false,
         },
       };
     case "PAUSE_CONFERENCE":
       return pauseConference(state, action.payload as ConferenceData);
+    case "RESUME_CONFERENCE":
+      return resumeConference(state, action.payload as ConferenceData);
     case "STOP_CONFERENCE":
       return stopConference(state, action.payload as ConferenceData);
     case "MARK_PRIVATE_MESSAGES_READ":
@@ -799,6 +870,7 @@ function chatReducer(state: ChatState, action: Action): ChatState {
           data: null,
           joined: false,
           ringPlayed: false,
+          paused: false,
         },
         typing: null,
         messageSearch: "",
@@ -808,11 +880,17 @@ function chatReducer(state: ChatState, action: Action): ChatState {
         ...state,
         operators: action.payload as Contact[],
       };
-    case "SET_VISIT_DATA":
+    case "SET_VISIT_DATA": {
+      const visitData = action.payload as VisitData[];
       return {
         ...state,
-        visitData: action.payload as VisitData[],
+        visitData,
+        conference: {
+          ...state.conference,
+          paused: isConferencePaused(state.conference.data, visitData),
+        },
       };
+    }
   }
 
   return state;
