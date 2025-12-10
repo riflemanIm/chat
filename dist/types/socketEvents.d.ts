@@ -16,6 +16,7 @@ export declare const SOCKET_EVENTS: {
     readonly JOIN_GROUP_SOCKET: "joinGroupSocket";
     readonly START_CONFERENCE: "startConference";
     readonly PAUSE_CONFERENCE: "pauseConference";
+    readonly RESUME_CONFERENCE: "resumeConference";
     readonly STOP_CONFERENCE: "stopConference";
     readonly ADD_OPERATOR: "addOperator";
     readonly SET_ACTIVE_ROOM: "setActiveRoom";

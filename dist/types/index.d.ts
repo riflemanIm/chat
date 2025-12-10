@@ -68,7 +68,7 @@ export interface Contact {
 }
 export interface VisitData {
     chatFrom: Date;
-    conferenceStatus: "started" | "finished" | "none";
+    conferenceStatus: "started" | "finished" | "none" | "paused";
     contactId: number;
     duration: number;
     plExamName: string;
@@ -166,6 +166,8 @@ export interface ConferenceData {
     password?: string;
     currentDate?: Date;
     finishDate?: Date;
+    status?: number | string;
+    conferenceStatus?: "started" | "finished" | "none" | "paused";
 }
 export interface ChatData {
     user: User;

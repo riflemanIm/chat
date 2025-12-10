@@ -8,7 +8,6 @@ type RoomProps = {
     typing: SetTyping | null;
     conference: ConferenceData | null;
     visitData: VisitData[];
-    conferenceJoined: boolean;
     loading: boolean;
     pageSize: number;
     operators: Contact[];
@@ -20,8 +19,6 @@ type RoomProps = {
     onTyping?: (chat: ChatRoom) => void;
     onSendMessage?: (chat: ChatRoom, data: SendMessage) => void;
     onVideoCall?: (chat: ChatRoom, visitId?: number, recreate?: boolean) => void;
-    onVideoEnd?: (chat: ConferenceData) => void;
-    onConferencePause?: (conference: ConferenceData) => void;
     onOperatorAdd?: (chat: Group, operator: Contact) => void;
     onLeaveGroup?: (chat: Group) => void;
     onContactClick?: (contact: Contact) => void;

@@ -1,1 +1,1 @@
-{"version":3,"file":"useCounter.d.ts","sourceRoot":"","sources":["../../src/hooks/useCounter.ts"],"names":[],"mappings":"AAEA,MAAM,CAAC,OAAO,UAAU,UAAU,CAAC,cAAc,EAAE,MAAM;;;iBAoBvB,MAAM;EAsBvC"}
+{"version":3,"file":"useCounter.d.ts","sourceRoot":"","sources":["../../src/hooks/useCounter.ts"],"names":[],"mappings":"AAEA,KAAK,iBAAiB,GAAG;IACvB,MAAM,CAAC,EAAE,OAAO,CAAC;CAClB,CAAC;AAEF,MAAM,CAAC,OAAO,UAAU,UAAU,CAChC,cAAc,EAAE,MAAM,EACtB,OAAO,GAAE,iBAAsB;;;iBAsBC,MAAM;EAyBvC"}

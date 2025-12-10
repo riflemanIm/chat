@@ -6,14 +6,11 @@ type RoomHeaderProps = {
     chat: ChatRoom | null;
     typing: SetTyping | null;
     conference: ConferenceData | null;
-    conferenceJoined: boolean;
     className: string;
     operators: Contact[];
     visitData: VisitData[];
     messageSearch: string;
     onVideoCall?: (chat: ChatRoom, visitId?: number, recreate?: boolean) => void;
-    onVideoEnd?: (conference: ConferenceData) => void;
-    onConferencePause?: (conference: ConferenceData) => void;
     onOperatorAdd?: (chat: Group, operator: Contact) => void;
     onLeaveGroup?: (chat: Group) => void;
     onContactClick?: (contact: Contact) => void;
