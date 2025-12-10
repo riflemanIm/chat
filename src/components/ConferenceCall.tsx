@@ -113,7 +113,7 @@ const ConferenceCall: React.FC<ConferenceCallProps> = ({
       </div>
       <div className={classes.footer}>
         {showPausedNotice ? (
-          <Typography variant="body2">{t("CHAT.CONFERENCE.PAUSED")}</Typography>
+          <Typography variant="h6">{t("CHAT.CONFERENCE.PAUSED")}</Typography>
         ) : (
           <Button
             variant="contained"
