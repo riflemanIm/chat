@@ -917,7 +917,7 @@ export const ChatProvider: React.FC<ChatProviderProps> = (
   emptyUser.langCode = props.defLang;
 
   const token = props.token;
-  const refreshToken = props.token;
+  const refreshToken = props.refreshToken;
   const chatState: ChatState = {
     ...emptyChatState,
     token,

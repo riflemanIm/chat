@@ -50,9 +50,9 @@ export async function getRefreshToken(
   refreshToken: string,
   baseUrl: string
 ) {
-  localStorage.removeItem("authToken");
-  localStorage.removeItem("refreshToken");
   try {
+    localStorage.removeItem("authToken");
+    localStorage.removeItem("refreshToken");
     const { data } = await axios.post(`${baseUrl}/auth/refreshToken`, {
       authToken,
       refreshToken,
@@ -61,8 +61,9 @@ export async function getRefreshToken(
     localStorage.setItem("refreshToken", data?.refreshToken);
   } catch (error) {
     console.log("ERROR RefreshToken", error);
+  } finally {
+    window.location.reload();
   }
-  window.location.reload();
 }
 
 export const RestProvider: React.FC<RestProviderProps> = ({

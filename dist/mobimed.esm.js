@@ -4750,7 +4750,7 @@ const Xa = () => null, Xe = U.createContext({
   dispatch: Xa
 }), Qa = (t) => {
   Qt.langCode = t.defLang;
-  const e = t.token, n = t.token, r = {
+  const e = t.token, n = t.refreshToken, r = {
     ...Ur,
     token: e,
     refreshToken: n
@@ -4761,8 +4761,8 @@ function lu() {
   localStorage.removeItem("authToken"), localStorage.removeItem("refreshToken"), localStorage.removeItem("user"), localStorage.removeItem("doctor"), localStorage.removeItem("chatUser");
 }
 async function Fr(t, e, n) {
-  localStorage.removeItem("authToken"), localStorage.removeItem("refreshToken");
   try {
+    localStorage.removeItem("authToken"), localStorage.removeItem("refreshToken");
     const { data: r } = await J.post(`${n}/auth/refreshToken`, {
       authToken: t,
       refreshToken: e
@@ -4770,8 +4770,9 @@ async function Fr(t, e, n) {
     localStorage.setItem("authToken", r?.authToken), localStorage.setItem("refreshToken", r?.refreshToken);
   } catch (r) {
     console.log("ERROR RefreshToken", r);
+  } finally {
+    window.location.reload();
   }
-  window.location.reload();
 }
 const ec = ({
   chatBaseURLApi: t,
