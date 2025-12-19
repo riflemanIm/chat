@@ -19,6 +19,7 @@ import {
   SendMessage,
 } from "../types";
 import { getChatId, getParam, isEmpty, isGroup } from "../utils/common";
+import { isConferencePaused } from "../utils/conference";
 
 // Отключили проигрыш звука
 // const getRingAudio = (): HTMLAudioElement => {
@@ -300,24 +301,33 @@ export const ChatPage: React.FC<ChatPageProps> = ({
   const onConferencePause = React.useCallback(
     (conference: ConferenceData | null) => {
       if (conference?.id) {
+        if (state.conference.paused) {
+          return;
+        }
+        dispatch({ type: "PAUSE_CONFERENCE", payload: conference });
         emitSocketEvent("pauseConference", {
           id: conference.id,
         });
       }
     },
-    [emitSocketEvent]
+    [emitSocketEvent, dispatch, state.conference.paused]
   );
 
   const onConferenceCallAccept = React.useCallback(
     (conference: ConferenceData) => {
       if (conference?.id) {
-        emitSocketEvent("resumeConference", {
-          id: conference.id,
-        });
+        const paused =
+          state.conference.paused ||
+          isConferencePaused(conference, state.visitData);
+        if (paused) {
+          emitSocketEvent("resumeConference", {
+            id: conference.id,
+          });
+        }
         dispatch({ type: "JOIN_CONFERENCE", payload: conference });
       }
     },
-    [emitSocketEvent, dispatch]
+    [emitSocketEvent, dispatch, state.conference.paused, state.visitData]
   );
 
   const onOperatorAdd = React.useCallback(

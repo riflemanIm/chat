@@ -20,6 +20,11 @@ import {
   VisitData,
 } from "../types";
 import { chatRoomComparer } from "../utils/common";
+import {
+  getConferencePauseState,
+  isConferencePaused,
+  isConferenceStarted,
+} from "../utils/conference";
 
 export interface ChatState {
   user: User;
@@ -175,38 +180,6 @@ const getActiveRoom = (state: ChatState) => {
     if (rooms.length > 0) newActiveRoom = rooms[0];
   }
   return newActiveRoom;
-};
-
-const isConferencePaused = (
-  conference: ConferenceData | null | undefined,
-  visitData: VisitData[]
-) => {
-  if (!conference) return false;
-  const rawStatus =
-    typeof (conference as any)?.status !== "undefined"
-      ? (conference as any).status
-      : (conference as any)?.conferenceStatus;
-
-  if (typeof rawStatus !== "undefined" && rawStatus !== null) {
-    const normalized =
-      typeof rawStatus === "string"
-        ? rawStatus.toLowerCase()
-        : Number(rawStatus);
-    if (normalized === 2 || normalized === "paused") {
-      return true;
-    }
-    return false;
-  }
-
-  if (Array.isArray(visitData) && conference.contactId != null) {
-    return visitData.some(
-      (visit) =>
-        visit.contactId === conference.contactId &&
-        visit.conferenceStatus === "paused"
-    );
-  }
-
-  return false;
 };
 
 const setUserOnline = (
@@ -676,13 +649,19 @@ const setConference = (
     };
   }
 
+  const isPaused = isConferencePaused(conference, state.visitData);
+  const isStarted = isConferenceStarted(conference);
+  const isInitiator = conference.userId === state.user.userId;
+  const isParticipant = conference.contactId === state.user.userId;
+  const shouldAutoJoin = isParticipant && isStarted && !isPaused;
+
   return {
     ...state,
     conference: {
       data: { ...conference },
-      joined: conference.userId === state.user.userId,
+      joined: isInitiator || shouldAutoJoin,
       ringPlayed: conference.userId !== state.user.userId,
-      paused: isConferencePaused(conference, state.visitData),
+      paused: isPaused,
     },
   };
 };
@@ -882,12 +861,16 @@ function chatReducer(state: ChatState, action: Action): ChatState {
       };
     case "SET_VISIT_DATA": {
       const visitData = action.payload as VisitData[];
+      const nextPaused = getConferencePauseState(
+        state.conference.data,
+        visitData
+      );
       return {
         ...state,
         visitData,
         conference: {
           ...state.conference,
-          paused: isConferencePaused(state.conference.data, visitData),
+          paused: nextPaused ?? state.conference.paused,
         },
       };
     }

@@ -2,6 +2,7 @@ import * as React from "react";
 import { ChatRoom, ConferenceData, User } from "../types";
 import Conference from "./Conference";
 import ConferenceCall from "./ConferenceCall";
+import { isConferenceStarted } from "../utils/conference";
 
 interface ConferenceSectionProps {
   conference: {
@@ -32,8 +33,36 @@ export const ConferenceSection: React.FC<ConferenceSectionProps> = ({
 
   const isOperatorRole = user?.role != null && [3, 4].includes(user.role);
   const isPaused = Boolean(conference.paused);
-  const canResume = !isPaused || isOperatorRole;
+  const [resumeBlocked, setResumeBlocked] = React.useState(false);
+  const canResume =
+    (!isPaused || isOperatorRole) && (!isPaused || !resumeBlocked);
+  const isStarted = isConferenceStarted(conference.data);
   const shouldRenderConference = conference.joined && !isPaused;
+  const autoJoinRef = React.useRef<string | null>(null);
+
+  React.useEffect(() => {
+    if (!conference.data) {
+      autoJoinRef.current = null;
+      return;
+    }
+
+    if (autoJoinRef.current === conference.data.id) return;
+    if (!conference.joined && !isPaused && isStarted) {
+      autoJoinRef.current = conference.data.id;
+      onAccept(conference.data);
+    }
+  }, [conference.data, conference.joined, isPaused, isStarted, onAccept]);
+
+  React.useEffect(() => {
+    if (!isPaused) {
+      setResumeBlocked(false);
+      return;
+    }
+
+    setResumeBlocked(true);
+    const timer = setTimeout(() => setResumeBlocked(false), 400);
+    return () => clearTimeout(timer);
+  }, [isPaused, conference.data?.id]);
 
   if (shouldRenderConference) {
     return (

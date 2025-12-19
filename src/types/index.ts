@@ -87,6 +87,7 @@ export interface Contact {
 export interface VisitData {
   chatFrom: Date;
   conferenceStatus: "started" | "finished" | "none" | "paused";
+  conferenceId?: string;
   contactId: number;
   duration: number;
   plExamName: string;
