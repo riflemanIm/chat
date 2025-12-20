@@ -21,6 +21,7 @@ import {
 } from "../types";
 import { chatRoomComparer } from "../utils/common";
 import {
+  getConferenceFinishState,
   getConferencePauseState,
   isConferencePaused,
   isConferenceStarted,
@@ -649,6 +650,19 @@ const setConference = (
     };
   }
 
+  const isFinished = getConferenceFinishState(conference, state.visitData);
+  if (isFinished) {
+    return {
+      ...state,
+      conference: {
+        data: null,
+        joined: false,
+        ringPlayed: false,
+        paused: false,
+      },
+    };
+  }
+
   const isPaused = isConferencePaused(conference, state.visitData);
   const isStarted = isConferenceStarted(conference);
   const isInitiator = conference.userId === state.user.userId;
@@ -865,6 +879,22 @@ function chatReducer(state: ChatState, action: Action): ChatState {
         state.conference.data,
         visitData
       );
+      const isFinished = getConferenceFinishState(
+        state.conference.data,
+        visitData
+      );
+      if (isFinished) {
+        return {
+          ...state,
+          visitData,
+          conference: {
+            data: null,
+            joined: false,
+            ringPlayed: false,
+            paused: false,
+          },
+        };
+      }
       return {
         ...state,
         visitData,

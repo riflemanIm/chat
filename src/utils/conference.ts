@@ -4,7 +4,13 @@ type RawStatus = number | string | null | undefined;
 
 const normalizeStatus = (rawStatus: RawStatus) => {
   if (rawStatus == null) return null;
-  if (typeof rawStatus === "string") return rawStatus.toLowerCase();
+  if (typeof rawStatus === "string") {
+    const lowered = rawStatus.toLowerCase();
+    if (lowered === "conferencefinished") return "finished";
+    if (lowered === "conferencepaused") return "paused";
+    if (lowered === "conferencestarted") return "started";
+    return lowered;
+  }
   const numeric = Number(rawStatus);
   return Number.isNaN(numeric) ? null : numeric;
 };
@@ -61,10 +67,53 @@ export const getConferencePauseState = (
   return null;
 };
 
+export const isConferenceFinished = (
+  conference: ConferenceData | null | undefined,
+  visitData: VisitData[]
+) => {
+  return Boolean(getConferenceFinishState(conference, visitData));
+};
+
+export const getConferenceFinishState = (
+  conference: ConferenceData | null | undefined,
+  visitData: VisitData[]
+) => {
+  if (!conference) return null;
+  const normalized = normalizeStatus(getConferenceStatus(conference));
+
+  if (normalized != null) {
+    return normalized === 1 || normalized === "finished";
+  }
+
+  if (Array.isArray(visitData) && conference.contactId != null) {
+    const byConferenceId =
+      conference.id != null
+        ? visitData.find((item) => item.conferenceId === conference.id)
+        : undefined;
+    const visit =
+      byConferenceId ??
+      visitData
+        .filter(
+          (item) =>
+            item.contactId === conference.contactId &&
+            item.conferenceStatus !== "none"
+        )
+        .sort(
+          (a, b) =>
+            new Date(b.visitDate).getTime() -
+            new Date(a.visitDate).getTime()
+        )[0];
+    if (!visit) return null;
+    return visit.conferenceStatus === "finished";
+  }
+
+  return null;
+};
+
 export const isConferenceStarted = (
   conference: ConferenceData | null | undefined
 ) => {
   const normalized = normalizeStatus(getConferenceStatus(conference));
   if (normalized == null) return Boolean(conference?.url);
-  return normalized === 1 || normalized === "started";
+  return normalized === 0 || normalized === "started";
 };

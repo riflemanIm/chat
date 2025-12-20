@@ -19,7 +19,7 @@ import {
   SendMessage,
 } from "../types";
 import { getChatId, getParam, isEmpty, isGroup } from "../utils/common";
-import { isConferencePaused } from "../utils/conference";
+import { isConferenceFinished, isConferencePaused } from "../utils/conference";
 
 // Отключили проигрыш звука
 // const getRingAudio = (): HTMLAudioElement => {
@@ -316,6 +316,8 @@ export const ChatPage: React.FC<ChatPageProps> = ({
   const onConferenceCallAccept = React.useCallback(
     (conference: ConferenceData) => {
       if (conference?.id) {
+        const isFinished = isConferenceFinished(conference, state.visitData);
+        if (isFinished) return;
         const paused =
           state.conference.paused ||
           isConferencePaused(conference, state.visitData);
