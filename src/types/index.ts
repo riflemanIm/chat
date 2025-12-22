@@ -10,6 +10,7 @@ export interface ChatPageProps {
   activeChatUserId?: number;
   hideRooms?: boolean;
   fullWidth?: boolean;
+  chatAutoCreateFormConf?: boolean;
   onContactInfoClick?: (contact: Contact) => void;
 }
 
@@ -216,6 +217,7 @@ export interface ConferenceData {
   finishDate?: Date;
   status?: number | string;
   conferenceStatus?: "started" | "finished" | "none" | "paused";
+  deepLinkDoctorApp?: string;
 }
 
 // Данные чата

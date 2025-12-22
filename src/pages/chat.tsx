@@ -6,6 +6,7 @@ import ChatAlert from "../components/Alert";
 import ChatContainer from "../components/ChatContainer";
 import ChatLayout from "../components/ChatLayout";
 import ConferenceSection from "../components/ConferenceSection";
+import DeepLinkDialog from "../components/DeepLinkDialog";
 import { ChatContext } from "../context/ChatContext";
 import { RestContext } from "../context/RestContext";
 import { SocketContext } from "../context/SocketContext";
@@ -37,6 +38,7 @@ export const ChatPage: React.FC<ChatPageProps> = ({
   activeChatUserId,
   hideRooms = false,
   fullWidth = false,
+  chatAutoCreateFormConf = false,
   ...props
 }: ChatPageProps) => {
   console.log("activeChatUserId", activeChatUserId);
@@ -47,6 +49,12 @@ export const ChatPage: React.FC<ChatPageProps> = ({
   // Update context usage
   const { state, dispatch } = React.useContext(ChatContext);
   const { socket } = React.useContext(SocketContext);
+  const [deepLinkDialog, setDeepLinkDialog] = React.useState({
+    open: false,
+    url: "",
+  });
+  const isOperatorRole =
+    state.user?.role != null && [3, 4].includes(state.user.role);
 
   const {
     apiUrl,
@@ -294,6 +302,17 @@ export const ChatPage: React.FC<ChatPageProps> = ({
           id: conference.id,
         });
       }
+      if (
+        chatAutoCreateFormConf &&
+        isOperatorRole &&
+        conference?.deepLinkDoctorApp &&
+        !isEmpty(conference.deepLinkDoctorApp)
+      ) {
+        setDeepLinkDialog({
+          open: true,
+          url: conference.deepLinkDoctorApp,
+        });
+      }
     },
     [emitSocketEvent]
   );
@@ -524,6 +543,13 @@ export const ChatPage: React.FC<ChatPageProps> = ({
         chatOld={state.chatOld}
       />
       <ChatAlert />
+      {chatAutoCreateFormConf && isOperatorRole && (
+        <DeepLinkDialog
+          open={deepLinkDialog.open}
+          url={deepLinkDialog.url}
+          onClose={() => setDeepLinkDialog({ open: false, url: "" })}
+        />
+      )}
     </ChatContainer>
   );
 };
