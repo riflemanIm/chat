@@ -263,6 +263,15 @@ const RoomHeader: React.FC<RoomHeaderProps> = ({
   return (
     <>
       <CardHeader
+        sx={{
+          minWidth: 0,
+          "& .MuiCardHeader-content": {
+            minWidth: 0,
+            flex: "1 1 auto",
+            overflow: "hidden",
+          },
+          "& .MuiCardHeader-action": { flex: "0 0 auto", marginLeft: 0 },
+        }}
         avatar={
           <Avatar
             alt={contact.username}
@@ -273,16 +282,20 @@ const RoomHeader: React.FC<RoomHeaderProps> = ({
           <Typography
             variant="h6"
             sx={(theme) => ({
+              minWidth: 0,
+              flexShrink: 1,
+              display: "block",
               whiteSpace: "nowrap",
               overflow: "hidden",
               textOverflow: "ellipsis",
               fontSize: "0.9rem",
+              width: "100%",
               [theme.breakpoints.down("md")]: {
                 fontSize: "0.8rem",
               },
 
               [theme.breakpoints.down("sm")]: {
-                whiteSpace: "wrap",
+                whiteSpace: "normal",
                 fontSize: "0.7rem",
               },
             })}

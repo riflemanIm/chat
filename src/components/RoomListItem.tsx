@@ -13,7 +13,7 @@ import React from "react";
 
 import GroupIcon from "@mui/icons-material/Group";
 import { useTranslation } from "react-i18next";
-import { ChatMessage, ChatRoom, Contact, Group, SetTyping } from "../types";
+import { ChatMessage, ChatRoom, Contact, SetTyping } from "../types";
 import { combineURLs, formatTime, getChatName } from "../utils/common";
 
 type RoomListItemProps = {
@@ -31,11 +31,15 @@ const useStyles = makeStyles((theme: Theme) =>
       whiteSpace: "nowrap",
       overflow: "hidden",
       textOverflow: "ellipsis",
+      color: theme.palette.text.secondary,
     },
     time: {
       paddingLeft: theme.spacing(1),
       justifyContent: "flex-end",
       whiteSpace: "nowrap",
+      fontSize: "0.8rem",
+      color: theme.palette.text.secondary,
+      fontWeight: 550,
     },
     unread: {
       justifyContent: "flex-end",
@@ -160,10 +164,11 @@ const RoomListItem: React.FC<RoomListItemProps> = (
   const { t } = useTranslation();
   const { apiUrl, chat, typing } = props;
   const roomName = getChatName(chat);
+  const isGroup = "groupId" in chat;
 
-  const avatar = (chat as Group).groupId ? (
+  const avatar = isGroup ? (
     <Avatar alt={roomName} className={classes.avatarGroup}>
-      <GroupIcon />{" "}
+      <GroupIcon />
     </Avatar>
   ) : (
     contactAvatar(apiUrl, chat as Contact, typing)
@@ -181,7 +186,7 @@ const RoomListItem: React.FC<RoomListItemProps> = (
     <ListItemButton selected={props.active} onClick={props.onClick}>
       <ListItemAvatar>{avatar}</ListItemAvatar>
       <ListItemText
-        secondaryTypographyProps={{ component: "span" }}
+        slotProps={{ secondary: { component: "span" } }}
         primary={
           <Box display="flex" flexDirection="row">
             <span className={classes.main}>{roomName}</span>
