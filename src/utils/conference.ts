@@ -47,19 +47,19 @@ export const getConferencePauseState = (
       conference.id != null
         ? visitData.find((item) => item.conferenceId === conference.id)
         : undefined;
-    const visit =
-      byConferenceId ??
-      visitData
-        .filter(
-          (item) =>
-            item.contactId === conference.contactId &&
-            item.conferenceStatus !== "none"
-        )
-        .sort(
-          (a, b) =>
-            new Date(b.visitDate).getTime() -
-            new Date(a.visitDate).getTime()
-        )[0];
+    if (conference.id != null) {
+      return byConferenceId ? byConferenceId.conferenceStatus === "paused" : null;
+    }
+    const visit = visitData
+      .filter(
+        (item) =>
+          item.contactId === conference.contactId &&
+          item.conferenceStatus !== "none"
+      )
+      .sort(
+        (a, b) =>
+          new Date(b.visitDate).getTime() - new Date(a.visitDate).getTime()
+      )[0];
     if (!visit) return null;
     return visit.conferenceStatus === "paused";
   }
@@ -90,19 +90,21 @@ export const getConferenceFinishState = (
       conference.id != null
         ? visitData.find((item) => item.conferenceId === conference.id)
         : undefined;
-    const visit =
-      byConferenceId ??
-      visitData
-        .filter(
-          (item) =>
-            item.contactId === conference.contactId &&
-            item.conferenceStatus !== "none"
-        )
-        .sort(
-          (a, b) =>
-            new Date(b.visitDate).getTime() -
-            new Date(a.visitDate).getTime()
-        )[0];
+    if (conference.id != null) {
+      return byConferenceId
+        ? byConferenceId.conferenceStatus === "finished"
+        : null;
+    }
+    const visit = visitData
+      .filter(
+        (item) =>
+          item.contactId === conference.contactId &&
+          item.conferenceStatus !== "none"
+      )
+      .sort(
+        (a, b) =>
+          new Date(b.visitDate).getTime() - new Date(a.visitDate).getTime()
+      )[0];
     if (!visit) return null;
     return visit.conferenceStatus === "finished";
   }

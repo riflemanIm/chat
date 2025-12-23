@@ -215,6 +215,7 @@ export interface ConferenceData {
   password?: string;
   currentDate?: Date;
   finishDate?: Date;
+  remainingDuration?: number;
   status?: number | string;
   conferenceStatus?: "started" | "finished" | "none" | "paused";
   deepLinkDoctorApp?: string;

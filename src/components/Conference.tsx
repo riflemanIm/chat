@@ -161,27 +161,32 @@ const Conference: React.FC<ConferenceProps> = ({
 
         {conference && isConferenceActive && (
           <>
-            {!isOperatorRole && !conferencePaused && (
+            {!isOperatorRole && (
               <Box mx="auto">
                 <ConferenceTime
                   finishDate={conference.finishDate}
+                  currentDate={conference.currentDate}
+                  remainingDuration={conference.remainingDuration}
                   paused={conferencePaused}
                 />
               </Box>
             )}
 
-            {isOperatorRole &&
-              conference.finishDate != null &&
-              (conferencePaused ? (
-                <Typography variant="body2" color="textSecondary">
-                  {t("CHAT.CONFERENCE.PAUSED")}
-                </Typography>
-              ) : (
+            {isOperatorRole && conference.finishDate != null && (
+              <Box display="flex" alignItems="center" gap={1}>
+                {conferencePaused && (
+                  <Typography variant="body2" color="textSecondary">
+                    {t("CHAT.CONFERENCE.PAUSED")}
+                  </Typography>
+                )}
                 <ConferenceTime
                   finishDate={conference.finishDate}
+                  currentDate={conference.currentDate}
+                  remainingDuration={conference.remainingDuration}
                   paused={conferencePaused}
                 />
-              ))}
+              </Box>
+            )}
           </>
         )}
       </Box>

@@ -238,12 +238,14 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({
 
     // start Conference
     const listener13 = (res: ServerRes) => {
+      console.log("start Conference listener13 res.data", res.data);
       if (handleSocketError(res, dispatch)) return;
+
       dispatch({
         type: "SET_CONFERENCE",
         payload: res.data as ConferenceData,
       });
-      dispatch({ type: "RESUME_CONFERENCE" });
+      //dispatch({ type: "RESUME_CONFERENCE" });
     };
     socket?.on("startConference", listener13);
 

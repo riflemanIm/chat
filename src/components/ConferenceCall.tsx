@@ -1,9 +1,10 @@
-import { Avatar, Button, Paper, Typography } from "@mui/material";
+import { Avatar, Box, Button, Paper, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { ConferenceData, Contact } from "../types";
 import { combineURLs } from "../utils/common";
+import ConferenceTime from "./ConferenceTime";
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -111,6 +112,14 @@ const ConferenceCall: React.FC<ConferenceCallProps> = ({
           <Avatar className={classes.avatar} />
         )}
       </div>
+      {conference.finishDate != null && (
+        <Box width="100%" display="flex" justifyContent="center" mt={3}>
+          <ConferenceTime
+            finishDate={conference.finishDate}
+            paused={isPaused}
+          />
+        </Box>
+      )}
       <div className={classes.footer}>
         {showPausedNotice ? (
           <Typography variant="h6">{t("CHAT.CONFERENCE.PAUSED")}</Typography>

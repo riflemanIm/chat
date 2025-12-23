@@ -543,7 +543,7 @@ export const ChatPage: React.FC<ChatPageProps> = ({
         chatOld={state.chatOld}
       />
       <ChatAlert />
-      {chatAutoCreateFormConf && isOperatorRole && (
+      {chatAutoCreateFormConf && (
         <DeepLinkDialog
           open={deepLinkDialog.open}
           url={deepLinkDialog.url}

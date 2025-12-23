@@ -667,7 +667,10 @@ const setConference = (
   const isStarted = isConferenceStarted(conference);
   const isInitiator = conference.userId === state.user.userId;
   const isParticipant = conference.contactId === state.user.userId;
-  const shouldAutoJoin = isParticipant && isStarted && !isPaused;
+  const isOperatorRole =
+    state.user?.role != null && [3, 4].includes(state.user.role);
+  const shouldAutoJoin =
+    (isParticipant || isOperatorRole) && isStarted && !isPaused;
 
   return {
     ...state,
@@ -690,6 +693,9 @@ const pauseConference = (
     ...state,
     conference: {
       ...state.conference,
+      data: state.conference.data
+        ? { ...state.conference.data, ...conference }
+        : state.conference.data,
       paused: true,
     },
   };
@@ -721,6 +727,9 @@ const resumeConference = (
     ...state,
     conference: {
       ...state.conference,
+      data: state.conference.data
+        ? { ...state.conference.data, ...conference }
+        : state.conference.data,
       paused: false,
     },
   };
