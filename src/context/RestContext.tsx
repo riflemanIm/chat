@@ -44,6 +44,16 @@ export function clearLocalStorage() {
   localStorage.removeItem("doctor");
   localStorage.removeItem("chatUser");
 }
+export async function signOut(baseUrl: string) {
+  try {
+    await axios.post(`${baseUrl}/auth/logout`);
+    console.log(" === Logout ===  ");
+  } catch (error) {
+    console.log("ERROR Logout", error);
+  } finally {
+    window.location.reload();
+  }
+}
 
 export async function getRefreshToken(
   authToken: string,
@@ -61,6 +71,7 @@ export async function getRefreshToken(
     localStorage.setItem("refreshToken", data?.refreshToken);
   } catch (error) {
     console.log("ERROR RefreshToken", error);
+    signOut(baseUrl);
   } finally {
     window.location.reload();
   }
