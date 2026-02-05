@@ -45,6 +45,7 @@ export interface ChatState {
     joined: boolean;
     ringPlayed: boolean;
     paused: boolean;
+    deepLinkDoctorApp?: string;
   };
   typing: SetTyping | null;
   loading: boolean;
@@ -79,6 +80,7 @@ const emptyChatState: ChatState = {
     joined: false,
     ringPlayed: false,
     paused: false,
+    deepLinkDoctorApp: undefined,
   },
   typing: null, // кто печатает текст
   loading: false, // загрузка данных
@@ -121,6 +123,7 @@ type ChatActionType =
   | "MARK_AS_READ"
   | "UPDATE_GROUP_INFO"
   | "MARK_PRIVATE_MESSAGES_READ"
+  | "CLEAR_CONFERENCE_DEEPLINK"
   | "SET_LOADING"
   | "SET_ERROR"
   | "SET_SUCCES"
@@ -186,7 +189,7 @@ const getActiveRoom = (state: ChatState) => {
 const setUserOnline = (
   state: ChatState,
   userId: number,
-  online: 0 | 1
+  online: 0 | 1,
 ): ChatState => {
   const newState = { ...state };
   // Обновить статусы приватных чатов
@@ -274,7 +277,7 @@ const addPrivateMessage = (state: ChatState, payload: PrivateMessage) => {
     return contactUnreadGather(
       newState,
       contactId,
-      (x?: number) => (x || 0) + 1
+      (x?: number) => (x || 0) + 1,
     );
   }
 
@@ -286,7 +289,7 @@ const addPrivateMessage = (state: ChatState, payload: PrivateMessage) => {
 const contactUnreadGather = (
   state: ChatState,
   userId: number,
-  predicate: (x?: number) => number
+  predicate: (x?: number) => number,
 ) => {
   const contact = state.contactGather[userId];
   if (!contact) {
@@ -321,7 +324,7 @@ const contactUnreadGather = (
 const groupUnreadGather = (
   state: ChatState,
   groupId: number,
-  predicate: (x?: number) => number
+  predicate: (x?: number) => number,
 ) => {
   const group = state.groupGather[groupId];
   if (!group) {
@@ -511,7 +514,7 @@ const markPrivateMessagesRead = (state: ChatState, userId: number) => {
 
   const normalizedMessages = contact.messages
     ? contact.messages.map((message) =>
-        message.status === 1 ? message : { ...message, status: 1 }
+        message.status === 1 ? message : { ...message, status: 1 },
       )
     : contact.messages;
 
@@ -636,7 +639,7 @@ const clearUser = (state: ChatState): ChatState => {
 
 const setConference = (
   state: ChatState,
-  conference: ConferenceData | null
+  conference: ConferenceData | null,
 ): ChatState => {
   if (!conference) {
     return {
@@ -685,7 +688,7 @@ const setConference = (
 
 const pauseConference = (
   state: ChatState,
-  conference: ConferenceData | null
+  conference: ConferenceData | null,
 ): ChatState => {
   if (state.conference.data?.id !== conference?.id) return state;
 
@@ -703,12 +706,14 @@ const pauseConference = (
 
 const stopConference = (
   state: ChatState,
-  conference: ConferenceData
+  conference: ConferenceData,
 ): ChatState => {
   if (state.conference.data?.id !== conference?.id) return state;
   return {
     ...state,
+
     conference: {
+      deepLinkDoctorApp: conference.deepLinkDoctorApp,
       data: null,
       joined: false,
       ringPlayed: false,
@@ -719,7 +724,7 @@ const stopConference = (
 
 const resumeConference = (
   state: ChatState,
-  conference?: ConferenceData | null
+  conference?: ConferenceData | null,
 ): ChatState => {
   if (state.conference.data?.id !== conference?.id) return state;
 
@@ -783,13 +788,13 @@ function chatReducer(state: ChatState, action: Action): ChatState {
       return groupUnreadGather(
         state,
         action.payload as number,
-        (x?: number) => (x || 0) + 1
+        (x?: number) => (x || 0) + 1,
       );
     case "ADD_CONTACT_UNREAD_GATHER":
       return contactUnreadGather(
         state,
         action.payload as number,
-        (x?: number) => (x || 0) + 1
+        (x?: number) => (x || 0) + 1,
       );
     case "SET_TYPING":
       return { ...state, typing: action.payload as SetTyping };
@@ -823,6 +828,14 @@ function chatReducer(state: ChatState, action: Action): ChatState {
       return resumeConference(state, action.payload as ConferenceData);
     case "STOP_CONFERENCE":
       return stopConference(state, action.payload as ConferenceData);
+    case "CLEAR_CONFERENCE_DEEPLINK":
+      return {
+        ...state,
+        conference: {
+          ...state.conference,
+          deepLinkDoctorApp: undefined,
+        },
+      };
     case "MARK_PRIVATE_MESSAGES_READ":
       return markPrivateMessagesRead(state, action.payload as number);
     case "ADD_PRIVATE_MESSAGES":
@@ -886,11 +899,11 @@ function chatReducer(state: ChatState, action: Action): ChatState {
       const visitData = action.payload as VisitData[];
       const nextPaused = getConferencePauseState(
         state.conference.data,
-        visitData
+        visitData,
       );
       const isFinished = getConferenceFinishState(
         state.conference.data,
-        visitData
+        visitData,
       );
       if (isFinished) {
         return {
@@ -934,7 +947,7 @@ export const ChatContext = React.createContext({
 });
 
 export const ChatProvider: React.FC<ChatProviderProps> = (
-  props: ChatProviderProps
+  props: ChatProviderProps,
 ) => {
   emptyUser.langCode = props.defLang;
 

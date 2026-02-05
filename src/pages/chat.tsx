@@ -43,7 +43,7 @@ export const ChatPage: React.FC<ChatPageProps> = ({
 }: ChatPageProps) => {
   console.log("activeChatUserId", activeChatUserId);
   const isMobile = useMediaQuery((theme: Theme) =>
-    theme.breakpoints.down("md")
+    theme.breakpoints.down("md"),
   );
 
   // Update context usage
@@ -91,7 +91,7 @@ export const ChatPage: React.FC<ChatPageProps> = ({
         });
       }
     },
-    [socket, dispatch]
+    [socket, dispatch],
   );
 
   const onNeedMoreMessages = React.useCallback(
@@ -113,7 +113,7 @@ export const ChatPage: React.FC<ChatPageProps> = ({
         dispatch({ type: "SET_LOADING", payload: false });
       }
     },
-    [getPrivateMessages, getGroupMessages, dispatch, state.messageSearch]
+    [getPrivateMessages, getGroupMessages, dispatch, state.messageSearch],
   );
 
   const onMessageSearchChange = React.useCallback(
@@ -170,7 +170,7 @@ export const ChatPage: React.FC<ChatPageProps> = ({
       getPrivateMessages,
       state.activeRoom,
       state.messageSearch,
-    ]
+    ],
   );
 
   const onMessageDelete = React.useCallback(
@@ -181,7 +181,7 @@ export const ChatPage: React.FC<ChatPageProps> = ({
         _id: message._id,
       });
     },
-    [emitSocketEvent]
+    [emitSocketEvent],
   );
 
   const onTyping = React.useCallback(
@@ -191,7 +191,7 @@ export const ChatPage: React.FC<ChatPageProps> = ({
         contactId: chat.userId,
       });
     },
-    [emitSocketEvent]
+    [emitSocketEvent],
   );
 
   const onSendMessage = React.useCallback(
@@ -217,7 +217,7 @@ export const ChatPage: React.FC<ChatPageProps> = ({
         });
       }
     },
-    [emitSocketEvent]
+    [emitSocketEvent],
   );
 
   // Обновляем onEnterRoom для безопасного доступа к данным
@@ -253,7 +253,7 @@ export const ChatPage: React.FC<ChatPageProps> = ({
         });
       }
     },
-    [socket, dispatch]
+    [socket, dispatch],
   );
 
   // Обновляем функцию onChangeChat
@@ -280,7 +280,7 @@ export const ChatPage: React.FC<ChatPageProps> = ({
         });
       }
     },
-    [dispatch, onEnterRoom]
+    [dispatch, onEnterRoom],
   );
 
   const onVideoCall = React.useCallback(
@@ -292,7 +292,7 @@ export const ChatPage: React.FC<ChatPageProps> = ({
         recreate,
       });
     },
-    [emitSocketEvent]
+    [emitSocketEvent],
   );
 
   const onVideoEnd = React.useCallback(
@@ -302,20 +302,28 @@ export const ChatPage: React.FC<ChatPageProps> = ({
           id: conference.id,
         });
       }
-      if (
-        chatAutoCreateFormConf &&
-        isOperatorRole &&
-        conference?.deepLinkDoctorApp &&
-        !isEmpty(conference.deepLinkDoctorApp)
-      ) {
-        setDeepLinkDialog({
-          open: true,
-          url: conference.deepLinkDoctorApp,
-        });
-      }
     },
-    [emitSocketEvent]
+    [emitSocketEvent],
   );
+
+  React.useEffect(() => {
+    const deepLink = state.conference.deepLinkDoctorApp;
+    if (
+      chatAutoCreateFormConf &&
+      isOperatorRole &&
+      deepLink &&
+      !isEmpty(deepLink)
+    ) {
+      setDeepLinkDialog({
+        open: true,
+        url: deepLink,
+      });
+    }
+  }, [
+    chatAutoCreateFormConf,
+    isOperatorRole,
+    state.conference.deepLinkDoctorApp,
+  ]);
 
   const onConferencePause = React.useCallback(
     (conference: ConferenceData | null) => {
@@ -329,7 +337,7 @@ export const ChatPage: React.FC<ChatPageProps> = ({
         });
       }
     },
-    [emitSocketEvent, dispatch, state.conference.paused]
+    [emitSocketEvent, dispatch, state.conference.paused],
   );
 
   const onConferenceCallAccept = React.useCallback(
@@ -348,7 +356,7 @@ export const ChatPage: React.FC<ChatPageProps> = ({
         dispatch({ type: "JOIN_CONFERENCE", payload: conference });
       }
     },
-    [emitSocketEvent, dispatch, state.conference.paused, state.visitData]
+    [emitSocketEvent, dispatch, state.conference.paused, state.visitData],
   );
 
   const onOperatorAdd = React.useCallback(
@@ -358,7 +366,7 @@ export const ChatPage: React.FC<ChatPageProps> = ({
         operatorId: operator.userId,
       });
     },
-    [emitSocketEvent]
+    [emitSocketEvent],
   );
 
   const onLeaveGroup = React.useCallback(
@@ -367,18 +375,18 @@ export const ChatPage: React.FC<ChatPageProps> = ({
         groupId: group.groupId,
       });
     },
-    [emitSocketEvent]
+    [emitSocketEvent],
   );
 
   // First useEffect for initialization
   const groups = React.useMemo<Group[]>(
     () => Object.values(state.groupGather),
-    [state.groupGather]
+    [state.groupGather],
   );
 
   const contacts = React.useMemo<Contact[]>(
     () => Object.values(state.contactGather),
-    [state.contactGather]
+    [state.contactGather],
   );
 
   const requestedChatId = React.useMemo(() => {
@@ -394,7 +402,7 @@ export const ChatPage: React.FC<ChatPageProps> = ({
   const searchRequestRef = React.useRef(0);
 
   const activeChatIdRef = React.useRef<string | null>(
-    getChatId(state.activeRoom)
+    getChatId(state.activeRoom),
   );
 
   React.useEffect(() => {
@@ -429,7 +437,7 @@ export const ChatPage: React.FC<ChatPageProps> = ({
 
     if (activeChatUserId != null && !isEmpty(contacts)) {
       const targetContact = contacts.find(
-        (item) => item.userId === activeChatUserId
+        (item) => item.userId === activeChatUserId,
       );
       if (targetContact) {
         selectChat(targetContact);
@@ -547,7 +555,10 @@ export const ChatPage: React.FC<ChatPageProps> = ({
         <DeepLinkDialog
           open={deepLinkDialog.open}
           url={deepLinkDialog.url}
-          onClose={() => setDeepLinkDialog({ open: false, url: "" })}
+          onClose={() => {
+            setDeepLinkDialog({ open: false, url: "" });
+            dispatch({ type: "CLEAR_CONFERENCE_DEEPLINK" });
+          }}
         />
       )}
     </ChatContainer>

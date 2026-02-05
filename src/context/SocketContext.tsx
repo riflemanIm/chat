@@ -60,7 +60,7 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({
   const { socket, online, disconnectSocket, connectSocket } = useSocket(
     wsUrl,
     wsPath,
-    state.token
+    state.token,
   );
   const groupGatherRef = useRef(state.groupGather);
   const contactGatherRef = useRef(state.contactGather);
