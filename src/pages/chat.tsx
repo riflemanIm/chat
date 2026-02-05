@@ -555,6 +555,7 @@ export const ChatPage: React.FC<ChatPageProps> = ({
         <DeepLinkDialog
           open={deepLinkDialog.open}
           url={deepLinkDialog.url}
+          isMobile={isMobile}
           onClose={() => {
             setDeepLinkDialog({ open: false, url: "" });
             dispatch({ type: "CLEAR_CONFERENCE_DEEPLINK" });

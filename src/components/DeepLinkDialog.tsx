@@ -13,12 +13,14 @@ type DeepLinkDialogProps = {
   open: boolean;
   url: string;
   onClose: () => void;
+  isMobile: boolean;
 };
 
 const DeepLinkDialog: React.FC<DeepLinkDialogProps> = ({
   open,
   url,
   onClose,
+  isMobile,
 }: DeepLinkDialogProps) => {
   const { t } = useTranslation();
 
@@ -34,6 +36,7 @@ const DeepLinkDialog: React.FC<DeepLinkDialogProps> = ({
       open={open}
       onClose={onClose}
       aria-labelledby="chat-conference-deep-link-title"
+      fullScreen={isMobile}
     >
       <DialogContent>
         <Typography id="chat-conference-deep-link-title" variant="h6">
