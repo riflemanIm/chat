@@ -74,6 +74,10 @@ const Conference: React.FC<ConferenceProps> = ({
     typeof onConferencePause === "function";
   const canFinishConference =
     isConferenceActive && isOperatorRole && typeof onVideoEnd === "function";
+  const autoStopTimeoutRef = React.useRef<ReturnType<typeof setTimeout> | null>(
+    null
+  );
+  const autoStopFiredRef = React.useRef<string | null>(null);
 
   const isConferenceTimeElapsed = React.useCallback(() => {
     if (!conference) return false;
@@ -93,6 +97,67 @@ const Conference: React.FC<ConferenceProps> = ({
     return false;
   }, [conference]);
 
+  const getAutoStopDelayMs = React.useCallback(() => {
+    if (!conference) return null;
+    if (
+      typeof conference.remainingDuration === "number" &&
+      Number.isFinite(conference.remainingDuration)
+    ) {
+      return conference.remainingDuration;
+    }
+    if (conference.finishDate) {
+      const finishMs =
+        typeof conference.finishDate === "string"
+          ? new Date(conference.finishDate).getTime()
+          : conference.finishDate.getTime();
+      if (!Number.isFinite(finishMs)) return null;
+      return finishMs - Date.now();
+    }
+    return null;
+  }, [conference]);
+
+  useEffect(() => {
+    if (autoStopTimeoutRef.current) {
+      clearTimeout(autoStopTimeoutRef.current);
+      autoStopTimeoutRef.current = null;
+    }
+    if (
+      !conference ||
+      !isOperatorRole ||
+      conferencePaused ||
+      typeof onVideoEnd !== "function"
+    ) {
+      return;
+    }
+    const delayMs = getAutoStopDelayMs();
+    if (delayMs == null) return;
+    if (delayMs <= 0) {
+      if (autoStopFiredRef.current !== conference.id) {
+        autoStopFiredRef.current = conference.id;
+        onVideoEnd(conference);
+      }
+      return;
+    }
+    autoStopTimeoutRef.current = setTimeout(() => {
+      if (autoStopFiredRef.current !== conference.id) {
+        autoStopFiredRef.current = conference.id;
+        onVideoEnd(conference);
+      }
+    }, delayMs);
+    return () => {
+      if (autoStopTimeoutRef.current) {
+        clearTimeout(autoStopTimeoutRef.current);
+        autoStopTimeoutRef.current = null;
+      }
+    };
+  }, [
+    conference,
+    conferencePaused,
+    getAutoStopDelayMs,
+    isOperatorRole,
+    onVideoEnd,
+  ]);
+
   useEffect(() => {
     const listener = ({ source, data }: MessageEvent) => {
       const contentWindow = ref.current ? ref.current.contentWindow : null;
@@ -102,6 +167,7 @@ const Conference: React.FC<ConferenceProps> = ({
         if (TERMINATION_EVENTS.includes(type)) {
           if (isConferenceTimeElapsed()) {
             if (onVideoEnd && conference) {
+              autoStopFiredRef.current = conference.id;
               onVideoEnd(conference);
             }
           } else {
