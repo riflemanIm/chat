@@ -75,13 +75,39 @@ const Conference: React.FC<ConferenceProps> = ({
   const canFinishConference =
     isConferenceActive && isOperatorRole && typeof onVideoEnd === "function";
 
+  const isConferenceTimeElapsed = React.useCallback(() => {
+    if (!conference) return false;
+    if (
+      typeof conference.remainingDuration === "number" &&
+      Number.isFinite(conference.remainingDuration)
+    ) {
+      return conference.remainingDuration <= 0;
+    }
+    if (conference.finishDate) {
+      const finishMs =
+        typeof conference.finishDate === "string"
+          ? new Date(conference.finishDate).getTime()
+          : conference.finishDate.getTime();
+      return Number.isFinite(finishMs) && finishMs <= Date.now();
+    }
+    return false;
+  }, [conference]);
+
   useEffect(() => {
     const listener = ({ source, data }: MessageEvent) => {
       const contentWindow = ref.current ? ref.current.contentWindow : null;
       if (contentWindow && source === contentWindow) {
         const { type } = data;
 
-        if (TERMINATION_EVENTS.includes(type)) onClose(conference);
+        if (TERMINATION_EVENTS.includes(type)) {
+          if (isConferenceTimeElapsed()) {
+            if (onVideoEnd && conference) {
+              onVideoEnd(conference);
+            }
+          } else {
+            onClose(conference);
+          }
+        }
       }
     };
     window.addEventListener("message", listener);
@@ -89,7 +115,7 @@ const Conference: React.FC<ConferenceProps> = ({
       window.removeEventListener("message", listener);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [conferenceId, langCode]);
+  }, [conferenceId, langCode, onClose, onVideoEnd, conference, isConferenceTimeElapsed]);
 
   return (
     <Box
