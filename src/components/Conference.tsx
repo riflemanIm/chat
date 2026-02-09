@@ -78,26 +78,9 @@ const Conference: React.FC<ConferenceProps> = ({
     null
   );
   const autoStopFiredRef = React.useRef<string | null>(null);
+  const EARLY_FINISH_GRACE_MS = 60 * 1000;
 
-  const isConferenceTimeElapsed = React.useCallback(() => {
-    if (!conference) return false;
-    if (
-      typeof conference.remainingDuration === "number" &&
-      Number.isFinite(conference.remainingDuration)
-    ) {
-      return conference.remainingDuration <= 0;
-    }
-    if (conference.finishDate) {
-      const finishMs =
-        typeof conference.finishDate === "string"
-          ? new Date(conference.finishDate).getTime()
-          : conference.finishDate.getTime();
-      return Number.isFinite(finishMs) && finishMs <= Date.now();
-    }
-    return false;
-  }, [conference]);
-
-  const getAutoStopDelayMs = React.useCallback(() => {
+  const getRemainingMs = React.useCallback(() => {
     if (!conference) return null;
     if (
       typeof conference.remainingDuration === "number" &&
@@ -110,11 +93,20 @@ const Conference: React.FC<ConferenceProps> = ({
         typeof conference.finishDate === "string"
           ? new Date(conference.finishDate).getTime()
           : conference.finishDate.getTime();
-      if (!Number.isFinite(finishMs)) return null;
-      return finishMs - Date.now();
+      return Number.isFinite(finishMs) ? finishMs - Date.now() : null;
     }
     return null;
   }, [conference]);
+
+  const getAutoStopDelayMs = React.useCallback(() => {
+    return getRemainingMs();
+  }, [getRemainingMs]);
+
+  const isConferenceTimeElapsed = React.useCallback(() => {
+    const remainingMs = getRemainingMs();
+    if (remainingMs == null) return false;
+    return remainingMs <= 0;
+  }, [getRemainingMs]);
 
   useEffect(() => {
     if (autoStopTimeoutRef.current) {
@@ -165,7 +157,11 @@ const Conference: React.FC<ConferenceProps> = ({
         const { type } = data;
 
         if (TERMINATION_EVENTS.includes(type)) {
-          if (isConferenceTimeElapsed()) {
+          const remainingMs = getRemainingMs();
+          const shouldStop =
+            isConferenceTimeElapsed() ||
+            (remainingMs != null && remainingMs <= EARLY_FINISH_GRACE_MS);
+          if (shouldStop) {
             if (onVideoEnd && conference) {
               autoStopFiredRef.current = conference.id;
               onVideoEnd(conference);
@@ -181,7 +177,15 @@ const Conference: React.FC<ConferenceProps> = ({
       window.removeEventListener("message", listener);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [conferenceId, langCode, onClose, onVideoEnd, conference, isConferenceTimeElapsed]);
+  }, [
+    conferenceId,
+    langCode,
+    onClose,
+    onVideoEnd,
+    conference,
+    isConferenceTimeElapsed,
+    getRemainingMs,
+  ]);
 
   return (
     <Box
