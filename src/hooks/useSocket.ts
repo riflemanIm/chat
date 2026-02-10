@@ -52,6 +52,22 @@ export const useSocket = (
     });
   }, [socket]);
 
+  useEffect(() => {
+    if (!socket) return;
+    const onDisconnect = (reason: string) => {
+      console.log("[socket] disconnect", reason);
+    };
+    const onReconnectAttempt = (attempt: number) => {
+      console.log("[socket] reconnect_attempt", attempt);
+    };
+    socket.on("disconnect", onDisconnect);
+    socket.io.on("reconnect_attempt", onReconnectAttempt);
+    return () => {
+      socket.off("disconnect", onDisconnect);
+      socket.io.off("reconnect_attempt", onReconnectAttempt);
+    };
+  }, [socket]);
+
   return {
     socket,
     online,

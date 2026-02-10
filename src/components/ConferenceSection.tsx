@@ -1,5 +1,5 @@
 import * as React from "react";
-import { ChatRoom, ConferenceData, User } from "../types";
+import { ConferenceData, User } from "../types";
 import Conference from "./Conference";
 import ConferenceCall from "./ConferenceCall";
 import { isConferenceStarted } from "../utils/conference";
@@ -14,13 +14,11 @@ interface ConferenceSectionProps {
   onAccept: (conference: ConferenceData) => void;
   isMobile: boolean;
   user: User;
-  activeRoom: ChatRoom | null;
-  onChangeChat: (chat: ChatRoom) => void;
   apiUrl: string;
   onVideoEnd?: (conference: ConferenceData) => void;
 }
 
-export const ConferenceSection: React.FC<ConferenceSectionProps> = ({
+const ConferenceSectionImpl: React.FC<ConferenceSectionProps> = ({
   conference,
   onClose,
   onAccept,
@@ -99,5 +97,37 @@ export const ConferenceSection: React.FC<ConferenceSectionProps> = ({
     />
   );
 };
+
+export const ConferenceSection = React.memo(
+  ConferenceSectionImpl,
+  (prev, next) => {
+    const prevConf = prev.conference;
+    const nextConf = next.conference;
+    const prevData = prevConf.data;
+    const nextData = nextConf.data;
+
+    if (prevConf.joined !== nextConf.joined) return false;
+    if (Boolean(prevConf.paused) !== Boolean(nextConf.paused)) return false;
+    if (prev.user.userId !== next.user.userId) return false;
+    if (prev.user.role !== next.user.role) return false;
+    if (prev.user.langCode !== next.user.langCode) return false;
+    if (prev.apiUrl !== next.apiUrl) return false;
+    if (prev.isMobile !== next.isMobile) return false;
+
+    if (prevData == null || nextData == null) {
+      return prevData == null && nextData == null;
+    }
+
+    return (
+      prevData.id === nextData.id &&
+      prevData.url === nextData.url &&
+      prevData.finishDate === nextData.finishDate &&
+      prevData.currentDate === nextData.currentDate &&
+      prevData.remainingDuration === nextData.remainingDuration &&
+      prevData.userId === nextData.userId &&
+      prevData.contactId === nextData.contactId
+    );
+  }
+);
 
 export default ConferenceSection;

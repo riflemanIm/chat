@@ -48,12 +48,14 @@ const Conference: React.FC<ConferenceProps> = ({
   const ref = React.useRef<HTMLIFrameElement>(null);
   const { t } = useTranslation();
   const [confirmFinishConf, setConfirmFinishConf] = React.useState(false);
-  let confUrl = "";
-  if (conference && conference.url) {
-    confUrl = langCode
-      ? updateUrlParameter(conference.url, "lang", transLang(langCode))
-      : conference.url;
-  }
+  const confUrl = React.useMemo(() => {
+    if (conference && conference.url) {
+      return langCode
+        ? updateUrlParameter(conference.url, "lang", transLang(langCode))
+        : conference.url;
+    }
+    return "";
+  }, [conference, langCode]);
   const TERMINATION_EVENTS = [
     "connectionFail",
     "loginFail",
@@ -289,4 +291,29 @@ const Conference: React.FC<ConferenceProps> = ({
     </Box>
   );
 };
-export default Conference;
+
+const ConferenceMemo = React.memo(Conference, (prev, next) => {
+  if (prev.conferenceJoined !== next.conferenceJoined) return false;
+  if (prev.conferencePaused !== next.conferencePaused) return false;
+  if (prev.langCode !== next.langCode) return false;
+  if (prev.user.userId !== next.user.userId) return false;
+  if (prev.user.role !== next.user.role) return false;
+
+  const prevConf = prev.conference;
+  const nextConf = next.conference;
+  if (prevConf == null || nextConf == null) {
+    return prevConf == null && nextConf == null;
+  }
+
+  return (
+    prevConf.id === nextConf.id &&
+    prevConf.url === nextConf.url &&
+    prevConf.finishDate === nextConf.finishDate &&
+    prevConf.currentDate === nextConf.currentDate &&
+    prevConf.remainingDuration === nextConf.remainingDuration &&
+    prevConf.userId === nextConf.userId &&
+    prevConf.contactId === nextConf.contactId
+  );
+});
+
+export default ConferenceMemo;
