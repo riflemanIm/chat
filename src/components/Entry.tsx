@@ -83,10 +83,21 @@ const Entry: React.FC<EntryProps> = ({
 
   const [error, setError] = useState<string>("");
   const [isUploading, setIsUploading] = useState(false);
-  const [lastTyping, setLastTyping] = useState({
-    chat,
+  const lastTypingRef = useRef<{ chatKey: string | null; time: number }>({
+    chatKey: null,
     time: 0,
   });
+
+  const getChatKey = useCallback((targetChat: ChatRoom | null) => {
+    if (!targetChat) return null;
+    if (typeof targetChat.groupId === "number") {
+      return `group:${targetChat.groupId}`;
+    }
+    if (typeof targetChat.userId === "number") {
+      return `user:${targetChat.userId}`;
+    }
+    return null;
+  }, []);
 
   const handleEmojiClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setEmojiAnchorEl(event.currentTarget);
@@ -110,19 +121,17 @@ const Entry: React.FC<EntryProps> = ({
       const newText = e.target.value;
       textValueRef.current = newText;
 
-      if (
-        chat &&
-        onTyping &&
-        (lastTyping.chat !== chat || Date.now() - lastTyping.time >= 500)
-      ) {
-        setLastTyping({
-          chat,
-          time: Date.now(),
-        });
+      if (!chat || !onTyping) return;
+
+      const chatKey = getChatKey(chat);
+      const now = Date.now();
+      const last = lastTypingRef.current;
+      if (chatKey !== last.chatKey || now - last.time >= 500) {
+        lastTypingRef.current = { chatKey, time: now };
         onTyping(chat);
       }
     },
-    [chat, onTyping, lastTyping.chat]
+    [chat, onTyping, getChatKey]
   );
 
   const sendMessage = useCallback(
