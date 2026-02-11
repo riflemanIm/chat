@@ -15,6 +15,7 @@ interface ChatLayoutProps {
   user: User;
   onExitRoom?: (chat: ChatRoom) => void;
   onChangeChat: (chat: ChatRoom) => void;
+  conferencePortalId?: string;
 }
 
 const ChatLayout: React.FC<ChatLayoutProps> = ({
@@ -28,6 +29,7 @@ const ChatLayout: React.FC<ChatLayoutProps> = ({
   onExitRoom,
   onChangeChat,
   chatOld,
+  conferencePortalId,
 }) => {
   if (isMobile) {
     return (
@@ -75,6 +77,9 @@ const ChatLayout: React.FC<ChatLayoutProps> = ({
             </Box>
           </Box>
         )}
+        {conferenceActive && conferencePortalId && (
+          <Box id={conferencePortalId} sx={{ height: "100%" }} />
+        )}
         {contactsList}
         {chatRoom}
       </>
@@ -97,6 +102,9 @@ const ChatLayout: React.FC<ChatLayoutProps> = ({
             }
             sx={{ height: "100%" }}
           >
+            {conferenceActive && conferencePortalId && (
+              <Box id={conferencePortalId} sx={{ height: "100%" }} />
+            )}
             {contactsList}
           </Grid>
         )}

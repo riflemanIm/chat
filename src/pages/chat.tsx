@@ -519,6 +519,11 @@ export const ChatPage: React.FC<ChatPageProps> = ({
         isMobile={isMobile}
         conferenceActive={!!state.conference.data?.id}
         hideRooms={hideRooms}
+        conferencePortalId={
+          state.conference.data?.id != null && activeGroupId == null
+            ? "conference-portal-root"
+            : undefined
+        }
         contactsList={
           state.conference.data?.id != null && activeGroupId == null ? (
             <ConferenceSection
@@ -528,7 +533,7 @@ export const ChatPage: React.FC<ChatPageProps> = ({
               user={state.user}
               apiUrl={apiUrl}
               onVideoEnd={onVideoEnd}
-              isMobile={isMobile}
+              portalTargetId="conference-portal-root"
             />
           ) : (
             <RoomList

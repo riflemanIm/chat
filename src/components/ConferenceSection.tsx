@@ -1,4 +1,5 @@
 import * as React from "react";
+import { createPortal } from "react-dom";
 import { ConferenceData, User } from "../types";
 import Conference from "./Conference";
 import ConferenceCall from "./ConferenceCall";
@@ -12,22 +13,34 @@ interface ConferenceSectionProps {
   };
   onClose: (conference: ConferenceData | null) => void;
   onAccept: (conference: ConferenceData) => void;
-  isMobile: boolean;
   user: User;
   apiUrl: string;
   onVideoEnd?: (conference: ConferenceData) => void;
+  portalTargetId?: string;
 }
 
 const ConferenceSectionImpl: React.FC<ConferenceSectionProps> = ({
   conference,
   onClose,
   onAccept,
-  isMobile,
   user,
   apiUrl,
   onVideoEnd,
+  portalTargetId,
 }) => {
   if (!conference.data) return null;
+
+  const [portalTarget, setPortalTarget] = React.useState<HTMLElement | null>(
+    null
+  );
+  React.useLayoutEffect(() => {
+    if (!portalTargetId) {
+      setPortalTarget(null);
+      return;
+    }
+    const target = document.getElementById(portalTargetId);
+    setPortalTarget(target);
+  }, [portalTargetId]);
 
   const isOperatorRole = user?.role != null && [3, 4].includes(user.role);
   const isPaused = Boolean(conference.paused);
@@ -62,27 +75,23 @@ const ConferenceSectionImpl: React.FC<ConferenceSectionProps> = ({
     return () => clearTimeout(timer);
   }, [isPaused, conference.data?.id]);
 
-  if (shouldRenderConference) {
-    return (
-      <>
-        <Conference
-          conference={conference.data}
-          onClose={onClose}
-          langCode={user.langCode}
-          user={user}
-          conferenceJoined={conference.joined}
-          conferencePaused={Boolean(conference.paused)}
-          onVideoEnd={onVideoEnd}
-          onConferencePause={onClose}
-        />
-        {/* {((!activeRoom && isMobile) || !isMobile) && (
-          <ConferenceControls user={user} />
-        )} */}
-      </>
-    );
-  }
-
-  return (
+  const content = shouldRenderConference ? (
+    <>
+      <Conference
+        conference={conference.data}
+        onClose={onClose}
+        langCode={user.langCode}
+        user={user}
+        conferenceJoined={conference.joined}
+        conferencePaused={Boolean(conference.paused)}
+        onVideoEnd={onVideoEnd}
+        onConferencePause={onClose}
+      />
+      {/* {((!activeRoom && isMobile) || !isMobile) && (
+        <ConferenceControls user={user} />
+      )} */}
+    </>
+  ) : (
     <ConferenceCall
       apiUrl={apiUrl}
       contact={
@@ -96,6 +105,12 @@ const ConferenceSectionImpl: React.FC<ConferenceSectionProps> = ({
       isPaused={isPaused}
     />
   );
+
+  if (portalTarget) {
+    return createPortal(content, portalTarget);
+  }
+
+  return content;
 };
 
 export const ConferenceSection = React.memo(
@@ -112,7 +127,7 @@ export const ConferenceSection = React.memo(
     if (prev.user.role !== next.user.role) return false;
     if (prev.user.langCode !== next.user.langCode) return false;
     if (prev.apiUrl !== next.apiUrl) return false;
-    if (prev.isMobile !== next.isMobile) return false;
+    if (prev.portalTargetId !== next.portalTargetId) return false;
 
     if (prevData == null || nextData == null) {
       return prevData == null && nextData == null;

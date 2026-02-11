@@ -56,6 +56,13 @@ const Conference: React.FC<ConferenceProps> = ({
     }
     return "";
   }, [conference, langCode]);
+  React.useEffect(() => {
+    const frame = ref.current;
+    if (!frame || !confUrl) return;
+    if (frame.src !== confUrl) {
+      frame.src = confUrl;
+    }
+  }, [confUrl]);
   const TERMINATION_EVENTS = [
     "connectionFail",
     "loginFail",
@@ -201,7 +208,7 @@ const Conference: React.FC<ConferenceProps> = ({
         <iframe
           title="conference"
           className={classes.root}
-          src={confUrl}
+          src={confUrl || undefined}
           allowFullScreen
           allow="microphone; camera; autoplay; display-capture"
           ref={ref}
