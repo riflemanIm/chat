@@ -99,8 +99,18 @@ const RoomList: FC<RoomListProps> = ({
 
   // Memoize the chat list
   const allContacts = React.useMemo(
-    () => getRoomList(user.userId, groups, contacts, searchFilter),
-    [user.userId, groups, contacts, searchFilter],
+    () => {
+      const list = getRoomList(user.userId, groups, contacts, searchFilter);
+      const activeId = activeRoom ? getChatId(activeRoom) : null;
+      if (!activeId) return list;
+      const idx = list.findIndex((chat) => getChatId(chat) === activeId);
+      if (idx <= 0) return list;
+      const next = list.slice();
+      const [active] = next.splice(idx, 1);
+      next.unshift(active);
+      return next;
+    },
+    [user.userId, groups, contacts, searchFilter, activeRoom],
   );
 
   const onSearchChange = (e: ChangeEvent<HTMLInputElement>): void => {

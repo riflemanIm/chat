@@ -9,11 +9,13 @@ import {
   DialogActions,
   DialogTitle,
   IconButton,
+  LinearProgress,
   List,
   ListItemButton,
   ListItemText,
   TextField,
   Typography,
+  Alert,
 } from "@mui/material";
 import React from "react";
 import { useTranslation } from "react-i18next";
@@ -37,7 +39,8 @@ const FindNewContact: React.FC = () => {
   const [results, setResults] = React.useState<UserSearchResult[]>([]);
   const [error, setError] = React.useState("");
   const [pendingUserId, setPendingUserId] = React.useState<number | null>(null);
-  const pending = pendingUserId != null;
+  const [pendingRequest, setPendingRequest] = React.useState(false);
+  const pending = pendingRequest || pendingUserId != null;
   const labels = React.useMemo(
     () => ({
       addContact: t("CHAT.ADD_CONTACT") || "Add contact",
@@ -57,6 +60,7 @@ const FindNewContact: React.FC = () => {
     setResults([]);
     setError("");
     setPendingUserId(null);
+    setPendingRequest(false);
   }, []);
 
   const handleOpen = React.useCallback(() => {
@@ -107,11 +111,13 @@ const FindNewContact: React.FC = () => {
         return;
       }
       setError("");
-      socket.emit("addContact", {
-        contactId: item.userId,
-        userId: item.userId,
+      socket.emit("createPrivateChat", {
+        emrGroupId: item.emrGroupId,
       });
-      setPendingUserId(item.userId);
+      setPendingRequest(true);
+      if (item.userId != null) {
+        setPendingUserId(item.userId);
+      }
     },
     [
       dispatch,
@@ -138,18 +144,26 @@ const FindNewContact: React.FC = () => {
 
   React.useEffect(() => {
     if (!socket) return;
-    const handleAddContact = (res: { code: number; msg: string }) => {
-      if (!pendingUserId) return;
+    const handleCreatePrivateChat = (res: {
+      code: number;
+      msg: string;
+      data?: { patientUserId?: number };
+    }) => {
       if (res.code) {
         resetState();
         setError(res.msg || labels.userNotFound);
+        return;
       }
+      if (res.data?.patientUserId != null) {
+        setPendingUserId(res.data.patientUserId);
+      }
+      setPendingRequest(false);
     };
-    socket.on("addContact", handleAddContact);
+    socket.on("createPrivateChat", handleCreatePrivateChat);
     return () => {
-      socket.off("addContact", handleAddContact);
+      socket.off("createPrivateChat", handleCreatePrivateChat);
     };
-  }, [labels.userNotFound, pendingUserId, resetState, socket]);
+  }, [labels.userNotFound, resetState, socket]);
 
   if (!isOperatorRole) return null;
 
@@ -191,14 +205,14 @@ const FindNewContact: React.FC = () => {
             </IconButton>
           </Box>
           {error && (
-            <Typography variant="body2" color="error" mb={1}>
-              {error}
-            </Typography>
+            <Alert severity="info" sx={{ my: 3 }}>
+              <Typography variant="h6">{error}</Typography>
+            </Alert>
           )}
           {pending && (
-            <Typography variant="body2" color="textSecondary" mb={1}>
-              {labels.addingContact}
-            </Typography>
+            <Box mb={1}>
+              <LinearProgress />
+            </Box>
           )}
           <List dense>
             {results.map((item) => {

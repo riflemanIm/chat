@@ -285,6 +285,13 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({
     };
     socket?.on("addOperator", listener16);
 
+    // create Private Chat
+    const listener16a = (res: ServerRes) => {
+      if (handleSocketError(res, dispatch)) return;
+      socket?.emit("chatData");
+    };
+    socket?.on("createPrivateChat", listener16a);
+
     // set ActiveRoom
     const listener17 = (res: ServerRes) => {
       if (handleSocketError(res, dispatch)) return;
@@ -341,6 +348,7 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({
       socket?.off("stopConference", listener15);
 
       socket?.off("addOperator", listener16);
+      socket?.off("createPrivateChat", listener16a);
 
       socket?.off("setActiveRoom", listener17);
 
