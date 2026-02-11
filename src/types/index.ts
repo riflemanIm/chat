@@ -102,6 +102,15 @@ export interface ContactGather {
   [userId: number]: Contact;
 }
 
+export interface UserSearchResult {
+  emrGroupId: number;
+  userId: number | null;
+  firstName: string;
+  lastName: string;
+  middleName?: string | null;
+  birthDate?: string | null;
+}
+
 // Групповое сообщение
 export interface GroupMessage {
   _id?: number;

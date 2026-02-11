@@ -28,6 +28,7 @@ import AddContact from "./AddContact";
 import ConferenceButton from "./ConferenceButton";
 import ContactList from "./ContactList";
 import ContactStatus from "./ContactStatus";
+import FindNewContact from "./FindNewContact";
 import RoomMessageSearch from "./RoomMessageSearch";
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -39,7 +40,7 @@ const useStyles = makeStyles((theme: Theme) =>
       backgroundColor: "#28B7C6",
       color: "#fff",
     },
-  })
+  }),
 );
 
 type RoomHeaderProps = {
@@ -64,7 +65,7 @@ const getGroupStatus = (group: Group, t: (key: string) => string) => {
   const status = [`${memberCount} ${t("CHAT.MEMBERS")}`];
   const onlineCount = (group.members || []).reduce(
     (sum: number, contact) => (contact.online ? sum + 1 : sum),
-    0
+    0,
   );
   if (onlineCount) status.push(`${onlineCount} ${t("CHAT.STATUS.ONLINE")}`);
   return status.join(", ");
@@ -89,7 +90,7 @@ const RoomHeader: React.FC<RoomHeaderProps> = ({
   const classes = useStyles();
   const { t } = useTranslation();
   const isMobile = useMediaQuery((theme: Theme) =>
-    theme.breakpoints.down("md")
+    theme.breakpoints.down("md"),
   );
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const [addOperatorOpen, setAddOperatorOpen] = useState(false);
@@ -97,7 +98,7 @@ const RoomHeader: React.FC<RoomHeaderProps> = ({
 
   const contact = chat as Contact;
   const isTyping = Boolean(
-    typing && typing.contactId && typing.userId === contact.userId
+    typing && typing.contactId && typing.userId === contact.userId,
   );
   const isConferenceActive = conference != null && !isEmpty(conference);
   const inMobileOrConferenceActive = isMobile || isConferenceActive;
@@ -131,7 +132,7 @@ const RoomHeader: React.FC<RoomHeaderProps> = ({
         closeTimer.current = null;
       }
     },
-    []
+    [],
   );
 
   const handlePopoverOut = useCallback(() => {
@@ -153,7 +154,7 @@ const RoomHeader: React.FC<RoomHeaderProps> = ({
         onOperatorAdd(chat as Group, operator);
       }
     },
-    [chat, onOperatorAdd]
+    [chat, onOperatorAdd],
   );
 
   const group = chat as Group;
@@ -243,7 +244,7 @@ const RoomHeader: React.FC<RoomHeaderProps> = ({
               {user.role === 4 &&
                 Array.isArray(group.members) &&
                 group.members.some(
-                  (it) => it.userId !== user.userId && it.role === 4
+                  (it) => it.userId !== user.userId && it.role === 4,
                 ) &&
                 onLeaveGroup && (
                   <IconButton
@@ -319,6 +320,7 @@ const RoomHeader: React.FC<RoomHeaderProps> = ({
                 onChange={onMessageSearchChange}
                 inMobileOrConferenceActive={inMobileOrConferenceActive}
               />
+
               {canStartConference && onVideoCall && (
                 <ConferenceButton
                   visitData={visitData}

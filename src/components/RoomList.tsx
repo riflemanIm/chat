@@ -2,13 +2,14 @@ import List from "@mui/material/List";
 import { Theme } from "@mui/material/styles";
 import React, { ChangeEvent, FC, useContext, useState } from "react";
 
-import { Card, CardHeader, Divider, TextField } from "@mui/material";
+import { Card, CardHeader, Divider, Stack, TextField } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { useTranslation } from "react-i18next";
 import { RestContext } from "../context/RestContext";
 import { ChatRoom, Contact, Group, SetTyping, User } from "../types";
 import { chatRoomComparer, getChatId, getChatName } from "../utils/common";
 import RoomListItem from "./RoomListItem";
+import FindNewContact from "./FindNewContact";
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
@@ -39,14 +40,14 @@ const filterChats = (chats: ChatRoom[], filter: string | null): ChatRoom[] => {
   if (!filter) return chats;
   const lowerFilter = filter.toLowerCase();
   return chats.filter((chat) =>
-    getChatName(chat).toLowerCase().includes(lowerFilter)
+    getChatName(chat).toLowerCase().includes(lowerFilter),
   );
 };
 
 const sortChats = (
   userId: number,
   groups: ChatRoom[],
-  contacts: ChatRoom[]
+  contacts: ChatRoom[],
 ) => {
   let roomArr = [...groups, ...contacts];
 
@@ -72,12 +73,12 @@ const getRoomList = (
   userId: number,
   groups: ChatRoom[],
   contacts: ChatRoom[],
-  filter: string | null
+  filter: string | null,
 ) => {
   return sortChats(
     userId,
     filterChats(groups, filter),
-    filterChats(contacts, filter)
+    filterChats(contacts, filter),
   );
 };
 
@@ -99,7 +100,7 @@ const RoomList: FC<RoomListProps> = ({
   // Memoize the chat list
   const allContacts = React.useMemo(
     () => getRoomList(user.userId, groups, contacts, searchFilter),
-    [user.userId, groups, contacts, searchFilter]
+    [user.userId, groups, contacts, searchFilter],
   );
 
   const onSearchChange = (e: ChangeEvent<HTMLInputElement>): void => {
@@ -110,15 +111,24 @@ const RoomList: FC<RoomListProps> = ({
     <Card elevation={1} className={classes.root}>
       <CardHeader
         title={
-          <TextField
-            className={classes.searchField}
-            label={t("CHAT.INPUT_SEARCH_CONTACT")}
-            variant="outlined"
-            size="small"
-            fullWidth
-            onChange={onSearchChange}
-            value={searchFilter}
-          />
+          <Stack
+            direction="row"
+            gap={1}
+            alignItems="center"
+            flexWrap="nowrap"
+            sx={{ width: "100%" }}
+          >
+            <TextField
+              className={classes.searchField}
+              label={t("CHAT.INPUT_SEARCH_CONTACT")}
+              variant="outlined"
+              size="small"
+              fullWidth
+              onChange={onSearchChange}
+              value={searchFilter}
+            />
+            <FindNewContact />
+          </Stack>
         }
       />
       <Divider />

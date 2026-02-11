@@ -1,6 +1,12 @@
 import axios, { AxiosError, AxiosInstance } from "axios";
 import React, { createContext, useCallback, useContext, useMemo } from "react";
-import { Contact, Group, PagingResponse, PrivateMessage } from "../types";
+import {
+  Contact,
+  Group,
+  PagingResponse,
+  PrivateMessage,
+  UserSearchResult,
+} from "../types";
 import { ChatContext } from "./ChatContext";
 
 export interface IRestContext {
@@ -24,6 +30,7 @@ export interface IRestContext {
     mmkId: string | null,
     guid: string | null
   ) => Promise<number | undefined>;
+  getUsersByName: (fullName: string) => Promise<UserSearchResult[]>;
 }
 const initialContext = {} as IRestContext;
 
@@ -233,6 +240,24 @@ export const RestProvider: React.FC<RestProviderProps> = ({
     [fetch]
   );
 
+  const getUsersByName = useCallback(
+    async (fullName: string) => {
+      try {
+        const { data } = await fetch.get("/user/findByName", {
+          params: {
+            fullName,
+          },
+        });
+        return (data as UserSearchResult[]) ?? [];
+      } catch (error) {
+        const err = error as AxiosError;
+        dispatch({ type: "SET_ERROR", payload: err.message });
+        return [];
+      }
+    },
+    [dispatch, fetch]
+  );
+
   const value = useMemo(
     () => ({
       apiUrl: chatBaseURLApi,
@@ -241,6 +266,7 @@ export const RestProvider: React.FC<RestProviderProps> = ({
       getPrivateMessages,
       getGroupMessages,
       getUserByMmk,
+      getUsersByName,
     }),
     [
       chatBaseURLApi,
@@ -249,6 +275,7 @@ export const RestProvider: React.FC<RestProviderProps> = ({
       getPrivateMessages,
       getGroupMessages,
       getUserByMmk,
+      getUsersByName,
     ]
   );
 

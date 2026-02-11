@@ -512,7 +512,7 @@ export const ChatPage: React.FC<ChatPageProps> = ({
       isMobile={isMobile}
     />
   ) : null;
-  console.log("state.conference", state.conference);
+  console.log("state", state);
   return (
     <ChatContainer>
       <ChatLayout
