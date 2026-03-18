@@ -3,7 +3,8 @@ import { Box, Typography } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import AlertDialog from "./AlertDialog";
 
-function formatHHMMSS(totalSeconds: number) {
+function formatHHMMSSFromMs(totalMs: number) {
+  const totalSeconds = Math.max(0, Math.ceil(totalMs / 1000));
   const hrs = Math.floor(totalSeconds / 3600);
   const mins = Math.floor((totalSeconds % 3600) / 60);
   const secs = totalSeconds % 60;
@@ -12,129 +13,83 @@ function formatHHMMSS(totalSeconds: number) {
 }
 
 type ConferenceTimeProps = {
-  finishDate: Date | string | null | undefined;
-  currentDate?: Date | string | null;
-  remainingDuration?: number | null;
+  conferenceTimer?: number | null;
+  conferenceTimerDeadlineMs?: number | null;
   paused?: boolean;
 };
 
-const toMs = (value: Date | string | null | undefined) => {
-  if (!value) return null;
-  return typeof value === "string" ? new Date(value).getTime() : value.getTime();
-};
-
-const getInitialSeconds = (
-  finishDate: Date | string | null | undefined,
-  currentDate: Date | string | null | undefined,
-  remainingDuration?: number | null
-) => {
-  if (
-    typeof remainingDuration === "number" &&
-    Number.isFinite(remainingDuration)
-  ) {
-    return Math.max(0, Math.round(remainingDuration / 1000));
-  }
-
-  const finishTimeMs = toMs(finishDate);
-  if (!finishTimeMs) return null;
-  const serverNowMs = toMs(currentDate) ?? Date.now();
-  return Math.max(0, Math.round((finishTimeMs - serverNowMs) / 1000));
-};
-
 export default function ConferenceTime({
-  finishDate,
-  currentDate,
-  remainingDuration,
+  conferenceTimer,
+  conferenceTimerDeadlineMs,
   paused = false,
 }: ConferenceTimeProps) {
   const { t } = useTranslation();
   const [showAlert, setShowAlert] = useState(false);
-  const [counter, setCounter] = useState<number | null>(null);
-  const [isFinished, setIsFinished] = useState(false);
+  const [tick, setTick] = useState(0);
+  const warningShownRef = useRef(false);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
-
-  const finishTimeMs = toMs(finishDate);
-  const currentMs = toMs(currentDate);
   const remainingDurationMs =
-    typeof remainingDuration === "number" && Number.isFinite(remainingDuration)
-      ? remainingDuration
+    typeof conferenceTimer === "number" && Number.isFinite(conferenceTimer)
+      ? Math.max(0, conferenceTimer)
+      : null;
+  const deadlineMs =
+    typeof conferenceTimerDeadlineMs === "number" &&
+    Number.isFinite(conferenceTimerDeadlineMs)
+      ? conferenceTimerDeadlineMs
       : null;
 
   useEffect(() => {
-    if (finishTimeMs == null && remainingDurationMs == null) {
-      setCounter(null);
-      return;
-    }
-    if (remainingDurationMs != null) {
-      setCounter(Math.max(0, Math.round(remainingDurationMs / 1000)));
-      setIsFinished(remainingDurationMs <= 0);
-      return;
-    }
-    const initialSec = getInitialSeconds(finishDate, currentDate, null);
-    if (initialSec == null) {
-      setCounter(null);
-      return;
-    }
-    setCounter(initialSec);
-    setIsFinished(initialSec <= 0);
-  }, [finishTimeMs, currentMs, remainingDurationMs, finishDate, currentDate]);
-
-  useEffect(() => {
-    if (paused || counter == null || isFinished) {
+    const shouldRun = !paused && (deadlineMs != null || remainingDurationMs != null);
+    if (!shouldRun) {
       if (intervalRef.current) {
         clearInterval(intervalRef.current);
         intervalRef.current = null;
       }
       return;
     }
+
     if (intervalRef.current) return;
     intervalRef.current = setInterval(() => {
-      setCounter((prev) => {
-        if (prev == null) {
-          return prev;
-        }
-        const next = Math.max(0, prev - 1);
-        if (next <= 0) {
-          setIsFinished(true);
-          if (intervalRef.current) {
-            clearInterval(intervalRef.current);
-            intervalRef.current = null;
-          }
-        }
-        return next;
-      });
-    }, 1000);
+      setTick((x) => x + 1);
+    }, 200);
+
     return () => {
       if (intervalRef.current) {
         clearInterval(intervalRef.current);
         intervalRef.current = null;
       }
     };
-  }, [paused, counter, isFinished]);
+  }, [paused, deadlineMs, remainingDurationMs]);
 
-  useEffect(() => {
-    if (counter != null && counter <= 0) {
-      setIsFinished(true);
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-        intervalRef.current = null;
-      }
-    }
-  }, [counter]);
+  const displayRemainingMs = useMemo(() => {
+    if (paused) return remainingDurationMs;
+    if (deadlineMs != null) return Math.max(0, deadlineMs - Date.now());
+    return remainingDurationMs;
+  }, [paused, remainingDurationMs, deadlineMs, tick]);
 
-  const { strTime } = useMemo(() => {
-    const str = formatHHMMSS(counter ?? 0);
-    return { strTime: str };
-  }, [counter]);
+  const secondsLeft = useMemo(() => {
+    if (displayRemainingMs == null) return null;
+    return Math.max(0, Math.ceil(displayRemainingMs / 1000));
+  }, [displayRemainingMs]);
+  const strTime = useMemo(
+    () => formatHHMMSSFromMs(displayRemainingMs ?? 0),
+    [displayRemainingMs],
+  );
 
   // Показываем модалку за 3 минуты (180 сек) до конца
   useEffect(() => {
-    if (counter === 180) {
+    if (secondsLeft == null) return;
+    if (secondsLeft > 180) {
+      warningShownRef.current = false;
+      return;
+    }
+    if (secondsLeft > 0 && !warningShownRef.current) {
+      warningShownRef.current = true;
       setShowAlert(true);
     }
-  }, [counter]);
+  }, [secondsLeft]);
 
-  if (isFinished || counter == null) {
+  if (displayRemainingMs == null || displayRemainingMs <= 0) {
     return null;
   }
 

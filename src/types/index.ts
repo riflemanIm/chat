@@ -225,9 +225,17 @@ export interface ConferenceData {
   currentDate?: Date;
   finishDate?: Date;
   remainingDuration?: number;
+  timerDeadlineMs?: number | null;
   status?: number | string;
   conferenceStatus?: "started" | "finished" | "none" | "paused";
   deepLinkDoctorApp?: string;
+}
+
+export interface ConferenceTimerData {
+  conferenceId: string;
+  timeToEnd: number;
+  minutes: number;
+  seconds: number;
 }
 
 // Данные чата

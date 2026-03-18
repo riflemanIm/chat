@@ -83,6 +83,11 @@ const Conference: React.FC<ConferenceProps> = ({
     typeof onConferencePause === "function";
   const canFinishConference =
     isConferenceActive && isOperatorRole && typeof onVideoEnd === "function";
+  const hasTimerSource =
+    (typeof conference?.remainingDuration === "number" &&
+      Number.isFinite(conference.remainingDuration)) ||
+    (typeof conference?.timerDeadlineMs === "number" &&
+      Number.isFinite(conference.timerDeadlineMs));
   const autoStopTimeoutRef = React.useRef<ReturnType<typeof setTimeout> | null>(
     null
   );
@@ -269,15 +274,14 @@ const Conference: React.FC<ConferenceProps> = ({
             {!isOperatorRole && (
               <Box mx="auto">
                 <ConferenceTime
-                  finishDate={conference.finishDate}
-                  currentDate={conference.currentDate}
-                  remainingDuration={conference.remainingDuration}
+                  conferenceTimer={conference.remainingDuration}
+                  conferenceTimerDeadlineMs={conference.timerDeadlineMs}
                   paused={conferencePaused}
                 />
               </Box>
             )}
 
-            {isOperatorRole && conference.finishDate != null && (
+            {isOperatorRole && hasTimerSource && (
               <Box display="flex" alignItems="center" gap={1}>
                 {conferencePaused && (
                   <Typography variant="body2" color="textSecondary">
@@ -285,9 +289,8 @@ const Conference: React.FC<ConferenceProps> = ({
                   </Typography>
                 )}
                 <ConferenceTime
-                  finishDate={conference.finishDate}
-                  currentDate={conference.currentDate}
-                  remainingDuration={conference.remainingDuration}
+                  conferenceTimer={conference.remainingDuration}
+                  conferenceTimerDeadlineMs={conference.timerDeadlineMs}
                   paused={conferencePaused}
                 />
               </Box>

@@ -4,6 +4,7 @@ import {
   AddPrivateMessages,
   ChatRoom,
   ConferenceData,
+  ConferenceTimerData,
   Contact,
   ContactGather,
   Group,
@@ -118,6 +119,8 @@ type ChatActionType =
   | "JOIN_CONFERENCE"
   | "PAUSE_CONFERENCE"
   | "RESUME_CONFERENCE"
+  | "SET_CONFERENCE_TIMER"
+  | "DELETE_CONFERENCE_TIMER"
   | "STOP_CONFERENCE"
   | "SET_TYPING"
   | "MARK_AS_READ"
@@ -154,6 +157,7 @@ type Action = {
     | AddGroupMessages
     | SetActiveRoom
     | ConferenceData
+    | ConferenceTimerData
     | Contact[]
     | GroupMap
     | VisitData[];
@@ -674,11 +678,24 @@ const setConference = (
     state.user?.role != null && [3, 4].includes(state.user.role);
   const shouldAutoJoin =
     (isParticipant || isOperatorRole) && isStarted && !isPaused;
+  const initialRemainingMs =
+    typeof conference.remainingDuration === "number" &&
+    Number.isFinite(conference.remainingDuration)
+      ? Math.max(0, conference.remainingDuration)
+      : undefined;
+  const initialDeadlineMs =
+    typeof initialRemainingMs === "number" && !isPaused
+      ? Date.now() + initialRemainingMs
+      : null;
 
   return {
     ...state,
     conference: {
-      data: { ...conference },
+      data: {
+        ...conference,
+        remainingDuration: initialRemainingMs,
+        timerDeadlineMs: initialDeadlineMs,
+      },
       joined: isInitiator || shouldAutoJoin,
       ringPlayed: conference.userId !== state.user.userId,
       paused: isPaused,
@@ -691,13 +708,32 @@ const pauseConference = (
   conference: ConferenceData | null,
 ): ChatState => {
   if (state.conference.data?.id !== conference?.id) return state;
+  const currentConference = state.conference.data;
+  const deadlineMs = currentConference?.timerDeadlineMs;
+  const fallbackRemainingMs =
+    typeof deadlineMs === "number"
+      ? Math.max(0, deadlineMs - Date.now())
+      : undefined;
+  const nextRemainingMs =
+    typeof conference?.remainingDuration === "number" &&
+    Number.isFinite(conference.remainingDuration)
+      ? Math.max(0, conference.remainingDuration)
+      : typeof currentConference?.remainingDuration === "number" &&
+          Number.isFinite(currentConference.remainingDuration)
+        ? Math.max(0, currentConference.remainingDuration)
+        : fallbackRemainingMs;
 
   return {
     ...state,
     conference: {
       ...state.conference,
       data: state.conference.data
-        ? { ...state.conference.data, ...conference }
+        ? {
+            ...state.conference.data,
+            ...conference,
+            remainingDuration: nextRemainingMs,
+            timerDeadlineMs: null,
+          }
         : state.conference.data,
       paused: true,
     },
@@ -727,15 +763,93 @@ const resumeConference = (
   conference?: ConferenceData | null,
 ): ChatState => {
   if (state.conference.data?.id !== conference?.id) return state;
+  const currentConference = state.conference.data;
+  const nextRemainingMs =
+    typeof conference?.remainingDuration === "number" &&
+    Number.isFinite(conference.remainingDuration)
+      ? Math.max(0, conference.remainingDuration)
+      : typeof currentConference?.remainingDuration === "number" &&
+          Number.isFinite(currentConference.remainingDuration)
+        ? Math.max(0, currentConference.remainingDuration)
+        : undefined;
+  const nextDeadlineMs =
+    typeof nextRemainingMs === "number"
+      ? Date.now() + nextRemainingMs
+      : null;
 
   return {
     ...state,
     conference: {
       ...state.conference,
       data: state.conference.data
-        ? { ...state.conference.data, ...conference }
+        ? {
+            ...state.conference.data,
+            ...conference,
+            remainingDuration: nextRemainingMs,
+            timerDeadlineMs: nextDeadlineMs,
+          }
         : state.conference.data,
       paused: false,
+    },
+  };
+};
+
+const setConferenceTimer = (
+  state: ChatState,
+  timerData: ConferenceTimerData,
+): ChatState => {
+  const activeConference = state.conference.data;
+  if (!activeConference || activeConference.id !== timerData.conferenceId) {
+    return state;
+  }
+  const msFromMinSec =
+    Number.isFinite(timerData.minutes) && Number.isFinite(timerData.seconds)
+      ? Math.max(
+          0,
+          (Math.floor(timerData.minutes) * 60 + Math.floor(timerData.seconds)) *
+            1000,
+        )
+      : null;
+  const safeTimeToEnd =
+    typeof timerData.timeToEnd === "number" && Number.isFinite(timerData.timeToEnd)
+      ? Math.max(0, timerData.timeToEnd)
+      : msFromMinSec ?? 0;
+  const nextDeadlineMs =
+    state.conference.paused || safeTimeToEnd <= 0
+      ? null
+      : Date.now() + safeTimeToEnd;
+
+  return {
+    ...state,
+    conference: {
+      ...state.conference,
+      data: {
+        ...activeConference,
+        remainingDuration: safeTimeToEnd,
+        timerDeadlineMs: nextDeadlineMs,
+      },
+    },
+  };
+};
+
+const deleteConferenceTimer = (
+  state: ChatState,
+  timerData: ConferenceTimerData,
+): ChatState => {
+  const activeConference = state.conference.data;
+  if (!activeConference || activeConference.id !== timerData.conferenceId) {
+    return state;
+  }
+
+  return {
+    ...state,
+    conference: {
+      ...state.conference,
+      data: {
+        ...activeConference,
+        remainingDuration: 0,
+        timerDeadlineMs: null,
+      },
     },
   };
 };
@@ -816,7 +930,10 @@ function chatReducer(state: ChatState, action: Action): ChatState {
       return {
         ...state,
         conference: {
-          data: { ...(action.payload as ConferenceData) },
+          data: {
+            ...(action.payload as ConferenceData),
+            timerDeadlineMs: null,
+          },
           joined: true,
           ringPlayed: false,
           paused: false,
@@ -826,6 +943,10 @@ function chatReducer(state: ChatState, action: Action): ChatState {
       return pauseConference(state, action.payload as ConferenceData);
     case "RESUME_CONFERENCE":
       return resumeConference(state, action.payload as ConferenceData);
+    case "SET_CONFERENCE_TIMER":
+      return setConferenceTimer(state, action.payload as ConferenceTimerData);
+    case "DELETE_CONFERENCE_TIMER":
+      return deleteConferenceTimer(state, action.payload as ConferenceTimerData);
     case "STOP_CONFERENCE":
       return stopConference(state, action.payload as ConferenceData);
     case "CLEAR_CONFERENCE_DEEPLINK":

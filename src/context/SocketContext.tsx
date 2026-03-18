@@ -10,6 +10,7 @@ import { useSocket } from "../hooks/useSocket";
 import {
   ChatData,
   ConferenceData,
+  ConferenceTimerData,
   Contact,
   Group,
   GroupMap,
@@ -140,6 +141,12 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({
         type: "SET_CONFERENCE",
         payload: payload.conferenceData,
       });
+      const conferenceId = payload.conferenceData?.id;
+      if (conferenceId) {
+        socket?.emit("getConferenceTimer", {
+          id: conferenceId,
+        });
+      }
       dispatch({
         type: "SET_VISIT_DATA",
         payload: payload.visitData,
@@ -279,6 +286,36 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({
     };
     socket?.on("stopConference", listener15);
 
+    // Conference timer update
+    const listener15a = (res: ServerRes) => {
+      if (handleSocketError(res, dispatch)) return;
+      dispatch({
+        type: "SET_CONFERENCE_TIMER",
+        payload: res.data as ConferenceTimerData,
+      });
+    };
+    socket?.on("conferenceTimer", listener15a);
+
+    // Conference timer paused
+    const listener15b = (res: ServerRes) => {
+      if (handleSocketError(res, dispatch)) return;
+      dispatch({
+        type: "SET_CONFERENCE_TIMER",
+        payload: res.data as ConferenceTimerData,
+      });
+    };
+    socket?.on("conferencePauseTimer", listener15b);
+
+    // Conference timer deleted
+    const listener15c = (res: ServerRes) => {
+      if (handleSocketError(res, dispatch)) return;
+      dispatch({
+        type: "DELETE_CONFERENCE_TIMER",
+        payload: res.data as ConferenceTimerData,
+      });
+    };
+    socket?.on("conferenceDeleteTimer", listener15c);
+
     // add Operator
     const listener16 = (res: ServerRes) => {
       if (handleSocketError(res, dispatch)) return;
@@ -346,6 +383,9 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({
       socket?.off("resumeConference", listener14a);
 
       socket?.off("stopConference", listener15);
+      socket?.off("conferenceTimer", listener15a);
+      socket?.off("conferencePauseTimer", listener15b);
+      socket?.off("conferenceDeleteTimer", listener15c);
 
       socket?.off("addOperator", listener16);
       socket?.off("createPrivateChat", listener16a);

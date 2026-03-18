@@ -27,6 +27,10 @@ export const SOCKET_EVENTS = {
   PAUSE_CONFERENCE: "pauseConference",
   RESUME_CONFERENCE: "resumeConference",
   STOP_CONFERENCE: "stopConference",
+  CONFERENCE_TIMER: "conferenceTimer",
+  CONFERENCE_PAUSE_TIMER: "conferencePauseTimer",
+  CONFERENCE_DELETE_TIMER: "conferenceDeleteTimer",
+  GET_CONFERENCE_TIMER: "getConferenceTimer",
 
   // Other events
   ADD_OPERATOR: "addOperator",

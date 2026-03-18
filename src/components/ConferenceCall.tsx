@@ -94,6 +94,11 @@ const ConferenceCall: React.FC<ConferenceCallProps> = ({
   const showPausedNotice = !canResume && isPaused;
   const resolvedContact =
     typeof contact === "number" || !contact ? null : contact;
+  const hasTimerSource =
+    (typeof conference.remainingDuration === "number" &&
+      Number.isFinite(conference.remainingDuration)) ||
+    (typeof conference.timerDeadlineMs === "number" &&
+      Number.isFinite(conference.timerDeadlineMs));
 
   return (
     <Paper className={classes.root}>
@@ -112,10 +117,11 @@ const ConferenceCall: React.FC<ConferenceCallProps> = ({
           <Avatar className={classes.avatar} />
         )}
       </div>
-      {conference.finishDate != null && (
+      {hasTimerSource && (
         <Box width="100%" display="flex" justifyContent="center" mt={3}>
           <ConferenceTime
-            finishDate={conference.finishDate}
+            conferenceTimer={conference.remainingDuration}
+            conferenceTimerDeadlineMs={conference.timerDeadlineMs}
             paused={isPaused}
           />
         </Box>
