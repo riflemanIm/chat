@@ -49,7 +49,7 @@ const useStyles = makeStyles((theme: Theme) =>
     flexEnd: {
       justifyContent: "flex-end",
     },
-  })
+  }),
 );
 
 type MenuState = {
@@ -87,7 +87,12 @@ type RoomProps = {
   onMessageDelete?: (chat: ChatRoom, message: ChatMessage) => void;
   onTyping?: (chat: ChatRoom) => void;
   onSendMessage?: (chat: ChatRoom, data: SendMessage) => void;
-  onVideoCall?: (chat: ChatRoom, visitId?: number, recreate?: boolean) => void;
+  onVideoCall?: (
+    chat: ChatRoom,
+    visitId?: number,
+    recreate?: boolean,
+    isMuteCamera?: boolean,
+  ) => void;
   onOperatorAdd?: (chat: Group, operator: Contact) => void;
   onLeaveGroup?: (chat: Group) => void;
   onContactClick?: (contact: Contact) => void;
@@ -190,11 +195,7 @@ const Room: React.FC<RoomProps> = (props: RoomProps) => {
       />
       <Divider />
       <CardContent>
-        <Entry
-          chat={chat}
-          onTyping={onTyping}
-          onSendMessage={onSendMessage}
-        />
+        <Entry chat={chat} onTyping={onTyping} onSendMessage={onSendMessage} />
       </CardContent>
       <Menu
         keepMounted

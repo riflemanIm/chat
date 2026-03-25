@@ -4,11 +4,10 @@ import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import {
   Avatar,
   Box,
-  CardHeader,
   IconButton,
   Popover,
+  Stack,
   Typography,
-  useMediaQuery,
 } from "@mui/material";
 import { Theme } from "@mui/material/styles";
 import { createStyles, makeStyles } from "@mui/styles";
@@ -53,7 +52,12 @@ type RoomHeaderProps = {
   operators: Contact[];
   visitData: VisitData[];
   messageSearch: string;
-  onVideoCall?: (chat: ChatRoom, visitId?: number, recreate?: boolean) => void;
+  onVideoCall?: (
+    chat: ChatRoom,
+    visitId?: number,
+    recreate?: boolean,
+    isMuteCamera?: boolean,
+  ) => void;
   onOperatorAdd?: (chat: Group, operator: Contact) => void;
   onLeaveGroup?: (chat: Group) => void;
   onContactClick?: (contact: Contact) => void;
@@ -89,11 +93,9 @@ const RoomHeader: React.FC<RoomHeaderProps> = ({
 }: RoomHeaderProps) => {
   const classes = useStyles();
   const { t } = useTranslation();
-  const isMobile = useMediaQuery((theme: Theme) =>
-    theme.breakpoints.down("md"),
-  );
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const [addOperatorOpen, setAddOperatorOpen] = useState(false);
+  const [inlineOpen, setInlineOpen] = useState(Boolean(messageSearch));
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const contact = chat as Contact;
@@ -101,19 +103,27 @@ const RoomHeader: React.FC<RoomHeaderProps> = ({
     typing && typing.contactId && typing.userId === contact.userId,
   );
   const isConferenceActive = conference != null && !isEmpty(conference);
-  const inMobileOrConferenceActive = isMobile || isConferenceActive;
   const isOperatorRole = user.role != null && [3, 4].includes(user.role);
   const canStartConference =
     !isConferenceActive && isOperatorRole && typeof onVideoCall === "function";
 
+  React.useEffect(() => {
+    if (messageSearch) {
+      setInlineOpen(true);
+    }
+  }, [messageSearch]);
+
   if (!chat)
     return (
-      <CardHeader
-        avatar={<Avatar />}
-        title=""
-        subheader=""
+      <Stack
+        direction="row"
+        alignItems="center"
+        justifyContent="space-between"
+        spacing={2}
         className={className}
-      />
+      >
+        <Avatar />
+      </Stack>
     );
 
   const handlePopoverClose = useCallback(() => {
@@ -161,178 +171,215 @@ const RoomHeader: React.FC<RoomHeaderProps> = ({
   if (group.groupId) {
     // группа
     return (
-      <>
-        <CardHeader
-          avatar={
+      <Stack
+        direction="row"
+        alignItems="center"
+        justifyContent="space-between"
+        spacing={2}
+        className={className}
+        sx={{
+          minWidth: 0,
+          px: 1.5,
+          py: 0.5,
+        }}
+      >
+        {inlineOpen ? (
+          <Box sx={{ flex: "1 1 auto", minWidth: 0 }} />
+        ) : (
+          <Stack
+            direction="row"
+            spacing={2}
+            alignItems="center"
+            sx={{ flex: "1 1 auto", minWidth: 0, overflow: "hidden" }}
+          >
             <Avatar alt={group.name} className={classes.avatarGroup}>
               <GroupIcon />
             </Avatar>
-          }
-          title={group.name}
-          subheader={
-            <React.Fragment>
-              <span
-                id="mouse-over-span"
-                aria-owns={anchorEl ? "mouse-over-popover" : undefined}
-                aria-haspopup="true"
-                onMouseEnter={handlePopoverIn}
-                onMouseLeave={handlePopoverOut}
-              >
-                {getGroupStatus(group, t)}
-              </span>
-              <Popover
-                id="mouse-over-popover"
-                classes={{
-                  paper: classes.paper,
-                }}
-                sx={{ pointerEvents: "none" }}
-                open={!!anchorEl}
-                anchorEl={anchorEl}
-                anchorOrigin={{
-                  vertical: "bottom",
-                  horizontal: "left",
-                }}
-                transformOrigin={{
-                  vertical: "top",
-                  horizontal: "left",
-                }}
-                onClose={handlePopoverClose}
-                disableRestoreFocus
-              >
-                <ContactList
-                  apiUrl={apiUrl}
-                  contacts={group.members as Contact[]}
-                  onContactClick={onContactClick}
-                  owner={group.userId}
+            <Stack sx={{ minWidth: 0, overflow: "hidden" }}>
+              <Typography variant="h6" noWrap>
+                {group.name}
+              </Typography>
+              <Box sx={{ minWidth: 0 }}>
+                <span
+                  id="mouse-over-span"
+                  aria-owns={anchorEl ? "mouse-over-popover" : undefined}
+                  aria-haspopup="true"
                   onMouseEnter={handlePopoverIn}
                   onMouseLeave={handlePopoverOut}
-                  sx={{ pointerEvents: "all" }}
-                />
-              </Popover>
-            </React.Fragment>
-          }
-          className={className}
-          action={
-            <Box
-              display="flex"
-              flexDirection="row"
-              alignItems="center"
-              gap={1}
-              sx={{ "& > *": { flexShrink: 0 } }}
-            >
-              <RoomMessageSearch
-                value={messageSearch}
-                onChange={onMessageSearchChange}
-                inMobileOrConferenceActive={inMobileOrConferenceActive}
-              />
-              {user.role === 4 && (
-                <React.Fragment>
-                  <IconButton
-                    aria-label="add user"
-                    onClick={handleAddOperatorOpen}
-                  >
-                    <PersonAddIcon />
-                  </IconButton>
-                  <AddContact
+                >
+                  {getGroupStatus(group, t)}
+                </span>
+                <Popover
+                  id="mouse-over-popover"
+                  classes={{
+                    paper: classes.paper,
+                  }}
+                  sx={{ pointerEvents: "none" }}
+                  open={!!anchorEl}
+                  anchorEl={anchorEl}
+                  anchorOrigin={{
+                    vertical: "bottom",
+                    horizontal: "left",
+                  }}
+                  transformOrigin={{
+                    vertical: "top",
+                    horizontal: "left",
+                  }}
+                  onClose={handlePopoverClose}
+                  disableRestoreFocus
+                >
+                  <ContactList
                     apiUrl={apiUrl}
-                    open={addOperatorOpen}
-                    contacts={operators}
-                    onClose={handleAddOperatorClose}
+                    contacts={group.members as Contact[]}
+                    onContactClick={onContactClick}
+                    owner={group.userId}
+                    onMouseEnter={handlePopoverIn}
+                    onMouseLeave={handlePopoverOut}
+                    sx={{ pointerEvents: "all" }}
                   />
-                </React.Fragment>
-              )}
-              {user.role === 4 &&
-                Array.isArray(group.members) &&
-                group.members.some(
-                  (it) => it.userId !== user.userId && it.role === 4,
-                ) &&
-                onLeaveGroup && (
-                  <IconButton
-                    aria-label="leave group"
-                    onClick={() => onLeaveGroup(group)}
-                  >
-                    <DeleteIcon />
-                  </IconButton>
-                )}
-            </Box>
-          }
-        />
-      </>
+                </Popover>
+              </Box>
+            </Stack>
+          </Stack>
+        )}
+        <Box
+          display="flex"
+          flexDirection="row"
+          alignItems="center"
+          gap={1.5}
+          sx={{
+            minWidth: 0,
+            flex: inlineOpen ? "1 1 auto" : "0 0 auto",
+            pl: inlineOpen ? 1 : 0,
+            pr: 0.5,
+            "& > *": { flexShrink: 0 },
+          }}
+        >
+          <RoomMessageSearch
+            value={messageSearch}
+            onChange={onMessageSearchChange}
+            inlineOpen={inlineOpen}
+            onInlineOpenChange={setInlineOpen}
+          />
+          {user.role === 4 && (
+            <React.Fragment>
+              <IconButton aria-label="add user" onClick={handleAddOperatorOpen}>
+                <PersonAddIcon />
+              </IconButton>
+              <AddContact
+                apiUrl={apiUrl}
+                open={addOperatorOpen}
+                contacts={operators}
+                onClose={handleAddOperatorClose}
+              />
+            </React.Fragment>
+          )}
+          {user.role === 4 &&
+            Array.isArray(group.members) &&
+            group.members.some(
+              (it) => it.userId !== user.userId && it.role === 4,
+            ) &&
+            onLeaveGroup && (
+              <IconButton
+                aria-label="leave group"
+                onClick={() => onLeaveGroup(group)}
+              >
+                <DeleteIcon />
+              </IconButton>
+            )}
+        </Box>
+      </Stack>
     );
   }
 
   return (
-    <>
-      <CardHeader
-        sx={{
-          minWidth: 0,
-          "& .MuiCardHeader-content": {
-            minWidth: 0,
+    <Stack
+      direction="row"
+      alignItems="center"
+      justifyContent="space-between"
+      spacing={2}
+      className={className}
+      sx={{
+        minWidth: 0,
+        px: 1.5,
+        py: 0.5,
+      }}
+    >
+      {inlineOpen ? null : (
+        <Stack
+          direction="row"
+          spacing={2}
+          alignItems="center"
+          sx={{
+            p: 1,
+            pl: 0.5,
             flex: "1 1 auto",
+            minWidth: 0,
             overflow: "hidden",
-          },
-          "& .MuiCardHeader-action": { flex: "0 0 auto", marginLeft: 0 },
-        }}
-        avatar={
+          }}
+        >
           <Avatar
             alt={contact.username}
             src={contact.avatar ? combineURLs(apiUrl, contact.avatar) : ""}
           />
-        }
-        title={
-          <Typography
-            variant="h6"
-            sx={(theme) => ({
-              minWidth: 0,
-              flexShrink: 1,
-              display: "block",
-              whiteSpace: "nowrap",
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-              fontSize: "0.9rem",
-              width: "100%",
-              [theme.breakpoints.down("md")]: {
-                fontSize: "0.8rem",
-              },
+          <Stack sx={{ minWidth: 0, overflow: "hidden" }}>
+            <Typography
+              variant="h6"
+              sx={(theme) => ({
+                minWidth: 0,
+                flexShrink: 1,
+                display: "block",
+                whiteSpace: "nowrap",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                fontSize: "0.9rem",
+                width: "100%",
+                [theme.breakpoints.down("md")]: {
+                  fontSize: "0.8rem",
+                },
 
-              [theme.breakpoints.down("sm")]: {
-                whiteSpace: "normal",
-                fontSize: "0.7rem",
-              },
-            })}
-          >
-            {contact.username}
-          </Typography>
-        }
-        subheader={<ContactStatus contact={contact} isTyping={isTyping} />}
-        className={className}
-        action={
-          <>
-            <Box
-              display="flex"
-              flexDirection="row"
-              alignItems="center"
-              gap={1}
-              sx={{ "& > *": { flexShrink: 0 } }}
+                [theme.breakpoints.down("sm")]: {
+                  whiteSpace: "normal",
+                  fontSize: "0.7rem",
+                },
+              })}
             >
-              <RoomMessageSearch
-                value={messageSearch}
-                onChange={onMessageSearchChange}
-                inMobileOrConferenceActive={inMobileOrConferenceActive}
-              />
+              {contact.username}
+            </Typography>
+            <ContactStatus contact={contact} isTyping={isTyping} />
+          </Stack>
+        </Stack>
+      )}
+      <Box
+        display="flex"
+        flexDirection="row"
+        alignItems="center"
+        gap={1.5}
+        sx={{
+          minWidth: 0,
+          flex: inlineOpen ? "1 1 auto" : "0 0 auto",
+          pl: inlineOpen ? 1 : 0,
+          pr: 0.5,
+          "& > *": { flexShrink: 0 },
+        }}
+      >
+        <RoomMessageSearch
+          value={messageSearch}
+          onChange={onMessageSearchChange}
+          inlineOpen={inlineOpen}
+          onInlineOpenChange={setInlineOpen}
+        />
 
-              {canStartConference && onVideoCall && (
-                <ConferenceButton
-                  visitData={visitData}
-                  chat={contact}
-                  onVideoCall={onVideoCall}
-                />
-              )}
-            </Box>
-          </>
-        }
-      />
-    </>
+        {canStartConference && onVideoCall && (
+          <ConferenceButton
+            visitData={visitData}
+            chat={contact}
+            hideLabel={inlineOpen}
+            onVideoCall={onVideoCall}
+          />
+        )}
+      </Box>
+    </Stack>
   );
 };
 

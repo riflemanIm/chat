@@ -1,7 +1,7 @@
 import SearchIcon from "@mui/icons-material/Search";
 import { IconButton, Tooltip } from "@mui/material";
 import React from "react";
-
+import TextFieldsIcon from "@mui/icons-material/TextFields";
 type ButtonMessageSearchIconProps = {
   onClick: (event: React.MouseEvent<HTMLElement>) => void;
   active?: boolean;
@@ -19,6 +19,7 @@ const ButtonMessageSearchIcon: React.FC<ButtonMessageSearchIconProps> = ({
         onClick={onClick}
         sx={{ width: 40, height: 40 }}
       >
+        <TextFieldsIcon fontSize="small" />
         <SearchIcon fontSize="medium" />
       </IconButton>
     </Tooltip>

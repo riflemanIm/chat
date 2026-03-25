@@ -284,12 +284,18 @@ export const ChatPage: React.FC<ChatPageProps> = ({
   );
 
   const onVideoCall = React.useCallback(
-    (chat: ChatRoom, visitId?: number, recreate?: boolean) => {
+    (
+      chat: ChatRoom,
+      visitId?: number,
+      recreate?: boolean,
+      isMuteCamera?: boolean,
+    ) => {
       emitSocketEvent("startConference", {
         groupId: isGroup(chat) ? chat.groupId : undefined,
         contactId: chat.userId,
         visitId,
         recreate,
+        isMuteCamera,
       });
     },
     [emitSocketEvent],

@@ -1,8 +1,10 @@
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import LocalPhoneIcon from "@mui/icons-material/LocalPhone";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import RestartAltIcon from "@mui/icons-material/RestartAlt";
 import VideoCallIcon from "@mui/icons-material/VideoCall";
 import Button from "@mui/material/Button";
+import ButtonGroup from "@mui/material/ButtonGroup";
 import Menu, { MenuProps } from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import { alpha, styled } from "@mui/material/styles";
@@ -11,6 +13,7 @@ import { useTranslation } from "react-i18next";
 import { ChatRoom, VisitData } from "../types";
 import { formatTime } from "../utils/common";
 import ConfirmDialogSlide from "./ConfirmDialogSlide";
+import { Typography } from "@mui/material";
 
 const StyledMenu = styled((props: MenuProps) => (
   <Menu
@@ -48,7 +51,7 @@ const StyledMenu = styled((props: MenuProps) => (
       "&:active": {
         backgroundColor: alpha(
           theme.palette.primary.main,
-          theme.palette.action.selectedOpacity
+          theme.palette.action.selectedOpacity,
         ),
       },
     },
@@ -58,7 +61,13 @@ const StyledMenu = styled((props: MenuProps) => (
 type ConferenceButtonProps = {
   visitData: VisitData[];
   chat: ChatRoom;
-  onVideoCall: (chat: ChatRoom, visitId?: number, recreate?: boolean) => void;
+  hideLabel?: boolean;
+  onVideoCall: (
+    chat: ChatRoom,
+    visitId?: number,
+    recreate?: boolean,
+    isMuteCamera?: boolean,
+  ) => void;
 };
 
 const getVisitMessage = (visit: VisitData) => {
@@ -66,7 +75,7 @@ const getVisitMessage = (visit: VisitData) => {
 
   return `${visit.plExamName} (${formatTime(visitDate, "HH:mm")} - ${formatTime(
     new Date(visitDate.getTime() + visit.duration * 60_000),
-    "HH:mm"
+    "HH:mm",
   )})`;
 };
 
@@ -75,22 +84,28 @@ export default function ConferenceButton(props: ConferenceButtonProps) {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
   const [visitId, setVisitId] = React.useState<number | null>(null);
+  const [isMuteCamera, setIsMuteCamera] = React.useState(false);
   const [confirmReCreateVisit, setConfirmReCreateVisit] = React.useState(false);
   const open = Boolean(anchorEl);
-  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+  const handleClick = (
+    event: React.MouseEvent<HTMLElement>,
+    muteCamera = false,
+  ) => {
+    setIsMuteCamera(muteCamera);
     setAnchorEl(event.currentTarget);
   };
   const handleClose = () => {
     setAnchorEl(null);
   };
 
-  const handleStart = (item: VisitData) => {
+  const handleStart = (item: VisitData, muteCamera = isMuteCamera) => {
     setAnchorEl(null);
     setVisitId(item.visitId);
+    setIsMuteCamera(muteCamera);
     if (item.conferenceStatus === "finished") {
       setConfirmReCreateVisit(true);
     } else {
-      props.onVideoCall(props.chat, item.visitId);
+      props.onVideoCall(props.chat, item.visitId, false, muteCamera);
     }
   };
 
@@ -98,67 +113,60 @@ export default function ConferenceButton(props: ConferenceButtonProps) {
     return props.visitData.filter((it) => it.contactId === props.chat.userId);
   }, [props.visitData, props.chat]);
 
-  /**
-   * <Button
-                  aria-label="video call"
-                  variant="contained"
-                  color="primary"
-                  size="small"
-                  startIcon={<VideoCallIcon />}
-                  onClick={() =>
-                    visitId &&
-                    !isEmpty(
-                      visitData.find(
-                        (it) =>
-                          it.conferenceStatus === 'finished' &&
-                          it.visitId === Number(visitId),
-                      ),
-                    )
-                      ? setConfirmReCreateVisit(true)
-                      : onVideoCall(contact, null)
-                  }
-                  fullWidth
-                >
-                  {t(
-                    visitId
-                      ? 'CHAT.CONFERENCE.RESTART'
-                      : 'CHAT.CONFERENCE.START',
-                  )}
-                </Button>              
-   */
-
   return (
     <div>
-      <Button
-        id="conference-button"
-        aria-controls={open ? "conference-menu" : undefined}
-        aria-haspopup="true"
-        aria-expanded={open ? "true" : undefined}
-        color="primary"
-        size="small"
-        variant="contained"
-        disableElevation
-        onClick={handleClick}
-        startIcon={<VideoCallIcon />}
-        endIcon={<KeyboardArrowDownIcon />}
-        disabled={visitData.length === 0}
-      >
-        {t("CHAT.CONFERENCE.START")}
-      </Button>
+      <ButtonGroup variant="contained" color="primary" size="small">
+        <Button
+          id="conference-video-button"
+          aria-controls={open ? "conference-menu" : undefined}
+          aria-haspopup="true"
+          aria-expanded={open ? "true" : undefined}
+          onClick={(event) => handleClick(event, false)}
+          endIcon={<KeyboardArrowDownIcon />}
+          disabled={visitData.length === 0}
+        >
+          <VideoCallIcon />{" "}
+          {!props.hideLabel && (
+            <Typography
+              variant="caption"
+              ml={1}
+              sx={{ display: { xs: "none", md: "inline" } }}
+            >
+              {t("CHAT.CONFERENCE.START")}
+            </Typography>
+          )}
+        </Button>
+        <Button
+          id="conference-audio-button"
+          aria-controls={open ? "conference-menu" : undefined}
+          aria-haspopup="true"
+          aria-expanded={open ? "true" : undefined}
+          onClick={(event) => handleClick(event, true)}
+          disabled={visitData.length === 0}
+          title="Audio call"
+          aria-label="audio call"
+          endIcon={<KeyboardArrowDownIcon />}
+          sx={{}}
+        >
+          <LocalPhoneIcon />
+        </Button>
+      </ButtonGroup>
       <ConfirmDialogSlide
         open={confirmReCreateVisit}
         setOpen={setConfirmReCreateVisit}
         contentText={t("CHAT.CONFERENCE.CONFIRM_RECREATE_CONF")}
         callback={() => {
           if (visitId && confirmReCreateVisit) {
-            props.onVideoCall(props.chat, visitId, true);
+            props.onVideoCall(props.chat, visitId, true, isMuteCamera);
           }
         }}
       />
       <StyledMenu
         id="conference-menu"
         MenuListProps={{
-          "aria-labelledby": "conference-button",
+          "aria-labelledby": isMuteCamera
+            ? "conference-audio-button"
+            : "conference-video-button",
         }}
         anchorEl={anchorEl}
         open={open}
