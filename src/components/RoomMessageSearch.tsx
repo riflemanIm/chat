@@ -24,14 +24,22 @@ const RoomMessageSearch: React.FC<RoomMessageSearchProps> = ({
 
   const [draft, setDraft] = React.useState(value);
   const inputRef = React.useRef<HTMLInputElement | null>(null);
+  const skipAutoOpenRef = React.useRef(false);
 
   const handleSubmit = React.useCallback(() => {
     onChange?.(draft);
   }, [draft, onChange]);
 
   const handleSearchOpen = React.useCallback(() => {
-    onInlineOpenChange(!inlineOpen);
-  }, [inlineOpen, onInlineOpenChange]);
+    if (inlineOpen) {
+      skipAutoOpenRef.current = true;
+      setDraft("");
+      onChange?.("");
+      onInlineOpenChange(false);
+      return;
+    }
+    onInlineOpenChange(true);
+  }, [inlineOpen, onChange, onInlineOpenChange]);
 
   const handleSearchClose = React.useCallback(() => {
     onInlineOpenChange(false);
@@ -39,6 +47,12 @@ const RoomMessageSearch: React.FC<RoomMessageSearchProps> = ({
 
   React.useEffect(() => {
     setDraft(value);
+    if (skipAutoOpenRef.current) {
+      if (!value) {
+        skipAutoOpenRef.current = false;
+      }
+      return;
+    }
     if (value && !inlineOpen) {
       onInlineOpenChange(true);
     }
@@ -148,7 +162,7 @@ const RoomMessageSearch: React.FC<RoomMessageSearchProps> = ({
       </Box>
       <ButtonMessageSearchIcon
         onClick={handleSearchOpen}
-        active={Boolean(value) || inlineOpen}
+        active={Boolean(draft) || inlineOpen}
       />
     </Box>
   );
