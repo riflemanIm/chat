@@ -78,9 +78,7 @@ const Entry: React.FC<EntryProps> = ({
     null
   );
 
-  const textRef = useRef<HTMLInputElement>(null);
-  const textValueRef = useRef("");
-
+  const [text, setText] = useState("");
   const [error, setError] = useState<string>("");
   const [isUploading, setIsUploading] = useState(false);
   const lastTypingRef = useRef<{ chatKey: string | null; time: number }>({
@@ -108,18 +106,14 @@ const Entry: React.FC<EntryProps> = ({
   };
 
   const emojiSelect = useCallback((emoji: string) => {
-    if (textRef.current) {
-      const newValue = textValueRef.current + emoji;
-      textValueRef.current = newValue;
-      textRef.current.value = newValue;
-    }
+    setText((currentText) => currentText + emoji);
     handleEmojiClose();
   }, []);
 
   const handleTyping = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const newText = e.target.value;
-      textValueRef.current = newText;
+      setText(newText);
 
       if (!chat || !onTyping) return;
 
@@ -156,17 +150,12 @@ const Entry: React.FC<EntryProps> = ({
   };
 
   const handleSubmit = useCallback(() => {
-    const currentText = textValueRef.current;
-    if (!validateMessage(currentText)) return;
+    if (!validateMessage(text)) return;
 
-    sendMessage({ message: currentText, messageType: "text" });
-
-    if (textRef.current) {
-      textRef.current.value = "";
-      textValueRef.current = "";
-    }
+    sendMessage({ message: text, messageType: "text" });
+    setText("");
     setError("");
-  }, [sendMessage]);
+  }, [sendMessage, text]);
 
   const handleFileUpload = async (
     event: React.ChangeEvent<HTMLInputElement>
@@ -245,7 +234,7 @@ const Entry: React.FC<EntryProps> = ({
         variant="standard"
         error={!!error}
         disabled={isUploading}
-        inputRef={textRef}
+        value={text}
         slotProps={{
           input: {
             autoComplete: "off",
@@ -268,7 +257,7 @@ const Entry: React.FC<EntryProps> = ({
                 <label htmlFor="icon-button-file">
                   <IconButton
                     color="primary"
-                    aria-label="upload"
+                    aria-label={t("CHAT.BUTTON.UPLOAD")}
                     component="span"
                     size="small"
                     disabled={isUploading}
@@ -306,7 +295,7 @@ const Entry: React.FC<EntryProps> = ({
                 color="inherit"
                 size="small"
                 onClick={handleSubmit}
-                disabled={isUploading || !textValueRef.current.trim()}
+                disabled={isUploading || !text.trim()}
               >
                 <Send />
               </IconButton>
